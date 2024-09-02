@@ -1,0 +1,24 @@
+﻿
+@{
+    ViewBag.Title = "Autenticacion";
+    Layout = "~/Views/Shared/_Autentication.cshtml";
+}
+
+
+    <!-- Sección de inicio de sesión-->
+    <div class="sesion_login">
+        <i class="fas fa-user-circle user-icon"></i>
+        <h2>Iniciar Sesión</h2>
+        <form action="Administrador/index.html" method="post">---------------------------------------------
+            <div class="input-container">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="email" name="email" placeholder="Correo electrónico" required>
+            </div>
+            <div class="input-container">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" name="password" placeholder="Contraseña">
+            </div>
+            <input type="submit" src="Administrador/index.html" value="Iniciar Sesión">
+        </form>
+    </div>
+

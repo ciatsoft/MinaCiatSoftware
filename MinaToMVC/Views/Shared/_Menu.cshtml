@@ -1,0 +1,200 @@
+﻿@{
+    ViewBag.Title = "Mina San Miguel";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <!-- Basic -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- Mobile Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title>@ViewBag.Title</title>
+
+    <link rel="icon" href="@Url.Content("~/img/Logo.ico")" type="image/x-icon" />
+
+    <!-- bootstrap core css -->
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/css/bootstrap.css")" />
+
+    <!-- Custom styles for this template -->
+    <!-- responsive style -->
+    <!-- Inicio a los llamados de js -->
+    <script src="@Url.Content("~/Assets/script.js")"></script>
+    <script src="@Url.Content("~/Assets/Administracion/js/script.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/js/jquery-3.4.1.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Assets/js/bootstrap.js")"></script>
+    <!-- Fin a los llamados de js -->
+
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/css/bootstrap.css")" />
+    <link href="@Url.Content("~/Assets/css/style.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Assets/css/estiloClientes.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Assets/css/responsive.css")" rel="stylesheet" />
+
+    <script src="/Assets/js/script.js"></script>
+    <script type="text/javascript" src="/Assets/js/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="/Assets/js/bootstrap.js"></script>
+
+
+
+</head>
+
+
+
+<style>
+    .main_title_html {
+        background-color: white;
+        font-family: Helvetica Neue;
+        font-size: 30px;
+        color: black;
+        width: 70%;
+        padding: 5px;
+        border: 20px;
+        border-radius: 100px;
+        border: 3px solid black;
+        position: relative;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .tabla-clientes {
+        background-color: #e6e1cd;
+    }
+
+    .panel-body {
+        background-color: #e6e1cd;
+    }
+
+    body {
+        background-color: #83988e;
+    }
+</style>
+
+<body>
+
+    <header class="header_section">
+        <div class="container-fluid">
+            <nav class="navbar navbar-expand-lg custom_nav-container">
+                <a class="navbar-brand" href="@Url.Action("Index", "Home")">
+                    <img src="@Url.Content("~/Assets/img/logow.png")" style="height: 50px; width: 150px" />
+                </a>
+                <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+                        <ul class="navbar-nav">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="@Url.Content("~/Administrador/index.html")">Inicio <span class="sr-only">(current)</span></a>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Administración
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Administracion/index.html")">Clientes</a>
+                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Administracion/solicitudes_de_compras.html")">Solicitudes</a>
+                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Venta/precios.html")">Precios</a>
+                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Venta/agregar_imagen.html")">Imágenes de precios</a>
+                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Consultas/empleados.html")">Empleados</a>
+                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Consultas/index.html")">Ingresos y egresos</a>
+                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Consultas/plantas.html")">General</a>
+                                </div>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Almacén
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Inventario/index.html")">Inventario</a>
+                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Inventario/solicitudes_procesadas.html")">Solicitudes procesadas</a>
+                                </div>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    R.H.
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/RH/index.html")">Agregar</a>
+                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/RH/editar_empleado.html")">Editar</a>
+                                </div>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Venta
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Venta/index.html")">Material</a>
+                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Venta/salidas/index.html")">Salidas</a>
+                                </div>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Taller
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Taller/index.html")">Vehículos</a>
+                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Taller/inventarioTaller/index.html")">Inventario del taller</a>
+                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Taller/reportes.html")">Reportes con stock</a>
+                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Taller/reportesinstock.html")">Reportes sin stock</a>
+                                </div>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Content("~/index.html")">Cerrar Sesión</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <section class="slider_section position-relative">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    @Html.ActionLink(" ", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                </div>
+            </div>
+            <div class="row">
+                @RenderBody()
+            </div>
+        </div>
+    </section>
+
+        <div class="contacto-ciat">
+            <div class="contacto">
+                <div class="puesto">Director General de CIATSoftware.</div>
+                <div class="nombre"><img src="@Url.Content("~/Assets/img/usuario.png")" alt="Teléfono" width="20" height="20">Juan Carlos Tinoco Herrera</div>
+                <div class="telefono"><img src="@Url.Content("~/Assets/img/tel-icono.png")" alt="Teléfono" width="20" height="20">Tel: +52 782 132 9772</div>
+            </div>
+            <div class="consulta">
+                <p>En caso de consultas sobre el funcionamiento del sistema, por favor contactar a CIATSoftware mediante los siguientes medios:</p>
+            </div>
+            <div class="contacto2">
+                <div class="puesto">Directora de Innovación Tecnológica.</div>
+                <div class="nombre"><img src="@Url.Content("~/Assets/img/usuario.png")" alt="Teléfono" width="20" height="20">Cesia Santiago Trejo</div>
+                <div class="telefono"><img src="@Url.Content("~/Assets/img/tel-icono.png")" alt="Teléfono" width="20" height="20">Tel: +52 228 182 7906</div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container text-center">
+                <span class="text-muted">© 2024 Desarrollado por CIATSoftware</span>
+            </div>
+        </footer>
+
+</body>
+
+</html>

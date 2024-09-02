@@ -1,0 +1,107 @@
+﻿@{
+    ViewBag.Title = "Precios"; // Establece el título de la vista.
+}
+<div class="content">
+    
+    <div class="title"><center><h1>Precios</h1></center></div>
+    <div class="container main-ventas-precios mt-4">
+        <div class="row">
+
+            <!-- Sección de Formulario para agregar precios -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <!-- Encabezado de la tarjeta con título y estilo -->
+                    <div class="card-header bg-primary text-white">
+                        <h3><i class="fa fa-tags"></i> Precios</h3>
+                    </div>
+                    <!-- Cuerpo de la tarjeta con el formulario para agregar precios -->
+                    <div class="card-body">
+                        <form>
+                            <div class="form-group">
+                                <!-- Campo de entrada para el nombre del producto -->
+                                <label for="nombre"><i class="fa fa-user"></i> Nombre</label>
+                                <input type="text" class="form-control" id="nombre" placeholder="Nombre">
+                            </div>
+                            <div class="form-group">
+                                <!-- Campo de entrada para el precio del producto -->
+                                <label for="precio"><i class="fa fa-dollar-sign"></i> Precio</label>
+                                <input type="text" class="form-control" id="precio" placeholder="Por metro cúbico">
+                            </div>
+                            <div class="form-group">
+                                <!-- Campo de entrada para la descripción del producto -->
+                                <label for="descripcion"><i class="fa fa-info-circle"></i> Descripción</label>
+                                <input type="text" class="form-control" id="descripcion" placeholder="Breve">
+                            </div>
+                            <div class="form-group">
+                                <!-- Campo de selección para la imagen del producto -->
+                                <label for="imagen"><i class="fa fa-image"></i> Imagen</label>
+                                <select class="form-control" id="imagen" multiple>
+                                    <!-- Itera sobre las imágenes disponibles y las agrega como opciones en el selector -->
+
+                                    <option value="<?php echo htmlspecialchars($img['imagen']); ?>">
+                                    </option>
+
+                                </select>
+                            </div>
+                            <!-- Botón para agregar un nuevo producto, ejecuta la función JavaScript 'add_member' -->
+                            <button type="button" class="btn btn-primary" onclick="add_member()">
+                                <i class="fa fa-plus-circle"></i> Agregar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección para mostrar la lista de precios -->
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <!-- Encabezado de la tarjeta con título y estilo -->
+                    <div class="card-header bg-primary text-white">
+                        <h3><i class="fa fa-list-ul"></i> Lista de Precios</h3>
+                    </div>
+                    <!-- Cuerpo de la tarjeta donde se mostrará la lista de precios -->
+                    <div class="card-body" id="list_container">
+                        <!-- Contenido PHP para incluir la lista de precios -->
+                        <main>
+                            <!-- Tabla que muestra la lista de precios -->
+                            <table class="table precios-table">
+                                <thead>
+                                    <!-- Encabezado de la tabla con iconos y nombres de columnas -->
+                                    <tr>
+                                        <th><i class="fas fa-file-signature"></i> Nombre</th>
+                                        <th><i class="fas fa-tags"></i> Precio</th>
+                                        <th><i class="fas fa-info-circle"></i> Descripción</th>
+                                        <th><i class="fas fa-image"></i> Imagen</th>
+                                        <th><i class="fas fa-trash-alt"></i> Eliminar</th>
+                                        <th><i class="fas fa-edit"></i> Editar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    <tr>
+                                        <!-- Muestra el nombre del producto -->
+                                        <td></td>
+                                        <!-- Muestra el precio del producto -->
+                                        <td></td>
+                                        <!-- Muestra la descripción del producto -->
+                                        <td></td>
+                                        <!-- Muestra la imagen del producto -->
+                                        <td></td>
+                                        <!-- Botón para eliminar el producto, llama a la función 'delete_member' con el ID del producto -->
+                                        <td><a href="#" class="icon icon-delete" onclick="delete_member()"><i class="fas fa-trash-alt"></i></a></td>
+                                        <!-- Botón para editar el producto, llama a la función 'edit_member' con el ID del producto -->
+                                        <td><a href="#" class="icon icon-edit" style="background-color:blue;" onclick="edit_member()"><i class="fas fa-edit"></i></a></td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </main>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

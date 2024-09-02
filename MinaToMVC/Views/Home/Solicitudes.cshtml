@@ -1,0 +1,121 @@
+﻿@{
+    ViewBag.Title = "Solicitudes"; // Establece el título de la vista.
+}
+<div class="content">
+    <br />
+    <center><h1>Solicitudes</h1></center>
+
+    <main class="container mt-4">
+        <div class="title">
+            <!-- Espacio reservado para un título, si es necesario -->
+        </div>
+
+        <div class="solicitudes-tabla">
+            <!-- Formulario para filtrar solicitudes -->
+            <form method="POST" class="form-inline mb-4">
+                <label for="filtro" class="mr-2">Filtrar solicitudes:</label>
+                <select name="filtro" id="filtro" class="form-control">
+                    <option value="todos">Todos</option>
+                    <option value="sin_revisar">Sin revisar</option>
+                    <option value="aprobadas">Aprobadas</option>
+                    <option value="denegadas">Denegadas</option>
+                </select>
+                <button type="submit" class="btn btn-primary ml-2">Filtrar</button>
+            </form>
+        </div>
+
+        <tbody>
+            <!-- Tabla para mostrar las solicitudes -->
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Solicitante</th>
+                    <th>Materiales <i class='fa fa-boxes'></i></th>
+                    <th>Área <i class='fa fa-map-marker-alt'></i></th>
+                    <th>Acciones <i class='fa fa-tools'></i></th>
+                    <th>Información <i class='fa fa-info-circle'></i></th>
+                </tr>
+                <!-- Aquí se deben agregar las filas de la tabla dinámicamente -->
+            </table>
+
+            <!-- Función para mostrar el formulario de comprobante -->
+            <script>
+                function mostrarFormularioComprobante(idSolicitud) {
+                    var formulario = document.getElementById('formComprobante' + idSolicitud);
+                    formulario.style.display = 'block'; // Muestra el formulario de comprobante
+                }
+            </script>
+
+            <!-- Funciones para manejar las solicitudes -->
+            <script>
+            // Función para aprobar una solicitud, redirige a una página PHP para aprobar
+            function aprobarSolicitud(id) {
+                window.location.href = `@Url.Action("AprobarSolicitud", "TuControlador", new { id = "" })`.replace("%22%22", id);
+            }
+
+            // Función para denegar una solicitud, redirige a una página PHP para denegar
+            function denegarSolicitud(id) {
+                window.location.href = `@Url.Action("DenegarSolicitud", "TuControlador", new { id = "" })`.replace("%22%22", id);
+            }
+
+            // Función para modificar la razón de la denegación
+            function modificarRazon(solicitudId, boton) {
+                var razonActual = boton.innerText === "Informar Razón" ? "" : boton.innerText;
+                var nuevaRazon = prompt("Ingrese la razón de la denegación:", razonActual);
+
+                // Si el usuario proporciona una razón válida, la envía al servidor
+                if (nuevaRazon !== null && nuevaRazon !== razonActual) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "@Url.Action("ActualizarRazon", "TuControlador")", true);
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                    xhr.onreadystatechange = function() {
+                        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                            boton.innerText = nuevaRazon ? nuevaRazon : "Informar Razón"; // Actualiza el texto del botón
+                            alert("Razón actualizada correctamente."); // Notifica al usuario
+                        }
+                    };
+                    xhr.send("solicitudId=" + solicitudId + "&razon=" + encodeURIComponent(nuevaRazon));
+                }
+            }
+
+            // Función para actualizar la fecha y hora de entrega de una solicitud
+            function actualizarFechaEntrega(solicitudId) {
+                var dateTimeValue = document.getElementById('fechaEntrega' + solicitudId).value;
+                var [fecha, hora] = dateTimeValue.split('T'); // Separa la fecha y la hora
+
+                fetch('@Url.Action("ActualizarFechaHoraEntrega", "TuControlador")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `id=${solicitudId}&fechaEntrega=${encodeURIComponent(fecha)}&horaEntrega=${encodeURIComponent(hora)}`
+                })
+                .then(response => response.text())
+                .then(data => {
+                    alert("Fecha y hora de entrega actualizadas correctamente."); // Notificación al usuario
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert("Error actualizando la fecha y hora de entrega."); // Notificación al usuario
+                });
+            }
+
+            // Función para mostrar una notificación de denegación con una razón
+            function mostrarNotificacionDenegacion(solicitudId) {
+                var razon = prompt("Por favor, ingrese la razón de la denegación:");
+                if (razon !== null && razon !== "") {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "@Url.Action("GuardarRazonDenegacion", "TuControlador")", true);
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                    xhr.onreadystatechange = function() {
+                        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                            alert("Razón guardada correctamente."); // Notificación al usuario
+                        }
+                    };
+                    xhr.send("solicitudId=" + solicitudId + "&razon=" + encodeURIComponent(razon));
+                }
+            }
+            </script>
+        </tbody>
+    </main>
+    </div>
