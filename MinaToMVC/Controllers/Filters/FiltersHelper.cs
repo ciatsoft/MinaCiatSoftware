@@ -24,7 +24,7 @@ namespace MinaToMVC.Controllers.Filters
                     filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new
                     {
                         controller = "Home",
-                        action = "Autentication"
+                        action = "Autenticacion"
                     }));
                 }
             }

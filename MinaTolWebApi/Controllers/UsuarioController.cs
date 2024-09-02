@@ -13,11 +13,11 @@ using System.Web.Http;
 namespace MinaTolWebApi.Controllers
 {
     [Authorize]
-    [RoutePrefix("api/User")]
-    public class UserController : ApiController
+    [RoutePrefix("api/Usuario")]
+    public class UsuarioController : ApiController
     {
         public DbWrapper dbWrapper { get; set; }
-        public UserController()
+        public UsuarioController()
         {
             dbWrapper = new DbWrapper();
         }
@@ -29,7 +29,13 @@ namespace MinaTolWebApi.Controllers
             return Ok();
         }
 
-        [AllowAnonymous]
+        [HttpPost, Route("ValidateUserName")]
+        public ModelResponse ValidateUserName(Usuario u)
+        {
+            var r = dbWrapper.ValidateUserName(u.Email);
+            return r;
+        }
+
         [HttpGet, Route("{UserID:long}")]
         public ModelResponse GetUserById(long UserID)
         {
@@ -50,8 +56,3 @@ namespace MinaTolWebApi.Controllers
         }
     }
 }
-
-//comentario de Emmanuel
-
-
-//Comentario de Natanias

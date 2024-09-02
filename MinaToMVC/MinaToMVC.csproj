@@ -142,6 +142,8 @@
     <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\Catalogos\UnidadMedida.js" />
+    <Content Include="Scripts\Comun\Comun.js" />
+    <Content Include="Scripts\Home\Autenticacion.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -150,6 +152,7 @@
     <Compile Include="Controllers\CatalogController.cs" />
     <Compile Include="Controllers\Filters\FiltersHelper.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="DAL\HttpClientConnection.Usuario.cs" />
     <Compile Include="DAL\HttpClientBase.cs" />
     <Compile Include="DAL\HttpClientConnection.cs" />
     <Compile Include="Global.asax.cs">
