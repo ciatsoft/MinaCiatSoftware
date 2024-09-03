@@ -1,0 +1,515 @@
+﻿@{
+    ViewBag.Title = "Ingresos"; // Establece el título de la vista.
+}
+<div class="content">
+    <br>
+    <div class="title"><center><h1>General</h1></div></center>
+    <div class="wrapper">
+        <div class="header-wrapper">
+            <div class="page-wrapper">
+                <div class="page-content">
+
+
+
+                    <!-- Viajes al mes -->
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
+                        <!-- Viajes en escurridero -->
+                        <div class="col">
+                            <div class="card radius-10 border-start border-0 border-4 border-info">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <div>
+                                            <p class="mb-0 text-secondary"><i class="fas fa-mountain" style="color: #333;"></i> Viajes en escurridero</p>
+                                            <h4 class="my-1 text-info"><i class="fas fa-truck" style="color: #333;"></i> Escurridero</h4>
+                                            <p class="mb-0 font-13"><i class="fas fa-calendar" style="color: #333;"></i> Este mes</p>
+                                        </div>
+                                        <div class="widgets-icons-2 rounded-circle bg-gradient-blues text-white ms-auto"><i class='bx bxs-cart'></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Viajes en planta blanca -->
+                        <div class="col">
+                            <div class="card radius-10 border-start border-0 border-4 border-danger">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <div>
+                                            <p class="mb-0 text-secondary"><i class="fas fa-building" style="color: #333;"></i> Viajes en planta blanca</p>
+                                            <h4 class="my-1 text-danger"><i class="fas fa-truck" style="color: #333;"></i> Blanca</h4>
+                                            <p class="mb-0 font-13"><i class="fas fa-calendar" style="color: #333;"></i> Este mes</p>
+                                        </div>
+                                        <div class="widgets-icons-2 rounded-circle bg-gradient-burning text-white ms-auto"><i class='bx bxs-wallet'></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Viajes en planta amarilla -->
+                        <div class="col">
+                            <div class="card radius-10 border-start border-0 border-4 border-success">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <div>
+                                            <p class="mb-0 text-secondary"><i class="fas fa-industry" style="color: #333;"></i> Viajes en planta amarilla</p>
+                                            <h4 class="my-1 text-success"><i class="fas fa-truck" style="color: #333;"></i> Amarilla</h4>
+                                            <p class="mb-0 font-13"><i class="fas fa-calendar" style="color: #333;"></i> Este mes</p>
+                                        </div>
+                                        <div class="widgets-icons-2 rounded-circle bg-gradient-ohhappiness text-white ms-auto"><i class='bx bxs-bar-chart-alt-2'></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estadísticas de viaje -->
+                    <div class="row">
+                        <div class="col-12 col-lg-8 d-flex">
+                            <div class="card radius-10 w-100">
+                                <div class="card-header">
+                                    <div class="d-flex align-items-center">
+                                        <div>
+                                            <h6 class="mb-0" style="color: #b5f7cd;"><i class="fas fa-chart-bar" style="color: white;"></i> Estadística de viajes</h6>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+
+                                <div class="card-body" style="max-height:10px">
+                                    <canvas id="graficaViajes"></canvas>
+                                    <script>
+                                        document.addEventListener('DOMContentLoaded', function () {
+                                            var ctx = document.getElementById('graficaViajes').getContext('2d');
+                                            var graficaViajes = new Chart(ctx, {
+                                                type: 'bar',
+                                                data: {
+                                                    labels: ['Escurridero', 'Blanca', 'Amarilla'],
+                                                    datasets: [{
+                                                        label: 'Ayer',
+                                                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                                                        borderColor: 'rgba(255, 99, 132, 1)',
+                                                        borderWidth: 1
+                                                    }, {
+                                                        label: 'Hoy',
+                                                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                                                        borderColor: 'rgba(54, 162, 235, 1)',
+                                                        borderWidth: 1
+                                                    }]
+                                                },
+                                                options: {
+                                                    scales: {
+                                                        y: {
+                                                            beginAtZero: true
+                                                        }
+                                                    },
+                                                    plugins: {
+                                                        legend: {
+                                                            labels: {
+                                                                font: {
+                                                                    size: 14
+                                                                }
+                                                            }
+                                                        },
+                                                        tooltip: {
+                                                            callbacks: {
+                                                                label: function (context) {
+                                                                    let label = context.dataset.label || '';
+                                                                    if (label) {
+                                                                        label += ': ';
+                                                                    }
+                                                                    label += context.raw;
+                                                                    return label;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            });
+                                        });
+                                    </script>
+                                </div>
+
+                                <div class="chart-container-1">
+                                    <canvas id="chart1"></canvas>
+                                </div>
+
+                                <!-- Modal de error -->
+                                <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p id="errorMessage"></p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Lateral plantas y clientes -->
+                        <div class="col-12 col-lg-4 d-flex">
+                            <div class="card radius-10 w-100">
+
+                                <div class="card-header">
+                                    <div class="d-flex align-items-center">
+                                        <div id="ingresos">
+                                            <h6 class="mb-0" style="color:#b5f7cd;"><i class="fas fa-money-bill-wave mr-2" style="color: white;"></i> Ingresos totales del ultimo mes por planta</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ul class="list-group list-group-flush" style="margin-left: 30px;">
+
+                                    <p>
+
+                                </ul>
+
+                                <br>
+
+                                <div class="card-header">
+                                    <div class="d-flex align-items-center">
+                                        <div id="mejores-clientes">
+                                            <h6 class="mb-0" style="color:#b5f7cd;"><i class="fas fa-users mr-2" style="color: white;"></i> Mejores clientes del año</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ul class="list-group list-group-flush" style="margin-left: 30px;">
+
+
+                                    <p>
+
+                                </ul>
+                            </div>
+                        </div>
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                fetch('datos.php') // Asegúrate de que la ruta a datos.php sea correcta
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        const ingresosDiv = document.getElementById('ingresos');
+                                        const clientesDiv = document.getElementById('mejores-clientes');
+
+                                        // Mostrando ingresos por planta
+                                        let ingresosHtml = '<h3>Ingresos totales del último mes por planta</h3>';
+                                        data.ingresos.forEach(ingreso => {
+                                            ingresosHtml += `<p>${ingreso.planta_servicio}: ${ingreso.ingresos_totales}</p>`;
+                                        });
+                                        ingresosDiv.innerHTML = ingresosHtml;
+
+                                        // Mostrando mejores clientes
+                                        let clientesHtml = '<h3>Mejores clientes del año</h3>';
+                                        data.clientes.forEach(cliente => {
+                                            clientesHtml += `<p>${cliente.nombre}: ${cliente.total_gastado}</p>`;
+                                        });
+                                        clientesDiv.innerHTML = clientesHtml;
+                                    })
+                                    .catch(error => console.error('Error:', error));
+                            });
+                        </script>
+
+                        <div class="card radius-10">
+
+
+                            <div class="card-body rounded-10">
+                                <div class="table-responsive">
+                                    <div class="card-header">
+                                        <div class="d-flex align-items-center">
+                                            <div>
+                                                <h6 class="mb-0" style="color:#b5f7cd;">Compras recientes</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <table class="table align-middle mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th><i class="fas fa-id-card mr-1"></i>Id</th>
+                                                <th><i class="fas fa-user mr-1"></i>Cliente</th>
+                                                <th><i class="fas fa-box mr-1"></i>Producto</th>
+                                                <th><i class="fas fa-shopping-basket mr-1"></i>Cantidad</th>
+                                                <th><i class="fas fa-dollar-sign mr-1"></i>Precio</th>
+                                                <th><i class="fas fa-calendar-alt mr-1"></i>Fecha</th>
+                                                <th><i class="fas fa-info-circle mr-1"></i>Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+
+
+                                            <tr>
+                                                <td colspan="7">No se encontraron compras recientes.</td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estadísticas de Vueltas en el Año-->
+                <div class="estadisticas-vueltas-año">
+                    <div class="container page-wrapper">
+                        <div class="row mt-4">
+                            <div class="col-12 col-lg-10 mx-auto d-flex">
+                                <div class="card radius-10 w-100">
+                                    <div class="card-body">
+                                        <div id="graficaVueltas-container">
+                                            <canvas id="graficaVueltas"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', () => {
+                            fetch('datos_vueltas.php')
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Error en la respuesta de la red');
+                                    }
+                                    return response.json();
+                                })
+                                .then(datos => {
+                                    renderChart(datos);
+                                })
+                                .catch(error => console.error('Error al cargar los datos:', error));
+                        });
+
+                        function renderChart(datos) {
+                            const ctx = document.getElementById('graficaVueltas').getContext('2d');
+                            const colors = {
+                                'Todas': 'rgba(0, 255, 0, 0.5)', // Verde/limón
+                                'Blanca': 'rgba(220, 20, 60, 0.5)', // Carmesí
+                                'Escurridero': 'rgba(0, 123, 255, 0.5)', // Azul
+                                'Amarilla': 'rgba(255, 205, 86, 0.5)' // Amarillo
+                            };
+
+                            if (!datos || typeof datos !== 'object') {
+                                console.error('Datos inválidos recibidos:', datos);
+                                return;
+                            }
+
+                            const datasets = Object.keys(datos).map(planta => ({
+                                label: `Viajes en ${planta}`,
+                                data: Array.isArray(datos[planta]) ? datos[planta].map(d => parseInt(d.total_vueltas, 10)) : [],
+                                borderColor: colors[planta] || 'rgba(128, 128, 128, 0.5)',
+                                backgroundColor: colors[planta] || 'rgba(128, 128, 128, 0.5)',
+                                fill: true,
+                                tension: 0.4
+                            }));
+
+                            new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                                    datasets
+                                },
+                                options: {
+                                    responsive: true,
+                                    plugins: {
+                                        legend: {
+                                            position: 'top',
+                                            labels: {
+                                                color: '#343a40',
+                                                font: {
+                                                    size: 14
+                                                }
+                                            }
+                                        },
+                                        title: {
+                                            display: true,
+                                            text: 'Estadísticas de Vueltas en el Año',
+                                            color: '#343a40',
+                                            font: {
+                                                size: 18
+                                            }
+                                        }
+                                    },
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            title: {
+                                                display: true,
+                                                text: 'Cantidad de Vueltas',
+                                                color: '#343a40',
+                                                font: {
+                                                    size: 14
+                                                }
+                                            },
+                                            ticks: {
+                                                color: '#343a40',
+                                                font: {
+                                                    size: 12
+                                                }
+                                            }
+                                        },
+                                        x: {
+                                            title: {
+                                                display: true,
+                                                text: 'Meses',
+                                                color: '#343a40',
+                                                font: {
+                                                    size: 14
+                                                }
+                                            },
+                                            ticks: {
+                                                color: '#343a40',
+                                                font: {
+                                                    size: 12
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    </script>
+
+                    <style>
+
+
+                        body {
+                            font-family: 'Roboto', sans-serif;
+                            margin: 0;
+                            padding: 0;
+                            background-color: #83988e;
+                            color: #343a40;
+                        }
+
+                        .page-wrapper {
+                            background-color: #fff;
+                            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+                            border-radius: 10px;
+                            overflow: hidden;
+                            margin: 20px;
+                            padding: 20px;
+                        }
+
+                        .card {
+                            margin-bottom: 20px;
+                            border: none;
+                            border-radius: 15px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            transition: box-shadow 0.3s ease-in-out;
+                        }
+
+                            .card:hover {
+                                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+                            }
+
+                        #graficaVueltas-container {
+                            width: 100%;
+                            margin: 20px auto;
+                        }
+
+                        canvas {
+                            width: 100% !important;
+                            height: 450px !important; /* Aumentar la altura de la gráfica */
+                        }
+
+                        body {
+                            background-color: #c2c7b1;
+                        }
+
+
+
+                        .card-header {
+                            background-color: #657275;
+                        }
+
+                        .title h1 {
+                            background-color: white;
+                            font-family: Helvetica Neue;
+                            font-size: 30px;
+                            color: black;
+                            width: 70%;
+                            padding: 5px;
+                            border: 20px;
+                            border-radius: 100px;
+                            border: 3px solid black;
+                        }
+                    </style>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        function actualizarInformacionGeneral() {
+            fetch('actualizar_datos.php')
+                .then(response => response.json())
+                .then(data => {
+                    // Actualizaciones que ocurren cada 5 minutos
+                    // Actualización de las ventas por planta
+                    const ingresosUl = document.querySelector('#ingresos .list-group');
+                    ingresosUl.innerHTML = ''; // Limpiar los elementos existentes
+                    data.ventasPorPlanta.forEach(venta => {
+                        const itemHtml = `<li class='list-group-item d-flex bg-transparent justify-content-between align-items-center'>
+                                      ${venta.planta_servicio} <span class="badge bg-success rounded-pill">${venta.total_vendido}</span>
+                                    </li>`;
+                        ingresosUl.insertAdjacentHTML('beforeend', itemHtml);
+                    });
+
+                    // Actualización de los top clientes
+                    const clientesUl = document.querySelector('#mejores-clientes .list-group');
+                    clientesUl.innerHTML = ''; // Limpiar los elementos existentes
+                    data.topClientes.forEach(cliente => {
+                        const itemHtml = `<li class='list-group-item d-flex bg-transparent justify-content-between align-items-center'>
+                                      ${cliente.nombre} <span class="badge bg-success rounded-pill">${cliente.total_en_carrito}</span>
+                                    </li>`;
+                        clientesUl.insertAdjacentHTML('beforeend', itemHtml);
+                    });
+
+                    // Actualización de los viajes por mes
+                    document.getElementById('contadorEscurridero').textContent = data.viajesPorMes['Escurridero'];
+                    document.getElementById('contadorBlanca').textContent = data.viajesPorMes['Blanca'];
+                    document.getElementById('contadorAmarilla').textContent = data.viajesPorMes['Amarilla'];
+                })
+                .catch(error => console.error('Error al actualizar la información:', error));
+        }
+
+        function actualizarEstadisticasYCompras() {
+            fetch('actualizar_datos_rapidos.php') // Asegúrate de tener este archivo PHP que devuelva solo las estadísticas de viajes y las compras recientes
+                .then(response => response.json())
+                .then(data => {
+                    // Actualizaciones que ocurren cada minuto
+                    // Aquí iría el código para actualizar la gráfica de estadísticas de viajes y la lista de compras recientes
+                    // Ejemplo: actualizarGráficaViajes(data.estadisticasViajes);
+                    // Ejemplo: actualizarComprasRecientes(data.comprasRecientes);
+                })
+                .catch(error => console.error('Error al actualizar la información:', error));
+        }
+
+        // Llama a la función al cargar la página y luego cada 5 minutos para actualizaciones generales
+        document.addEventListener('DOMContentLoaded', actualizarInformacionGeneral);
+        setInterval(actualizarInformacionGeneral, 300000); // 300000 ms = 5 minutos
+
+        // Actualización cada minuto para las estadísticas de viajes y las compras recientes
+        setInterval(actualizarEstadisticasYCompras, 60000); // 60000 ms = 1 minuto
+    </script>
+
+</div>
