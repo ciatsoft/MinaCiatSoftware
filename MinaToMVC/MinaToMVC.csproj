@@ -93,13 +93,30 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\css\all.css" />
+    <Content Include="Assets\css\all.min.css" />
     <Content Include="Assets\css\bootstrap.css" />
     <Content Include="Assets\css\bootstrap.min.css" />
+    <Content Include="Assets\css\brands.css" />
+    <Content Include="Assets\css\brands.min.css" />
     <Content Include="Assets\css\dataTables.dataTables.min.css" />
     <Content Include="Assets\css\estiloClientes.css" />
     <Content Include="Assets\css\estiloVentas.css" />
+    <Content Include="Assets\css\fontawesome.css" />
+    <Content Include="Assets\css\fontawesome.min.css" />
+    <Content Include="Assets\css\regular.css" />
+    <Content Include="Assets\css\regular.min.css" />
     <Content Include="Assets\css\responsive.css" />
+    <Content Include="Assets\css\solid.css" />
+    <Content Include="Assets\css\solid.min.css" />
     <Content Include="Assets\css\style.css" />
+    <Content Include="Assets\css\svg-with-js.css" />
+    <Content Include="Assets\css\svg-with-js.min.css" />
+    <Content Include="Assets\css\v4-font-face.css" />
+    <Content Include="Assets\css\v4-font-face.min.css" />
+    <Content Include="Assets\css\v4-shims.css" />
+    <Content Include="Assets\css\v4-shims.min.css" />
+    <Content Include="Assets\css\v5-font-face.css" />
+    <Content Include="Assets\css\v5-font-face.min.css" />
     <Content Include="Assets\img\abierto.png" />
     <Content Include="Assets\img\actualizar.png" />
     <Content Include="Assets\img\administracion.png" />

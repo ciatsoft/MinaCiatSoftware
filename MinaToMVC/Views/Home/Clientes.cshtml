@@ -3,138 +3,97 @@
 }
 
 <div class="content">
+    <br>
     <center><h1 class="main_title_html">Clientes</h1></center>
-    <div class="container">
-        <div class="container mt-4">
-            <h1 class="mb-4">Acciones</h1>
-            <div class="row mb-4">
-                <div class="col">
-                    <input type="text" class="form-control" name="search_query" id="search_query" placeholder="Buscar">
-                </div>
-                <div class="col-auto">
-                    <a href="#" onclick="search_member()" class="btn btn-primary">
-                        <i class="fas fa-search"></i> Buscar
-                    </a>
-                </div>
-                <div class="col-auto">
-                    <a href="#" onclick="location.reload()" class="btn btn-success">
-                        <i class="fas fa-sync-alt"></i> Recargar
-                    </a>
-                </div>
-                <div class="col-auto">
-                    <a href="#" onclick="toggleAddForm()" class="btn btn-success" style="color: white;">
-                        <i class="fas fa-plus" style="color: white;"></i> Añadir
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="tabla-clientes">
-            <div id="add_form" class="add-form-container" style="display: none;">
-                <h3>Agregar cliente</h3>
-                <form method="post" class="form-cliente">
-                    <div class="form-row">
-                        <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Empresa/Nombre">
-                        <input type="text" name="email" id="email" class="form-control" placeholder="Email">
-                        <input type="text" name="telefono" id="telefono" class="form-control" placeholder="Telefono">
-                        <input type="text" name="vehiculo1" id="vehiculo1" class="form-control" placeholder="Vehiculo 1">
-                        <input type="text" name="placas1" id="placas1" class="form-control" placeholder="Placas 1">
-                        <input type="text" name="vehiculo2" id="vehiculo2" class="form-control" placeholder="Vehiculo 2" style="display:none;">
-                        <input type="text" name="placas2" id="placas2" class="form-control" placeholder="Placas 2" style="display:none;">
-                        <input type="text" name="vehiculo3" id="vehiculo3" class="form-control" placeholder="Vehiculo 3" style="display:none;">
-                        <input type="text" name="placas3" id="placas3" class="form-control" placeholder="Placas 3" style="display:none;">
-                    </div>
-                    <input type="button" class="btn btn-vehicle" value="Agregar vehículo" onclick="add_vehicle()">
-                    <input type="button" class="btn btn-add" value="Agregar" onclick="add_member()">
-                </form>
-            </div>
-        </div>
-    </div>
-
     <div class="content">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <h3>Lista de clientes.</h3>
-                <div id="list_container">
-                    <div class="lista-clientes-main">
-                        <div class="paginador-clientes">
-                            <select id="rowsToShow" class="custom-select custom-select-sm">
-                                <option value="all">Todos</option>
-                                <option value="100">100</option>
-                                <option value="50">50</option>
-                                <option value="25">25</option>
-                                <option value="10">10</option>
-                            </select>
+        <div class="container">
+
+            <div class="container mt-4">
+        <h1 class="mb-4">Acciones</h1>
+        <div class="row mb-4">
+          <div class="col">
+            <input type="text" class="form-control" name="search_query" id="search_query" placeholder="Buscar">
+          </div>
+          <div class="col-auto">
+            <a href="#" onclick="search_member()" class="btn btn-primary">
+              <i class="fas fa-search"></i> Buscar
+            </a>
+          </div>
+          <div class="col-auto">
+            <a href="#" onclick="location.reload()" class="btn btn-success">
+              <i class="fas fa-sync-alt"></i> Recargar
+            </a>
+          </div>
+          <div class="col-auto">
+            <a href="#" onclick="toggleAddForm()" class="btn btn-success">
+              <i class="fas fa-plus"></i> Añadir
+            </a>
+          </div>
+        </div>
+      </div>
+
+            <div class="tabla-clientes">
+                <div id="add_form" class="add-form-container">
+                    <h3>Agregar cliente</h3>
+                    <form method="post" class="form-cliente">
+                        <div class="form-row">
+                            <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Empresa/Nombre">
+                            <input type="text" name="email" id="email" class="form-control" placeholder="Email">
+                            <input type="text" name="telefono" id="telefono" class="form-control" placeholder="Telefono">
+                            <input type="text" name="vehiculo1" id="vehiculo1" class="form-control" placeholder="Vehiculo 1">
+                            <input type="text" name="placas1" id="placas1" class="form-control" placeholder="Placas 1">
+                            <input type="text" name="vehiculo2" id="vehiculo2" class="form-control" placeholder="Vehiculo 2" style="display:none;">
+                            <input type="text" name="placas2" id="placas2" class="form-control" placeholder="Placas 2" style="display:none;">
+                            <input type="text" name="vehiculo3" id="vehiculo3" class="form-control" placeholder="Vehiculo 3" style="display:none;">
+                            <input type="text" name="placas3" id="placas3" class="form-control" placeholder="Placas 3" style="display:none;">
                         </div>
-                        <table class="table table-bordered" cellspacing="0" cellpadding="0">
+                        <input type="button" class="btn btn-vehicle" value="Agregar vehículo" onclick="add_vehicle()">
+                        <input type="button" class="btn btn-add" value="Agregar" onclick="add_member()">
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h3>Lista de clientes.</h3>
+                    <div id="list_container">
+                        <!-- Tabla de clientes utilizando DataTables de Bootstrap -->
+                        <table id="clientesTable" class="table table-bordered table-striped">
                             <thead class="thead-light">
                                 <tr>
                                     <th>Empresa/Nombre</th>
                                     <th>Email</th>
                                     <th>Telefono</th>
-                                    <th style="width: auto;">Borrar</th>
-                                    <th style="width: auto;">Editar</th>
-                                    <th style="width: auto;">Datos</th>
+                                    <th>Borrar</th>
+                                    <th>Editar</th>
+                                    <th>Datos</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td>
-                                        <a href="#" onclick="delete_member()" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a href="#" onclick="edit_member()" class="btn btn-sm" style="background-color: green; color: white;">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a href="javascript:void(0);" onclick="verDetallesCliente();" class="btn btn-info btn-sm">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                    </td>
-                                </tr>
+                                <!-- Esta sección está vacía por ahora -->
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                        <div class="main-modal">
-                            <div id="clientDetailModal" class="modal client-modal">
-                                <div class="modal-content client-modal-content">
-                                    <span class="close-button client-close-button">&times;</span>
-                                    <div id="clientDetails" class="client-details">
-                                        <h1>Datos Básicos</h1>
-                                        <div class="row">
-                                            <div class="column basic-details">
-                                                <p><i class="fas fa-id-badge"></i> ID: <span id="clientId"></span></p>
-                                                <p><i class="fas fa-user"></i> Nombre: <span id="clientName"></span></p>
-                                                <p><i class="fas fa-envelope"></i> Email: <span id="clientEmail"></span></p>
-                                                <p><i class="fas fa-phone"></i> Teléfono: <span id="clientPhone"></span></p>
-                                                <p><i class="fas fa-history"></i> Ultima visita: <span id="clientVisits"></span></p>
-                                            </div>
-                                            <div class="column vehicle-details">
-                                                <p><i class="fas fa-car"></i> Vehículos y Placas: <span id="clientVehicles"></span></p>
-                                            </div>
-                                        </div>
-
-                                        <div class="client-section">
-                                            <h2>Productos Comprados</h2>
-                                            <div id="clientProducts" class="client-products-scrollable"></div>
-                                        </div>
-
-                                        <div class="client-section">
-                                            <h2>Productos Despachados</h2>
-                                            <div id="clientDispatched" class="client-dispatched-scrollable"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+        <!-- Modal para detalles de cliente -->
+        <div class="modal fade" id="clientDetailModal" tabindex="-1" role="dialog" aria-labelledby="clientDetailModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="clientDetailModalLabel">Detalles del Cliente</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="clientDetails">
+                            <!-- Aquí se cargarán los detalles del cliente -->
                         </div>
-
-                        <div id="pagination"></div>
                     </div>
                 </div>
             </div>
@@ -142,4 +101,4 @@
     </div>
 </div>
 
-</html>
+}
