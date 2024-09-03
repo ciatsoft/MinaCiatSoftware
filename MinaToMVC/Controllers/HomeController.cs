@@ -50,6 +50,16 @@ namespace MinaToMVC.Controllers
         {
             return View();
         }
+        [Autenticated]
+        public ActionResult Ingresos()
+        {
+            return View();
+        }
+        [Autenticated]
+        public ActionResult General()
+        {
+            return View();
+        }
         #endregion
 
         #region Data Acces
