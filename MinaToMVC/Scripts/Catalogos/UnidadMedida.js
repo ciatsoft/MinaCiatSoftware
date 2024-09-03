@@ -15,17 +15,17 @@
 });
 
 function GetAllUnidadMedida() {
-    $.ajax({
-        url: 'http://localhost:44382/api/UnidadMedida/List',
-        cache: false,
-        type: 'GET',
-        dataType: 'json',
-        contentType: "application/json;",
-        success: function (r) {
-            $('#tableUnidadMedida').dataTable().fnAddData(r.response);
-        },
-        error: function (e) {
-            console.log(e);
+    GetMVC("/Catalog/GetAllUnidadmedida", function (r) {
+        if (r.IsSuccess) {
+            $('#tableUnidadMedida').dataTable().fnAddData(r.Response);
+        }
+        else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Ocurrió un error.',
+                text: r.Message
+            });
+            //alert(r.Message);
         }
     });
 }

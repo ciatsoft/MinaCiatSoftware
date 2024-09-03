@@ -38,6 +38,11 @@
     <script type="text/javascript" src="/Assets/js/jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="/Assets/js/bootstrap.js"></script>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <script src="~/Scripts/Comun/Comun.js"></script>
+
 
 </head>
 <link rel="icon" href="@Url.Content("~/Assets/img/Logo.ico")" type="image/x-icon" />
@@ -342,12 +347,7 @@
         </div>
     </header>
     <section class="slider_section position-relative">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    @Html.ActionLink(" ", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-                </div>
-            </div>
+        <div class="container" style="background-color:white;">
             <div class="row">
                 @RenderBody()
             </div>

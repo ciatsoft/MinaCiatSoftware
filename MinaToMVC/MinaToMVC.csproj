@@ -152,6 +152,7 @@
     <Compile Include="Controllers\CatalogController.cs" />
     <Compile Include="Controllers\Filters\FiltersHelper.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="DAL\HttpClientConnection.UnidadMedida.cs" />
     <Compile Include="DAL\HttpClientConnection.Usuario.cs" />
     <Compile Include="DAL\HttpClientBase.cs" />
     <Compile Include="DAL\HttpClientConnection.cs" />
