@@ -34,9 +34,9 @@
     <link href="@Url.Content("~/Assets/css/responsive.css")" rel="stylesheet" />
     <link href="@Url.Content("~/Assets/css/estiloventas.css")" rel="stylesheet" />
 
-    <script src="/Assets/js/script.js"></script>
-    <script type="text/javascript" src="/Assets/js/jquery-3.4.1.min.js"></script>
-    <script type="text/javascript" src="/Assets/js/bootstrap.js"></script>
+    <script href="@Url.Content("~/Assets/js/script.js")"></script>
+    <script type="text/javascript" href="@Url.Content("~/Assets/js/jquery-3.4.1.min.js")"></script>
+    <script type="text/javascript" href="@Url.Content("~/Assets/js/bootstrap.js")"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
@@ -120,7 +120,7 @@
 
     /* Estilo específico para el div.content */
     .content {
-        background-color: rgba(255, 255, 255, 0.5); /* Fondo blanco con 50% de opacidad */
+        background-color: rgba(255, 255, 255, 0.7); /* Fondo blanco con 50% de opacidad */
     }
 
     .main_title_html {
@@ -277,7 +277,7 @@
                     <div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
                         <ul class="navbar-nav">
                             <li class="nav-item active">
-                                <a class="nav-link" href="@Url.Content("~/Administrador/index.html")">Inicio <span class="sr-only">(current)</span></a>
+                                <a class="nav-link" data-title="Index" href="#">Inicio <span class="sr-only">(current)</span></a>
                             </li>
 
                             <li class="nav-item dropdown">
@@ -285,13 +285,13 @@
                                     Administración
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Administracion/index.html")">Clientes</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Administracion/solicitudes_de_compras.html")">Solicitudes</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Venta/precios.html")">Precios</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Venta/agregar_imagen.html")">Imágenes de precios</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Consultas/empleados.html")">Empleados</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Consultas/index.html")">Ingresos y egresos</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Consultas/plantas.html")">General</a>
+                                    <a class="dropdown-item" data-title="Clientes" href="#">Clientes</a>
+                                    <a class="dropdown-item" data-title="Solicitudes" href="#">Solicitudes</a>
+                                    <a class="dropdown-item" data-title="Precios" href="#">Precios</a>
+                                    <a class="dropdown-item" data-title="Gestion_Img" href="#">Imágenes de precios</a>
+                                    <a class="dropdown-item" data-title="Empleados" href="#">Empleados</a>
+                                    <a class="dropdown-item" data-title="Ingresos" href="#">Ingresos y egresos</a>
+                                    <a class="dropdown-item" data-title="Plantas" href="#">General</a>
                                 </div>
                             </li>
 
@@ -300,8 +300,8 @@
                                     Almacén
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Inventario/index.html")">Inventario</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Inventario/solicitudes_procesadas.html")">Solicitudes procesadas</a>
+                                    <a class="dropdown-item" data-title="Inventario" href="#">Inventario</a>
+                                    <a class="dropdown-item" data-title="SolicitudesProcesadas" href="#">Solicitudes procesadas</a>
                                 </div>
                             </li>
 
@@ -310,8 +310,8 @@
                                     R.H.
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/RH/index.html")">Agregar</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/RH/editar_empleado.html")">Editar</a>
+                                    <a class="dropdown-item" data-title="Agregar" href="#">Agregar</a>
+                                    <a class="dropdown-item" data-title="EditarEmpleado" href="#">Editar</a>
                                 </div>
                             </li>
 
@@ -320,8 +320,8 @@
                                     Venta
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Venta/index.html")">Material</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Venta/salidas/index.html")">Salidas</a>
+                                    <a class="dropdown-item" data-title="Material" href="#">Material</a>
+                                    <a class="dropdown-item" data-title="Salidas" href="#">Salidas</a>
                                 </div>
                             </li>
 
@@ -330,15 +330,15 @@
                                     Taller
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Taller/index.html")">Vehículos</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Taller/inventarioTaller/index.html")">Inventario del taller</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Taller/reportes.html")">Reportes con stock</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Taller/reportesinstock.html")">Reportes sin stock</a>
+                                    <a class="dropdown-item" data-title="Vehiculos" href="#">Vehículos</a>
+                                    <a class="dropdown-item" data-title="InventarioTaller" href="#">Inventario del taller</a>
+                                    <a class="dropdown-item" data-title="ReportesStock" href="#">Reportes con stock</a>
+                                    <a class="dropdown-item" data-title="ReportesSinStock" href="#">Reportes sin stock</a>
                                 </div>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" href="@Url.Content("~/index.html")">Cerrar Sesión</a>
+                                <a class="nav-link" data-title="Autentication" href="#">Cerrar Sesión</a>
                             </li>
                         </ul>
                     </div>
@@ -346,35 +346,52 @@
             </nav>
         </div>
     </header>
+
+    <script>
+$(document).ready(function () {
+    $('.dropdown-item').on('click', function (event) {
+        event.preventDefault();  // Evita el comportamiento por defecto del enlace
+
+        var pageTitle = $(this).data('title');  // Obtiene el valor del atributo data-title
+
+        // Construye la URL completa
+        var baseUrl = '@Url.Content("~/Home/")'; // Ruta base desde la raíz del sitio
+        var fullUrl = baseUrl + pageTitle;  // Construye la URL completa
+
+        // Redirecciona a la página correspondiente
+        window.location.href = fullUrl;
+    });
+});
+    </script>
+
+
     <section class="slider_section position-relative">
-        <div class="container" style="background-color:white;">
-            <div class="row">
-                @RenderBody()
-            </div>
+        <div class="row">
+            @RenderBody()
         </div>
     </section>
 
-        <div class="contacto-ciat">
-            <div class="contacto">
-                <div class="puesto">Director General de CIATSoftware.</div>
-                <div class="nombre"><img src="@Url.Content("~/Assets/img/usuario.png")" alt="Teléfono" width="20" height="20">Juan Carlos Tinoco Herrera</div>
-                <div class="telefono"><img src="@Url.Content("~/Assets/img/tel-icono.png")" alt="Teléfono" width="20" height="20">Tel: +52 782 132 9772</div>
-            </div>
-            <div class="consulta">
-                <p>En caso de consultas sobre el funcionamiento del sistema, por favor contactar a CIATSoftware mediante los siguientes medios:</p>
-            </div>
-            <div class="contacto2">
-                <div class="puesto">Directora de Innovación Tecnológica.</div>
-                <div class="nombre"><img src="@Url.Content("~/Assets/img/usuario.png")" alt="Teléfono" width="20" height="20">Cesia Santiago Trejo</div>
-                <div class="telefono"><img src="@Url.Content("~/Assets/img/tel-icono.png")" alt="Teléfono" width="20" height="20">Tel: +52 228 182 7906</div>
-            </div>
+    <div class="contacto-ciat">
+        <div class="contacto">
+            <div class="puesto">Director General de CIATSoftware.</div>
+            <div class="nombre"><img src="@Url.Content("~/Assets/img/usuario.png")" alt="Teléfono" width="20" height="20">Juan Carlos Tinoco Herrera</div>
+            <div class="telefono"><img src="@Url.Content("~/Assets/img/tel-icono.png")" alt="Teléfono" width="20" height="20">Tel: +52 782 132 9772</div>
         </div>
+        <div class="consulta">
+            <p>En caso de consultas sobre el funcionamiento del sistema, por favor contactar a CIATSoftware mediante los siguientes medios:</p>
+        </div>
+        <div class="contacto2">
+            <div class="puesto">Directora de Innovación Tecnológica.</div>
+            <div class="nombre"><img src="@Url.Content("~/Assets/img/usuario.png")" alt="Teléfono" width="20" height="20">Cesia Santiago Trejo</div>
+            <div class="telefono"><img src="@Url.Content("~/Assets/img/tel-icono.png")" alt="Teléfono" width="20" height="20">Tel: +52 228 182 7906</div>
+        </div>
+    </div>
 
-        <footer class="footer">
-            <div class="container text-center">
-                <span class="text-muted">© 2024 Desarrollado por CIATSoftware</span>
-            </div>
-        </footer>
+    <footer class="footer">
+        <div class="container text-center">
+            <span class="text-muted">© 2024 Desarrollado por CIATSoftware</span>
+        </div>
+    </footer>
 
 </body>
 
