@@ -34,7 +34,7 @@
     <link href="@Url.Content("~/Assets/css/responsive.css")" rel="stylesheet" />
     <link href="@Url.Content("~/Assets/css/estiloventas.css")" rel="stylesheet" />
 
-    <script href="@Url.Content("~/Assets/js/script.js")"></script>
+    <script type="text/javascript" href="@Url.Content("~/Assets/js/script.js")"></script>
     <script type="text/javascript" href="@Url.Content("~/Assets/js/jquery-3.4.1.min.js")"></script>
     <script type="text/javascript" href="@Url.Content("~/Assets/js/bootstrap.js")"></script>
 
@@ -42,12 +42,50 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
     <script src="~/Scripts/Comun/Comun.js"></script>
+    <link href="https://cdn.datatables.net/v/dt/dt-2.1.5/datatables.min.css" rel="stylesheet">
+    <link href="@Url.Content("~/Assets/css/all.min.css")" rel="stylesheet">
+    <script src="https://cdn.datatables.net/v/dt/dt-2.1.5/datatables.min.js"></script>
 
 
 </head>
 <link rel="icon" href="@Url.Content("~/Assets/img/Logo.ico")" type="image/x-icon" />
 
 
+<style>
+    .main_title_html {
+        background-color: white;
+        font-family: Helvetica Neue;
+        font-size: 30px;
+        color: black;
+        width: 70%;
+        padding: 5px;
+        border: 20px;
+        border-radius: 100px;
+        border: 3px solid black;
+    }
+
+
+    .tabla-clientes {
+        background-color: #e6e1cd;
+        width: 100%;
+        background: #fff;
+        border-radius: 5px;
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+
+    .panel-body {
+        background-color: #e6e1cd;
+    }
+
+    body {
+        background-color: #83988e;
+    }
+</style>
 <style>
     /* Estilos generales */
     .slider_section {
