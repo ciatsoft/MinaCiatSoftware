@@ -45,6 +45,11 @@ namespace MinaToMVC.Controllers
         {
             return View();
         }
+        [Autenticated]
+        public ActionResult Gestion_Img()
+        {
+            return View();
+        }
         #endregion
 
         #region Data Acces
