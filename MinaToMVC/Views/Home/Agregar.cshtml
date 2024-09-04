@@ -1,0 +1,309 @@
+﻿@{
+    ViewBag.Title = "Agregar"; // Establece el título de la vista.
+}
+<div class="content">
+    <br>
+    <div><center><h1>Agregar Empleado</h1></center></div>
+    <div class="tabla-empleados-rh">
+        <!-- Formulario para agregar o editar empleados -->
+        <form id="employee-form" action="guardar_empleado.html" method="post" class="form-container">
+
+            <div class="form-columns">
+                <!-- Sección de Información Personal -->
+                <div class="section personal-info">
+                    <h2>
+                        <a href="editar_empleado.html" class="btn btn-secondary float-right">
+                            <i class="fas fa-users"></i> Empleados
+                        </a>
+                        <br><br>
+                        <i class="fas fa-info-circle"></i> Información Personal
+                    </h2>
+                    <div class="input-group">
+                        <label for="name"><i class="fas fa-user"></i> Nombre:</label>
+                        <input type="text" id="name" name="name" required placeholder="Escribe tu nombre completo">
+                    </div>
+                    <div class="input-group">
+                        <label for="email"><i class="fas fa-envelope"></i> Email:</label>
+                        <input type="email" id="email" name="email" required placeholder="ejemplo@correo.com">
+                    </div>
+                    <div class="input-group">
+                        <label for="phone"><i class="fas fa-phone"></i> Teléfono:</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="555-123-4567">
+                    </div>
+                </div>
+
+                <!-- Sección de Detalles del Trabajo -->
+                <div class="section job-details">
+                    <h2><i class="fas fa-briefcase"></i> Detalles del Trabajo</h2>
+                    <div class="input-group">
+                        <label for="area"><i class="fas fa-building"></i> Área de Trabajo:</label>
+                        <input type="text" id="area" name="area" required placeholder="Ej: Ventas, Administración">
+                    </div>
+                    <div class="input-group">
+                        <label for="salary"><i class="fas fa-money-bill-alt"></i> Salario:</label>
+                        <input type="number" id="salary" name="salary" required placeholder="Mensual">
+                    </div>
+                    <div class="input-group">
+                        <label for="hire-date"><i class="fas fa-calendar-alt"></i> Fecha de Contratación:</label>
+                        <input type="date" id="hire-date" name="hire-date" required placeholder="AAAA-MM-DD">
+                    </div>
+                </div>
+
+                <!-- Sección de Horario -->
+                <div class="section schedule">
+                    <h2><i class="fas fa-clock"></i> Horario</h2>
+                    <div class="input-group">
+                        <label for="start-time"><i class="fas fa-clock"></i> Hora de inicio:</label>
+                        <input type="time" id="start-time" name="start-time" required placeholder="HH:MM">
+                    </div>
+                    <div class="input-group">
+                        <label for="end-time"><i class="fas fa-clock"></i> Hora de finalización:</label>
+                        <input type="time" id="end-time" name="end-time" required placeholder="HH:MM">
+                    </div>
+                </div>
+
+                <!-- Sección de Días de Trabajo -->
+                <div class="section work-days">
+                    <h2><i class="fas fa-calendar-week"></i> Días de Trabajo</h2>
+                    <div class="input-group">
+                        <label for="work-days"><i class="fas fa-calendar-week"></i> Días de Trabajo:</label>
+                        <select id="work-days" name="work-days[]" multiple>
+                            <option value="Lunes">Lunes</option>
+                            <option value="Martes">Martes</option>
+                            <option value="Miércoles">Miércoles</option>
+                            <option value="Jueves">Jueves</option>
+                            <option value="Viernes">Viernes</option>
+                            <option value="Sábado">Sábado</option>
+                            <option value="Domingo">Domingo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Sección de Permisos -->
+                <div class="section permissions">
+                    <h2><i class="fas fa-lock"></i> Permisos</h2>
+                    <div class="input-group">
+                        <label for="permisos"><i class="fas fa-lock"></i> Permisos:</label>
+                        <select id="permisos" name="permisos[]" multiple>
+                            <option value="Administracion">Administración</option>
+                            <option value="Almacen">Almacén</option>
+                            <option value="RH">RH</option>
+                            <option value="Venta">Venta</option>
+                            <option value="Consultas">Consultas</option>
+                            <option value="Taller">Taller</option>
+                            <option value="Todos">Todos</option>
+                            <option value="Ninguno">Ninguno</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Sección de Información Adicional -->
+                <div class="section additional-info">
+                    <h2><i class="fas fa-info"></i> Información Adicional</h2>
+                    <div class="input-group">
+                        <label for="insurance"><i class="fas fa-shield-alt"></i> Seguro:</label>
+                        <input type="text" id="insurance" name="insurance" required placeholder="Ingresa el código de seguro social">
+                    </div>
+                    <div class="input-group">
+                        <label for="shift"><i class="fas fa-clock"></i> Turno:</label>
+                        <input type="text" id="shift" name="shift" required placeholder="Ej: Matutino, Vespertino">
+                    </div>
+                    <div class="input-group">
+                        <label for="absences"><i class="fas fa-times-circle"></i> Faltas:</label>
+                        <input type="number" id="absences" name="absences" value="0" placeholder="Número inicial de faltas">
+                    </div>
+                    <div class="input-group">
+                        <label for="delays"><i class="fas fa-exclamation-circle"></i> Retardos:</label>
+                        <input type="number" id="delays" name="delays" value="0" placeholder="Número inicial de retardos">
+                    </div>
+                    <div class="input-group">
+                        <label for="deduction-concept"><i class="fas fa-comment-dollar"></i> Concepto de Descuento:</label>
+                        <input type="text" id="deduction-concept" name="deduction-concept" placeholder="Descripción breve">
+                    </div>
+                    <div class="input-group">
+                        <label for="deduction-amount"><i class="fas fa-dollar-sign"></i> Cantidad de Descuento:</label>
+                        <input type="number" id="deduction-amount" name="deduction-amount" placeholder="Monto en $">
+                    </div>
+                </div>
+
+                <!-- Sección de Seguridad -->
+                <div class="section security">
+                    <h2><i class="fas fa-lock"></i> Seguridad</h2>
+                    <div class="input-group">
+                        <label for="password"><i class="fas fa-key"></i> Contraseña:</label>
+                        <div class="password-input-container">
+                            <input type="password" id="password" name="password" required placeholder="Crea una contraseña segura">
+                            <button type="button" id="togglePassword" onclick="togglePasswordField()"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de Acción del Formulario -->
+            <div class="form-actions">
+                <button type="button" class="back-button"><i class="fas fa-arrow-left"></i> Regresar</button>
+                <button type="submit" class="submit-button"><i class="fas fa-save"></i> Guardar</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Obtener el elemento select de días de trabajo
+            var workDaysSelect = document.getElementById('work-days');
+            // Añadir evento click al select de días de trabajo
+            workDaysSelect.addEventListener('click', function (event) {
+                var option = event.target;
+                toggleSelection(option);
+            });
+        });
+
+        var selectedDays = {}; // Objeto para rastrear los días seleccionados
+
+        function toggleSelection(option) {
+            var day = option.value;
+            // Si el día ya está seleccionado, lo eliminamos del registro
+            if (selectedDays[day]) {
+                delete selectedDays[day];
+            } else {
+                // Si no está seleccionado, lo añadimos al registro
+                selectedDays[day] = true;
+            }
+            // Actualizar las opciones seleccionadas del select
+            updateSelectedOptions();
+        }
+
+        function updateSelectedOptions() {
+            var workDaysSelect = document.getElementById('work-days');
+            var options = workDaysSelect.options;
+            // Deseleccionar todas las opciones primero
+            for (var i = 0; i < options.length; i++) {
+                options[i].selected = false;
+            }
+            // Luego seleccionar solo las opciones que están presentes en el registro
+            for (var day in selectedDays) {
+                if (selectedDays.hasOwnProperty(day)) {
+                    for (var j = 0; j < options.length; j++) {
+                        if (options[j].value === day) {
+                            options[j].selected = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Añadir evento click al botón de regresar
+        document.querySelector('.back-button').addEventListener('click', function () {
+            window.history.back(); // Regresar a la página anterior
+        });
+
+        // Función para alternar la visibilidad del campo de contraseña
+        function togglePasswordField() {
+            var passwordField = document.getElementById("password");
+            var toggleButton = document.getElementById("togglePassword");
+
+            // Alternar entre mostrar y ocultar la contraseña
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleButton.innerHTML = '<i class="fas fa-eye-slash"></i>';
+            } else {
+                passwordField.type = "password";
+                toggleButton.innerHTML = '<i class="fas fa-eye"></i>';
+            }
+        }
+
+
+
+    </script>
+    <style>
+        body {
+            background-color: #83988e;
+        }
+
+        center h1 {
+            background-color: white;
+            font-family: Helvetica Neue;
+            font-size: 30px;
+            color: black;
+            width: 70%;
+            padding: 5px;
+            border: 20px;
+            border-radius: 100px;
+            border: 3px solid black;
+        }
+
+
+
+
+        .form-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .form-columns {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .section {
+            width: 50%; /* Ajusta el ancho según sea necesario */
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #ccc; /* Opcional: para visualización clara de las secciones */
+            margin-bottom: 20px; /* Espacio entre filas */
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+            .input-group label {
+                display: block;
+                margin-bottom: 5px;
+            }
+
+            .input-group input,
+            .input-group select {
+                width: 100%;
+                padding: 8px;
+                box-sizing: border-box;
+            }
+
+        .password-input-container {
+            display: flex;
+            align-items: center;
+        }
+
+            .password-input-container input {
+                flex-grow: 1;
+            }
+
+            .password-input-container button {
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 8px;
+            }
+
+        .btn {
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+
+            .btn:hover {
+                background-color: #0056b3;
+            }
+
+        .form-actions {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+        }
+    </style>
+
+</div>
