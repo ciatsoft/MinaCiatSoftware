@@ -24,5 +24,18 @@ namespace MinaToMVC.DAL
 
             return modelResponse;
         }
+
+        public async Task<ModelResponse> SaveOrUpdateUnidadMedida(UnidadMedida u)
+        {
+            var result = await RequestAsync<object>("api/UnidadMedida/", HttpMethod.Post, u,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
     }
 }
