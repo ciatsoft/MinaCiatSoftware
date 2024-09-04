@@ -201,6 +201,7 @@
     <Content Include="Views\Home\Gestion_Img.cshtml" />
     <Content Include="Views\Home\General.cshtml" />
     <Content Include="Views\Home\Ingresos.cshtml" />
+    <Content Include="Views\Home\Inventario.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

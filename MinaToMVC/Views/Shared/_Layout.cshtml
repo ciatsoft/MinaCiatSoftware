@@ -109,9 +109,9 @@
     }
 
     .slider_section .detail-box p {
-        color: white;
+        color: black;
         text-align: justify;
-        font-size: 18px;
+        font-size: 24px;
     }
 
     .contacto-ciat {
@@ -315,7 +315,7 @@
                     <div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
                         <ul class="navbar-nav">
                             <li class="nav-item active">
-                                <a class="nav-link" data-title="Index" href="#">Inicio <span class="sr-only">(current)</span></a>
+                                <a class="nav-link" data-title="Index" href="@Url.Action("Index", "Home")">Inicio <span class="sr-only">(current)</span></a>
                             </li>
 
                             <li class="nav-item dropdown">
@@ -329,7 +329,7 @@
                                     <a class="dropdown-item" data-title="Gestion_Img" href="#">Imágenes de precios</a>
                                     <a class="dropdown-item" data-title="Empleados" href="#">Empleados</a>
                                     <a class="dropdown-item" data-title="Ingresos" href="#">Ingresos y egresos</a>
-                                    <a class="dropdown-item" data-title="Plantas" href="#">General</a>
+                                    <a class="dropdown-item" data-title="General" href="#">General</a>
                                 </div>
                             </li>
 
@@ -402,13 +402,10 @@ $(document).ready(function () {
 });
     </script>
 
-
     <section class="slider_section position-relative">
-        <div class="container" style="background-color:white;">
-            <div class="row">
-                <div class="col-lg-12">
-                    @RenderBody()
-                </div>
+        <div class="row">
+            <div class="col-lg-12">
+                @RenderBody()
             </div>
         </div>
     </section>
