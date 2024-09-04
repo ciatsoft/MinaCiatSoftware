@@ -5,95 +5,105 @@
 <div class="content">
     <br>
     <center><h1 class="main_title_html">Clientes</h1></center>
-    <div class="content">
-        <div class="container">
-
+    <div class="container">
+        <div class="tabla-clientes">
             <div class="container mt-4">
-        <h1 class="mb-4">Acciones</h1>
-        <div class="row mb-4">
-          <div class="col">
-            <input type="text" class="form-control" name="search_query" id="search_query" placeholder="Buscar">
-          </div>
-          <div class="col-auto">
-            <a href="#" onclick="search_member()" class="btn btn-primary">
-              <i class="fas fa-search"></i> Buscar
-            </a>
-          </div>
-          <div class="col-auto">
-            <a href="#" onclick="location.reload()" class="btn btn-success">
-              <i class="fas fa-sync-alt"></i> Recargar
-            </a>
-          </div>
-          <div class="col-auto">
-            <a href="#" onclick="toggleAddForm()" class="btn btn-success">
-              <i class="fas fa-plus"></i> Añadir
-            </a>
-          </div>
-        </div>
-      </div>
+                <h1 class="mb-4">Acciones</h1>
+                <div class="row mb-4">
+                    <div class="col">
+                        <input type="text" class="form-control" name="search_query" id="search_query" placeholder="Buscar">
+                    </div>
+                    <div class="col-auto">
+                        <a href="#" onclick="search_member()" class="btn btn-primary">
+                            <i class="fas fa-search"></i> <!-- Lupa para Buscar -->
+                            Buscar
+                        </a>
+                    </div>
+                    <div class="col-auto">
+                        <a href="#" onclick="location.reload()" class="btn btn-success" style="background-color: #28a745 !important; color: white !important; border-color: #28a745 !important; "
+                           onmouseover="this.style.backgroundColor='#76c776'; this.style.borderColor='#76c776';"
+                           onmouseout="this.style.backgroundColor='#28a745'; this.style.borderColor='#28a745';">
+                            <!-- Color cambiado a amarillo -->
+                            <i class="fas fa-sync-alt"></i> <!-- Flecha de recargar -->
+                            Recargar
+                        </a>
+                    </div>
+                    <div class="col-auto">
+                        <a href="#" onclick="toggleAddForm()" class="btn btn-success"
+                           style="background-color: #28a745 !important; color: white !important; border-color: #28a745 !important; "
+                           onmouseover="this.style.backgroundColor='#76c776'; this.style.borderColor='#76c776';"
+                           onmouseout="this.style.backgroundColor='#28a745'; this.style.borderColor='#28a745';">
+                            <!-- Color verde para Añadir -->
+                            <i class="fas fa-plus"></i> <!-- Ícono de añadir -->
+                            Añadir
+                        </a>
+                    </div>
 
-            <div class="tabla-clientes">
-                <div id="add_form" class="add-form-container">
-                    <h3>Agregar cliente</h3>
-                    <form method="post" class="form-cliente">
-                        <div class="form-row">
-                            <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Empresa/Nombre">
-                            <input type="text" name="email" id="email" class="form-control" placeholder="Email">
-                            <input type="text" name="telefono" id="telefono" class="form-control" placeholder="Telefono">
-                            <input type="text" name="vehiculo1" id="vehiculo1" class="form-control" placeholder="Vehiculo 1">
-                            <input type="text" name="placas1" id="placas1" class="form-control" placeholder="Placas 1">
-                            <input type="text" name="vehiculo2" id="vehiculo2" class="form-control" placeholder="Vehiculo 2" style="display:none;">
-                            <input type="text" name="placas2" id="placas2" class="form-control" placeholder="Placas 2" style="display:none;">
-                            <input type="text" name="vehiculo3" id="vehiculo3" class="form-control" placeholder="Vehiculo 3" style="display:none;">
-                            <input type="text" name="placas3" id="placas3" class="form-control" placeholder="Placas 3" style="display:none;">
-                        </div>
-                        <input type="button" class="btn btn-vehicle" value="Agregar vehículo" onclick="add_vehicle()">
-                        <input type="button" class="btn btn-add" value="Agregar" onclick="add_member()">
-                    </form>
                 </div>
             </div>
         </div>
 
-        <div class="content">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <h3>Lista de clientes.</h3>
-                    <div id="list_container">
-                        <!-- Tabla de clientes utilizando DataTables de Bootstrap -->
-                        <table id="clientesTable" class="table table-bordered table-striped">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>Empresa/Nombre</th>
-                                    <th>Email</th>
-                                    <th>Telefono</th>
-                                    <th>Borrar</th>
-                                    <th>Editar</th>
-                                    <th>Datos</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Esta sección está vacía por ahora -->
-                            </tbody>
-                        </table>
+        <div class="tabla-clientes">
+            <div id="add_form" class="add-form-container">
+                <h3>Agregar cliente</h3>
+                <form method="post" class="form-cliente">
+                    <div class="form-row">
+                        <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Empresa/Nombre">
+                        <input type="text" name="email" id="email" class="form-control" placeholder="Email">
+                        <input type="text" name="telefono" id="telefono" class="form-control" placeholder="Telefono">
+                        <input type="text" name="vehiculo1" id="vehiculo1" class="form-control" placeholder="Vehiculo 1">
+                        <input type="text" name="placas1" id="placas1" class="form-control" placeholder="Placas 1">
+                        <input type="text" name="vehiculo2" id="vehiculo2" class="form-control" placeholder="Vehiculo 2" style="display:none;">
+                        <input type="text" name="placas2" id="placas2" class="form-control" placeholder="Placas 2" style="display:none;">
+                        <input type="text" name="vehiculo3" id="vehiculo3" class="form-control" placeholder="Vehiculo 3" style="display:none;">
+                        <input type="text" name="placas3" id="placas3" class="form-control" placeholder="Placas 3" style="display:none;">
                     </div>
+                    <input type="button" class="btn btn-vehicle" value="Agregar vehículo" onclick="add_vehicle()">
+                    <input type="button" class="btn btn-add" value="Agregar" onclick="add_member()">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h3>Lista de clientes.</h3>
+                <div id="list_container">
+                    <!-- Tabla de clientes utilizando DataTables de Bootstrap -->
+                    <table id="clientesTable" class="table table-bordered table-striped">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Empresa/Nombre</th>
+                                <th>Email</th>
+                                <th>Telefono</th>
+                                <th>Borrar</th>
+                                <th>Editar</th>
+                                <th>Datos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Esta sección está vacía por ahora -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Modal para detalles de cliente -->
-        <div class="modal fade" id="clientDetailModal" tabindex="-1" role="dialog" aria-labelledby="clientDetailModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="clientDetailModalLabel">Detalles del Cliente</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div id="clientDetails">
-                            <!-- Aquí se cargarán los detalles del cliente -->
-                        </div>
+    <!-- Modal para detalles de cliente -->
+    <div class="modal fade" id="clientDetailModal" tabindex="-1" role="dialog" aria-labelledby="clientDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="clientDetailModalLabel">Detalles del Cliente</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="clientDetails">
+                        <!-- Aquí se cargarán los detalles del cliente -->
                     </div>
                 </div>
             </div>
@@ -102,3 +112,4 @@
 </div>
 
 }
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
