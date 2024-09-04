@@ -1,0 +1,344 @@
+﻿@{
+    ViewBag.Title = "Precios"; // Establece el título de la vista.
+}
+<div class="content">
+    <div class="editar-empleado-table">
+
+        <div class="container mt-4">
+            <center><h1 class="mb-4">Editar Empleado</h1></center>
+            <form action="" method="get">
+                <div class="row mb-4">
+                    <div class="col">
+                        <input type="text" class="form-control" name="search" placeholder="Buscar por nombre o área">
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-primary"><i class="fas fa-search"></i> Buscar</button>
+                    </div>
+                    <div class="col-auto">
+                        <a href="index.php" class="btn btn-success"><i class="fas fa-plus"></i> Agregar</a>
+                    </div>
+                    <div class="col-auto">
+                        <select class="custom-select" name="cantidad" onchange="this.form.submit()">
+                            <option value="Todos">Todos</option>
+                            <option value="100">100</option>
+                            <option value="50">50</option>
+                            <option value="20">20</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
+            </form>
+        </div>
+
+        <table class="table table-striped table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th><i class="fas fa-user"></i> Nombre</th>
+                    <th><i class="fas fa-envelope"></i> Email</th>
+                    <th><i class="fas fa-phone"></i> Teléfono</th>
+                    <th><i class="fas fa-clock"></i> Horario</th>
+                    <th><i class="fas fa-info-circle"></i> Detalles</th>
+                    <th><i class="fas fa-edit"></i> Editar</th>
+                    <th><i class="fas fa-trash"></i> Eliminar</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td><a href='#' class='btn btn-info btn-sm view-employee-details' data-employee-id='" . $row["id"] . "' data-toggle='modal' data-target='#employeeDetailModal'><i class='fas fa-search'></i></a></td>
+                    <td><a href='#' class='btn btn-warning btn-sm'><i class='fas fa-pen'></i></a></td>";
+                    <td><a href='#' class='btn btn-danger btn-sm'><i class='fas fa-trash'></i></a></td>
+                </tr>
+                <tr><td colspan='7'>No se encontraron empleados</td></tr>
+
+            </tbody>
+        </table>
+
+        <!-- Modal Structure -->
+        <div id="employeeModal" class="modal employee-modal">
+            <div class="modal-content employee-modal-content">
+                <span class="close-button employee-close-button">&times;</span>
+                <h2 class="employee-modal-title">Detalles del Empleado</h2>
+                <div id="employeeDetails" class="employee-details">
+                    <!-- Los detalles del empleado se cargarán aquí con JavaScript -->
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const modal = document.getElementById('employeeModal');
+                            const btns = document.querySelectorAll('.view-employee-details');
+                            const span = document.querySelector('.employee-close-button');
+
+                            // Event listeners para abrir el modal con los detalles
+                            btns.forEach(btn => {
+                                btn.addEventListener('click', function () {
+                                    const employeeId = this.getAttribute('data-employee-id');
+                                    loadEmployeeDetails(employeeId);
+                                });
+                            });
+
+                            // Cierra el modal al hacer clic en el botón de cerrar o fuera del modal
+                            span.addEventListener('click', () => {
+                                modal.style.display = 'none';
+                            });
+
+                            window.addEventListener('click', event => {
+                                if (event.target === modal) {
+                                    modal.style.display = 'none';
+                                }
+                            });
+                        });
+
+                        // Carga los detalles del empleado desde el servidor
+                        async function loadEmployeeDetails(employeeId) {
+                            try {
+                                const response = await fetch(`get_employee_details.php?id=${employeeId}`);
+                                const data = await response.json();
+                                if (data.error) {
+                                    throw new Error(data.error);
+                                }
+                                renderEmployeeDetails(data, employeeId);
+                            } catch (error) {
+                                console.error('Error:', error.message);
+                                alert('Error al cargar los datos.');
+                            }
+                        }
+
+                        // Renderiza los detalles del empleado en el modal
+                        function renderEmployeeDetails(data, employeeId) {
+                            const details = document.getElementById('employeeDetails');
+                            details.innerHTML = createEmployeeDetailsMarkup(data, employeeId);
+                            document.getElementById('employeeModal').style.display = 'block';
+                        }
+
+                        function createEmployeeDetailsMarkup(data, employeeId) {
+                            const icons = {
+                                id: 'fas fa-fingerprint',
+                                nombre: 'fas fa-user',
+                                email: 'fas fa-envelope',
+                                telefono: 'fas fa-phone',
+                                area_de_trabajo: 'fas fa-briefcase',
+                                salario: 'fas fa-dollar-sign',
+                                fecha_contratacion: 'fas fa-calendar-alt',
+                                hora_inicio: 'fas fa-clock',
+                                hora_fin: 'fas fa-clock',
+                                permisos: 'fas fa-clipboard-list',
+                                seguro: 'fas fa-shield-alt',
+                                turno: 'fas fa-business-time',
+                                faltas: 'fas fa-calendar-times',
+                                retardos: 'fas fa-user-clock',
+                                descuento_concepto: 'fas fa-comment-dollar',
+                                descuento_cantidad: 'fas fa-money-bill-wave',
+                                reportes: 'fas fa-file-alt',
+                                dias_de_trabajo: 'fas fa-calendar-check',
+                                vueltas_ultimo_mes: 'fas fa-redo',
+                                vueltas_ultimo_ano: 'fas fa-history',
+                                archivos: 'fas fa-folder-open'
+                            };
+
+                            let innerHTML = `
+                                                        <div class="employee-info">
+                                                            <div class="column">
+                                                                <p><i class="${icons.id}"></i> ID: ${data.id}</p>
+                                                                <p><i class="${icons.nombre}"></i> Nombre: ${data.nombre}</p>
+                                                                <p><i class="${icons.email}"></i> Email: ${data.email}</p>
+                                                                <p><i class="${icons.telefono}"></i> Teléfono: ${data.telefono}</p>
+                                                                <p><i class="${icons.area_de_trabajo}"></i> Área de trabajo: ${data.area_de_trabajo}</p>
+                                                                <p><i class="${icons.salario}"></i> Salario: ${data.salario}</p>
+                                                                <p><i class="${icons.fecha_contratacion}"></i> Fecha de contratación: ${data.fecha_contratacion}</p>
+                                                                <p><i class="${icons.hora_inicio}"></i> Hora de inicio: ${data.hora_inicio}</p>
+                                                                <p><i class="${icons.hora_fin}"></i> Hora de fin: ${data.hora_fin}</p>
+                                                                <p><i class="${icons.permisos}"></i> Permisos: ${data.permisos.join(', ')}</p>
+                                                            </div>
+                                                            <div class="column">
+                                                                <p><i class="${icons.seguro}"></i> Seguro: ${data.seguro}</p>
+                                                                <p><i class="${icons.turno}"></i> Turno: ${data.turno}</p>
+                                                                <p><i class="${icons.faltas}"></i> Faltas: ${data.faltas}</p>
+                                                                <p><i class="${icons.retardos}"></i> Retardos: ${data.retardos}</p>
+                                                                <p><i class="${icons.descuento_concepto}"></i> Descuento por concepto: ${data.descuento_concepto}</p>
+                                                                <p><i class="${icons.descuento_cantidad}"></i> Descuento cantidad: ${data.descuento_cantidad}</p>
+                                                                <p><i class="${icons.reportes}"></i> Reportes: ${data.reportes}</p>
+                                                                <p><i class="${icons.dias_de_trabajo}"></i> Días de trabajo: ${data.dias_de_trabajo.join(', ')}</p>
+                                                            </div>
+                                                        </div>
+                                                        <h3><i class="${icons.archivos}"></i> Archivos:</h3>
+                                                        <div class="file-fields">`;
+
+                            const fileFields = [
+                                'carta_antecedentes', 'constancia_fiscal', 'acta_nacimiento', 'curp', 'comprobante_domicilio',
+                                'ine', 'solicitud_empleo', 'constancia_imss', 'referencia_ingreso', 'certificado_medico', 'fotografias_infantil'
+                            ];
+
+                            fileFields.forEach(field => {
+                                if (data.archivos && data.archivos[field]) {
+                                    innerHTML += `<p><i class="${icons.archivos}"></i> ${field}:
+                                                            <a class="modal-link" href="${data.archivos[field]}" target="_blank">Ver Archivo</a>
+                                                            <button class="modal-link delete" onclick="confirmDelete('${field}', '${employeeId}', '${data.nombre}')">Eliminar</button>
+                                                                          </p>`;
+                                } else {
+                                    innerHTML += `<p><i class="${icons.archivos}"></i> ${field}:
+                                                                          <button class="modal-button" onclick="triggerFileUpload('${field}', '${employeeId}')">Subir</button></p>`;
+                                }
+                            });
+                            innerHTML += `</div>`;
+                            return innerHTML;
+                        }
+
+
+                        // Función para activar la subida de archivos
+                        function triggerFileUpload(field, employeeId) {
+                            // Aquí debes implementar la lógica para activar el input de tipo file o abrir un formulario de subida
+                            const fileInput = document.createElement('input');
+                            fileInput.type = 'file';
+                            fileInput.onchange = e => {
+                                console.log(`Archivo para ${field} seleccionado`);
+                                uploadFile(e.target.files[0], field, employeeId);
+                            };
+                            fileInput.click();
+                        }
+
+                        async function uploadFile(file, field, employeeId) {
+                            const formData = new FormData();
+                            formData.append('fileToUpload', file);
+                            formData.append('tipoArchivo', field); // Asegúrate que 'tipoArchivo' es el nombre correcto esperado por PHP
+                            formData.append('employeeId', employeeId);
+
+                            try {
+                                const response = await fetch('upload_file.php', {
+                                    method: 'POST',
+                                    body: formData
+                                });
+                                const result = await response.json(); // Asumiendo que PHP ahora devuelve JSON
+                                if (result.success) {
+                                    console.log('Archivo subido correctamente:', result.message);
+                                    alert('Archivo subido correctamente');
+                                    // Recargar los detalles del empleado para actualizar el modal
+                                    loadEmployeeDetails(employeeId);
+                                } else {
+                                    console.error('Error al subir archivo:', result.message); // Asegurarse de que 'message' es proporcionado por PHP
+                                    alert('Error al subir archivo: ' + result.message);
+                                }
+                            } catch (error) {
+                                console.error('Error al subir archivo:', error);
+                                alert('Error al subir archivo');
+                            }
+                        }
+
+                        // Manejo de errores de conexión o procesamiento
+                        function handleError(error) {
+                            console.error('Error al cargar los datos:', error);
+                            alert('Error al cargar los datos.');
+                        }
+                    </script>
+
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="paginas">
+            <ul class="pagination justify-content-center">
+                <li class="page-item"><a class="page-link" href="?pagina=' . $pagina_anterior . '&cantidad=' . urlencode($cantidad_por_pagina) . '&search=' . urlencode($search) . '"><i class="fas fa-chevron-left"></i></a></li>
+
+                <li class="page-item disabled"><span class="page-link"><i class="fas fa-chevron-left"></i></span></li>
+
+                <li class="page-item"><a class="page-link" href="?pagina=1&cantidad=' . urlencode($cantidad_por_pagina) . '&search=' . urlencode($search) . '">1</a></li>
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+
+                <li class="page-item' . $active . '"><a class="page-link" href="?pagina=' . $i . '&cantidad=' . urlencode($cantidad_por_pagina) . '&search=' . urlencode($search) . '"></a></li>
+
+
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+                <li class="page-item"><a class="page-link" href="?pagina=' . $total_paginas . '&cantidad=' . urlencode($cantidad_por_pagina) . '&search=' . urlencode($search) . '"></a></li>
+
+                <li class="page-item"><a class="page-link" href="?pagina=' . $pagina_siguiente . '&cantidad=' . urlencode($cantidad_por_pagina) . '&search=' . urlencode($search) . '"><i class="fas fa-chevron-right"></i></a></li>
+                <li class="page-item disabled"><span class="page-link"><i class="fas fa-chevron-right"></i></span></li>
+
+
+            </ul>
+        </div>
+
+
+    </div>
+
+    <!-- Modal de Confirmación de Eliminación -->
+    <div class="delete-modal-container">
+        <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Confirmar Eliminación</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Está seguro de que desea eliminar este archivo?
+
+                        <script>
+                            function confirmDelete(field, employeeId, employeeName) {
+                                $('#deleteModalLabel').text(`Eliminar ${field} de ${employeeName}`);
+                                $('#deleteConfirmationModal').modal('show');
+                                $('#confirmDeleteButton').off('click').on('click', function () {
+                                    deleteFile(field, employeeId);
+                                });
+                            }
+
+                            async function deleteFile(field, employeeId) {
+                                try {
+                                    const response = await fetch('eliminar_archivo.php', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/x-www-form-urlencoded'
+                                        },
+                                        body: `employeeId=${employeeId}&tipoArchivo=${field}`
+                                    });
+                                    const data = await response.json();
+                                    if (data.success) {
+                                        alert('Archivo eliminado correctamente');
+                                        // Aquí puedes recargar los detalles del empleado o actualizar la interfaz de usuario según sea necesario
+                                    } else {
+                                        alert('Error al eliminar archivo: ' + data.message);
+                                    }
+                                } catch (error) {
+                                    console.error('Error al eliminar el archivo:', error);
+                                    alert('Error al eliminar el archivo');
+                                }
+                                $('#deleteConfirmationModal').modal('hide');
+                            }
+                        </script>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" id="confirmDeleteButton">Eliminar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        body {
+            background-color: #83988e;
+        }
+
+        .table {
+            background-color: white;
+        }
+
+        center h1 {
+            background-color: white;
+            font-family: Helvetica Neue;
+            font-size: 30px;
+            color: black;
+            width: 70%;
+            padding: 5px;
+            border: 20px;
+            border-radius: 100px;
+            border: 3px solid black;
+        }
+    </style>
+</div>
