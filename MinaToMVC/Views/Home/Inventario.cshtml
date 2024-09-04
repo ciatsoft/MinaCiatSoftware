@@ -1,0 +1,142 @@
+﻿
+@{
+    ViewBag.Title = "Inventario";
+}
+
+<div class="content">
+
+    <main class="container mt-4">
+        <!-- Mensaje de agregar o editar -->
+
+        <div class="alert alert-custom"></div>
+
+
+        <!-- Sección de Inventario -->
+        <center><h1>Inventario</h1></center>
+        <div class="d-flex justify-content-between mb-3">
+            <input type="text" id="searchInput" placeholder="Buscar..." class="form-control w-50">
+            <div>
+                <button class="btn btn-custom-primary" onclick="search_member()">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button class="btn btn-custom-info" onclick="window.location.reload();">
+                    <i class="fas fa-redo"></i>
+                </button>
+                <button class="btn btn-custom-warning" onclick="agregarAlInventario()">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+        </div>
+
+        <table class="table table-hover" style=background-color:#f8f8d6;>
+            <thead class="thead-light">
+                <tr>
+                    <th>ID <i class="fas fa-fingerprint"></i></th>
+                    <th>Nombre <i class="fas fa-user"></i></th>
+                    <th>Descripción <i class="fas fa-align-left"></i></th>
+                    <th>Cantidad Foránea <i class="fas fa-globe-americas"></i></th>
+                    <th>Cantidad Mina <i class="fas fa-mountain"></i></th>
+                    <th>Cantidad Local <i class="fas fa-home"></i></th>
+                    <th>Cantidad Disponible <i class="fas fa-check-circle"></i></th>
+                    <th>Cantidad Total <i class="fas fa-sum"></i></th>
+                    <th>Editar</th>  <!-- Nueva columna para editar -->
+                </tr>
+            </thead>
+            <tbody id="tabla-inventario">
+                <!-- Aquí se cargarán los datos del inventario -->
+            </tbody>
+        </table>
+    </main>
+
+    <script>
+document.addEventListener("DOMContentLoaded", function() {
+    cargarInventario();
+    configurarEventos();
+});
+
+function configurarEventos() {
+    document.querySelector(".search-button").addEventListener("click", search_member);
+    document.querySelector(".add-button").addEventListener("click", agregarAlInventario);
+    document.querySelector(".reload-button").addEventListener("click", function() {
+        window.location.reload();
+    });
+}
+
+function cargarInventario() {
+    fetch('cargar_inventario.php')
+        .then(response => response.json())
+        .then(data => renderInventario(data))
+        .catch(error => console.error('Error al cargar inventario:', error));
+}
+
+function renderInventario(data) {
+  const tablaInventario = document.getElementById('tabla-inventario');
+  tablaInventario.innerHTML = '';
+  data.forEach(item => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+          <td>${item.id}</td>
+          <td>${item.nombre}</td>
+          <td>${item.descripcion}</td>
+          <td>${item.cantidad_foranea}</td>
+          <td>${item.cantidad_mina}</td>
+          <td>${item.cantidad_local}</td>
+          <td>${item.cantidad_disponible}</td>
+          <td>${parseInt(item.cantidad_foranea) + parseInt(item.cantidad_mina) + parseInt(item.cantidad_local) + parseInt(item.cantidad_disponible)}</td>
+          <td>
+              <button class="btn btn-custom-edit" onclick="editarInventario(${item.id})"><i class="fas fa-edit"></i></button>
+          </td>
+      `;
+      tablaInventario.appendChild(row);
+  });
+}
+
+
+function search_member() {
+    var query = document.getElementById('searchInput').value;
+    fetch('buscar.php', {
+        method: 'POST',
+        body: 'buscar=' + query,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById('tabla-inventario').innerHTML = data;
+    })
+    .catch(error => {
+        console.error('Error al buscar:', error);
+    });
+}
+
+function agregarAlInventario() {
+    window.location.href = 'agregar_inventario.php';
+}
+function renderInventario(data) {
+const tablaInventario = document.getElementById('tabla-inventario');
+tablaInventario.innerHTML = '';
+data.forEach(item => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${item.id}</td>
+        <td>${item.nombre}</td>
+        <td>${item.descripcion}</td>
+        <td>${item.cantidad_foranea}</td>
+        <td>${item.cantidad_mina}</td>
+        <td>${item.cantidad_local}</td>
+        <td>${item.cantidad_disponible}</td>
+        <td>${parseInt(item.cantidad_foranea) + parseInt(item.cantidad_mina) + parseInt(item.cantidad_local) + parseInt(item.cantidad_disponible)}</td>
+        <td><button class="btn btn-custom-edit" onclick="editarInventario(${item.id})"><i class="fas fa-edit"></i></button></td>
+    `;
+    tablaInventario.appendChild(row);
+});
+}
+
+function editarInventario(id) {
+  window.location.href = 'editar_inventario.php?id=' + id;
+}
+
+    </script>
+</div>
+    
