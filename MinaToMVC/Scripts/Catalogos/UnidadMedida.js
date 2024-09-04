@@ -29,3 +29,28 @@ function GetAllUnidadMedida() {
         }
     });
 }
+
+
+function SaveOrUpdateUnidadMedida()
+{
+    if ($("#frmUnidadMedida").valid()) {
+        var parametro = {
+            Id: $("#txtIdUnidadMedida").val(),
+            Nombre: $("#txtnombreUnidadmedida").val(),
+            CreatedBy: $("#txtCreatedBy").val(),
+            CreatedDt: $("#txtCreatedDt").val(),
+            UpdatedBy: $("#txtUpdateBy").val(),
+            UpdatedDt: $("#txtUpdateDt").val()
+        };
+        PostMVC(urlUnidadMedida, parametro, function (success, response) {
+            if (success) {
+                location.href = "/Catalogos/UnidadMedida";
+            }
+            else {
+                alert("Error")
+                console.log(response);
+            }
+        });
+    }
+}
+//te falta aquí el método de saveorupdate que llame al controlador

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MinaTolEntidades.DtoSucursales;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace MinaToMVC.Controllers
 
 
         #region Unidad de Medida
+
         public ActionResult UnidadMedida()
         {
             return View();
@@ -28,6 +30,16 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllUnidadMedida();
             return JsonConvert.SerializeObject(result);
         }
-        #endregion
+
+
+        public async Task<ActionResult> SaveOrUpdateUnidadMedida(UnidadMedida u)
+        {
+            httpClientConnection.MappingColumSecurity(u);
+            var result = await httpClientConnection.SaveOrUpdateUnidadMedida(u);
+            return RedirectToAction("UnidadMedida", "Catalog");
+
+        }
+
+    #endregion
     }
 }
