@@ -1,0 +1,111 @@
+﻿@{
+    ViewBag.Title = "Gestion_IMG"; // Establece el título de la vista.
+}
+<div class="content">
+    <br>
+    <div class="titulo">
+        <center><h1>Gestión de Imágenes </h1></center>
+    </div>
+    <main>
+        <div class="main container">
+
+            <!-- Tabla que muestra las imágenes cargadas -->
+            <table class="table table-venta-imagenes table-striped table-bordered mt-5">
+                <thead class="thead-dark">
+                    <tr>
+                        <th><i class="fas fa-file-alt"></i> Nombre</th>
+                        <th><i class="fas fa-file-image"></i> Formato</th>
+                        <th><i class="fas fa-image"></i> Imagen</th>
+                        <th style="width:160px;"><i class="fas fa-trash"></i> Eliminar</th>
+                        <th style="width:160px;"><i class="fas fa-edit"></i> Editar</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><i class="fas fa-file-alt"></i> </td>
+                        <td><i class="fas fa-file-image"></i>  </td>
+                        <td><img src="#" alt="#" class="img-fluid"></td>
+                        <td>
+                            <a href="#" class="btn btn-danger btn-sm" onclick="deleteImage('#')">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="editar_imagen.html?imageName=#" class="btn btn-editar btn-sm">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <!-- Formulario para subir una nueva imagen -->
+            <div class="guardar-venta-imagenes py-4">
+                <h2><i class="fas fa-upload"></i> Subir imagen</h2>
+                <form action="guardar_imagen.html" method="post" enctype="multipart/form-data" style="display: block;">
+                    <div class="form-group mb-3">
+                        <label for="newImageFile"><i class="fas fa-file-upload"></i> Elegir archivo de imagen:</label>
+                        <input type="file" name="newImageFile" id="newImageFile" class="form-control-file" onchange="previewFile()">
+                    </div>
+
+                    <div class="preview-img-container mb-3">
+                        <img id="previewImg" src="" alt="Vista previa de la imagen" style="max-width: 100px; max-height: 100px; display: none;">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <input type="text" name="newImageName" placeholder="Nombre de imagen" class="form-control">
+                    </div>
+                    <button type="submit" name="submit" class="btn btn-color mb-2"><i class="fas fa-cloud-upload-alt"></i> Subir imagen</button>
+                </form>
+            </div>
+        </div>
+    </main>
+    </body>
+
+    <script>
+        // Función para eliminar una imagen
+        function deleteImage(imageName) {
+            if (confirm('¿Estás seguro de que deseas eliminar esta imagen?')) {
+                fetch('delete.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'imageName=' + encodeURIComponent(imageName)
+                })
+                    .then(response => response.json()) // Asegura que la respuesta se procesa como JSON
+                    .then(data => {
+                        alert(data.message); // Muestra el mensaje de éxito o error
+                        if (data.status === 'success') {
+                            window.location.reload(); // Recarga la página si el estado es 'success'
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error al procesar la solicitud.'); // Informa al usuario si hay un error en la conexión o respuesta
+                    });
+            }
+        }
+
+        // Función para mostrar una vista previa de la imagen seleccionada
+        function previewFile() {
+            const preview = document.getElementById('previewImg');
+            const file = document.getElementById('newImageFile').files[0];
+            const reader = new FileReader();
+
+            reader.onloadend = function () {
+                preview.src = reader.result;
+                preview.style.display = 'block'; // Asegura que la imagen se muestra
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = "";
+                preview.style.display = 'none'; // Oculta la imagen si no se selecciona un archivo
+            }
+        }
+    </script>
+</div>

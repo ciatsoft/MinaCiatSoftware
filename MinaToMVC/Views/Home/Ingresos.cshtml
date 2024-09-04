@@ -1,0 +1,152 @@
+﻿@{
+    ViewBag.Title = "Ingresos"; // Establece el título de la vista.
+}
+<div class="content">
+    <div class="page-wrapper">
+        <center>
+            <h1 style="font-size:25px;"><i class="fas fa-industry"></i> Ingresos por Planta</h1>
+            <h1 style="font-size:25px;"><i class="fas fa-calendar-alt"></i> Último Mes</h1>
+        </center>
+
+        <div class="flexbox">
+            <div class="plantas">
+
+                <div class="plantas" style="text-align: center; margin-bottom: 20px;">
+                    <button class="show-hide-button planta-blanca" id="planta-blanca">
+                        <h2 style="font-size: 20px;"><i class="fas fa-leaf"></i> Planta Blanca</h2>
+                    </button>
+                    <p>Ingreso: $0.00</p>
+                </div>
+
+                <div class="plantas" style="text-align: center; margin-bottom: 20px;">
+                    <button class="show-hide-button planta-amarilla" id="planta-amarilla">
+                        <h2 style="font-size: 20px;"><i class="fas fa-leaf"></i> Planta Amarilla</h2>
+                    </button>
+                    <p>Ingreso: $0.00</p>
+                </div>
+
+                <div class="plantas" style="text-align: center; margin-bottom: 20px;">
+                    <button class="show-hide-button escurridero" id="escurridero">
+                        <h2 style="font-size: 20px;"><i class="fas fa-leaf"></i> Escurridero</h2>
+                    </button>
+                    <p>Ingreso: $0.00</p>
+                </div>
+
+                <div class="plantas" style="text-align: center; margin-bottom: 20px;">
+                    <button class="show-hide-button conos" id="conos">
+                        <h2 style="font-size: 20px;"><i class="fas fa-leaf"></i> Conos</h2>
+                    </button>
+                    <p>Ingreso: $0.00</p>
+                </div>
+
+
+            </div>
+
+
+            <div class="t1">
+                <h2><i class="fas fa-dollar-sign"></i> Total ganado en el mes: </h2>
+            </div>
+
+            <div class="Ingresos">
+                <canvas id="gananciasPorPlantaChart"></canvas>
+
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        var ctx = document.getElementById('gananciasPorPlantaChart').getContext('2d');
+                        var chart = new Chart(ctx, {
+                            type: 'doughnut',
+                            data: {
+                                datasets: [{
+                                    label: 'Porcentaje de Ingresos por Planta',
+                                    backgroundColor: [
+                                        'rgba(0, 255, 0, 0.5)',
+                                        'rgba(220, 20, 60, 0.5)',
+                                        'rgba(0, 123, 255, 0.5)',
+                                        'rgba(255, 205, 86, 0.5)'
+                                    ],
+                                    borderColor: [
+                                        'rgba(0, 0, 0, 1)',
+                                        'rgba(0, 0, 0, 1)',
+                                        'rgba(0, 0, 0, 1)',
+                                        'rgba(0, 0, 0, 1)'
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                    },
+                                    title: {
+                                        display: false,
+                                    }
+                                }
+                            }
+                        });
+
+                        ctx.canvas.width = 500;
+                        ctx.canvas.height = 500;
+                    });
+                </script>
+            </div>
+
+            <div class="total-ganado">
+
+                <div class="ganancias-netas">
+                    <div class="columna">
+                        <div class="monto"><i class=""></i> </div>
+                        <div class="descripcion">Ingresos del mes</div>
+                    </div>
+                    <div class="columna">
+                        <div class="monto"><i class=""></i> </div>
+                        <div class="descripcion">Egresos del mes</div>
+                    </div>
+                    <div class="columna">
+                        <div class="monto"><i class=""></i> </div>
+                        <div class="descripcion">Ganancias netas del mes</div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="Ingreso-egreso">
+                <h1><i class="fas fa-exchange-alt"></i> Ingresos y Egresos</h1>
+                <a><i class="fas fa-calendar-alt"></i> Tiempos personalizados</a>
+                <div class="calendar">
+                    <label for="fechaInicio"><i class="fas fa-calendar-day"></i> Fecha de inicio:</label>
+                    <input type="date" id="fechaInicio">
+                    <label for="fechaFin"><i class="fas fa-calendar-day"></i> Fecha final:</label>
+                    <input type="date" id="fechaFin">
+                    <button class="show-hide-button" id="buscarBtn"><i class="fas fa-search"></i> Buscar</button>
+                </div>
+
+                <div id="resultadosConsulta"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("buscarBtn").addEventListener("click", function () {
+            var fechaInicio = document.getElementById("fechaInicio").value;
+            var fechaFin = document.getElementById("fechaFin").value;
+
+            if (fechaInicio && fechaFin) {
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "consulta_fechas.php", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function () {
+                    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                        document.getElementById("resultadosConsulta").innerHTML = this.responseText;
+                    }
+                };
+                xhr.send("fechaInicio=" + fechaInicio + "&fechaFin=" + fechaFin);
+            } else {
+                alert("Por favor, seleccione ambas fechas.");
+            }
+        });
+    </script>
+</div>
