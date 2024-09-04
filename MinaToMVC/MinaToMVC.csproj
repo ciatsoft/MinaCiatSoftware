@@ -202,6 +202,7 @@
     <Content Include="Views\Home\General.cshtml" />
     <Content Include="Views\Home\Ingresos.cshtml" />
     <Content Include="Views\Home\Inventario.cshtml" />
+    <Content Include="Views\Home\SolicitudesProcesadas.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

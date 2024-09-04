@@ -1,0 +1,142 @@
+﻿@{
+    ViewBag.Title = "Solicitudes_Procesadas"; // Establece el título de la vista.
+}
+<div class="content">
+    <br>
+    <div><center><h1>Solicitudes Procesadas</h1></center></div>
+
+    <div class="main-body">
+
+        <div class="php">
+
+        </div>
+
+        <div class="barra-superior">
+            <main class="container mt-4">
+
+                <!-- Alerta de mensaje -->
+                <div class="mensaje">
+
+                    <div class="alert alert-info" role="alert">
+
+                    </div>
+
+                </div>
+
+                <!-- Formulario de filtro -->
+                <div class="solicitudes-tabla">
+                    <form method="POST" class="form-inline mb-4">
+                        <label style="color:white;" for="filtro" class="mr-2">Filtrar solicitudes:</label>
+                        <select name="filtro" id="filtro" class="form-control">
+                            <option value="todos">Todos</option>
+                            <option value="sin_revisar">Sin revisar</option>
+                            <option value="aprobadas">Aprobadas</option>
+                            <option value="denegadas">Denegadas</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary ml-2">
+                            <i class="fa fa-filter"></i> Filtrar
+                        </button>
+                        <!-- Sección de Solicitud de Compra -->
+                        <div class="solicitud-compra-inventario">
+                            <button class="btn btn-info show-hide-button" onclick="mostrarOcultarFormulario()">
+                                <i class="fa fa-plus-circle"></i> Solicitud de Compra
+                            </button>
+
+                            <div id="formularioSolicitud" style="display: none;">
+                                <h1><i class="fa fa-list-alt"></i> Solicitud de Compra</h1>
+                                <form action="procesar_solicitud.html" method="POST">
+                                    <div class="form-group">
+                                        <label for="solicitante"><i class="fa fa-user"></i> Solicitante:</label>
+                                        <input type="text" class="form-control" id="solicitante" name="solicitante" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="area"><i class="fa fa-building"></i> Área:</label>
+                                        <input type="text" class="form-control" id="area" name="area" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="unidad"><i class="fa fa-cubes"></i> Unidad:</label>
+                                        <input type="text" class="form-control" id="unidad" name="unidad" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="placa"><i class="fa fa-car"></i> Placa:</label>
+                                        <input type="text" class="form-control" id="placa" name="placa" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="materiales"><i class="fa fa-wrench"></i> Materiales:</label>
+                                        <textarea class="form-control" id="materiales" name="materiales" required></textarea>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-success purchase-request-button">
+                                        <i class="fa fa-paper-plane"></i> Enviar Solicitud
+                                    </button>
+
+                                </form>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
+
+        <div class="tabla">
+            <tbody class="table-inventario">
+                <div class="tabla">
+
+                    <table class="table table-hover">
+                        <thead class="thead-light">
+                            <tr>
+                                <th><i class="fa fa-hashtag"></i> ID</th>
+                                <th><i class="fa fa-user"></i> Solicitante</th>
+                                <th><i class="fa fa-boxes"></i> Materiales</th>
+                                <th><i class="fa fa-building"></i> Área</th>
+                                <th><i class="fa fa-info-circle"></i> Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+
+                                <td><i class="fas fa-spinner fa-pulse"></i> Sin revisión</td>
+                                <td><i class="fa fa-check-circle" style="color: green;"></i> Aprobada</td>
+                                <td><i class="fa fa-times-circle" style="color: red;"></i> Denegada</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </tbody>
+        </div>
+
+        <div class="scripts">
+            <script>
+                function mostrarOcultarFormulario() {
+                    var formulario = document.getElementById("formularioSolicitud");
+                    if (formulario.style.display === "none") {
+                        formulario.style.display = "block";
+                    } else {
+                        formulario.style.display = "none";
+                    }
+                }
+
+                function mostrarOcultar(id) {
+                    var elemento = document.getElementById(id);
+                    if (elemento.style.display === "none") {
+                        elemento.style.display = "block";
+                    } else {
+                        elemento.style.display = "none";
+                    }
+                }
+            </script>
+        </div>
+
+    </div>
+</div>
