@@ -75,6 +75,11 @@ namespace MinaToMVC.Controllers
         {
             return View();
         }
+        [Autenticated]
+        public ActionResult SolicitudesProcesadas()
+        {
+            return View();
+        }
         #endregion
 
         #region Data Acces
