@@ -77,7 +77,7 @@ namespace MinaTolWebApi.DAL
             {
                 var user = GetObject($"ValidateUserName", CommandType.StoredProcedure,
                     new[] {
-                    new SqlParameter("@Email", userName)
+                    new SqlParameter("@UserName", userName)
                     },
                     new Func<IDataReader, Usuario>((reader) =>
                     {

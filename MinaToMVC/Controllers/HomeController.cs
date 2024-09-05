@@ -41,11 +41,6 @@ namespace MinaToMVC.Controllers
             return View();
         }
         [Autenticated]
-        public ActionResult Empleados()
-        {
-            return View();
-        }
-        [Autenticated]
         public ActionResult Gestion_Img()
         {
             return View();
