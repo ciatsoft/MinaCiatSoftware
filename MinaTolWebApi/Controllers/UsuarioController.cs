@@ -32,7 +32,7 @@ namespace MinaTolWebApi.Controllers
         [HttpPost, Route("ValidateUserName")]
         public ModelResponse ValidateUserName(Usuario u)
         {
-            var r = dbWrapper.ValidateUserName(u.Email);
+            var r = dbWrapper.ValidateUserName(u.UserName);
             return r;
         }
 

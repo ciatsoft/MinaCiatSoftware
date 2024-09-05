@@ -30,11 +30,11 @@ namespace MinaToMVC.DAL
 
             return modelResponse;
         }
-        public async Task<ModelResponse> ValidateUserName(string email, string token)
+        public async Task<ModelResponse> ValidateUserName(string userName, string token)
         {
             var userTemp = new Usuario()
             {
-                Email = email
+                UserName = userName
             };
 
             var result = await RequestAsync<object>("api/Usuario/ValidateUserName", HttpMethod.Post, userTemp,

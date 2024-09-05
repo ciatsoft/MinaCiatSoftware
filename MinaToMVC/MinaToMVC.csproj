@@ -199,7 +199,6 @@
     <Content Include="Views\Shared\_Menu.cshtml" />
     <Content Include="Views\Home\Solicitudes.cshtml" />
     <Content Include="Views\Home\Precios.cshtml" />
-    <Content Include="Views\Home\Empleados.cshtml" />
     <Content Include="Views\Home\Gestion_Img.cshtml" />
     <Content Include="Views\Home\General.cshtml" />
     <Content Include="Views\Home\Ingresos.cshtml" />
