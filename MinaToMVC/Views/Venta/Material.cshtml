@@ -1,0 +1,209 @@
+﻿@{
+    ViewBag.Title = "Material"; // Establece el título de la vista.
+}
+<div class="content">
+    <br />
+
+    <div class="agregar_al_carrito">
+        <!-- Título de la sección -->
+        <center><h1>Venta de Material</h1></center>
+        <script>
+            // Evento que se ejecuta cuando el contenido del DOM ha sido cargado
+            document.addEventListener("DOMContentLoaded", function () {
+                // Obtiene el botón del menú desplegable
+                var dropdownBtn = document.getElementById('dropdownBtn');
+                // Obtiene el menú desplegable
+                var dropdownMenu = document.getElementById('dropdownMenu');
+
+                // Añade un evento click al botón del menú desplegable
+                dropdownBtn.addEventListener('click', function () {
+                    // Alterna la visualización del menú desplegable
+                    if (dropdownMenu.style.display === 'none' || dropdownMenu.style.display === '') {
+                        dropdownMenu.style.display = 'block';
+                    } else {
+                        dropdownMenu.style.display = 'none';
+                    }
+                });
+            });
+        </script>
+    </div>
+
+    <div class="tabla-venta-precios-imagenes">
+        <!-- Contenedor para la lista de precios -->
+        <div id="list_container">
+            <script>
+                // Función para agregar un producto al carrito
+                function agregarAlCarrito() {
+                    // Obtiene los valores seleccionados de los campos de cliente y producto, y la cantidad del carrito
+                    var selCliente = document.getElementById("selCliente").value;
+                    var selProducto = document.getElementById("selProducto").value;
+                    var cantCarrito = parseFloat(document.getElementById("cantCarrito").value);
+                    var precioTotal = parseFloat(document.getElementById("montoPagar").textContent);
+
+                    // Crea una nueva solicitud HTTP
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "agregar_al_carrito.php", true);
+                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                    // Define una función para manejar la respuesta de la solicitud
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            var response = JSON.parse(xhr.responseText);
+                            mostrarNotificacion(response.status, response.message);
+                        }
+                    };
+
+                    // Define los parámetros que se enviarán en la solicitud
+                    var params = "selCliente=" + selCliente + "&selProducto=" + selProducto + "&cantCarrito=" + cantCarrito + "&montoPagar=" + precioTotal;
+                    // Envía la solicitud con los parámetros
+                    xhr.send(params);
+                }
+
+                // Función para mostrar una notificación
+                function mostrarNotificacion(status, message) {
+                    // Crear un nuevo elemento de notificación
+                    var notification = document.createElement("div");
+                    notification.className = "notification " + status;
+
+                    // Agregar el mensaje y un botón de cierre a la notificación
+                    notification.innerHTML = message + '<span class="close-btn" onclick="cerrarNotificacion(this)">✖</span>';
+
+                    // Agregar la notificación al contenedor de notificaciones
+                    document.getElementById("notificationContainer").appendChild(notification);
+
+                    // Mostrar la notificación
+                    notification.style.display = "block";
+                }
+
+                // Función para cerrar una notificación
+                function cerrarNotificacion(btn) {
+                    // Ocultar el elemento de notificación
+                    var notification = btn.parentElement;
+                    notification.style.display = "none";
+                }
+
+                // Función para actualizar el monto a pagar
+                function actualizarMonto() {
+                    // Obtiene el precio del producto seleccionado y la cantidad del carrito
+                    var selProducto = document.getElementById("selProducto");
+                    var precioSeleccionado = parseFloat(selProducto.options[selProducto.selectedIndex].getAttribute("data-precio"));
+                    var cantCarrito = parseFloat(document.getElementById("cantCarrito").value);
+                    var montoPagar = precioSeleccionado * cantCarrito;
+
+                    // Actualiza el monto a pagar en el DOM
+                    document.getElementById("montoPagar").textContent = montoPagar.toFixed(2);
+                }
+
+                // Función para mostrar el precio del producto seleccionado
+                function mostrarPrecio() {
+                    var select = document.getElementById('selProducto');
+                    var precio = select.options[select.selectedIndex].getAttribute('data-precio');
+                    alert("Precio: $" + precio);
+                }
+
+                // Función para redirigir a la página de administración con el ID del cliente seleccionado
+                function redirectToAdmin() {
+                    var selCliente = document.getElementById("selCliente").value;
+                    window.location.href = '../administracion/index.php?cliente_id=' + selCliente;
+                }
+            </script>
+
+            <!-- Contenedor para las notificaciones -->
+            <div id="notification-Container"></div>
+
+            <!-- Contenedor principal para la tabla y formulario -->
+            <div class="contenedor-flex">
+                <!-- Tabla que muestra los productos y sus detalles -->
+                <table class="tabla-agregar-carrito" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <th><i class="fa fa-user"></i> Nombre</th>
+                        <th><i class="fa fa-info-circle"></i> Descripción</th>
+                        <th><i class="fa fa-money-bill-wave"></i> Precio</th>
+                        <th><i class="fa fa-image"></i> Imagen</th>
+                    </tr>
+
+
+                    <tr>
+                        <td><i class="fa fa-tag"></i> <?php echo $rs['nombre']; ?></td>
+                        <td><i class="fa fa-align-left"></i> <?php echo $rs['descripcion']; ?></td>
+                        <td><i class="fa fa-dollar-sign"></i> <?php echo $rs['precio']; ?></td>
+                        <td>
+                            <img src="#" alt="Imagen" class="product-image">
+                        </td>
+                    </tr>
+
+                </table>
+
+                <!-- Formulario para agregar productos al carrito -->
+                <div class="lista-agregar-carrito">
+                    <form action="agregar_al_carrito.php" method="post" onsubmit="confirmarAgregar()">
+                        <label for="selCliente"><i class="fa fa-user"></i> Cliente:</label>
+                        <input type="text" name="selCliente" id="selCliente" required oninput="searchClientes()">
+                        <div class="container">
+                            <!-- Fila para el botón de nuevo cliente -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <button class="btn btn-primary nuevo-cliente" type="submit" onclick="redirectToAdmin()">
+                                        <i class="fa fa-plus-circle"></i> Nuevo cliente
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Fila para la etiqueta y el campo de selección de productos -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="selProducto">
+                                        <i class="fa fa-box"></i> Producto:
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Selección de productos con datos obtenidos de la base de datos -->
+                        <select name="selProducto" id="selProducto">
+
+                            <option value="" data-precio="">
+                            </option>
+
+                        </select>
+                        <label for="cantCarrito"><i class="fa fa-cube"></i> Cantidad en metros cúbicos:</label>
+                        <input type="number" name="cantCarrito" id="cantCarrito" min="1" required oninput="actualizarMonto()">
+                        <label for="precioProd"><i class="fa fa-calculator"></i> Monto a pagar:</label>
+                        <span id="montoPagar">0.00</span>
+                        <button class="agregar" type="submit"><i class="fa fa-cart-plus"></i> Agregar al Carrito</button>
+                    </form>
+
+                    <!-- Lista de clientes filtrados -->
+                    <ul id="clienteList"></ul>
+                    <div id="cargoSection" style="display:none;">
+                        <h2><i class="fa fa-credit-card"></i> Realizar Cargo</h2>
+                        <form onsubmit="realizarCargo(event)">
+                            <label for="selClienteCargo"><i class="fa fa-user-check"></i> Cliente Seleccionado:</label>
+                            <input type="text" name="selClienteCargo" id="selClienteCargo" readonly required>
+                            <label for="montoCargo"><i class="fa fa-dollar-sign"></i> Monto a cargar:</label>
+                            <input type="text" name="montoCargo" id="montoCargo" readonly>
+                            <button type="submit"><i class="fa fa-credit-card"></i> Realizar Cargo</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<style>
+
+    .tabla-venta-precios-imagenes {
+        background-color: rgba(255, 255, 255, 0.0);
+    }
+
+    center h1 {
+        background-color: white;
+        font-family: Helvetica Neue;
+        font-size: 30px;
+        color: black;
+        width: 70%;
+        padding: 5px;
+        border: 20px;
+        border-radius: 100px;
+        border: 3px solid black;
+    }
+</style>

@@ -213,6 +213,8 @@
     <Content Include="Views\RH\Editar.cshtml" />
     <Content Include="Views\Empleado\Index.cshtml" />
     <Content Include="Views\Empleado\AltaEdicion.cshtml" />
+    <Content Include="Views\Venta\Material.cshtml" />
+    <Content Include="Views\Venta\Salidas.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -224,7 +226,6 @@
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
     <Folder Include="Views\Taller\" />
-    <Folder Include="Views\Venta\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MinaTolEntidades\MinaTolEntidades.csproj">
