@@ -40,6 +40,13 @@ namespace MinaToMVC.Controllers
 
         }
 
+        public async Task<string> GetUnidadMedidaById (long id )
+        {
+            var result = await httpClientConnection.GetUnidadMedidaById(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+
     #endregion
     }
 }

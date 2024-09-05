@@ -67,6 +67,8 @@
     });
 
     var unidadMedidaId = JSON.parse('@Html.Raw((Newtonsoft.Json.JsonConvert.SerializeObject(Model)))');
-    var urlUnidadMedida ="@Url.Action("SaveOrUpdateUnidadMedida", "UnidadMedida")";
+    var urlUnidadMedida = "@Url.Action("SaveOrUpdateUnidadMedida", "UnidadMedida")";
+    var urlUnidadmedidaPorId = "@Url.Action("GetUnidadMedidaById", "UnidadMedida")";
+    var urlConsultarTodasUnidadMedida= "@Url.Action("GetAllUnidadmedida", "UnidadMedida")";
 </script>
 <script src="~/Scripts/Catalogos/UnidadMedida.js"></script>
