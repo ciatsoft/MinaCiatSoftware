@@ -169,6 +169,11 @@
     <Compile Include="Controllers\CatalogController.cs" />
     <Compile Include="Controllers\EmpleadoController.cs" />
     <Compile Include="Controllers\Filters\FiltersHelper.cs" />
+    <Compile Include="Controllers\AdministracionController.cs" />
+    <Compile Include="Controllers\VentaController.cs" />
+    <Compile Include="Controllers\TallerController .cs" />
+    <Compile Include="Controllers\RHController.cs" />
+    <Compile Include="Controllers\AlmacenController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="DAL\HttpClientConnection.AreaTrabajo.cs" />
     <Compile Include="DAL\HttpClientConnection.UnidadMedida.cs" />
@@ -195,17 +200,17 @@
     <Content Include="Views\Shared\_Autentication.cshtml" />
     <Content Include="Views\Home\Autenticacion.cshtml" />
     <Content Include="Views\Catalog\UnidadMedida.cshtml" />
-    <Content Include="Views\Home\Clientes.cshtml" />
+    <Content Include="Views\Administracion\Clientes.cshtml" />
     <Content Include="Views\Shared\_Menu.cshtml" />
-    <Content Include="Views\Home\Solicitudes.cshtml" />
-    <Content Include="Views\Home\Precios.cshtml" />
-    <Content Include="Views\Home\Gestion_Img.cshtml" />
-    <Content Include="Views\Home\General.cshtml" />
-    <Content Include="Views\Home\Ingresos.cshtml" />
-    <Content Include="Views\Home\Inventario.cshtml" />
-    <Content Include="Views\Home\SolicitudesProcesadas.cshtml" />
-    <Content Include="Views\Home\Agregar.cshtml" />
-    <Content Include="Views\Home\Editar.cshtml" />
+    <Content Include="Views\Administracion\Solicitudes.cshtml" />
+    <Content Include="Views\Administracion\Precios.cshtml" />
+    <Content Include="Views\Administracion\Gestion_Img.cshtml" />
+    <Content Include="Views\Administracion\General.cshtml" />
+    <Content Include="Views\Administracion\Ingresos.cshtml" />
+    <Content Include="Views\Almacen\Inventario.cshtml" />
+    <Content Include="Views\Almacen\SolicitudesProcesadas.cshtml" />
+    <Content Include="Views\RH\Agregar.cshtml" />
+    <Content Include="Views\RH\Editar.cshtml" />
     <Content Include="Views\Empleado\Index.cshtml" />
     <Content Include="Views\Empleado\AltaEdicion.cshtml" />
     <None Include="Web.Debug.config">
@@ -218,6 +223,8 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\Taller\" />
+    <Folder Include="Views\Venta\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MinaTolEntidades\MinaTolEntidades.csproj">
