@@ -1,0 +1,216 @@
+﻿@{
+    ViewBag.Title = "Alta/Edición Empleado";
+
+    var areasTrabajo = (List<MinaTolEntidades.DtoCatalogos.DtoAreaTrabajo>)ViewBag.AreasDeTrabajo;
+}
+
+
+
+<div class="content">
+    <br>
+    <center><h1>Empleados</h1></center>
+    <div class="tabla-consultas-empleados">
+
+        <div class="rectangulos" style="width: 100%;">
+            <div class="row">
+                <div class="col-lg-3">
+                    <label>Nombre:</label>
+                    <input type="text" name="txtNombre" id="txtNombre" value="" class="form-control" />
+                </div>
+                <div class="col-lg-3">
+                    <label>Email:</label>
+                    <input type="text" name="txtEmail" id="txtEmail" value="" class="form-control" />
+                </div>
+                <div class="col-lg-3">
+                    <label>Teléfono:</label>
+                    <input type="text" name="txtTelefono" id="txtTelefono" value="" class="form-control" />
+                </div>
+                <div class="col-lg-3">
+                    <label>Area de Trabajo:</label>
+                    <select id="ddlAreaTrabajo" class="form-control">
+                        @foreach (var i in areasTrabajo)
+                        {
+                            <option value="@i.Id">@i.Nombre</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="busqueda">
+            <form action="" method="get">
+                <input type="text" id="search" name="search" placeholder="Buscar por nombre o área">
+                <button type="submit">
+                    <i class="fa fa-search" aria-hidden="true"></i> Buscar
+                </button>
+            </form>
+        </div>
+
+
+        <!-- Menú desplegable para seleccionar la cantidad de filas a mostrar -->
+        <select id="rowsToShow">
+            <option value="all">Todos</option>
+            <option value="100">100</option>
+            <option value="50">50</option>
+            <option value="25">25</option>
+            <option value="10">10</option>
+        </select>
+
+        <table id="employeeTable">
+            <thead>
+                <tr>
+                    <th class="nombre"><i class="fa fa-user" aria-hidden="true"></i> Nombre</th>
+                    <th class="area"><i class="fa fa-industry" aria-hidden="true"></i> Área de Trabajo</th>
+                    <th class="salario"><i class="fa fa-dollar-sign" aria-hidden="true"></i> Salario MXN</th>
+                    <th class="horario"><i class="fa fa-clock" aria-hidden="true"></i> Horario</th>
+                    <th class="seguro"><i class="fa fa-shield" aria-hidden="true"></i> Seguro</th>
+                    <th class="retardos"><i class="fa fa-hourglass-start" aria-hidden="true"></i> Retardos</th>
+                    <th class="faltas"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Faltas</th>
+                </tr>
+            </thead>
+            <tbody style="font-size: 16px;">
+            </tbody>
+        </table>
+        <br>
+        <!-- Contenedor para la paginación -->
+        <div id="pagination"></div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Evento de clic para el botón de empleados con seguro
+        $("#empleadosConSeguroButton").click(function () {
+            var filtro = "conSeguro";
+            actualizarTabla(filtro);
+        });
+        // Función para actualizar la tabla con los datos filtrados
+        function actualizarTabla(filtro) {
+            $.ajax({
+                url: "actualizar_tabla.php",
+                type: "POST",
+                data: { filtro: filtro },
+                success: function (response) {
+                    $("#employeeTable tbody").html(response);
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error al actualizar la tabla: " + error);
+                }
+            });
+        }
+    });
+</script>
+<script>
+    document.getElementById('rowsToShow').addEventListener('change', function () {
+        var table = document.getElementById('employeeTable');
+        var tbody = table.getElementsByTagName('tbody')[0];
+        var rows = tbody.getElementsByTagName('tr');
+        var show = this.value;
+
+        var displayCount = show === 'all' ? rows.length : parseInt(show, 10);
+
+        // Calcula el número total de páginas
+        var totalPages = Math.ceil(rows.length / displayCount);
+        createPagination(totalPages, displayCount);
+
+        function createPagination(totalPages, displayCount) {
+            var paginationContainer = document.getElementById('pagination');
+            paginationContainer.innerHTML = ''; // Limpia la paginación anterior
+
+            for (let i = 1; i <= totalPages; i++) {
+                let pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                pageButton.onclick = function () {
+                    for (let j = 0; j < rows.length; j++) {
+                        // Muestra solo las filas de la página actual
+                        rows[j].style.display = (j >= (i - 1) * displayCount && j < i * displayCount) ? '' : 'none';
+                    }
+                };
+                paginationContainer.appendChild(pageButton);
+            }
+
+            // Muestra automáticamente la primera página
+            if (totalPages > 0) {
+                paginationContainer.firstChild.click();
+            }
+        }
+    });
+
+    // Inicializa la paginación con la selección actual al cargar la página
+    window.onload = function () {
+        document.getElementById('rowsToShow').dispatchEvent(new Event('change'));
+    };
+</script>
+<script>
+    document.getElementById('rowsToShow').addEventListener('change', function () {
+        var table = document.getElementById('employeeTable');
+        var tbody = table.getElementsByTagName('tbody')[0];
+        var rows = tbody.getElementsByTagName('tr');
+        var show = this.value;
+
+        // Determina el número de filas a mostrar
+        var displayCount = show === 'all' ? rows.length : parseInt(show, 10);
+
+        // Itera sobre las filas y muestra/oculta según la selección
+        for (var i = 0; i < rows.length; i++) {
+            rows[i].style.display = i < displayCount ? '' : 'none';
+        }
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        // Evento de clic para el botón de empleados con faltas
+        $("#empleadosConFaltasButton").click(function () {
+            var filtro = "conFaltas";
+            actualizarTabla(filtro);
+        });
+        // Función para actualizar la tabla con los datos filtrados
+        function actualizarTabla(filtro) {
+            $.ajax({
+                url: "actualizar_tabla.php",
+                type: "POST",
+                data: { filtro: filtro },
+                success: function (response) {
+                    $("#employeeTable tbody").html(response);
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error al actualizar la tabla: " + error);
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        // Evento de clic para el botón de empleados con retardos
+        $("#empleadosConRetardosButton").click(function () {
+            var filtro = "conRetardos";
+            actualizarTabla(filtro);
+        });
+
+        // Función para actualizar la tabla con los datos filtrados
+        function actualizarTabla(filtro) {
+            $.ajax({
+                url: "actualizar_tabla.html",
+                type: "POST",
+                data: { filtro: filtro },
+                success: function (response) {
+                    $("#employeeTable tbody").html(response);
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error al actualizar la tabla: " + error);
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        // Evento de clic para el botón de total de empleados
+        $("#totaldeempleados").click(function () {
+            location.reload()
+        });
+    });
+</script>

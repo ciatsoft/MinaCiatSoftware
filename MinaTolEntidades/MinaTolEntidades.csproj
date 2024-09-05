@@ -42,10 +42,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseObject.cs" />
+    <Compile Include="DtoCatalogos\DtoAreaTrabajo.cs" />
     <Compile Include="DtoClientes\Cliente.cs" />
     <Compile Include="DtoClientes\ClienteVehiculo.cs" />
     <Compile Include="DtoClientes\TipoVehiculo.cs" />
     <Compile Include="DtoClientes\Vehiculo.cs" />
+    <Compile Include="DtoEmpleados\DtoEmpleado.cs" />
     <Compile Include="DtoSucursales\Precio.cs" />
     <Compile Include="DtoSucursales\Producto.cs" />
     <Compile Include="DtoSucursales\UnidadMedida.cs" />
@@ -55,8 +57,6 @@
     <Compile Include="Security\TokenCookie.cs" />
     <Compile Include="Security\Usuario.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DtoEmpleado\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
