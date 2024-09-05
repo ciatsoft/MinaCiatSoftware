@@ -134,6 +134,7 @@
   <ItemGroup>
     <Compile Include="App_Start\App_Start.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\AreaTrabajoController.cs" />
     <Compile Include="Controllers\ClienteController.cs" />
     <Compile Include="Controllers\PrecioController.cs" />
     <Compile Include="Controllers\ProductoController.cs" />
@@ -142,6 +143,7 @@
     <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Controllers\VehiculoController.cs" />
     <Compile Include="DAL\BaseDbWrapper.cs" />
+    <Compile Include="DAL\DbWrapper.AreaTrabajo.cs" />
     <Compile Include="DAL\DbWrapper.Cliente.cs" />
     <Compile Include="DAL\DbWrapper.cs" />
     <Compile Include="DAL\DbWrapper.Precio.cs" />

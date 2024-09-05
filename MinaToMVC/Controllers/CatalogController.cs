@@ -20,7 +20,6 @@ namespace MinaToMVC.Controllers
 
 
         #region Unidad de Medida
-
         public ActionResult UnidadMedida()
         {
             return View();
@@ -30,8 +29,6 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllUnidadMedida();
             return JsonConvert.SerializeObject(result);
         }
-
-
         public async Task<ActionResult> SaveOrUpdateUnidadMedida(UnidadMedida u)
         {
             httpClientConnection.MappingColumSecurity(u);
@@ -39,14 +36,21 @@ namespace MinaToMVC.Controllers
             return RedirectToAction("UnidadMedida", "Catalog");
 
         }
-
         public async Task<string> GetUnidadMedidaById (long id )
         {
             var result = await httpClientConnection.GetUnidadMedidaById(id);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
+        #endregion
 
-    #endregion
+        #region Area Trabajo
+        public async Task<string> GetAllAreaTrabajo()
+        {
+            var token = Helpers.SessionHelper.GetSessionUser();
+            var result = await httpClientConnection.GetAllAreaTrabajo(token.Token.access_token);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        #endregion
     }
 }

@@ -167,8 +167,10 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CatalogController.cs" />
+    <Compile Include="Controllers\EmpleadoController.cs" />
     <Compile Include="Controllers\Filters\FiltersHelper.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="DAL\HttpClientConnection.AreaTrabajo.cs" />
     <Compile Include="DAL\HttpClientConnection.UnidadMedida.cs" />
     <Compile Include="DAL\HttpClientConnection.Usuario.cs" />
     <Compile Include="DAL\HttpClientBase.cs" />
@@ -205,6 +207,8 @@
     <Content Include="Views\Home\SolicitudesProcesadas.cshtml" />
     <Content Include="Views\Home\Agregar.cshtml" />
     <Content Include="Views\Home\Editar.cshtml" />
+    <Content Include="Views\Empleado\Index.cshtml" />
+    <Content Include="Views\Empleado\AltaEdicion.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
