@@ -323,13 +323,21 @@
                                     Administración
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" data-title="Clientes" href="#">Clientes</a>
-                                    <a class="dropdown-item" data-title="Solicitudes" href="#">Solicitudes</a>
-                                    <a class="dropdown-item" data-title="Precios" href="#">Precios</a>
-                                    <a class="dropdown-item" data-title="Gestion_Img" href="#">Imágenes de precios</a>
-                                    <a class="dropdown-item" data-title="Empleados" href="#">Empleados</a>
-                                    <a class="dropdown-item" data-title="Ingresos" href="#">Ingresos y egresos</a>
-                                    <a class="dropdown-item" data-title="General" href="#">General</a>
+                                    <a class="dropdown-item" data-title="Clientes" href="@Url.Action("Clientes", "Administracion")">Clientes</a>
+                                    <a class="dropdown-item" data-title="Solicitudes" href="@Url.Action("Solicitudes", "Administracion")">Solicitudes</a>
+                                    <a class="dropdown-item" data-title="Precios" href="@Url.Action("Precios", "Administracion")">Precios</a>
+                                    <a class="dropdown-item" data-title="Gestion_Img" href="@Url.Action("Gestion_Img", "Administracion")">Imágenes de precios</a>
+                                    <a class="dropdown-item" data-title="Ingresos" href="@Url.Action("Ingresos", "Administracion")">Ingresos y egresos</a>
+                                    <a class="dropdown-item" data-title="General" href="@Url.Action("General", "Administracion")">General</a>
+                                </div>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Empleados
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" data-title="Empleados" href="@Url.Action("AltaEdicion", "Empleado")">Empleados</a>
                                 </div>
                             </li>
 
@@ -338,8 +346,8 @@
                                     Almacén
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" data-title="Inventario" href="#">Inventario</a>
-                                    <a class="dropdown-item" data-title="SolicitudesProcesadas" href="#">Solicitudes procesadas</a>
+                                    <a class="dropdown-item" data-title="Inventario" href="@Url.Action("Inventario", "Almacen")">Inventario</a>
+                                    <a class="dropdown-item" data-title="SolicitudesProcesadas" href="@Url.Action("SolicitudesProcesadas", "Almacen")">Solicitudes procesadas</a>
                                 </div>
                             </li>
 
@@ -348,8 +356,8 @@
                                     R.H.
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" data-title="Agregar" href="#">Agregar</a>
-                                    <a class="dropdown-item" data-title="Editar" href="#">Editar</a>
+                                    <a class="dropdown-item" data-title="Agregar" href="@Url.Action("Agregar", "RH")">Agregar</a>
+                                    <a class="dropdown-item" data-title="Editar" href="@Url.Action("Editar", "RH")">Editar</a>
                                 </div>
                             </li>
 
@@ -384,23 +392,6 @@
             </nav>
         </div>
     </header>
-
-    <script>
-$(document).ready(function () {
-    $('.dropdown-item').on('click', function (event) {
-        event.preventDefault();  // Evita el comportamiento por defecto del enlace
-
-        var pageTitle = $(this).data('title');  // Obtiene el valor del atributo data-title
-
-        // Construye la URL completa
-        var baseUrl = '@Url.Content("~/Home/")'; // Ruta base desde la raíz del sitio
-        var fullUrl = baseUrl + pageTitle;  // Construye la URL completa
-
-        // Redirecciona a la página correspondiente
-        window.location.href = fullUrl;
-    });
-});
-    </script>
 
     <section class="slider_section position-relative">
         <div class="row">
