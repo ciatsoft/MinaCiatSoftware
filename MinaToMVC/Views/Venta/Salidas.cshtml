@@ -1,0 +1,259 @@
+﻿@{
+    ViewBag.Title = "Salidas"; // Establece el título de la vista.
+}
+<div class="content">
+    <br>
+    <center><h1><i class="fa fa-clipboard"></i> Salidas/Prestamos</h1></center>
+    <div class="main">
+
+        <!-- Muestra mensajes de éxito o error -->
+        <!-- Barra de búsqueda y botones -->
+        <div class="tabla-salidas-buscar">
+
+            <div id="search_bar">
+                <input type="text" id="search_input" placeholder="Buscar...">
+                <button id="search_button" onclick="searchData()"><i class="fa fa-search"></i> Buscar</button>
+                <button id="add_button" onclick="toggleAddForm()"><i class="fa fa-plus"></i> Agregar</button>
+                <button id="reload_button" onclick="reloadPage()"><i class="fa fa-refresh"></i> Recargar</button>
+            </div>
+
+            <!-- Formulario para agregar nuevas salidas -->
+            <div id="tabla-salidas-agregar" style="display:none;">
+                <h3><i class="fa fa-plus-circle"></i> Agregar registro de salida</h3>
+                <form method="post" id="addForm" action="guardar_salida.php">
+                    <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Empresa/Nombre">
+                    <input type="number" name="cantidad" id="cantidad" class="form-control" placeholder="Cantidad">
+                    <input type="text" name="concepto" id="concepto" class="form-control" placeholder="Concepto">
+                    <input type="text" name="autoriza" id="autoriza" class="form-control" placeholder="Autoriza">
+                    <select name="entidad_tipo" id="entidad_tipo" class="form-control">
+                        <option value="empleado">Empleado</option>
+                        <option value="empresa">Empresa</option>
+                        <option value="proveedor">Proveedor</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Agregar</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tabla que muestra los registros de salidas -->
+        <table class="tabla-salidas-datos" cellspacing="0" cellpadding="0">
+            <tr>
+                <th><i class="fa fa-user"></i> Nombre</th>
+                <th><i class="fa fa-cube"></i> Cantidad</th>
+                <th><i class="fa fa-book"></i> Concepto</th>
+                <th><i class="fa fa-building"></i> Tipo de Entidad</th>
+                <th><i class="fa fa-money"></i> Pagado</th>
+                <th>Eliminar</th>
+                <th>Editar</th>
+                <th>Datos</th>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><button class="borrar" onclick=""><i class="fa fa-trash"></i></button></td>
+                <td><button class="editar" onclick=""><i class="fa fa-pencil"></i></button></td>
+                <td><button class="ver" onclick=""><i class="fa fa-eye"></i></button></td>
+            </tr>
+        </table>
+
+        <!-- Scripts para manejar las acciones de los botones -->
+        <script>
+            function borrar(id) {
+                if (confirm("¿Estás seguro de que quieres borrar este registro?")) {
+                    window.location.href = "borrar.php?id=" + id;
+                }
+            }
+
+            function editar(id) {
+                window.location.href = "editar.php?id=" + id;
+            }
+
+            function ver(id) {
+                window.location.href = "ver.php?id=" + id;
+            }
+
+            function toggleAddForm() {
+                var addForm = document.getElementById("tabla-salidas-agregar");
+                if (addForm.style.display === "none") {
+                    addForm.style.display = "block";
+                } else {
+                    addForm.style.display = "none";
+                }
+            }
+
+            function searchData() {
+                const input = document.getElementById('search_input').value;
+                fetch('buscar_salida.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'query=' + encodeURIComponent(input)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const tableBody = document.querySelector(".tabla-salidas-datos tbody");
+                        tableBody.innerHTML = ''; // Limpiar la tabla antes de añadir los nuevos resultados
+                        data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `<td>${row.nombre}</td><td>${row.cantidad}</td><td>${row.concepto}</td><td>${row.entidad_tipo}</td><td>${row.pagado}</td><td><button onclick="borrar(${row.id})"><i class="fa fa-trash"></i></button></td><td><button onclick="editar(${row.id})"><i class="fa fa-pencil"></i></button></td><td><button onclick="ver(${row.id})"><i class="fa fa-eye"></i></button></td>`;
+                            tableBody.appendChild(tr);
+                        });
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+
+            function reloadPage() {
+                location.reload();
+            }
+        </script>
+
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #83988e;
+    }
+    /* Estilo básico y general */
+    .main {
+        font-family: Arial, sans-serif;
+        background-color: #a1a1a1;
+        color: black;
+        margin: 20px; /* Margen general */
+        padding: 10px; /* Padding general */
+    }
+
+    /* Alertas y mensajes */
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
+
+    .alert-success {
+        color: #3c763d;
+        background-color: #dff0d8;
+        border-color: #d6e9c6;
+    }
+
+    .alert-danger {
+        color: #a94442;
+        background-color: #f2dede;
+        border-color: #ebccd1;
+    }
+
+    /* Barra de búsqueda y botones con ajustes de tamaño y color */
+    #search_bar {
+        display: flex;
+        width: 100%; /* Asegura que la barra ocupe el 100% del ancho disponible */
+        gap: 5px; /* Espacio entre elementos */
+        margin-bottom: 20px;
+    }
+
+    #search_input {
+        flex-grow: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    button {
+        cursor: pointer;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        margin-right: 5px;
+        font-size: 16px;
+        color: white; /* Texto en blanco para todos los botones */
+    }
+
+    #search_button {
+        background-color: #123142; /* Azul */
+    }
+
+    #add_button {
+        background-color: #28a745; /* Verde */
+    }
+
+    #reload_button {
+        background-color: #17a2b8; /* Color elegido: Cian */
+    }
+
+    /* Estilos para la tabla */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        border: 2px solid #333; /* Borde de color #333 */
+    }
+
+    th, td {
+        text-align: left;
+        padding: 12px;
+        border-bottom: 1px solid #333;
+        font-size: 16px; /* Tamaño general para el contenido */
+    }
+
+    th {
+        background-color: #333;
+        color: white;
+        font-weight: bolder;
+        font-size: 15px; /* Tamaño para encabezados */
+    }
+
+    /* Alternar colores de filas y hover */
+    tr:nth-child(odd) {
+        background-color: #f9f9f9;
+    }
+
+    tr:nth-child(even) {
+        background-color: #ececec;
+    }
+
+    tr:hover {
+        background-color: #cccccc; /* Cambio de color al pasar el mouse */
+    }
+
+    /* Estilos básicos para los botones */
+    button {
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 16px;
+        border-radius: 5px;
+        margin: 5px;
+    }
+
+        /* Estilo para el botón de borrar */
+        button.borrar {
+            background-color: #e74c3c; /* Rojo */
+        }
+
+        /* Estilo para el botón de editar */
+        button.editar {
+            background-color: #3498db; /* Azul */
+        }
+
+        /* Estilo para el botón de ver */
+        button.ver {
+            background-color: #2ecc71; /* Verde */
+        }
+
+    center h1 {
+        background-color: white;
+        font-family: Helvetica Neue;
+        font-size: 30px;
+        color: black;
+        width: 70%;
+        padding: 5px;
+        border: 20px;
+        border-radius: 100px;
+        border: 3px solid black;
+    }
+</style>

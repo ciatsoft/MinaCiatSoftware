@@ -26,52 +26,12 @@ namespace MinaToMVC.Controllers
             return View();
         }
         [Autenticated]
-        public ActionResult Clientes()
+        public ActionResult Material()
         {
             return View();
         }
         [Autenticated]
-        public ActionResult Solicitudes()
-        {
-            return View();
-        }
-        [Autenticated]
-        public ActionResult Precios()
-        {
-            return View();
-        }
-        [Autenticated]
-        public ActionResult Gestion_Img()
-        {
-            return View();
-        }
-        [Autenticated]
-        public ActionResult Ingresos()
-        {
-            return View();
-        }
-        [Autenticated]
-        public ActionResult General()
-        {
-            return View();
-        }
-        [Autenticated]
-        public ActionResult Inventario()
-        {
-            return View();
-        }
-        [Autenticated]
-        public ActionResult Agregar()
-        {
-            return View();
-        }
-        [Autenticated]
-        public ActionResult Editar()
-        {
-            return View();
-        }
-        [Autenticated]
-        public ActionResult SolicitudesProcesadas()
+        public ActionResult Salidas()
         {
             return View();
         }

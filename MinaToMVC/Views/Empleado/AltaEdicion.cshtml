@@ -1,62 +1,89 @@
 ﻿@{
     ViewBag.Title = "Alta/Edición Empleado";
-
     var areasTrabajo = (List<MinaTolEntidades.DtoCatalogos.DtoAreaTrabajo>)ViewBag.AreasDeTrabajo;
+    var turnos = new List<string> { "Mañana", "Tarde", "Noche" }; // Ejemplo de turnos
+    var estatus = new List<string> { "Activo", "Inactivo" }; // Ejemplo de estatus
 }
-
-
 
 <div class="content">
     <br>
     <center><h1>Empleados</h1></center>
     <div class="tabla-consultas-empleados">
-
         <div class="rectangulos" style="width: 100%;">
             <div class="row">
                 <div class="col-lg-3">
+                    <label>ID del Trabajador:</label>
+                    <input type="text" id="txtTrabajadorId" class="form-control" disabled />
+                </div>
+                <div class="col-lg-3">
                     <label>Nombre:</label>
-                    <input type="text" name="txtNombre" id="txtNombre" value="" class="form-control" />
+                    <input type="text" id="txtNombre" class="form-control" />
                 </div>
                 <div class="col-lg-3">
                     <label>Email:</label>
-                    <input type="text" name="txtEmail" id="txtEmail" value="" class="form-control" />
+                    <input type="text" id="txtEmail" class="form-control" />
                 </div>
                 <div class="col-lg-3">
                     <label>Teléfono:</label>
-                    <input type="text" name="txtTelefono" id="txtTelefono" value="" class="form-control" />
+                    <input type="text" id="txtTelefono" class="form-control" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3">
+                    <label>Fecha Contratación:</label>
+                    <input type="date" id="dtpFechaContratacion" class="form-control" />
                 </div>
                 <div class="col-lg-3">
-                    <label>Area de Trabajo:</label>
-                    <select id="ddlAreaTrabajo" class="form-control">
-                        @foreach (var i in areasTrabajo)
+                    <label>Seguro:</label>
+                    <input type="text" id="txtSeguro" class="form-control" />
+                </div>
+                <div class="col-lg-3">
+                    <label>Turno:</label>
+                    <select id="ddlTurno" class="form-control">
+                        @foreach (var turno in turnos)
                         {
-                            <option value="@i.Id">@i.Nombre</option>
+                            <option value="@turno">@turno</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-lg-3">
+                    <label>Estatus:</label>
+                    <select id="ddlEstatus" class="form-control">
+                        @foreach (var est in estatus)
+                        {
+                            <option value="@est">@est</option>
                         }
                     </select>
                 </div>
             </div>
             <div class="row">
                 <div class="col-lg-3">
-                    <label>Fecha Contratación</label>
-                    <input type="date" name="dtpFechaContratacion" id="dtpFechaContratacion" class="form-control" value="" />
+                    <label>Área de Trabajo:</label>
+                    <select id="ddlAreaTrabajo" class="form-control">
+                        @foreach (var area in areasTrabajo)
+                        {
+                            <option value="@area.Id">@area.Nombre</option>
+                        }
+                    </select>
                 </div>
-                <div class="col-lg-3"></div>
-                <div class="col-lg-3"></div>
-                <div class="col-lg-3"></div>
+                <!-- Campos ocultos para los datos automáticos -->
+                <input type="hidden" id="txtCreatedBy" value="@User.Identity.Name" />
+                <input type="hidden" id="txtCreatedDt" value="@DateTime.Now" />
+                <input type="hidden" id="txtUpdatedBy" value="@User.Identity.Name" />
+                <input type="hidden" id="txtUpdatedDt" value="@DateTime.Now" />
             </div>
         </div>
 
         <br>
 
         <div class="busqueda">
-            <form action="" method="get">
-                <input type="text" id="search" name="search" placeholder="Buscar por nombre o área">
+            <form method="get">
+                <input type="text" id="search" name="search" placeholder="Buscar por nombre o área" />
                 <button type="submit">
                     <i class="fa fa-search" aria-hidden="true"></i> Buscar
                 </button>
             </form>
         </div>
-
 
         <!-- Menú desplegable para seleccionar la cantidad de filas a mostrar -->
         <select id="rowsToShow">
@@ -70,17 +97,16 @@
         <table id="employeeTable">
             <thead>
                 <tr>
-                    <th class="nombre"><i class="fa fa-user" aria-hidden="true"></i> Nombre</th>
-                    <th class="area"><i class="fa fa-industry" aria-hidden="true"></i> Área de Trabajo</th>
-                    <th class="salario"><i class="fa fa-dollar-sign" aria-hidden="true"></i> Salario MXN</th>
-                    <th class="horario"><i class="fa fa-clock" aria-hidden="true"></i> Horario</th>
-                    <th class="seguro"><i class="fa fa-shield" aria-hidden="true"></i> Seguro</th>
-                    <th class="retardos"><i class="fa fa-hourglass-start" aria-hidden="true"></i> Retardos</th>
-                    <th class="faltas"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Faltas</th>
+                    <th><i class="fa fa-user" aria-hidden="true"></i> Nombre</th>
+                    <th><i class="fa fa-industry" aria-hidden="true"></i> Área de Trabajo</th>
+                    <th><i class="fa fa-dollar-sign" aria-hidden="true"></i> Salario MXN</th>
+                    <th><i class="fa fa-clock" aria-hidden="true"></i> Horario</th>
+                    <th><i class="fa fa-shield" aria-hidden="true"></i> Seguro</th>
+                    <th><i class="fa fa-hourglass-start" aria-hidden="true"></i> Retardos</th>
+                    <th><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Faltas</th>
                 </tr>
             </thead>
-            <tbody style="font-size: 16px;">
-            </tbody>
+            <tbody style="font-size: 16px;"></tbody>
         </table>
         <br>
         <!-- Contenedor para la paginación -->
@@ -90,12 +116,6 @@
 
 <script>
     $(document).ready(function () {
-        // Evento de clic para el botón de empleados con seguro
-        $("#empleadosConSeguroButton").click(function () {
-            var filtro = "conSeguro";
-            actualizarTabla(filtro);
-        });
-        // Función para actualizar la tabla con los datos filtrados
         function actualizarTabla(filtro) {
             $.ajax({
                 url: "actualizar_tabla.php",
@@ -105,121 +125,46 @@
                     $("#employeeTable tbody").html(response);
                 },
                 error: function (xhr, status, error) {
-                    console.log("Error al actualizar la tabla: " + error);
+                    console.error("Error al actualizar la tabla: " + error);
                 }
             });
         }
-    });
-</script>
-<script>
-    document.getElementById('rowsToShow').addEventListener('change', function () {
-        var table = document.getElementById('employeeTable');
-        var tbody = table.getElementsByTagName('tbody')[0];
-        var rows = tbody.getElementsByTagName('tr');
-        var show = this.value;
 
-        var displayCount = show === 'all' ? rows.length : parseInt(show, 10);
-
-        // Calcula el número total de páginas
-        var totalPages = Math.ceil(rows.length / displayCount);
-        createPagination(totalPages, displayCount);
-
-        function createPagination(totalPages, displayCount) {
-            var paginationContainer = document.getElementById('pagination');
-            paginationContainer.innerHTML = ''; // Limpia la paginación anterior
-
-            for (let i = 1; i <= totalPages; i++) {
-                let pageButton = document.createElement('button');
-                pageButton.textContent = i;
-                pageButton.onclick = function () {
-                    for (let j = 0; j < rows.length; j++) {
-                        // Muestra solo las filas de la página actual
-                        rows[j].style.display = (j >= (i - 1) * displayCount && j < i * displayCount) ? '' : 'none';
-                    }
-                };
-                paginationContainer.appendChild(pageButton);
-            }
-
-            // Muestra automáticamente la primera página
-            if (totalPages > 0) {
-                paginationContainer.firstChild.click();
-            }
-        }
-    });
-
-    // Inicializa la paginación con la selección actual al cargar la página
-    window.onload = function () {
-        document.getElementById('rowsToShow').dispatchEvent(new Event('change'));
-    };
-</script>
-<script>
-    document.getElementById('rowsToShow').addEventListener('change', function () {
-        var table = document.getElementById('employeeTable');
-        var tbody = table.getElementsByTagName('tbody')[0];
-        var rows = tbody.getElementsByTagName('tr');
-        var show = this.value;
-
-        // Determina el número de filas a mostrar
-        var displayCount = show === 'all' ? rows.length : parseInt(show, 10);
-
-        // Itera sobre las filas y muestra/oculta según la selección
-        for (var i = 0; i < rows.length; i++) {
-            rows[i].style.display = i < displayCount ? '' : 'none';
-        }
-    });
-</script>
-<script>
-    $(document).ready(function () {
-        // Evento de clic para el botón de empleados con faltas
-        $("#empleadosConFaltasButton").click(function () {
-            var filtro = "conFaltas";
-            actualizarTabla(filtro);
-        });
-        // Función para actualizar la tabla con los datos filtrados
-        function actualizarTabla(filtro) {
-            $.ajax({
-                url: "actualizar_tabla.php",
-                type: "POST",
-                data: { filtro: filtro },
-                success: function (response) {
-                    $("#employeeTable tbody").html(response);
-                },
-                error: function (xhr, status, error) {
-                    console.log("Error al actualizar la tabla: " + error);
-                }
-            });
-        }
-    });
-</script>
-<script>
-    $(document).ready(function () {
-        // Evento de clic para el botón de empleados con retardos
-        $("#empleadosConRetardosButton").click(function () {
-            var filtro = "conRetardos";
+        // Eventos de clic para diferentes filtros
+        $("#empleadosConSeguroButton, #empleadosConFaltasButton, #empleadosConRetardosButton").click(function () {
+            const filtro = $(this).data("filtro");
             actualizarTabla(filtro);
         });
 
-        // Función para actualizar la tabla con los datos filtrados
-        function actualizarTabla(filtro) {
-            $.ajax({
-                url: "actualizar_tabla.html",
-                type: "POST",
-                data: { filtro: filtro },
-                success: function (response) {
-                    $("#employeeTable tbody").html(response);
-                },
-                error: function (xhr, status, error) {
-                    console.log("Error al actualizar la tabla: " + error);
-                }
-            });
-        }
-    });
-</script>
-<script>
-    $(document).ready(function () {
-        // Evento de clic para el botón de total de empleados
+        // Evento para mostrar todas las filas al recargar la página
         $("#totaldeempleados").click(function () {
-            location.reload()
+            location.reload();
         });
+
+        // Evento para mostrar las filas según la selección
+        $('#rowsToShow').change(function () {
+            const table = $('#employeeTable tbody');
+            const rows = table.find('tr');
+            const show = $(this).val();
+            const displayCount = show === 'all' ? rows.length : parseInt(show, 10);
+
+            let totalPages = Math.ceil(rows.length / displayCount);
+            createPagination(totalPages, displayCount);
+
+            function createPagination(totalPages, displayCount) {
+                const paginationContainer = $('#pagination').empty();
+
+                for (let i = 1; i <= totalPages; i++) {
+                    $('<button/>', {
+                        text: i,
+                        click: function () {
+                            rows.hide().slice((i - 1) * displayCount, i * displayCount).show();
+                        }
+                    }).appendTo(paginationContainer);
+                }
+
+                if (totalPages > 0) paginationContainer.children().first().click();
+            }
+        }).trigger('change');
     });
 </script>

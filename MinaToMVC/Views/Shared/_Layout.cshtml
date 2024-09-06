@@ -366,8 +366,8 @@
                                     Venta
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" data-title="Material" href="#">Material</a>
-                                    <a class="dropdown-item" data-title="Salidas" href="#">Salidas</a>
+                                    <a class="dropdown-item" data-title="Material" href="@Url.Action("Material", "Venta")">Material</a>
+                                    <a class="dropdown-item" data-title="Salidas" href="@Url.Action("Salidas", "Venta")">Salidas</a>
                                 </div>
                             </li>
 
@@ -384,7 +384,7 @@
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" data-title="Autentication" href="#">Cerrar Sesión</a>
+                                <a class="nav-link" data-title="Autentication" href="@Url.Action("Autenticacion", "Home")">Cerrar Sesión</a>
                             </li>
                         </ul>
                     </div>
