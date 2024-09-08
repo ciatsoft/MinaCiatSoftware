@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MinaTolEntidades.DtoSucursales
 {
-    public class DtoEmpleado : BaseObject
+    public class DtoTrabajador : BaseObject
     {
         public string Nombre { get; set; }
         public string Email { get; set; }
