@@ -176,6 +176,7 @@
     <Compile Include="Controllers\AlmacenController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="DAL\HttpClientConnection.AreaTrabajo.cs" />
+    <Compile Include="DAL\HttpClientConnection.Trabajador.cs" />
     <Compile Include="DAL\HttpClientConnection.UnidadMedida.cs" />
     <Compile Include="DAL\HttpClientConnection.Usuario.cs" />
     <Compile Include="DAL\HttpClientBase.cs" />
