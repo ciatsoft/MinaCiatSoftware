@@ -1,0 +1,39 @@
+﻿@{
+    ViewBag.Title = "ReportesCStock"; // Establece el título de la vista.
+}
+<div class="content">
+    <br>
+    <center><h2>Generar Reporte con stock</h2></center>
+    <form method="POST" action="procesar_reporte.html">
+        <div id="productos-container">
+            <div class="producto">
+                <label>Selecciona el Producto:</label>
+                <select name="productos_ids[]" required>
+                    <option value='" . $row["id"] . "'></option>
+                    <option value=''>No hay productos disponibles</option>
+                </select>
+                <br>
+                <label>Cantidad a descontar:</label>
+                <input type="number" name="cantidades_descontadas[]" required min="0"><br>
+                <button type="button" onclick="eliminarProducto(this)">Quitar Producto</button><br><br>
+            </div>
+        </div>
+        <button type="button" onclick="agregarProducto()">Agregar Producto</button><br><br>
+
+        <label>Selecciona el Vehículo:</label>
+        <select name="vehiculo_id" required>
+            <option>Nombre  Placas </option>
+            <option value=''>No hay vehículos disponibles</option>
+        </select><br>
+
+        <label>Estado de la Unidad:</label><br>
+        <input type="radio" id="reparado" name="estado_unidad" value="Reparado" required>
+        <label for="reparado">Reparado</label><br>
+        <input type="radio" id="en_proceso" name="estado_unidad" value="En proceso" required>
+        <label for="en_proceso">En proceso</label><br><br>
+
+        <input type="submit" value="Generar Reporte">
+    </form>
+    <br>
+    <center><a href="listar_reportes.html"><button class="styled-button">Ver Reportes</button></a></center>
+</div>

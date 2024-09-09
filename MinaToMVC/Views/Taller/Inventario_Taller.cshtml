@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "Inventario_Taller"; // Establece el título de la vista.
+}
+<div class="content">
+    <main class="container mt-4">
+        <!-- Mensaje de agregar o editar -->
+
+        <div class="alert alert-custom"></div>
+
+        <!-- Sección de agregar al Inventario -->
+        <center><h1>Agregar al inventario</h1></center>
+
+        <form method="POST" class="formulario">
+            <input type="hidden" name="id" value="">
+            <div class="form-group">
+                <label for="nombre_producto">Nombre del Producto:</label>
+                <input type="text" id="nombre_producto" name="nombre_producto" value="" required>
+            </div>
+            <div class="form-group">
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="cantidad">Cantidad:</label>
+                <input type="number" id="cantidad" name="cantidad" value="" required min="0">
+            </div>
+            <div class="form-group">
+                <label for="numero_de_parte">Número de Parte:</label>
+                <input type="text" id="numero_de_parte" name="numero_de_parte" value="">
+            </div>
+            <div class="form-group">
+                <label for="marca">Marca:</label>
+                <input type="text" id="marca" name="marca" value="">
+            </div>
+            <div class="form-group botones">
+                <input type="submit" name="guardar" value="Guardar">
+                <br>
+                <a href="procesar_inventario.html" class="btn">Ver Lista de Inventario</a>
+            </div>
+        </form>
+
+    </main>
+</div>
