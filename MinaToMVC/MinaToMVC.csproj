@@ -103,6 +103,7 @@
     <Content Include="Assets\css\estiloVentas.css" />
     <Content Include="Assets\css\fontawesome.css" />
     <Content Include="Assets\css\fontawesome.min.css" />
+    <Content Include="Assets\css\jquery.dataTables.min.css" />
     <Content Include="Assets\css\regular.css" />
     <Content Include="Assets\css\regular.min.css" />
     <Content Include="Assets\css\responsive.css" />
@@ -140,6 +141,7 @@
     <Content Include="Assets\img\logow4.jpg" />
     <Content Include="Assets\img\lupa.png" />
     <Content Include="Assets\img\mas.png" />
+    <Content Include="Assets\img\MaterialDesign\cash-multiple.png" />
     <Content Include="Assets\img\menu.png" />
     <Content Include="Assets\img\minalogin.jpg" />
     <Content Include="Assets\img\minas.png" />
@@ -154,6 +156,7 @@
     <Content Include="Assets\js\bootstrap.js" />
     <Content Include="Assets\js\dataTables.min.js" />
     <Content Include="Assets\js\jquery-3.4.1.min.js" />
+    <Content Include="Assets\js\jquery.dataTables.min.js" />
     <Content Include="Assets\script.js" />
     <Content Include="Assets\styles.css" />
     <Content Include="Content\Site.css" />
@@ -161,6 +164,7 @@
     <Content Include="Scripts\Catalogos\UnidadMedida.js" />
     <Content Include="Scripts\Comun\Comun.js" />
     <Content Include="Scripts\Home\Autenticacion.js" />
+    <Content Include="Scripts\Trabajador\AltaEdicion.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -216,6 +220,7 @@
     <Content Include="Views\Empleado\AltaEdicion.cshtml" />
     <Content Include="Views\Venta\Material.cshtml" />
     <Content Include="Views\Venta\Salidas.cshtml" />
+    <Content Include="Views\Empleado\PartialCrudSalario.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

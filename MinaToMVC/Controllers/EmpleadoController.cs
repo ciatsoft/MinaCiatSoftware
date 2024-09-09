@@ -1,4 +1,5 @@
 ﻿using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.DtoSucursales;
 using MinaToMVC.DAL;
 using Newtonsoft.Json;
 using System;
@@ -14,6 +15,7 @@ namespace MinaToMVC.Controllers
     [Autenticated]
     public class EmpleadoController : BaseController
     {
+        #region Vistas
         public ActionResult Index()
         {
             return View();
@@ -28,5 +30,49 @@ namespace MinaToMVC.Controllers
 
             return View();
         }
+        #endregion
+
+        #region Vistas Parciales
+        public ActionResult PartialCrudSalario()
+        {
+            return PartialView();
+        }
+        #endregion
+
+        #region Acceso a Datos
+        public string GetAllTrabajadores()
+        {
+            var empleados = new List<DtoTrabajador>();
+            empleados.Add(new DtoTrabajador()
+            {
+                Id = 1,
+                Nombre = "Empleado 1",
+                Email = "empleado2@empleado.com",
+                Telefono = "4426341470"
+
+            });
+            empleados.Add(new DtoTrabajador()
+            {
+                Id = 1,
+                Nombre = "Empleado 2",
+                Email = "empleado@empleado.com",
+                Telefono = "7821409487"
+
+            });
+            empleados.Add(new DtoTrabajador()
+            {
+                Id = 1,
+                Nombre = "Empleado 3",
+                Email = "empleado3@empleado.com",
+                Telefono = "7821176433"
+
+            });
+            mr.IsSuccess = true;
+            mr.Response = empleados;
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(mr);
+        }
+        #endregion
+
     }
 }
