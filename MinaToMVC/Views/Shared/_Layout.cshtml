@@ -17,7 +17,8 @@
     <link rel="icon" href="@Url.Content("~/img/Logo.ico")" type="image/x-icon" />
 
     <!-- bootstrap core css -->
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/css/bootstrap.css")" />
+    @*<link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/css/bootstrap.css")" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">*@
 
     <!-- Custom styles for this template -->
     <!-- responsive style -->
@@ -25,10 +26,9 @@
     <script src="@Url.Content("~/Assets/script.js")"></script>
     <script src="@Url.Content("~/Assets/Administracion/js/script.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Assets/js/jquery-3.4.1.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/js/bootstrap.js")"></script>
+    @*<script type="text/javascript" src="@Url.Content("~/Assets/js/bootstrap.js")"></script>*@
     <!-- Fin a los llamados de js -->
-
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/css/bootstrap.css")" />
+    @*<link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/css/bootstrap.css")" />*@
     <link href="@Url.Content("~/Assets/css/style.css")" rel="stylesheet" />
     <link href="@Url.Content("~/Assets/css/estiloClientes.css")" rel="stylesheet" />
     <link href="@Url.Content("~/Assets/css/responsive.css")" rel="stylesheet" />
@@ -36,15 +36,20 @@
 
     <script type="text/javascript" href="@Url.Content("~/Assets/js/script.js")"></script>
     <script type="text/javascript" href="@Url.Content("~/Assets/js/jquery-3.4.1.min.js")"></script>
-    <script type="text/javascript" href="@Url.Content("~/Assets/js/bootstrap.js")"></script>
+    @*<script type="text/javascript" href="@Url.Content("~/Assets/js/bootstrap.js")"></script>*@
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
     <script src="~/Scripts/Comun/Comun.js"></script>
-    <link href="https://cdn.datatables.net/v/dt/dt-2.1.5/datatables.min.css" rel="stylesheet">
+    @*<link href="https://cdn.datatables.net/v/dt/dt-2.1.5/datatables.min.css" rel="stylesheet">*@
     <link href="@Url.Content("~/Assets/css/all.min.css")" rel="stylesheet">
-    <script src="https://cdn.datatables.net/v/dt/dt-2.1.5/datatables.min.js"></script>
+    @*<script src="https://cdn.datatables.net/v/dt/dt-2.1.5/datatables.min.js"></script>*@
+
+    <link href="~/Assets/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <script src="~/Assets/js/jquery.dataTables.min.js"></script>
 
 
 </head>
@@ -399,6 +404,29 @@
                 @RenderBody()
             </div>
         </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="modal fade" id="genericModal" role="dialog">
+                    <div class="modal-dialog modal-lg">
+
+                        <!-- Modal content-->
+                        <div class="modal-content" style=" width: 900px;">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title" id="titleGenerciModal"></h4>
+                            </div>
+                            <div class="modal-body" id="boddyGeericModal">
+                                <p>Some text in the modal.</p>
+                            </div>
+                            @*<div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>*@
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
     <div class="contacto-ciat">
@@ -422,6 +450,7 @@
             <span class="text-muted">© 2024 Desarrollado por CIATSoftware</span>
         </div>
     </footer>
+
 
 </body>
 

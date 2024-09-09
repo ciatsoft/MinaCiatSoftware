@@ -4,7 +4,7 @@
     var turnos = new List<string> { "Mañana", "Tarde", "Noche" }; // Ejemplo de turnos
     var estatus = new List<string> { "Activo", "Inactivo" }; // Ejemplo de estatus
 }
-
+<script src="~/Scripts/Trabajador/AltaEdicion.js"></script>
 <div class="content">
     <br>
     <center><h1>Empleados</h1></center>
@@ -66,6 +66,15 @@
                         }
                     </select>
                 </div>
+                <div class="col-lg-3">
+                    <label>Salario Actual</label>
+                    <input type="text" name="txtSalario" id="txtSalario" value="" style="display:none;" />
+                    <input type="text" name="txtSalarioTexto" id="txtSalarioTexto" value="" class="form-control" disabled />
+                </div>
+                <div class="col-lg-2">
+                    <br />
+                    <img src="~/Assets/img/MaterialDesign/cash-multiple.png" style="width:50px; cursor:pointer;" name="imgAddSalario" id="imgAddSalario" />
+                </div>
                 <!-- Campos ocultos para los datos automáticos -->
                 <input type="hidden" id="txtCreatedBy" value="@User.Identity.Name" />
                 <input type="hidden" id="txtCreatedDt" value="@DateTime.Now" />
@@ -76,25 +85,27 @@
 
         <br>
 
-        <div class="busqueda">
+        @*<div class="busqueda">
             <form method="get">
                 <input type="text" id="search" name="search" placeholder="Buscar por nombre o área" />
                 <button type="submit">
                     <i class="fa fa-search" aria-hidden="true"></i> Buscar
                 </button>
             </form>
-        </div>
+        </div>*@
 
         <!-- Menú desplegable para seleccionar la cantidad de filas a mostrar -->
-        <select id="rowsToShow">
+        @*<select id="rowsToShow">
             <option value="all">Todos</option>
             <option value="100">100</option>
             <option value="50">50</option>
             <option value="25">25</option>
             <option value="10">10</option>
-        </select>
+        </select>*@
+        <table id="tblEmpleados" class="table" style="width:100%;">
+        </table>
 
-        <table id="employeeTable">
+        @*<table id="employeeTable">
             <thead>
                 <tr>
                     <th><i class="fa fa-user" aria-hidden="true"></i> Nombre</th>
@@ -107,10 +118,10 @@
                 </tr>
             </thead>
             <tbody style="font-size: 16px;"></tbody>
-        </table>
+        </table>*@
         <br>
         <!-- Contenedor para la paginación -->
-        <div id="pagination"></div>
+        @*<div id="pagination"></div>*@
     </div>
 </div>
 
