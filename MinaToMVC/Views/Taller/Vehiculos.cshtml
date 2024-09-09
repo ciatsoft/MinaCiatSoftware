@@ -1,0 +1,166 @@
+﻿@{
+    ViewBag.Title = "Vehiculos"; // Establece el título de la vista.
+}
+<div class="content">
+    <br>
+    <center><h1 class="main_title_html">Vehículos</h1></center>
+    <div class="container">
+        <div class="form-container">
+            <form method="POST" action="">
+                <h2><i class="fas fa-clipboard-list"></i> Registrar Vehículo</h2>
+                <input type="hidden" name="action" value="add">
+                <label>Nombre del Vehículo:</label>
+                <input type="text" name="nombre" required><br>
+                <label>Color:</label>
+                <input type="text" name="color" required><br>
+                <label>Placas:</label>
+                <input type="text" name="placas" required><br>
+                <label>Área:</label>
+                <input type="text" name="area" required><br>
+                <label>Operador:</label>
+                <input type="text" name="operador" required><br>
+                <center><input style="background-color:#1f7f15;" type="submit" value="Registrar"></center>
+            </form>
+        </div>
+
+        <div class="table-container">
+            <h2 style="border: 2px; background-color:white; border-radius: 2px;"><i class="fas fa-list-ul"></i> Lista de Vehículos Registrados</h2>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Color</th>
+                    <th>Placas</th>
+                    <th>Área</th>
+                    <th>Operador</th>
+                    <th>Acciones</th>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <form method='POST' action='editar_vehiculo.php' style='display:inline-block;'>
+                            <input type='hidden' name='action' value='edit_form'>
+                            <input type='hidden' name='id' value='" . $row[' id'] . "'>
+                            <input type='submit' value='Editar'>
+                        </form>
+                        <form method='POST' action='' style='display:inline-block;'>
+                            <input type='hidden' name='action' value='delete'>
+                            <input type='hidden' name='id' value='" . $row[' id'] . "'>
+                            <input type='submit' style='background-color:#fa1f0c;' value='Eliminar'>
+                        </form>
+                    </td>
+                </tr>
+                <tr><td colspan='7'>No hay vehículos registrados</td></tr>
+            </table>
+        </div>
+    </div>
+</div>
+<style>
+
+    .main_title_html {
+        background-color: white;
+        font-family: Helvetica Neue;
+        font-size: 30px;
+        color: black;
+        width: 70%;
+        padding: 5px;
+        border: 20px;
+        border-radius: 100px;
+        border: 3px solid black;
+    }
+
+
+    body {
+        background-color: #83988e;
+    }
+    /* Estilos para el contenedor principal */
+    .container {
+        display: flex;
+        justify-content: space-around;
+        margin: 20px;
+    }
+
+    /* Estilos generales para el formulario */
+    form {
+        max-width: 500px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Estilos para etiquetas */
+    label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    /* Estilos para los campos de entrada */
+    input[type="text"] {
+        width: calc(100% - 12px);
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    /* Estilos para el botón de enviar */
+    input[type="submit"] {
+        color: black;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+
+
+    /* Estilos generales para la tabla */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    /* Estilos para las celdas de encabezado */
+    th {
+        background-color: #007BFF;
+        color: white;
+        padding: 10px;
+        text-align: left;
+    }
+
+    /* Estilos para las celdas de datos */
+    td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    /* Estilos para filas impares (alternancia de color) */
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    /* Estilos para el título */
+    h2 {
+        text-align: center;
+        margin-top: 20px;
+        color: #333;
+    }
+
+    /* Estilos para la sección de la tabla */
+    .table-container {
+        max-width: 800px;
+    }
+</style>

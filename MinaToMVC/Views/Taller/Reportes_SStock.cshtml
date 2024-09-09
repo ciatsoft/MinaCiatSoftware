@@ -1,0 +1,53 @@
+﻿@{
+    ViewBag.Title = "Reportes_SStock"; // Establece el título de la vista.
+}
+<div class="content">
+    <br>
+    <center><h2>Generar Reporte sin stock</h2></center>
+
+    <form action="generar_reporte.html" method="POST">
+        <label>Selecciona el Vehículo:</label>
+        <select name="vehiculo_id" required>
+            <option value='ID'></option>
+            <option value=''>No hay vehículos disponibles</option>
+
+        </select><br><br>
+
+        <label>Descripción de la Reparación:</label><br>
+        <textarea name="descripcion" rows="4" cols="50" required></textarea><br><br>
+
+        <label>Refacciones Utilizadas:</label><br>
+        <textarea name="refacciones" rows="4" cols="50"></textarea><br><br>
+
+        <label class="text-black">Estado de la Reparación:</label><br>
+        <input type="radio" name="estado" value="reparado" required> <span class="text-black">Reparado</span><br>
+        <input type="radio" name="estado" value="en_proceso" required> <span class="text-black">En Proceso</span><br><br>
+
+
+        <input type="submit" value="Generar Reporte">
+    </form>
+
+    <br>
+    <center><a href="listar_reportes2.html"><button class="styled-button">Ver Reportes</button></a></center>
+
+    <script>
+    function validateInput() {
+        const descripcion = document.querySelector('textarea[name="descripcion"]').value;
+        const refacciones = document.querySelector('textarea[name="refacciones"]').value;
+
+        const regex = /^[a-zA-Z0-9\s]*$/; // Permite solo letras, números y espacios
+
+        if (!regex.test(descripcion)) {
+            alert('La descripción solo puede contener letras, números y espacios.');
+            return false;
+        }
+
+        if (!regex.test(refacciones)) {
+            alert('Las refacciones solo pueden contener letras, números y espacios.');
+            return false;
+        }
+
+        return true;
+    }
+    </script>
+</div>

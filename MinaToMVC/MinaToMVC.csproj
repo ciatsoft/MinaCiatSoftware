@@ -221,6 +221,10 @@
     <Content Include="Views\Venta\Material.cshtml" />
     <Content Include="Views\Venta\Salidas.cshtml" />
     <Content Include="Views\Empleado\PartialCrudSalario.cshtml" />
+    <Content Include="Views\Taller\Vehiculos.cshtml" />
+    <Content Include="Views\Taller\Inventario_Taller.cshtml" />
+    <Content Include="Views\Taller\ReportesCStock.cshtml" />
+    <Content Include="Views\Taller\Reportes_SStock.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -231,7 +235,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
-    <Folder Include="Views\Taller\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MinaTolEntidades\MinaTolEntidades.csproj">

@@ -17,8 +17,8 @@
     <link rel="icon" href="@Url.Content("~/img/Logo.ico")" type="image/x-icon" />
 
     <!-- bootstrap core css -->
-    @*<link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/css/bootstrap.css")" />
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">*@
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/css/bootstrap.css")" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
     <!-- Custom styles for this template -->
     <!-- responsive style -->
@@ -381,10 +381,10 @@
                                     Taller
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" data-title="Vehiculos" href="#">Vehículos</a>
-                                    <a class="dropdown-item" data-title="InventarioTaller" href="#">Inventario del taller</a>
-                                    <a class="dropdown-item" data-title="ReportesStock" href="#">Reportes con stock</a>
-                                    <a class="dropdown-item" data-title="ReportesSinStock" href="#">Reportes sin stock</a>
+                                    <a class="dropdown-item" data-title="Vehiculos" href="@Url.Action("Vehiculos", "Taller")">Vehículos</a>
+                                    <a class="dropdown-item" data-title="InventarioTaller" href="@Url.Action("Inventario_Taller", "Taller")">Inventario del taller</a>
+                                    <a class="dropdown-item" data-title="ReportesStock" href="@Url.Action("ReportesCStock", "Taller")">Reportes con stock</a>
+                                    <a class="dropdown-item" data-title="ReportesSinStock" href="@Url.Action("Reportes_SStock", "Taller")">Reportes sin stock</a>
                                 </div>
                             </li>
 
