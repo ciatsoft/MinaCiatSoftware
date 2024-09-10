@@ -1,4 +1,5 @@
-﻿using MinaTolEntidades.DtoSucursales;
+﻿using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.DtoSucursales;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace MinaToMVC.Controllers
 
 
         #region Unidad de Medida
+
         public ActionResult UnidadMedida()
         {
             return View();
@@ -45,12 +47,28 @@ namespace MinaToMVC.Controllers
         #endregion
 
         #region Area Trabajo
+        public ActionResult AreaTrabajo()
+        {
+            return View();
+        }
         public async Task<string> GetAllAreaTrabajo()
         {
             var token = Helpers.SessionHelper.GetSessionUser();
             var result = await httpClientConnection.GetAllAreaTrabajo(token.Token.access_token);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+        public async Task<ActionResult> SaveOrUpdateAreaTrabajo(DtoAreaTrabajo ar)
+        {
+            httpClientConnection.MappingColumSecurity(ar);
+            var result = await httpClientConnection.SaveOrUpdateAreaTrabajo(ar);
+            return RedirectToAction("AreaTrabajo", "Catalog");
+        }
+        public async Task<string> GetAreaTrabajoById (long id)
+        {
+            var result = await httpClientConnection.GetAreaTrabajoById(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
         #endregion
     }
 }
