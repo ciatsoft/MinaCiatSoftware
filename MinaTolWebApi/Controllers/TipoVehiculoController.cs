@@ -19,21 +19,18 @@ namespace MinaTolWebApi.Controllers
         {
             wrapper = new DbWrapper();
         }
-        [AllowAnonymous]
         [Route("List"), HttpGet]
         public async Task <ModelResponse> GetAllTipoVehiculo()
         {
             var result = wrapper.GetAllTipoVehiculo();
             return result;
         }
-        [AllowAnonymous]
         [HttpGet, Route("{id:long}")]
         public async Task<ModelResponse> GetTipoDeVehiculoById(int id)
         {
             var result = wrapper.GetTipoDeVehiculoById(id);
             return result;
         }
-        [AllowAnonymous]
         [HttpPost, Route("")]
         public async Task<ModelResponse> SaveOrUpdateTipoVehiculo(TipoVehiculo t)
         {

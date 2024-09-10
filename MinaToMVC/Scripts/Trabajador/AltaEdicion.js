@@ -18,7 +18,7 @@
             { data: "Telefono", title: "Teléfono" }
         ]
     });
-
+    
     GetAllTrabajadores();
 });
 
