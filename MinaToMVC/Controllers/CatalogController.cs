@@ -70,5 +70,14 @@ namespace MinaToMVC.Controllers
         }
 
         #endregion
+
+        #region Tipo de Vehiculo
+
+        public ActionResult TipoVehiculo()
+        {
+            return View();
+        }
+
+        #endregion
     }
 }
