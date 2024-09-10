@@ -37,5 +37,63 @@ namespace MinaTolWebApi.DAL
 
             return modelResponse;
         }
+
+        public ModelResponse SaveOrUpdateAreaTrabajo(DtoAreaTrabajo a)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = GenerateSQLParameters(a);
+                var result = GetObject("SaveOrUpdateAreaTrabajo", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, DtoAreaTrabajo>((reader) =>
+                    {
+                        var r = FillEntity<DtoAreaTrabajo>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+        public ModelResponse GetAreaTrabajoById(int id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id",
+                    SqlDbType = System.Data.SqlDbType.Int
+                });
+
+                var result = GetObject("GetAreaTrabajoById", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, DtoAreaTrabajo>((reader) =>
+                    {
+                        var r = FillEntity<DtoAreaTrabajo>(reader);
+                        return r;
+                    }));
+
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
     }
 }

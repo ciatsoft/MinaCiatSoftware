@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using MinaTolEntidades.DtoCatalogos;
 
 namespace MinaToMVC.DAL
 {
@@ -24,6 +25,27 @@ namespace MinaToMVC.DAL
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
 
             return modelResponse;
+        }
+
+        public async Task<ModelResponse> SaveOrUpdateAreaTrabajo (DtoAreaTrabajo ar)
+        {
+            var result = await RequestAsync<object>("api/AreaTrabajo/", HttpMethod.Post, ar,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+
+        public async Task<ModelResponse> GetAreaTrabajoById(long areatrabajoId)
+        {
+            var result = RequestAsync("api/AreaTrabajo/GetAreaTrabajoById/{areatrabajoId}", HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }));
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
         }
     }
 }

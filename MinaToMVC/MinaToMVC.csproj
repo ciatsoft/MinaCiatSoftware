@@ -225,6 +225,7 @@
     <Content Include="Views\Taller\Inventario_Taller.cshtml" />
     <Content Include="Views\Taller\ReportesCStock.cshtml" />
     <Content Include="Views\Taller\Reportes_SStock.cshtml" />
+    <Content Include="Views\Catalog\AreaTrabajo.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
