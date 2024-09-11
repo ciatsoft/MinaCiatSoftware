@@ -8,66 +8,112 @@
     <link href="~/Assets/css/dataTables.dataTables.min.css" rel="stylesheet" />
     <script src="~/Assets/js/dataTables.min.js"></script>
 
-<div class="content">
-    <br>
-    <center><h1>Area de Trabajo</h1></center>
-    <div class="tabla-consultas-areadetrabajo" >
-        <div class="rectangulos" style="width: 100%;">
-            <div class="row">
-                <div class="col-lg-3">
-                    <label>ID area trabajo:</label>
-                    <input type="text" id="txtidareatrabajo" class="form-control" disabled />
-                </div>
-                <div class="col-lg-3">
-                    <label>Nombre:</label>
-                    <input type="text" id="txtNombre" class="form-control" />
-                </div>
-                <div class=" col-lg-3">
-                    <label>Descripcion:</label>
-                    <input type="text" id="txtDescripcion" class="form-control" />
-                </div>
-                <div class=" col-lg-3">
-                    <label>Estatus:</label>
-                    <select id="ddlEstatus" class="form-control">
-                        @foreach (var est in estatus)
-                        {
-                            <option value="@est">@est</option>
-                        }
-                    </select>
+    <div class="content">
+        
+        <form id="frmareaTrabajo" name="frmareaTrabajo" method="post" enctype="multipart/form-data" action="@Url.Action("SaveOrUpdateAreaTrabajo","Catalog")">
+            @Html.HiddenFor(x => x.Id)
+            <br>
+            <center><h1>Area de Trabajo</h1></center>
+            <div class="tabla-consultas-areadetrabajo">
+                <div class="rectangulos" style="width: 100%;">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <label>ID area trabajo:</label>
+                            <input type="text" id="txtidareatrabajo" class="form-control" disabled />
+                        </div>
+                        <div class="col-lg-3">
+                            <label>Nombre:</label>
+                            <input type="text" id="txtNombre" class="form-control" />
+                        </div>
+                        <div class=" col-lg-3">
+                            <label>Descripcion:</label>
+                            <input type="text" id="txtDescripcion" class="form-control" />
+                        </div>
+                        <div class=" col-lg-3">
+                            <label>Estatus:</label>
+                            <input type="checkbox" name="chbEstatus" id="chbEstatus" value="" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-12">
+                            <input type="button" id="btnGuardarAreaTrabajo" value="Guardar" class="btn btn-success" />
+                            <input type="button" value="Cancelar" class="btn btn-warning" />
+                        </div>
+                    </div>
+                    <input type="hidden" id="txtCreatedBy" value="@User.Identity.Name" />
+                    <input type="hidden" id="txtCreatedDt" value="@DateTime.Now" />
+                    <input type="hidden" id="txtUpdatedBy" value="@User.Identity.Name" />
+                    <input type="hidden" id="txtUpdatedDt" value="@DateTime.Now" />
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <input type="submit" value="Guardar" class="btn btn-success" />
-                    <input type="button" value="Cancelar" class="btn btn-warning" />
-                </div>
-            </div>
-            <input type="hidden" id="txtCreatedBy" value="@User.Identity.Name" />
-            <input type="hidden" id="txtCreatedDt" value="@DateTime.Now" />
-            <input type="hidden" id="txtUpdatedBy" value="@User.Identity.Name" />
-            <input type="hidden" id="txtUpdatedDt" value="@DateTime.Now" />
-        </div>
+        </form>
     </div>
-</div>
-<table id="tblAreaTrabajo" class="table" style="width:100%;"></table>
+    <div class="row">
+        @*<select id="rowsToShow">
+            <option value="all">Todos</option>
+            <option value="100">100</option>
+            <option value="50">50</option>
+            <option value="25">25</option>
+            <option value="10">10</option>
+        </select>*@
+        <div class="col-lg-12">
+            <table class="table table-bordered table-striped" id="tableareaTrabajo" style="width: 100%;"></table>
+        </div>
+        @*<table id="areatrabajoTable">
+            <thead>
+                <tr>
+                    <th><i class="fa fa-user" aria-hidden="true"></i> Nombre</th>
+                    <th><i class="fa fa-industry" aria-hidden="true"></i> Descripcion</th>
+                </tr>
+            </thead>
+            <tbody style="font-size: 16px;"></tbody>
+        </table>*@
+    </div>
+     
+  
 <script>
-    $(document).ready(function () {
-        function actualizarTabla(filtro) {
-            $.ajax({
-                url: "actualizar_tabla.php",
-                type: "POST",
-                data: { filtro: filtro },
-                success: function (response) {
-                    $("#areatrabajoTable tbody").html(response);
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error al actualizar la tabla: " + error);
+    $(function () {
+        $("#frmareaTrabajo").validate({
+            rules: {
+                "Nombre": "required",
+                "Descripcion": "required"
+            },
+            messages: {
+                "Nombre": "Campo Obligatorio",
+                "Descripcion": "Campo Obligatorio"
+
+            }
+        });
+        $('#rowsToShow').change(function () {
+            const table = $('#areatrabajoTable tbody');
+            const rows = table.find('tr');
+            const show = $(this).val();
+            const displayCount = show === 'all' ? rows.length : parseInt(show, 10);
+
+            let totalPages = Math.ceil(rows.length / displayCount);
+            createPagination(totalPages, displayCount);
+
+            function createPagination(totalPages, displayCount) {
+                const paginationContainer = $('#pagination').empty();
+
+                for (let i = 1; i <= totalPages; i++) {
+                    $('<button/>', {
+                        text: i,
+                        click: function () {
+                            rows.hide().slice((i - 1) * displayCount, i * displayCount).show();
+                        }
+                    }).appendTo(paginationContainer);
                 }
-            });
-        }
-    }
+
+                if (totalPages > 0) paginationContainer.children().first().click();
+            }
+        }).trigger('change');
+    });
+
+     var areaTrabajoId = JSON.parse('@Html.Raw((Newtonsoft.Json.JsonConvert.SerializeObject(Model)))');
+     var urlGetAllAreaTrabajo = "@Url.Action("GetAllAreaTrabajo", "Catalog")";
+     var urlareaTrabajoPorId = "@Url.Action("GetAreaTrabajoById", "Catalog")";
+     var urlSaveOrUpdateAreaTrabajo= "@Url.Action("SaveOrUpdateAreaTrabajo", "Catalog")";
 </script>
-
-<script src="~/Scripts/Catalogos/.js"></script>
-    
-
+ 
+<script src="~/Scripts/Catalogos/AreaTrabajo.js"></script>
