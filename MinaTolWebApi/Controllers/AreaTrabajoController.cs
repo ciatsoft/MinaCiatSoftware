@@ -19,7 +19,7 @@ namespace MinaTolWebApi.Controllers
         {
             wrapper = new DbWrapper();
         }
-
+        [AllowAnonymous]
         [Route("List"), HttpGet]
         public ModelResponse GetAllAreaTrabajo()
         {
@@ -38,7 +38,7 @@ namespace MinaTolWebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost, Route("")]
-        public async Task<ModelResponse> SaveOrUpdateAreaTrabajo(DtoAreaTrabajo at)
+        public ModelResponse SaveOrUpdateAreaTrabajo(DtoAreaTrabajo at)
         {
             var result = wrapper.SaveOrUpdateAreaTrabajo(at);
             return result;
