@@ -34,6 +34,7 @@
     <!-- Fin a los llamados de js -->
     <script src="~/Scripts/Comun/Comun.js"></script>
 
+
 </head>
 
 <style>
@@ -104,6 +105,37 @@
         border: none;
         border-radius: 50px;
         font-size: 25px;
+    }
+</style>
+
+<style>
+    .field-validation-error {
+        color: red;
+    }
+
+    form .error {
+        color: #ff0000;
+        font-size: 1rem;
+        position: relative;
+        line-height: 1;
+        width: 100%;
+    }
+
+    .requerid {
+        color: red !important;
+    }
+
+    td.details-control {
+        background: url('https://datatables.net/examples/resources/details_open.png') no-repeat center center;
+        cursor: pointer;
+    }
+
+    tr.shown td.details-control {
+        background: url('https://datatables.net/examples/resources/details_close.png') no-repeat center center;
+    }
+
+    searchTableButton {
+        background: url('/Assets/img/magnify.png');
     }
 </style>
 

@@ -1,6 +1,7 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.DtoEmpleados;
+using MinaTolEntidades.DtoSucursales;
 using MinaTolWebApi.DAL;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,13 @@ namespace MinaTolWebApi.Controllers
         public ModelResponse SaveOrUpdateSalario(DtoSalario s)
         {
             var result = wrapper.SaveOrUpdateSalario(s);
+            return result;
+        }
+
+        [HttpPost, Route("")]
+        public ModelResponse SaveOrupdateTrabajador(DtoTrabajador t)
+        {
+            var result = wrapper.SaveOrupdateTrabajador(t);
             return result;
         }
     }

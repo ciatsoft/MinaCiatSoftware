@@ -18,44 +18,38 @@
                 @Html.HiddenFor(x => x.UpdatedBy)
                 @Html.HiddenFor(x => x.UpdatedDt)
 
-                <div class="row form-group">
-                    <div class="col-6">
-                        <label> Nombre </label>
-                        @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control" })
-                    </div>
+            <div class="row form-group">
+                <div class="col-6">
+                    <label> Nombre </label>
+                    @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control" })
+                </div>
 
-                    <div class="col-6">
-                        <label> Descripcion </label>
-                        @Html.TextBoxFor(x => x.Descripcion, new { @class = "form-control" })
-                    </div>
+                <div class="col-6">
+                    <label> Descripcion </label>
+                    @Html.TextBoxFor(x => x.Descripcion, new { @class = "form-control" })
                 </div>
-                <div class="row form-group">
-                    <div class="col-md-12">
-                        <input type="submit" value="Guardar" class="btn btn-success" />
-                        <input type="button" value="Cancelar" class="btn btn-warning" />
-                    </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-md-12">
+                    <input type="submit" value="Guardar" class="btn btn-success" />
+                    <input type="button" value="Cancelar" class="btn btn-warning" />
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <table class="table table-bordered table-striped" id="tableUnidadMedida" style="width: 100%;"></table>
-        </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <table class="table table-bordered table-striped" id="tableUnidadMedida" style="width: 100%;"></table>
     </div>
+</div>
 
 </div>
 
 
-
-
-
-
-
-
 <script>
     $(function () {
-        $("#frmUnidadMedida").validate({
+        $("#/*/*frmUnidadMedida*/*/").validate({
             rules: {
                 "Nombre": "required",
                 "Descripcion": "required"
