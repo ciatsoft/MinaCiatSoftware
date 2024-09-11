@@ -151,6 +151,7 @@
     <Compile Include="DAL\DbWrapper.Producto.cs" />
     <Compile Include="DAL\DbWrapper.Salario.cs" />
     <Compile Include="DAL\DbWrapper.TipoVehiculo.cs" />
+    <Compile Include="DAL\DbWrapper.Trabajador.cs" />
     <Compile Include="DAL\DbWrapper.UnidadMedida.cs" />
     <Compile Include="DAL\DbWrapper.Usuario.cs" />
     <Compile Include="DAL\DbWrapper.Vehiculo.cs" />

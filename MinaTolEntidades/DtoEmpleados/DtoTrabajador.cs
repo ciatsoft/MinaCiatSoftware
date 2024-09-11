@@ -12,6 +12,9 @@ namespace MinaTolEntidades.DtoSucursales
         public string Nombre { get; set; }
         public string Email { get; set; }
         public string Telefono { get; set; }
+        public DateTime FechaContratacion { get; set; }
+        public string Seguro { get; set; }
+        public string Turno { get; set; }
         public DtoAreaTrabajo AreaTrabajo { get; set; }
     }
 }
