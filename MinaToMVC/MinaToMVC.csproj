@@ -100,6 +100,7 @@
     <Content Include="Assets\css\brands.min.css" />
     <Content Include="Assets\css\dataTables.dataTables.min.css" />
     <Content Include="Assets\css\estiloClientes.css" />
+    <Content Include="Assets\css\EstilosBtnCambios\EstiloBtn.css" />
     <Content Include="Assets\css\estiloVentas.css" />
     <Content Include="Assets\css\fontawesome.css" />
     <Content Include="Assets\css\fontawesome.min.css" />
@@ -161,6 +162,7 @@
     <Content Include="Assets\styles.css" />
     <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\Catalogos\AltaTipoVehiculo.js" />
     <Content Include="Scripts\Catalogos\AreaTrabajo.js" />
     <Content Include="Scripts\Catalogos\UnidadMedida.js" />
     <Content Include="Scripts\Comun\Comun.js" />

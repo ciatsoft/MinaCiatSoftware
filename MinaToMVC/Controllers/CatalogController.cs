@@ -8,9 +8,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using static MinaToMVC.Controllers.Filters.FiltersHelper;
 
 namespace MinaToMVC.Controllers
 {
+    [Autenticated]
     public class CatalogController : BaseController
     {
         // GET: Catalog
@@ -78,32 +80,15 @@ namespace MinaToMVC.Controllers
         {
             return View();
         }
-
-        public async Task<string> GetAllTipoVehiculo()
+        public string SaveOrUpdateTipoVehiculo(TipoVehiculo t)
         {
-            // Llamada al método GetAllTipoVehiculo desde la capa de conexión HTTP.
-            var result = await httpClientConnection.GetAllTipoVehiculo();
+
+            var result = httpClientConnection.SaveOrUpdateTipoVehiculo(t);
             return JsonConvert.SerializeObject(result);
         }
 
-        public async Task<ActionResult> SaveOrUpdateTipoVehiculo(TipoVehiculo t)
-        {
-            // Mapeo de las columnas de seguridad antes de guardar o actualizar
-            httpClientConnection.MappingColumSecurity(t);
 
-            // Llamada para guardar o actualizar el tipo de vehículo
-            var result = await httpClientConnection.SaveOrUpdateTipoVehiculo(t);
 
-            // Redirigir a la vista de TipoVehiculo
-            return RedirectToAction("TipoVehiculo", "Catalog");
-        }
-
-        public async Task<string> GetTipoVehiculoById(long id)
-        {
-            // Llamada al método GetTipoVehiculoById desde la capa de conexión HTTP.
-            var result = await httpClientConnection.GetTipoDeVehiculoById(id);
-            return JsonConvert.SerializeObject(result);
-        }
         #endregion
     }
 }

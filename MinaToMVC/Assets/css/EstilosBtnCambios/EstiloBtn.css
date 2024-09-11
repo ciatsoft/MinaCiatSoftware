@@ -1,0 +1,32 @@
+﻿
+
+
+<style >
+
+.btn-custom-save {
+    background-color: #28a745; /* Verde para el botón Guardar */
+    color: white;
+    border: none;
+    transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+}
+
+.btn-custom-cancel {
+    background-color: #dc3545; /* Rojo para el botón Cancelar */
+    color: white;
+    border: none;
+    transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+}
+
+.btn-custom-save:hover {
+    background-color: #218838; /* Color verde más oscuro al pasar el ratón */
+    transform: scale(1.1); /* Aumenta el tamaño del botón */
+    color: white; /* Color de texto blanco */
+}
+
+.btn-custom-cancel:hover {
+    background-color: #c82333; /* Color rojo más oscuro al pasar el ratón */
+    transform: scale(1.1); /* Aumenta el tamaño del botón */
+    color: white; /* Color de texto blanco */
+}
+
+</style >

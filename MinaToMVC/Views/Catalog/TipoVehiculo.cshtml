@@ -2,13 +2,31 @@
 @{
     ViewBag.Title = "TipoVehiculo";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var estatus = new List<string> { "Activo", "Inactivo" };
 }
 
-<div class="content">
-    <br>
-    <center><h1>Tipo de vehiculo</h1></center>
-    <form id="frmtipovehiculo" name="frmtipovehiculo" method="post" enctype="multipart/form-data" action="@Url.Action("SaveOrUpdateUnidadTipoVehiculo","Catalog")">
+<link href="@Url.Content("~/Assets/css/EstilosBtnCambios/EstiloBtn.css")" rel="stylesheet" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<script src="~/Scripts/Catalogos/AltaTipoVehiculo.js"></script>
+<style>
+    .btn-success {
+        background-color: #28a745; /* Verde para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-success:hover {
+            background-color: #218838; /* Color verde más oscuro al pasar el ratón */
+            transform: scale(1.1); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+</style>
+
+<form id="frmtipovehiculo" name="frmtipovehiculo" method="post" enctype="multipart/form-data">
+    <div class="content">
+        <br>
+        <center><h1>Tipo de vehiculo</h1></center>
         <div class="tabla-consultas-tipovehiculo">
             <div class="rectangulos" style="width: 100%;">
                 <div class="row">
@@ -17,8 +35,8 @@
                         <input type="text" id="txtidtipovehiculo" name="idtipovehiculo" class="form-control" disabled />
                     </div>
                     <div class="col-lg-3">
-                        <label>Vehiculo:</label>
-                        <input type="text" id="txtNombreVehiculo" name="NombreVehiculo" class="form-control" maxlength="80" />
+                        <label>Nombre del Vehiculo:</label>
+                        <input type="text" id="txtNombre" name="txtNombre" class="form-control" />
                     </div>
                     <div class="col-lg-3">
                         <label>Descripcion:</label>
@@ -26,17 +44,15 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Estatus:</label>
-                        <select id="ddlEstatus" name="Estatus" class="form-control">
-                            @foreach (var est in estatus)
-                            {
-                                <option value="@est">@est</option>
-                            }
-                        </select>
+                        <div class="form-check">
+                            <input type="checkbox" id="chkEstatus" name="Estatus" value="Activo" class="form-check-input" /><
+                            <label class="form-check-label" for="chkEstatus"> Activo</label>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <input type="submit" value="Guardar" class="btn btn-custom-save" />
+                        <input type="button" value="Guardar" onclick="SaveOrUpdateTipoVehiculo()" class="btn btn-success" />
                         <input type="button" value="Cancelar" class="btn btn-custom-cancel" />
                     </div>
                 </div>
@@ -47,79 +63,30 @@
                 <input type="hidden" id="txtUpdatedDt" name="UpdatedDt" value="@DateTime.Now" />
             </div>
         </div>
-    </form>
 
 
-    <br />
+        <br />
 
-    <table id="tblTipoVehiculo" class="display" style="width:100%;">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Vehiculo</th>
-                <th>Descripcion</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Los datos se cargarán aquí por DataTables -->
-        </tbody>
-    </table>
+        <table id="tblTipoVehiculo" class="display" style="width:100%;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Vehiculo</th>
+                    <th>Descripcion</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Los datos se cargarán aquí por DataTables -->
+            </tbody>
+        </table>
 
-</div>
-<script>
-    $(document).ready(function () {
+    </div>
 
-        // Añadir reglas de validación
-        $("form").validate({
-            rules: {
-                txtNombreVehiculo: {
-                    required: true,
-                    minlength: 1,
-                    maxlength: 80,
-                    pattern: "^[a-zA-Z]+$"
-                }
-            },
-            messages: {
-                txtNombreVehiculo: {
-                    required: "El nombre del vehículo es obligatorio.",
-                    maxlength: "El nombre no puede tener más de 80 caracteres.",
-                    pattern: "Solo se permiten letras."
-                }
-            }
-        });
-    });
-</script>
+</form>
+
 <script>
     $(document).ready(function () {
         $('#tblTipoVehiculo').DataTable();
     });
 </script>
-
-<style>
-    .btn-custom-save {
-        background-color: #28a745; /* Verde para el botón Guardar */
-        color: white;
-        border: none;
-        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
-    }
-
-    .btn-custom-cancel {
-        background-color: #dc3545; /* Rojo para el botón Cancelar */
-        color: white;
-        border: none;
-        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
-    }
-
-    .btn-custom-save:hover {
-        background-color: #218838; /* Color verde más oscuro al pasar el ratón */
-        transform: scale(1.1); /* Aumenta el tamaño del botón */
-        color: white; /* Color de texto blanco */
-    }
-
-    .btn-custom-cancel:hover {
-        background-color: #c82333; /* Color rojo más oscuro al pasar el ratón */
-        transform: scale(1.1); /* Aumenta el tamaño del botón */
-        color: white; /* Color de texto blanco */
-    }
-</style>
