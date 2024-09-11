@@ -1,7 +1,125 @@
-﻿
+﻿@model IEnumerable<MinaTolEntidades.DtoClientes.TipoVehiculo>
 @{
     ViewBag.Title = "TipoVehiculo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var estatus = new List<string> { "Activo", "Inactivo" };
 }
 
-<h2>TipoVehiculo</h2>
+<div class="content">
+    <br>
+    <center><h1>Tipo de vehiculo</h1></center>
+    <form id="frmtipovehiculo" name="frmtipovehiculo" method="post" enctype="multipart/form-data" action="@Url.Action("SaveOrUpdateUnidadTipoVehiculo","Catalog")">
+        <div class="tabla-consultas-tipovehiculo">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>ID Tipo Vehiculo:</label>
+                        <input type="text" id="txtidtipovehiculo" name="idtipovehiculo" class="form-control" disabled />
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Vehiculo:</label>
+                        <input type="text" id="txtNombreVehiculo" name="NombreVehiculo" class="form-control" maxlength="80" />
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Descripcion:</label>
+                        <input type="text" id="txtDescripcion" name="Descripcion" class="form-control" />
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Estatus:</label>
+                        <select id="ddlEstatus" name="Estatus" class="form-control">
+                            @foreach (var est in estatus)
+                            {
+                                <option value="@est">@est</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="submit" value="Guardar" class="btn btn-custom-save" />
+                        <input type="button" value="Cancelar" class="btn btn-custom-cancel" />
+                    </div>
+                </div>
 
+                <input type="hidden" id="txtCreatedBy" name="CreatedBy" value="@User.Identity.Name" />
+                <input type="hidden" id="txtCreatedDt" name="CreatedDt" value="@DateTime.Now" />
+                <input type="hidden" id="txtUpdatedBy" name="UpdatedBy" value="@User.Identity.Name" />
+                <input type="hidden" id="txtUpdatedDt" name="UpdatedDt" value="@DateTime.Now" />
+            </div>
+        </div>
+    </form>
+
+
+    <br />
+
+    <table id="tblTipoVehiculo" class="display" style="width:100%;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Vehiculo</th>
+                <th>Descripcion</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Los datos se cargarán aquí por DataTables -->
+        </tbody>
+    </table>
+
+</div>
+<script>
+    $(document).ready(function () {
+
+        // Añadir reglas de validación
+        $("form").validate({
+            rules: {
+                txtNombreVehiculo: {
+                    required: true,
+                    minlength: 1,
+                    maxlength: 80,
+                    pattern: "^[a-zA-Z]+$"
+                }
+            },
+            messages: {
+                txtNombreVehiculo: {
+                    required: "El nombre del vehículo es obligatorio.",
+                    maxlength: "El nombre no puede tener más de 80 caracteres.",
+                    pattern: "Solo se permiten letras."
+                }
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#tblTipoVehiculo').DataTable();
+    });
+</script>
+
+<style>
+    .btn-custom-save {
+        background-color: #28a745; /* Verde para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+    .btn-custom-cancel {
+        background-color: #dc3545; /* Rojo para el botón Cancelar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+    .btn-custom-save:hover {
+        background-color: #218838; /* Color verde más oscuro al pasar el ratón */
+        transform: scale(1.1); /* Aumenta el tamaño del botón */
+        color: white; /* Color de texto blanco */
+    }
+
+    .btn-custom-cancel:hover {
+        background-color: #c82333; /* Color rojo más oscuro al pasar el ratón */
+        transform: scale(1.1); /* Aumenta el tamaño del botón */
+        color: white; /* Color de texto blanco */
+    }
+</style>

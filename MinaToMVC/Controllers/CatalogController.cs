@@ -1,4 +1,5 @@
 ﻿using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.DtoSucursales;
 using Newtonsoft.Json;
 using System;
@@ -78,6 +79,31 @@ namespace MinaToMVC.Controllers
             return View();
         }
 
+        public async Task<string> GetAllTipoVehiculo()
+        {
+            // Llamada al método GetAllTipoVehiculo desde la capa de conexión HTTP.
+            var result = await httpClientConnection.GetAllTipoVehiculo();
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<ActionResult> SaveOrUpdateTipoVehiculo(TipoVehiculo t)
+        {
+            // Mapeo de las columnas de seguridad antes de guardar o actualizar
+            httpClientConnection.MappingColumSecurity(t);
+
+            // Llamada para guardar o actualizar el tipo de vehículo
+            var result = await httpClientConnection.SaveOrUpdateTipoVehiculo(t);
+
+            // Redirigir a la vista de TipoVehiculo
+            return RedirectToAction("TipoVehiculo", "Catalog");
+        }
+
+        public async Task<string> GetTipoVehiculoById(long id)
+        {
+            // Llamada al método GetTipoVehiculoById desde la capa de conexión HTTP.
+            var result = await httpClientConnection.GetTipoDeVehiculoById(id);
+            return JsonConvert.SerializeObject(result);
+        }
         #endregion
     }
 }
