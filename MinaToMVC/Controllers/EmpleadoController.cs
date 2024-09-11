@@ -72,6 +72,13 @@ namespace MinaToMVC.Controllers
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(mr);
         }
+
+        public string SaveOrupdateTrabajador(DtoTrabajador t)
+        {
+            t.FechaContratacion = DateTime.Now;
+            var result = httpClientConnection.SaveOrupdateTrabajador(t);
+            return JsonConvert.SerializeObject(result);
+        }
         #endregion
 
     }
