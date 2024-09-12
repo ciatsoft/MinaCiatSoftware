@@ -1,7 +1,7 @@
 ﻿@{
     ViewBag.Title = "Alta/Edición Empleado";
     var areasTrabajo = (List<MinaTolEntidades.DtoCatalogos.DtoAreaTrabajo>)ViewBag.AreasDeTrabajo;
-    var turnos = new List<string> { "Mañana", "Tarde", "Noche" }; // Ejemplo de turnos
+    //var turnos = new List<string> { "Mañana", "Tarde", "Noche" }; // Ejemplo de turnos
     var estatus = new List<string> { "Activo", "Inactivo" }; // Ejemplo de estatus
 }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
@@ -43,10 +43,9 @@
                     <div class="col-lg-3">
                         <label>Turno:</label>
                         <select id="ddlTurno" name="ddlTurno" class="form-control">
-                            @foreach (var turno in turnos)
-                            {
-                                <option value="@turno">@turno</option>
-                            }
+                            <option value="M">Matutino</option>
+                            <option value="V">Vespertino</option>
+                            <option value="N">Nocturno</option>
                         </select>
                     </div>
                     <div class="col-lg-3">
