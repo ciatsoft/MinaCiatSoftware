@@ -86,7 +86,12 @@ namespace MinaToMVC.Controllers
             var result = httpClientConnection.SaveOrUpdateTipoVehiculo(t);
             return JsonConvert.SerializeObject(result);
         }
+        public async Task<string> GetAllTipoVehiculo()
+        {
+            var result = await httpClientConnection.GetAllTipoVehiculo();
 
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
 
 
         #endregion

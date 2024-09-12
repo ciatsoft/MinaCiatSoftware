@@ -19,8 +19,8 @@ namespace MinaTolWebApi.Controllers
         {
             wrapper = new DbWrapper();
         }
-        [Route("List"), HttpGet]
-        public async Task <ModelResponse> GetAllTipoVehiculo()
+        [HttpGet, Route("")]
+        public ModelResponse GetAllTipoVehiculo()
         {
             var result = wrapper.GetAllTipoVehiculo();
             return result;

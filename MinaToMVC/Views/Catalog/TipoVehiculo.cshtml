@@ -43,10 +43,9 @@
                         <input type="text" id="txtDescripcion" name="Descripcion" class="form-control" />
                     </div>
                     <div class="col-lg-3">
-                        <label>Estatus:</label>
-                        <div class="form-check">
-                            <input type="checkbox" id="chkEstatus" name="Estatus" value="Activo" class="form-check-input" /><
-                            <label class="form-check-label" for="chkEstatus"> Activo</label>
+                        <div class="col-lg-3">
+                            <label>Estatus:</label>
+                            <input type="checkbox" name="chbEstatus" id="chbEstatus" value="" class="form-control" />
                         </div>
                     </div>
                 </div>
@@ -68,25 +67,9 @@
         <br />
 
         <table id="tblTipoVehiculo" class="display" style="width:100%;">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Vehiculo</th>
-                    <th>Descripcion</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Los datos se cargarán aquí por DataTables -->
-            </tbody>
+            
         </table>
 
     </div>
 
 </form>
-
-<script>
-    $(document).ready(function () {
-        $('#tblTipoVehiculo').DataTable();
-    });
-</script>
