@@ -1,7 +1,7 @@
 ﻿@{
     ViewBag.Title = "Alta/Edición Empleado";
     var areasTrabajo = (List<MinaTolEntidades.DtoCatalogos.DtoAreaTrabajo>)ViewBag.AreasDeTrabajo;
-    var turnos = new List<string> { "Mañana", "Tarde", "Noche" }; // Ejemplo de turnos
+    //var turnos = new List<string> { "Mañana", "Tarde", "Noche" }; // Ejemplo de turnos
     var estatus = new List<string> { "Activo", "Inactivo" }; // Ejemplo de estatus
 }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
@@ -43,10 +43,9 @@
                     <div class="col-lg-3">
                         <label>Turno:</label>
                         <select id="ddlTurno" name="ddlTurno" class="form-control">
-                            @foreach (var turno in turnos)
-                            {
-                                <option value="@turno">@turno</option>
-                            }
+                            <option value="M">Matutino</option>
+                            <option value="V">Vespertino</option>
+                            <option value="N">Nocturno</option>
                         </select>
                     </div>
                     <div class="col-lg-3">
@@ -128,57 +127,57 @@
         </div>
     </div>
 </form>
-    <script>
-        $(document).ready(function () {
-            function actualizarTabla(filtro) {
-                $.ajax({
-                    url: "actualizar_tabla.php",
-                    type: "POST",
-                    data: { filtro: filtro },
-                    success: function (response) {
-                        $("#employeeTable tbody").html(response);
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Error al actualizar la tabla: " + error);
-                    }
-                });
-            }
-
-            // Eventos de clic para diferentes filtros
-            $("#empleadosConSeguroButton, #empleadosConFaltasButton, #empleadosConRetardosButton").click(function () {
-                const filtro = $(this).data("filtro");
-                actualizarTabla(filtro);
-            });
-
-            // Evento para mostrar todas las filas al recargar la página
-            $("#totaldeempleados").click(function () {
-                location.reload();
-            });
-
-            // Evento para mostrar las filas según la selección
-            $('#rowsToShow').change(function () {
-                const table = $('#employeeTable tbody');
-                const rows = table.find('tr');
-                const show = $(this).val();
-                const displayCount = show === 'all' ? rows.length : parseInt(show, 10);
-
-                let totalPages = Math.ceil(rows.length / displayCount);
-                createPagination(totalPages, displayCount);
-
-                function createPagination(totalPages, displayCount) {
-                    const paginationContainer = $('#pagination').empty();
-
-                    for (let i = 1; i <= totalPages; i++) {
-                        $('<button/>', {
-                            text: i,
-                            click: function () {
-                                rows.hide().slice((i - 1) * displayCount, i * displayCount).show();
-                            }
-                        }).appendTo(paginationContainer);
-                    }
-
-                    if (totalPages > 0) paginationContainer.children().first().click();
+<script>
+    $(document).ready(function () {
+        function actualizarTabla(filtro) {
+            $.ajax({
+                url: "actualizar_tabla.php",
+                type: "POST",
+                data: { filtro: filtro },
+                success: function (response) {
+                    $("#employeeTable tbody").html(response);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error al actualizar la tabla: " + error);
                 }
-            }).trigger('change');
+            });
+        }
+
+        // Eventos de clic para diferentes filtros
+        $("#empleadosConSeguroButton, #empleadosConFaltasButton, #empleadosConRetardosButton").click(function () {
+            const filtro = $(this).data("filtro");
+            actualizarTabla(filtro);
         });
-    </script>
+
+        // Evento para mostrar todas las filas al recargar la página
+        $("#totaldeempleados").click(function () {
+            location.reload();
+        });
+
+        // Evento para mostrar las filas según la selección
+        $('#rowsToShow').change(function () {
+            const table = $('#employeeTable tbody');
+            const rows = table.find('tr');
+            const show = $(this).val();
+            const displayCount = show === 'all' ? rows.length : parseInt(show, 10);
+
+            let totalPages = Math.ceil(rows.length / displayCount);
+            createPagination(totalPages, displayCount);
+
+            function createPagination(totalPages, displayCount) {
+                const paginationContainer = $('#pagination').empty();
+
+                for (let i = 1; i <= totalPages; i++) {
+                    $('<button/>', {
+                        text: i,
+                        click: function () {
+                            rows.hide().slice((i - 1) * displayCount, i * displayCount).show();
+                        }
+                    }).appendTo(paginationContainer);
+                }
+
+                if (totalPages > 0) paginationContainer.children().first().click();
+            }
+        }).trigger('change');
+    });
+</script>

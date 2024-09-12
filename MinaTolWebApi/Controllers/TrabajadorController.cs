@@ -40,6 +40,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.SaveOrupdateTrabajador(t);
             return result;
         }
+        [HttpGet, Route("")]
+        public ModelResponse GetAllTrabajador()
+        {
+            var result = wrapper.GetAllTrabajador();
+            return result;
+        }
     }
 
 }

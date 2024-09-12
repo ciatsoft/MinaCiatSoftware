@@ -40,43 +40,17 @@ namespace MinaToMVC.Controllers
         #endregion
 
         #region Acceso a Datos
-        public string GetAllTrabajadores()
+        public async Task<string> GetAllTrabajadores()
         {
-            var empleados = new List<DtoTrabajador>();
-            empleados.Add(new DtoTrabajador()
-            {
-                Id = 1,
-                Nombre = "Empleado 1",
-                Email = "empleado2@empleado.com",
-                Telefono = "4426341470"
+            var result = await httpClientConnection.GetAllTrabajador();
 
-            });
-            empleados.Add(new DtoTrabajador()
-            {
-                Id = 1,
-                Nombre = "Empleado 2",
-                Email = "empleado@empleado.com",
-                Telefono = "7821409487"
-
-            });
-            empleados.Add(new DtoTrabajador()
-            {
-                Id = 1,
-                Nombre = "Empleado 3",
-                Email = "empleado3@empleado.com",
-                Telefono = "7821176433"
-
-            });
-            mr.IsSuccess = true;
-            mr.Response = empleados;
-
-            return Newtonsoft.Json.JsonConvert.SerializeObject(mr);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
-        public string SaveOrupdateTrabajador(DtoTrabajador t)
+        public async Task<string> SaveOrupdateTrabajador(DtoTrabajador t)
         {
-            t.FechaContratacion = DateTime.Now;
-            var result = httpClientConnection.SaveOrupdateTrabajador(t);
+            //t.FechaContratacion = DateTime.Now;
+            var result = await httpClientConnection.SaveOrupdateTrabajador(t);
             return JsonConvert.SerializeObject(result);
         }
         #endregion

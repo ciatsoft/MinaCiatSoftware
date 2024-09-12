@@ -1,14 +1,34 @@
 ﻿$(function () {
+    jQuery.validator.addMethod("lettersonly", function (value, element) {
+        return this.optional(element) || /^[a-z\s]+$/i.test(value);
+    }, "Only alphabetical characters");
+
     $("#frmTrabajador").validate({
         rules: {
-            "txtNombre": "required",
-            "txtEmail": "required",
+            "txtNombre": {
+                lettersonly: true,
+                required: true
+            },
+            "txtEmail": {
+                email: true,
+                required: true
+            },
             "txtTelefono": "required",
             "dtpFechaContratacion": "required",
-            "txtSeguro": "required"
-        }//,
-        //messages: {
-        //    "AmountString": "El campo 'Importe en letras' es requerido.",
+            "txtSeguro": {
+                digits: true,
+                required: true
+            }
+        },
+        messages: {
+            "txtNombre": {
+                required: "El campo 'Nombre' es requerido.",
+                lettersonly: "Este campo no acepta valores númericos."
+            },
+            "txtSeguro": {
+                required: "El campo 'NSS' es requerido.",
+                digits: "Este campo solo acepta números."
+            }
         //    "Customer": "El campo 'Cliente' es requerido.",
         //    "BeneficiaryString": "El campo 'Beneficiario' es requerido.",
         //    "Concept_Id": "El campo 'Concepto' es requerido.",
@@ -21,7 +41,7 @@
         //        notOnlyZero: 'El importe debe ser diferente de cero'
         //    },
         //    "TransferCLABE": "El campo 'Cuenta CLABE' es requerido."
-        //}
+        }
     });
 });
 
@@ -39,10 +59,10 @@ $(document).ready(function () {
         searching: true,
         //order: [[2, "asc"]],
         columns: [
-            { data: "Id", "visible": false, title: "Id" },
-            { data: "Nombre", title: "Nombre" },
-            { data: "Email", title: "Email" },
-            { data: "Telefono", title: "Teléfono" }
+            { data: "id", "visible": false, title: "Id" },
+            { data: "nombre", title: "Nombre" },
+            { data: "email", title: "Email" },
+            { data: "telefono", title: "Teléfono" }
         ]
     });
 
@@ -73,7 +93,7 @@ function SaveOrupdateTrabajador() {
             AreaTrabajo: {
                 Id: $("#ddlAreaTrabajo").val()
             },
-            FechaContratacion: $("#dtpFechaContratacion").val(),
+            FechaContratacion: fc,
             Seguro: $("#txtSeguro").val(),
             Turno: $("#ddlTurno").val(),
             Estatus: $("#chbEstatus").is(':checked'),
@@ -83,7 +103,7 @@ function SaveOrupdateTrabajador() {
 
         PostMVC('/Empleado/SaveOrupdateTrabajador', parametro, function (r) {
             if (r.IsSuccess) {
-                location.href = "/Empleado/AltaEdicion" + r.Response.id;
+                location.href = "/Empleado/AltaEdicion";
             }
             else {
                 //alert(r.Message);
