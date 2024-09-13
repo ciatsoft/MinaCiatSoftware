@@ -3,6 +3,7 @@
     var areasTrabajo = (List<MinaTolEntidades.DtoCatalogos.DtoAreaTrabajo>)ViewBag.AreasDeTrabajo;
     //var turnos = new List<string> { "Mañana", "Tarde", "Noche" }; // Ejemplo de turnos
     var estatus = new List<string> { "Activo", "Inactivo" }; // Ejemplo de estatus
+    var trabajador = (MinaTolEntidades.DtoSucursales.DtoTrabajador)Model;
 }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 <script src="~/Scripts/Trabajador/AltaEdicion.js"></script>
@@ -180,4 +181,6 @@
             }
         }).trigger('change');
     });
+
+    var trabajadorJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(trabajador))');
 </script>

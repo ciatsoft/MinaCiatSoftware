@@ -46,6 +46,13 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetAllTrabajador();
             return result;
         }
+
+        [HttpGet, Route("{id:long}")]
+        public ModelResponse GetTrabajadorById(long id)
+        {
+            var result = wrapper.GetTrabajadorById(id);
+            return result;
+        }
     }
 
 }
