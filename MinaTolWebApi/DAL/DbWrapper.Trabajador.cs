@@ -44,7 +44,7 @@ namespace MinaTolWebApi.DAL
             {
                 response.IsSuccess = true;
                 var parameters = GenerateSQLParameters(t);
-                var result = ExecuteScalar("SaveOrupdateTrabajador", System.Data.CommandType.StoredProcedure, parameters);
+                var result = ExecuteScalar($"SaveOrupdateTrabajador", System.Data.CommandType.StoredProcedure, parameters);
                 t.Id = Convert.ToInt64(result);
 
                 response.Response = t;

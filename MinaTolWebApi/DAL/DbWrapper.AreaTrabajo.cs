@@ -15,10 +15,11 @@ namespace MinaTolWebApi.DAL
         public ModelResponse GetAllAreaTrabajo()
         {
             var modelResponse = new ModelResponse();
+            var parameters = new List<SqlParameter>();
 
             try
             {
-                var result = GetObjects($"GetAllAreaTrabajo", CommandType.StoredProcedure, null,
+                var result = GetObjects($"GetAllAreaTrabajo", CommandType.Text,parameters,
                     new Func<IDataReader, DtoAreaTrabajo>((reader) =>
                     {
                         var r = FillEntity<DtoAreaTrabajo>(reader);
@@ -38,15 +39,17 @@ namespace MinaTolWebApi.DAL
             return modelResponse;
         }
 
-        public ModelResponse SaveOrUpdateAreaTrabajo(DtoAreaTrabajo a)
+        public ModelResponse SaveOrUpdateAreaTrabajo(DtoAreaTrabajo at)
         {
             var response = new ModelResponse();
             try
             {
-                var areatrabajoId = ExecuteScalar($"SaveOrUpdateAreaTrabajo", CommandType.StoredProcedure, GenerateSQLParameters(a));
-                a.Id = Convert.ToInt64(areatrabajoId);
+                response.IsSuccess = true;
+                var parameters = GenerateSQLParameters(at);
+                var areatrabajoId = ExecuteScalar($"SaveOrUpdateAreaTrabajo",System.Data.CommandType.StoredProcedure, parameters);
+                at.Id = Convert.ToInt64(areatrabajoId);
 
-                response.Response = a;
+                response.Response = at;
             }
             catch (Exception ex)
             {
@@ -64,7 +67,7 @@ namespace MinaTolWebApi.DAL
             try
             {
 
-                var result = GetObjects($"GetAreaTrabajoById", CommandType.StoredProcedure, parameters,
+                var result = GetObjects("GetAreaTrabajoById", CommandType.StoredProcedure, parameters,
                      new Func<IDataReader, DtoAreaTrabajo>((reader) =>
                      {
                          var r = FillEntity<DtoAreaTrabajo>(reader);
