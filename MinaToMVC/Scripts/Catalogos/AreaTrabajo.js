@@ -1,7 +1,7 @@
 ﻿$(document).ready(function () {
-    //if (areaTrabajoId.Id != 0) {
-    //    GetAreaTrabajoById();
-    //}
+    if (areaTrabajoId.Id != 0) {
+        GetAreaTrabajoById();
+    }
     $("#tableareaTrabajo").dataTable({
         processing: true,
         destroy: true,
@@ -16,7 +16,7 @@
                 data: "id", title: "Editar", render: function (data) {
                     return "<a href='/Catalogos/AreaTrabajo/" + data + "' class='btn btn-primary'>Editar</a>";
                 }
-            },
+            }
         ]
     });
         GetAllAreaTrabajo(); 

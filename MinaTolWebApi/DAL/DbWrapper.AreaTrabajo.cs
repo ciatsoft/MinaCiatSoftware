@@ -43,15 +43,10 @@ namespace MinaTolWebApi.DAL
             var response = new ModelResponse();
             try
             {
-                response.IsSuccess = true;
-                var parameters = GenerateSQLParameters(a);
-                var result = GetObject("SaveOrUpdateAreaTrabajo", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, DtoAreaTrabajo>((reader) =>
-                    {
-                        var r = FillEntity<DtoAreaTrabajo>(reader);
-                        return r;
-                    }));
-                response.Response = result;
+                var areatrabajoId = ExecuteScalar($"SaveOrUpdateAreaTrabajo", CommandType.StoredProcedure, GenerateSQLParameters(a));
+                a.Id = Convert.ToInt64(areatrabajoId);
+
+                response.Response = a;
             }
             catch (Exception ex)
             {
@@ -61,28 +56,21 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
-        public ModelResponse GetAreaTrabajoById(int id)
+        public ModelResponse GetAreaTrabajoById(long id)
         {
             var response = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("@Id",id));
             try
             {
-                response.IsSuccess = true;
 
-                var parameters = new List<SqlParameter>();
-                parameters.Add(new SqlParameter()
-                {
-                    Value = id,
-                    IsNullable = true,
-                    ParameterName = "@Id",
-                    SqlDbType = System.Data.SqlDbType.Int
-                });
+                var result = GetObjects($"GetAreaTrabajoById", CommandType.StoredProcedure, parameters,
+                     new Func<IDataReader, DtoAreaTrabajo>((reader) =>
+                     {
+                         var r = FillEntity<DtoAreaTrabajo>(reader);
 
-                var result = GetObject("GetAreaTrabajoById", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, DtoAreaTrabajo>((reader) =>
-                    {
-                        var r = FillEntity<DtoAreaTrabajo>(reader);
-                        return r;
-                    }));
+                         return r;
+                     }));
 
                 response.Response = result;
             }
