@@ -14,15 +14,15 @@
             { data: "descripcion", title: "Descripción" },
             {
                 data: "id", title: "Editar", render: function (data) {
-                    return "<a href='/Catalogos/AreaTrabajo/" + data + "' class='btn btn-primary'>Editar</a>";
+                    return "<a href='/Catalog/AreaTrabajo/" + data + "' class='btn btn-primary'>Editar</a>";
                 }
             }
         ]
     });
-        GetAllAreaTrabajo(); 
-        $("#btnGuardarAreaTrabajo").on("click", function () {
-            SaveOrUpdateAreaTrabajo();
-        });
+    GetAllAreaTrabajo();
+    $("#btnGuardarAreaTrabajo").on("click", function () {
+        SaveOrUpdateAreaTrabajo();
+    });
 
 });
 
@@ -56,7 +56,7 @@ function SaveOrUpdateAreaTrabajo() {
         };
         PostMVC(urlSaveOrUpdateAreaTrabajo, parametro, function (success, response) {
             if (success) {
-                location.href = "/Catalogos/AreaTrabajo";
+                location.href = "/Catalog/AreaTrabajo";
             }
             else {
                 alert("Error")
