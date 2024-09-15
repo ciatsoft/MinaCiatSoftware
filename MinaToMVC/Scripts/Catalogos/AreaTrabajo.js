@@ -27,7 +27,7 @@
 });
 
 function GetAllAreaTrabajo() {
-    GetMVC("/Catalog/GetAllAreaTrabajo", function (r) {
+    GetMVC("/Catalog/AreaTrabajo", function (r) {
         if (r.IsSuccess) {
             $('#tableareaTrabajo').dataTable().fnAddData(r.Response);
         }
