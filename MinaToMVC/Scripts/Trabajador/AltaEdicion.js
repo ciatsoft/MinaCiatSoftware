@@ -110,7 +110,7 @@ function GetAllTrabajadores() {
 function SaveOrupdateTrabajador() {
     if ($("#frmTrabajador").valid()) {
         var date = new Date($("#dtpFechaContratacion").val());
-        var fc = ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear();
+        var fc = ((dateI.getDate() > 9) ? dateI.getDate() : ('0' + dateI.getDate())) + '/' + ((dateI.getMonth() > 8) ? (dateI.getMonth() + 1) : ('0' + (dateI.getMonth() + 1))) + '/' + dateI.getFullYear();
         var parametro = {
             Id: $("#txtTrabajadorId").val(),
             Nombre: $("#txtNombre").val(),
@@ -154,9 +154,9 @@ function ChanegChebSalariOActual() {
 
 function SaveOrUpdateSalario() {
     var dateI = new Date($("#dtpFI").val());
-    var fi = ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear();
+    var fi = ((dateI.getDate() > 9) ? dateI.getDate() : ('0' + dateI.getDate())) + '/' + ((dateI.getMonth() > 8) ? (dateI.getMonth() + 1) : ('0' + (dateI.getMonth() + 1))) + '/' + dateI.getFullYear();
     var dateF = new Date($("#drpFF").val());
-    var ff = ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear();
+    var ff = ((dateF.getDate() > 9) ? dateF.getDate() : ('0' + dateF.getDate())) + '/' + ((dateF.getMonth() > 8) ? (dateF.getMonth() + 1) : ('0' + (dateF.getMonth() + 1))) + '/' + dateF.getFullYear();
     var parametros = {
         FechaInicial: fi,
         FechaFinal: ff,
@@ -167,7 +167,7 @@ function SaveOrUpdateSalario() {
         }
     };
 
-    PostMVC('/Empleado/SaveOrupdateTrabajador', parametro, function (r) {
+    PostMVC('/Empleado/SaveOrupdateTrabajador', parametros, function (r) {
         if (r.IsSuccess) {
             location.href = "/Empleado/AltaEdicion";
         }
