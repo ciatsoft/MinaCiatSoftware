@@ -50,9 +50,17 @@ namespace MinaToMVC.Controllers
         #endregion
 
         #region Area Trabajo
-        public ActionResult AreaTrabajo()
+        public async Task<ActionResult> AreaTrabajo(long id = 0)
         {
-            return View();
+
+            var areaTrabajo = new DtoAreaTrabajo();
+            if (id != 0)
+            {
+                var result = await httpClientConnection.GetAreaTrabajoById(id);
+                areaTrabajo = JsonConvert.DeserializeObject<DtoAreaTrabajo>(result.Response.ToString());
+            }
+
+            return View(areaTrabajo);
         }
         public async Task<string> GetAllAreaTrabajo()
         {

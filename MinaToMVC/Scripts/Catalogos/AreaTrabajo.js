@@ -1,7 +1,7 @@
 ﻿$(document).ready(function () {
-    //if (areaTrabajoId.Id != 0) {
-    //    GetAreaTrabajoById();
-    //}
+    if (areaTrabajoId.Id != 0) {
+        GetAreaTrabajoById();
+    }
     $("#tableareaTrabajo").dataTable({
         processing: true,
         destroy: true,
@@ -14,20 +14,20 @@
             { data: "descripcion", title: "Descripción" },
             {
                 data: "id", title: "Editar", render: function (data) {
-                    return "<a href='/Catalogos/AreaTrabajo/" + data + "' class='btn btn-primary'>Editar</a>";
+                    return "<a href='/Catalog/AreaTrabajo/" + data + "' class='btn btn-primary'>Editar</a>";
                 }
-            },
+            }
         ]
     });
-        GetAllAreaTrabajo(); 
-        $("#btnGuardarAreaTrabajo").on("click", function () {
-            SaveOrUpdateAreaTrabajo();
-        });
+    GetAllAreaTrabajo();
+    $("#btnGuardarAreaTrabajo").on("click", function () {
+        SaveOrUpdateAreaTrabajo();
+    });
 
 });
 
 function GetAllAreaTrabajo() {
-    GetMVC("/Catalog/GetAllAreaTrabajo", function (r) {
+    GetMVC("/Catalog/AreaTrabajo", function (r) {
         if (r.IsSuccess) {
             $('#tableareaTrabajo').dataTable().fnAddData(r.Response);
         }
@@ -56,7 +56,7 @@ function SaveOrUpdateAreaTrabajo() {
         };
         PostMVC(urlSaveOrUpdateAreaTrabajo, parametro, function (success, response) {
             if (success) {
-                location.href = "/Catalogos/AreaTrabajo";
+                location.href = "/Catalog/AreaTrabajo";
             }
             else {
                 alert("Error")

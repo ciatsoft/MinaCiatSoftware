@@ -29,18 +29,6 @@
                 required: "El campo 'NSS' es requerido.",
                 digits: "Este campo solo acepta números."
             }
-        //    "Customer": "El campo 'Cliente' es requerido.",
-        //    "BeneficiaryString": "El campo 'Beneficiario' es requerido.",
-        //    "Concept_Id": "El campo 'Concepto' es requerido.",
-        //    "ConceptDescription": {
-        //        required: "El campo 'Comentarios del concepto' es requerido.",
-        //        maxlength: "El campo no puede superar los 249 caracteres."
-        //    },
-        //    "Amount": {
-        //        required: "El campo 'Importe' es requerido.",
-        //        notOnlyZero: 'El importe debe ser diferente de cero'
-        //    },
-        //    "TransferCLABE": "El campo 'Cuenta CLABE' es requerido."
         }
     });
 });
@@ -48,6 +36,27 @@
 $(document).ready(function () {
     $("#imgAddSalario").on("click", function () {
         $("#boddyGeericModal").empty().load("/Empleado/PartialCrudSalario", function () {
+            $("#tableSalario").dataTable({
+                processing: true,
+                destroy: true,
+                paging: true,
+                searching: true,
+                //order: [[2, "asc"]],
+                columns: [
+                    { data: "id", "visible": false, title: "Id" },
+                    { data: "fechaInicial", title: "Fecha Inicial" },
+                    { data: "fechaFinal", title: "Fecha Termino" },
+                    { data: "monto", title: "Monto" },
+                    { data: "esSalarioActual", title: "Salario Actual" },
+                    {
+                        data: "id", render: function (data) {
+                            return '<input type="button" value="Editar" class="btn btn-primary" onclick="EditarTrabajador(' + data + ')" />';
+                        }
+                    }
+                ]
+            });
+
+            $("#titleGenerciModal").text('Salarios del trabajador');
             $('#genericModal').modal('show');
         });
     });
@@ -62,11 +71,28 @@ $(document).ready(function () {
             { data: "id", "visible": false, title: "Id" },
             { data: "nombre", title: "Nombre" },
             { data: "email", title: "Email" },
-            { data: "telefono", title: "Teléfono" }
+            { data: "telefono", title: "Teléfono" },
+            {
+                data: "id", render: function (data) {
+                    return '<input type="button" value="Editar" class="btn btn-primary" onclick="EditarTrabajador(' + data + ')" />';
+                }
+            }
         ]
     });
 
     GetAllTrabajadores();
+
+    if (trabajadorJson.Id != 0) {
+        $("#txtTrabajadorId").val(trabajadorJson.Id);
+        $("#txtNombre").val(trabajadorJson.Nombre);
+        $("#txtEmail").val(trabajadorJson.Email);
+        $("#txtTelefono").val(trabajadorJson.Telefono);
+        $("#ddlAreaTrabajo").val(trabajadorJson.AreaTrabajo.Id);
+        $("#txtSeguro").val(trabajadorJson.Seguro);
+        $("#dtpFechaContratacion").val(trabajadorJson.FechaContratacion.substring(0, 10));
+        $("#ddlTurno").val(trabajadorJson.Turno);
+        $("#chbEstatus").prop('checked', trabajadorJson.Estatus);
+    }
 });
 
 function GetAllTrabajadores() {
@@ -84,7 +110,7 @@ function GetAllTrabajadores() {
 function SaveOrupdateTrabajador() {
     if ($("#frmTrabajador").valid()) {
         var date = new Date($("#dtpFechaContratacion").val());
-        var fc = ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear();
+        var fc = ((dateI.getDate() > 9) ? dateI.getDate() : ('0' + dateI.getDate())) + '/' + ((dateI.getMonth() > 8) ? (dateI.getMonth() + 1) : ('0' + (dateI.getMonth() + 1))) + '/' + dateI.getFullYear();
         var parametro = {
             Id: $("#txtTrabajadorId").val(),
             Nombre: $("#txtNombre").val(),
@@ -111,3 +137,42 @@ function SaveOrupdateTrabajador() {
         });
     }
 }
+
+function EditarTrabajador(id) {
+    location.href = "/Empleado/AltaEdicion/"+id;
+}
+
+function ChanegChebSalariOActual() {
+    if ($("#chbEsSalarioActual").is(':checked')) {
+        $("#drpFF").attr('disabled', 'disabled');
+        $("#drpFF").val('');
+    }
+    else {
+        $("#drpFF").removeAttr('disabled');
+    }
+}
+
+function SaveOrUpdateSalario() {
+    var dateI = new Date($("#dtpFI").val());
+    var fi = ((dateI.getDate() > 9) ? dateI.getDate() : ('0' + dateI.getDate())) + '/' + ((dateI.getMonth() > 8) ? (dateI.getMonth() + 1) : ('0' + (dateI.getMonth() + 1))) + '/' + dateI.getFullYear();
+    var dateF = new Date($("#drpFF").val());
+    var ff = ((dateF.getDate() > 9) ? dateF.getDate() : ('0' + dateF.getDate())) + '/' + ((dateF.getMonth() > 8) ? (dateF.getMonth() + 1) : ('0' + (dateF.getMonth() + 1))) + '/' + dateF.getFullYear();
+    var parametros = {
+        FechaInicial: fi,
+        FechaFinal: ff,
+        Monto: $("#txtMonto").val(),
+        EsSalarioActual: $("#chbEsSalarioActual").is(':checked'),
+        Empleado: {
+            Id: $("#txtTrabajadorId").val()
+        }
+    };
+
+    PostMVC('/Empleado/SaveOrupdateTrabajador', parametros, function (r) {
+        if (r.IsSuccess) {
+            location.href = "/Empleado/AltaEdicion";
+        }
+        else {
+            //alert(r.Message);
+        }
+    });
+} 
