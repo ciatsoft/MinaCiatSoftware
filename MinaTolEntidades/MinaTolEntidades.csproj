@@ -43,8 +43,6 @@
   <ItemGroup>
     <Compile Include="BaseObject.cs" />
     <Compile Include="DtoCatalogos\DtoAreaTrabajo.cs" />
-    <Compile Include="DtoCatalogos\DtoTipoMaterialUbicacion.cs" />
-    <Compile Include="DtoCatalogos\DtoUbicacion.cs" />
     <Compile Include="DtoClientes\Cliente.cs" />
     <Compile Include="DtoClientes\ClienteVehiculo.cs" />
     <Compile Include="DtoClientes\TipoVehiculo.cs" />

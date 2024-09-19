@@ -1,8 +1,7 @@
 ﻿$(document).ready(function () {
-    if (areaTrabajoJson.Id != 0) {
-        GetAreaTrabajoById(areaTrabajoJson.Id);
+    if (areaTrabajoId.Id != 0) {
+        GetAreaTrabajoById();
     }
-
     $("#tableareaTrabajo").dataTable({
         processing: true,
         destroy: true,
@@ -28,7 +27,7 @@
 });
 
 function GetAllAreaTrabajo() {
-    GetMVC("/Catalog/GetAllAreaTrabajo", function (r) {
+    GetMVC("/Catalog/AreaTrabajo", function (r) {
         if (r.IsSuccess) {
             $('#tableareaTrabajo').dataTable().fnAddData(r.Response);
         }
@@ -67,8 +66,8 @@ function SaveOrUpdateAreaTrabajo() {
     }
 }
 
-function GetAreaTrabajoById(id) {
-    PostMVC(urlareaTrabajoPorId + "/" + id, function (success, response) {
+function GetAreaTrabajoById() {
+    PostMVC(urlareaTrabajoPorId + "/" + areaTrabajoId, function (success, response) {
         if (success) {
             $("#txtIdAreaTrabajo").val(response.Id);
             $("#txtNombre").val(response.Nombre);
