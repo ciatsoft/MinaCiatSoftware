@@ -2,6 +2,7 @@
 using MinaTolEntidades.DtoSucursales;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
@@ -17,13 +18,10 @@ namespace MinaTolWebApi.DAL
             {
                 response.IsSuccess = true;
                 var parameters = GenerateSQLParameters(u);
-                var result = GetObject("SaveOrUpdateUnidadMedida", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, UnidadMedida>((reader) =>
-                    {
-                        var r = FillEntity<UnidadMedida>(reader);
-                        return r;
-                    }));
-                response.Response = result;
+                var unidadmedidaId = ExecuteScalar($"SaveOrUpdateUnidadMedida", System.Data.CommandType.StoredProcedure, parameters);
+                u.Id = Convert.ToInt64(unidadmedidaId);
+
+                response.Response = u;
             }
             catch (Exception ex)
             {
@@ -39,16 +37,15 @@ namespace MinaTolWebApi.DAL
         public ModelResponse GetAllUnidadMedida()
         {
             var response = new ModelResponse();
-
+            var parameters = new List<SqlParameter>();
             try
             {
-                response.IsSuccess = true;
-
-                var parameters = new List<SqlParameter>();
-                var result = GetObjects("GetAllUnidadMedida", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, UnidadMedida>((reader) =>
-                    {
-                        var r = FillEntity<UnidadMedida>(reader);
+                           
+                var result = GetObjects($"GetAllUnidadMedida", CommandType.Text, parameters,
+                   new Func<IDataReader, UnidadMedida>((reader) =>
+                   {
+                       var r = FillEntity<UnidadMedida>(reader);
+                                        
                         return r;
                     }));
 
@@ -67,27 +64,21 @@ namespace MinaTolWebApi.DAL
         public ModelResponse GetUnidadMedidaById(int id)
         {
             var response = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("@Id", id));
             try
             {
-                response.IsSuccess = true;
 
-                var parameters = new List<SqlParameter>();
-                parameters.Add(new SqlParameter()
-                {
-                    Value = id,
-                    IsNullable = true,
-                    ParameterName = "@Id",
-                    SqlDbType = System.Data.SqlDbType.Int
-                });
 
-                var result = GetObject("GetUnidadMedidaById", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, UnidadMedida>((reader) =>
-                    {
-                        var r = FillEntity<UnidadMedida>(reader);
-                        return r;
-                    }));
+                var result = GetObject("GetUnidadMedidaById", CommandType.StoredProcedure, parameters,
+                     new Func<IDataReader, UnidadMedida>((reader) =>
+                     {
+                         var r = FillEntity<UnidadMedida>(reader);
 
-                response.Response = result;
+                         return r;
+                     }));
+                
+                 response.Response = result;
             }
             catch (Exception ex)
             {
