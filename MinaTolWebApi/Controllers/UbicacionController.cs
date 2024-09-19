@@ -6,40 +6,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace MinaTolWebApi.Controllers
 {
-    [RoutePrefix("api/AreaTrabajo")]
-    public class AreaTrabajoController : ApiController
+    [RoutePrefix("api/Ubicacion")]
+    public class UbicacionController : ApiController
     {
         private DbWrapper wrapper { get; set; }
-        public AreaTrabajoController()
+        public UbicacionController()
         {
             wrapper = new DbWrapper();
         }
-        
         [Route("List"), HttpGet]
-        public ModelResponse GetAllAreaTrabajo()
+        public ModelResponse GetAllUbicacion()
         {
-            var result = wrapper.GetAllAreaTrabajo();
+            var result = wrapper.GetAllUbicacion();
             return result;
         }
-
         [HttpGet, Route("{id:long}")]
-        public ModelResponse GetAreaTrabajoById(int id)
+
+        public ModelResponse GetUbicacionById (int id)
         {
-            var result = wrapper.GetAreaTrabajoById(id);
+            var result = wrapper.GetUbicacionById(id);
             return result;
         }
-
 
         [HttpPost, Route("")]
-        public ModelResponse SaveOrUpdateAreaTrabajo(DtoAreaTrabajo at)
+        public ModelResponse SaveOrUpdateUbicacion(DtoUbicacion u)
         {
-            var result = wrapper.SaveOrUpdateAreaTrabajo(at);
+            var result = wrapper.SaveOrUpdateUbicacion(u);
             return result;
         }
     }
+
 }

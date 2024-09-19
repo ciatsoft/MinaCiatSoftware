@@ -1,7 +1,7 @@
 ﻿$(document).ready(function () {
 
-    if (unidadMedidaId.Id != 0){
-        GetUnidadMedidaById();
+    if (unidadMedidaJson.Id != 0) {
+        GetUnidadMedidaById(unidadMedidaJson.Id);
     }
     $("#tableUnidadMedida").dataTable({
         processing: true,
@@ -16,6 +16,10 @@
         ]
     });
     GetAllUnidadMedida();
+    $("#btnGuardarUnidadMedida").on("click", function () {
+        SaveOrUpdateUnidadMedida();
+    });
+
 });
 
 function GetAllUnidadMedida() {
@@ -37,7 +41,7 @@ function GetAllUnidadMedida() {
 
 function SaveOrUpdateUnidadMedida()
 {
-    if ($("#frmUnidadMedida").valid()) {
+    if ($("#frmunidadmedida").valid()) {
         var parametro = {
             Id: $("#txtIdUnidadMedida").val(),
             Nombre: $("#txtnombreUnidadmedida").val(),
@@ -45,11 +49,12 @@ function SaveOrUpdateUnidadMedida()
             CreatedBy: $("#txtCreatedBy").val(),
             CreatedDt: $("#txtCreatedDt").val(),
             UpdatedBy: $("#txtUpdateBy").val(),
-            UpdatedDt: $("#txtUpdateDt").val()
+            UpdatedDt: $("#txtUpdateDt").val(),
+            Estatus: $("#chbEstatus").is(':checked')
         };
         PostMVC(urlUnidadMedida, parametro, function (success, response) {
             if (success) {
-                location.href = "/Catalogos/UnidadMedida";
+                location.href = "/Catalog/UnidadMedida";
             }
             else {
                 alert("Error")
@@ -59,15 +64,15 @@ function SaveOrUpdateUnidadMedida()
     }
 }
 
-function GetUnidadMedidaById() {
-    PostMVC(urlUnidadmedidaPorId) + "/" + unidadMedidaId, function (success, response) {
+function GetUnidadMedidaById(id) {
+    PostMVC(urlUnidadmedidaPorId) + "/" + id, function (success, response) {
         if (success) {
             $("#txtIdUnidadMedida").val(response.Id);
             $("#txtnombreUnidadmedida").val(response.Nombre);
             $("#txtdescripcion").val(response.Descripcion);
             $("#txtCreatedBy").val(response.CreatedBy);
             $("#txtCreatedDt").val(response.CreatedDt);
-            $("#txtUpdateBy").val(response..UpdatedBy);
+            $("#txtUpdateBy").val(response.UpdatedBy);
             $("#txtUpdateDt").val(response.UpdatedDt);
         }
     

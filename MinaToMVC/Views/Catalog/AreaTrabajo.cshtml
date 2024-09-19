@@ -95,7 +95,7 @@
         //}).trigger('change');
     });
 
-     var areaTrabajoId = JSON.parse('@Html.Raw((Newtonsoft.Json.JsonConvert.SerializeObject(Model)))');
+     var areaTrabajoJson = JSON.parse('@Html.Raw((Newtonsoft.Json.JsonConvert.SerializeObject(Model)))');
      var urlGetAllAreaTrabajo = "@Url.Action("GetAllAreaTrabajo", "Catalog")";
      var urlareaTrabajoPorId = "@Url.Action("GetAreaTrabajoById", "Catalog")";
      var urlSaveOrUpdateAreaTrabajo= "@Url.Action("SaveOrUpdateAreaTrabajo", "Catalog")";

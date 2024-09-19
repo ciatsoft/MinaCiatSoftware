@@ -1,28 +1,27 @@
-﻿using MinaTolEntidades.Security;
-using MinaTolEntidades;
+﻿using MinaTolEntidades;
+using MinaTolEntidades.DtoCatalogos;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
-using MinaTolEntidades.DtoCatalogos;
 
 namespace MinaTolWebApi.DAL
 {
     public partial class DbWrapper
     {
-        public ModelResponse GetAllAreaTrabajo()
+        public ModelResponse GetAllTipoMaterialUbicacion()
         {
             var modelResponse = new ModelResponse();
             var parameters = new List<SqlParameter>();
 
             try
             {
-                var result = GetObjects($"GetAllAreaTrabajo", CommandType.Text,parameters,
-                    new Func<IDataReader, DtoAreaTrabajo>((reader) =>
+                var result = GetObjects($"GetAllTipoMaterialUbicacion", CommandType.Text, parameters,
+                    new Func<IDataReader, DtoTipoMaterialUbicacion>((reader) =>
                     {
-                        var r = FillEntity<DtoAreaTrabajo>(reader);
+                        var r = FillEntity<DtoTipoMaterialUbicacion>(reader);
 
                         return r;
                     }));
@@ -39,17 +38,17 @@ namespace MinaTolWebApi.DAL
             return modelResponse;
         }
 
-        public ModelResponse SaveOrUpdateAreaTrabajo(DtoAreaTrabajo at)
+        public ModelResponse SaveOrUpdateTipoMaterialUbicacion (DtoTipoMaterialUbicacion t)
         {
             var response = new ModelResponse();
             try
             {
                 response.IsSuccess = true;
-                var parameters = GenerateSQLParameters(at);
-                var areatrabajoId = ExecuteScalar($"SaveOrUpdateAreaTrabajo",System.Data.CommandType.StoredProcedure, parameters);
-                at.Id = Convert.ToInt64(areatrabajoId);
+                var parameters = GenerateSQLParameters(t);
+                var tipoMaterialU = ExecuteScalar($"SaveOrUpdateTipoMaterialUbicacion", System.Data.CommandType.StoredProcedure, parameters);
+                t.Id = Convert.ToInt64(tipoMaterialU);
 
-                response.Response = at;
+                response.Response = t;
             }
             catch (Exception ex)
             {
@@ -59,18 +58,18 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
-        public ModelResponse GetAreaTrabajoById(long id)
+
+        public ModelResponse GetTipoMaterialUbicacionById (long id)
         {
             var response = new ModelResponse();
             var parameters = new List<SqlParameter>();
-            parameters.Add(new SqlParameter("@Id",id));
+            parameters.Add(new SqlParameter("@Id", id));
             try
             {
-
-                var result = GetObject("GetAreaTrabajoById", CommandType.StoredProcedure, parameters,
-                     new Func<IDataReader, DtoAreaTrabajo>((reader) =>
+                var result = GetObject("GetTipoMaterialUbicacionById", CommandType.StoredProcedure, parameters,
+                     new Func<IDataReader, DtoTipoMaterialUbicacion>((reader) =>
                      {
-                         var r = FillEntity<DtoAreaTrabajo>(reader);
+                         var r = FillEntity<DtoTipoMaterialUbicacion>(reader);
 
                          return r;
                      }));
