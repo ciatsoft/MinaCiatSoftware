@@ -20,25 +20,24 @@ namespace MinaTolWebApi.Controllers
             wrapper = new DbWrapper();
         }
 
-        [AllowAnonymous]
+        
         [Route("List"), HttpGet]
-        public async Task<ModelResponse> GetAllUnidadMedida()
+        public ModelResponse GetAllUnidadMedida()
         {
             var result = wrapper.GetAllUnidadMedida();
             return result;
         }
 
-        [AllowAnonymous]
+       
         [HttpGet , Route("{id:long}")]
-        public async Task<ModelResponse> GetUnidadMedidaById(int id)
+        public ModelResponse GetUnidadMedidaById(int id)
         {
             var result = wrapper.GetUnidadMedidaById(id);
             return result;
         }
 
-        [AllowAnonymous]
         [HttpPost, Route ("")]
-        public async Task<ModelResponse> SaveOrUpdateUnidadMedida(UnidadMedida unidad)
+        public ModelResponse SaveOrUpdateUnidadMedida(UnidadMedida unidad)
         {
             var result = wrapper.SaveOrUpdateUnidadMedida(unidad);
             return result;

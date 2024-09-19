@@ -1,32 +1,30 @@
-﻿using MinaTolEntidades.Security;
-using MinaTolEntidades;
-using System;
+﻿using MinaTolEntidades;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Data;
+using System;
 using System.Linq;
 using System.Web;
+using System.Data.SqlClient;
+using System.Data;
 using MinaTolEntidades.DtoCatalogos;
 
 namespace MinaTolWebApi.DAL
 {
     public partial class DbWrapper
     {
-        public ModelResponse GetAllAreaTrabajo()
+        public ModelResponse GetAllUbicacion()
         {
             var modelResponse = new ModelResponse();
             var parameters = new List<SqlParameter>();
-
+            
             try
             {
-                var result = GetObjects($"GetAllAreaTrabajo", CommandType.Text,parameters,
-                    new Func<IDataReader, DtoAreaTrabajo>((reader) =>
+                var result = GetObjects($"GetAllUbicacion", CommandType.Text, parameters,
+                    new Func<IDataReader, DtoUbicacion>((reader) =>
                     {
-                        var r = FillEntity<DtoAreaTrabajo>(reader);
+                        var r = FillEntity<DtoUbicacion>(reader);
 
                         return r;
                     }));
-
                 modelResponse.Response = result;
             }
             catch (Exception ex)
@@ -35,21 +33,21 @@ namespace MinaTolWebApi.DAL
                 modelResponse.Enum = Enumeration.ErrorNoControlado;
                 modelResponse.Message = ex.Message;
             }
-
             return modelResponse;
+          
         }
 
-        public ModelResponse SaveOrUpdateAreaTrabajo(DtoAreaTrabajo at)
+        public ModelResponse SaveOrUpdateUbicacion(DtoUbicacion u)
         {
             var response = new ModelResponse();
             try
             {
                 response.IsSuccess = true;
-                var parameters = GenerateSQLParameters(at);
-                var areatrabajoId = ExecuteScalar($"SaveOrUpdateAreaTrabajo",System.Data.CommandType.StoredProcedure, parameters);
-                at.Id = Convert.ToInt64(areatrabajoId);
+                var parameters = GenerateSQLParameters(u);
+                var ubicacionId = ExecuteScalar($"SaveOrUpdateUbicacion", System.Data.CommandType.StoredProcedure, parameters);
+                u.Id = Convert.ToInt64(ubicacionId);
 
-                response.Response = at;
+                response.Response = u;
             }
             catch (Exception ex)
             {
@@ -59,21 +57,21 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
-        public ModelResponse GetAreaTrabajoById(long id)
+
+        public ModelResponse GetUbicacionById(long id)
         {
             var response = new ModelResponse();
             var parameters = new List<SqlParameter>();
-            parameters.Add(new SqlParameter("@Id",id));
+            parameters.Add(new SqlParameter("@Id", id));
             try
             {
+                var result = GetObject("GetUbicacionById", CommandType.StoredProcedure, parameters,
+                    new Func<IDataReader, DtoUbicacion>((reader) =>
+                    {
+                        var r = FillEntity<DtoUbicacion>(reader);
 
-                var result = GetObject("GetAreaTrabajoById", CommandType.StoredProcedure, parameters,
-                     new Func<IDataReader, DtoAreaTrabajo>((reader) =>
-                     {
-                         var r = FillEntity<DtoAreaTrabajo>(reader);
-
-                         return r;
-                     }));
+                        return r;
+                    }));
 
                 response.Response = result;
             }
@@ -86,5 +84,7 @@ namespace MinaTolWebApi.DAL
 
             return response;
         }
+
+
     }
 }
