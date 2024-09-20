@@ -162,6 +162,8 @@
     <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\Catalogos\AreaTrabajo.js" />
+    <Content Include="Scripts\Catalogos\TipoMaterialUbicacion.js" />
+    <Content Include="Scripts\Catalogos\Ubicacion.js" />
     <Content Include="Scripts\Catalogos\UnidadMedida.js" />
     <Content Include="Scripts\Comun\Comun.js" />
     <Content Include="Scripts\Home\Autenticacion.js" />
@@ -231,6 +233,7 @@
     <Content Include="Views\Catalog\AreaTrabajo.cshtml" />
     <Content Include="Views\Catalog\TipoVehiculo.cshtml" />
     <Content Include="Views\Catalog\Ubicacion.cshtml" />
+    <Content Include="Views\Catalog\TipoMaterialUbicacion.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
