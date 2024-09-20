@@ -103,5 +103,27 @@ namespace MinaToMVC.Controllers
 
 
         #endregion
+
+        #region Roles
+
+        public ActionResult Roll()
+        {
+            return View();
+        }
+        public string SaveOrUpdateRoll(Roll t)
+        {
+
+            var result = httpClientConnection.SaveOrUpdateRoll(t);
+            return JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetAllRoll()
+        {
+            var result = await httpClientConnection.GetAllRoll();
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+
+        #endregion
     }
 }

@@ -162,6 +162,7 @@
     <Content Include="Assets\styles.css" />
     <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\Catalogos\AltaRoll.js" />
     <Content Include="Scripts\Catalogos\AltaTipoVehiculo.js" />
     <Content Include="Scripts\Catalogos\AreaTrabajo.js" />
     <Content Include="Scripts\Catalogos\UnidadMedida.js" />
@@ -182,6 +183,7 @@
     <Compile Include="Controllers\RHController.cs" />
     <Compile Include="Controllers\AlmacenController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="DAL\httpClientConnection.Roll.cs" />
     <Compile Include="DAL\httpClientConnection.TipoVehiculo.cs" />
     <Compile Include="DAL\HttpClientConnection.AreaTrabajo.cs" />
     <Compile Include="DAL\HttpClientConnection.Trabajador.cs" />
@@ -231,6 +233,7 @@
     <Content Include="Views\Taller\Reportes_SStock.cshtml" />
     <Content Include="Views\Catalog\AreaTrabajo.cshtml" />
     <Content Include="Views\Catalog\TipoVehiculo.cshtml" />
+    <Content Include="Views\Catalog\Roll.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
