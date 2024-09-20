@@ -127,7 +127,46 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetUbicacionById(id);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-    }
+
+
         #endregion
-    
+
+        #region TipoMaterialUbicacion
+        public async Task<ActionResult> TipoMaterialUbicacion(long id= 0)
+        {
+            var tipoMaterial = new DtoTipoMaterialUbicacion();
+            if (id != 0)
+            {
+                var result = await httpClientConnection.GetTipoMaterialUbicacionById(id);
+                tipoMaterial = JsonConvert.DeserializeObject<DtoTipoMaterialUbicacion>(result.Response.ToString());
+            }
+            return View(tipoMaterial);
+        }
+
+        public async Task<string> GetAllTipoMaterialUbicacion()
+        {
+            var token = Helpers.SessionHelper.GetSessionUser();
+            var result = await httpClientConnection.GetAllTipoMaterialUbicacion(token.Token.access_token);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<ActionResult> SaveOrUpdateTipoMaterialUbicacion(DtoTipoMaterialUbicacion tmu)
+        {
+            httpClientConnection.MappingColumSecurity(tmu);
+            var result = await httpClientConnection.SaveOrUpdateTipoMaterialUbicacion(tmu);
+            return RedirectToAction("TipoMaterialUbicacion", "Catalog");
+
+        }
+
+        public async Task<string> GetTipoMaterialUbicacionById(long id)
+        {
+            var result = await httpClientConnection.GetTipoMaterialUbicacionById(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        #endregion
+
+
+
+    }
+
 }
