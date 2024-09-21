@@ -55,11 +55,11 @@ namespace MinaToMVC.DAL
 
         public async Task<ModelResponse> GetSalarioByTrabajador(long id)
         {
-            var result = await RequestAsync<object>($"api/Salario/Trabajador/{id}", HttpMethod.Get, null,
+            var result = await RequestAsync<object>($"api/Trabajador/Salario/Trabajador/{id}", HttpMethod.Get, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
-            }));
+            }), token.Token.access_token);
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
 
             return modelResponse;
@@ -68,7 +68,7 @@ namespace MinaToMVC.DAL
 
         public async Task<ModelResponse> SaveOrUpdateSalario(DtoSalario s)
         {
-            var result = await RequestAsync<object>("api/Salario", HttpMethod.Post, s,
+            var result = await RequestAsync<object>("api/Trabajador/Salario", HttpMethod.Post, s,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
