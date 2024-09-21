@@ -12,13 +12,13 @@ namespace MinaToMVC.DAL
 {
     public partial class HttpClientConnection
     {
-        public async Task<ModelResponse> GetAllUnidadMedida()
+        public async Task<ModelResponse> GetAllUnidadMedida(string token)
         {
             var result = await RequestAsync<object>("api/UnidadMedida/List", HttpMethod.Get, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
-            }));
+            }), token);
 
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
 
@@ -40,7 +40,7 @@ namespace MinaToMVC.DAL
 
        public async Task<ModelResponse> GetUnidadMedidaById(long unidadId)
         {
-            var result = RequestAsync("api/UnidadMedida/GetUnidadMedidaById/{unidadId}", HttpMethod.Get, null,
+            var result = await RequestAsync($"api/UnidadMedida/{unidadId}", HttpMethod.Get, null,
                 new Func<string, string>((responseString) =>
                 {
                     return responseString;

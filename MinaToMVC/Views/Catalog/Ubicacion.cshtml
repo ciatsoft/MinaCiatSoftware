@@ -1,34 +1,33 @@
-﻿@model MinaTolEntidades.DtoSucursales.UnidadMedida
+﻿@model MinaTolEntidades.DtoCatalogos.DtoUbicacion
 @{
-    ViewBag.Title = "UnidadMedida";
+    ViewBag.Title = "Ubicacion";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var estatus = new List<string> { "Activo", "Inactivo" };
 }
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 <link href="~/Assets/css/dataTables.dataTables.min.css" rel="stylesheet" />
 <script src="~/Assets/js/dataTables.min.js"></script>
 
 <div class="content">
 
-    <form id="frmunidadmedida" name="frmunidadmedida" method="post" enctype="multipart/form-data" action="@Url.Action("SaveOrUpdateUnidadMedida","Catalog")">
+    <form id="frmubicacion" name="frmubicacion" method="post" enctype="multipart/form-data" action="@Url.Action("SaveOrUpdateUbicacion","Catalog")">
         @Html.HiddenFor(x => x.Id)
         <br>
-        <center><h1>Unidad De Medida</h1></center>
-        <div class="tabla-consultas-tableUnidadMedida">
+        <center><h1> Ubicacion </h1></center>
+        <div class="tabla-consultas-ubicacion">
             <div class="rectangulos" style="width: 100%;">
                 <div class="row">
                     <div class="col-lg-3">
-                        <label>ID Unidad Medida:</label>
-                        <input type="text" id="txtunidadmedida" class="form-control" disabled />
+                        <label>ID Ubicacion:</label>
+                        <input type="text" id="txtIdUbicacion" class="form-control" disabled />
                     </div>
                     <div class="col-lg-3">
-                        <label>Nombre:</label>
-                        <input type="text" id="txtNombre" class="form-control" />
+                        <label>Nombre Ubicacion:</label>
+                        <input type="text" id="txtNombreUbicacion" class="form-control" />
                     </div>
                     <div class=" col-lg-3">
-                        <label>Descripcion:</label>
-                        <input type="text" id="txtDescripcion" class="form-control" />
+                        <label>Descripcion Ubicacion:</label>
+                        <input type="text" id="txtDescripcionUbicacion" class="form-control" />
                     </div>
                     <div class=" col-lg-3">
                         <label>Estatus:</label>
@@ -37,7 +36,7 @@
                 </div>
                 <div class="row form-group">
                     <div class="col-md-12">
-                        <input type="button" id="btnGuardarUnidadMedida" value="Guardar" class="btn btn-success" />
+                        <input type="button" id="btnGuardarUbicacion" value="Guardar" class="btn btn-success" />
                         <input type="button" value="Cancelar" class="btn btn-warning" />
                     </div>
                 </div>
@@ -49,31 +48,30 @@
         </div>
         <div class="row">
             <div class="col-lg-12">
-                <table class="table table-bordered table-striped" id="tableUnidadMedida" style="width: 100%;"></table>
+                <table class="table table-bordered table-striped" id="tableUbicacion" style="width: 100%;"></table>
             </div>
         </div>
     </form>
 </div>
 
-
 <script>
     $(function () {
-        $("#frmunidadmedida").validate({
+        $("#frmubicacion").validate({
             rules: {
-                "Nombre": "required",
-                "Descripcion": "required"
+                "NombreUbicacion": "required",
+                "DescripcionUbicacion": "required"
             },
             messages: {
-                "Nombre": "Campo Obligatorio",
-                "Descripcion": "Campo Obligatorio"
+                "NombreUbicacion": "Campo Obligatorio",
+                "DescripcionUbicacion": "Campo Obligatorio"
 
             }
         });
     });
+     var UbicacionJson = JSON.parse('@Html.Raw((Newtonsoft.Json.JsonConvert.SerializeObject(Model)))');
+     var urlGetAllUbicacion  = "@Url.Action("GetAllUbicacion", "Catalog")";
+     var urlUbicacionPorId = "@Url.Action("GetUbicacionById", "Catalog")";
+    var urlSaveOrUpdateUbicacion= "@Url.Action("SaveOrUpdateUbicacion", "Catalog")";
 
-    var unidadMedidaJson = JSON.parse('@Html.Raw((Newtonsoft.Json.JsonConvert.SerializeObject(Model)))');
-    var urlUnidadMedida = "@Url.Action("SaveOrUpdateUnidadMedida", "Catalog")";
-    var urlUnidadmedidaPorId = "@Url.Action("GetUnidadMedidaById", "Catalog")";
-    var urlConsultarTodasUnidadMedida= "@Url.Action("GetAllUnidadmedida", "Catalog")";
 </script>
-<script src="~/Scripts/Catalogos/UnidadMedida.js"></script>
+<script src="~/Scripts/Catalogos/Ubicacion.js"></script>

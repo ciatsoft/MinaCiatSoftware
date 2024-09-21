@@ -162,6 +162,8 @@
     <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\Catalogos\AreaTrabajo.js" />
+    <Content Include="Scripts\Catalogos\TipoMaterialUbicacion.js" />
+    <Content Include="Scripts\Catalogos\Ubicacion.js" />
     <Content Include="Scripts\Catalogos\UnidadMedida.js" />
     <Content Include="Scripts\Comun\Comun.js" />
     <Content Include="Scripts\Home\Autenticacion.js" />
@@ -181,7 +183,9 @@
     <Compile Include="Controllers\AlmacenController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="DAL\HttpClientConnection.AreaTrabajo.cs" />
+    <Compile Include="DAL\HttpClientConnection.TipoMaterialUbicacion.cs" />
     <Compile Include="DAL\HttpClientConnection.Trabajador.cs" />
+    <Compile Include="DAL\HttpClientConnection.Ubicacion.cs" />
     <Compile Include="DAL\HttpClientConnection.UnidadMedida.cs" />
     <Compile Include="DAL\HttpClientConnection.Usuario.cs" />
     <Compile Include="DAL\HttpClientBase.cs" />
@@ -228,6 +232,8 @@
     <Content Include="Views\Taller\Reportes_SStock.cshtml" />
     <Content Include="Views\Catalog\AreaTrabajo.cshtml" />
     <Content Include="Views\Catalog\TipoVehiculo.cshtml" />
+    <Content Include="Views\Catalog\Ubicacion.cshtml" />
+    <Content Include="Views\Catalog\TipoMaterialUbicacion.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -238,6 +244,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\Ubicacion\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MinaTolEntidades\MinaTolEntidades.csproj">
