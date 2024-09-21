@@ -93,6 +93,9 @@ $(document).ready(function () {
         $("#ddlTurno").val(trabajadorJson.Turno);
         $("#chbEstatus").prop('checked', trabajadorJson.Estatus);
     }
+    else {
+        $("#imgAddSalario").hide();
+    }
 });
 
 function GetAllTrabajadores() {
@@ -167,7 +170,7 @@ function SaveOrUpdateSalario() {
         }
     };
 
-    PostMVC('/Empleado/SaveOrupdateTrabajador', parametros, function (r) {
+    PostMVC('/Empleado/SaveOrupdateSalario', parametros, function (r) {
         if (r.IsSuccess) {
             location.href = "/Empleado/AltaEdicion";
         }

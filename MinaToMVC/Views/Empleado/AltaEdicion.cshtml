@@ -10,6 +10,11 @@
 @*<form enctype="multipart/form-data" id="frmPaymentRequest" method="post" name="frmPaymentRequest">*@
 <form enctype="multipart/form-data" id="frmTrabajador" method="post" name="frmTrabajador">
     <div class="content">
+        <!-- Campos ocultos para los datos automáticos -->
+        <input type="hidden" id="txtCreatedBy" value="@User.Identity.Name" />
+        <input type="hidden" id="txtCreatedDt" value="@DateTime.Now" />
+        <input type="hidden" id="txtUpdatedBy" value="@User.Identity.Name" />
+        <input type="hidden" id="txtUpdatedDt" value="@DateTime.Now" />
         <br>
         <center><h1>Empleados</h1></center>
         <div class="tabla-consultas-empleados">
@@ -73,11 +78,6 @@
                         <br />
                         <img src="~/Assets/img/MaterialDesign/cash-multiple.png" style="width:50px; cursor:pointer;" name="imgAddSalario" id="imgAddSalario" />
                     </div>
-                    <!-- Campos ocultos para los datos automáticos -->
-                    <input type="hidden" id="txtCreatedBy" value="@User.Identity.Name" />
-                    <input type="hidden" id="txtCreatedDt" value="@DateTime.Now" />
-                    <input type="hidden" id="txtUpdatedBy" value="@User.Identity.Name" />
-                    <input type="hidden" id="txtUpdatedDt" value="@DateTime.Now" />
                 </div>
                 <div class="row">
                     <div class="col-lg-12">
@@ -91,39 +91,39 @@
             <br>
 
             @*<div class="busqueda">
-                    <form method="get">
-                        <input type="text" id="search" name="search" placeholder="Buscar por nombre o área" />
-                        <button type="submit">
-                            <i class="fa fa-search" aria-hidden="true"></i> Buscar
-                        </button>
-                    </form>
-                </div>*@
+                <form method="get">
+                    <input type="text" id="search" name="search" placeholder="Buscar por nombre o área" />
+                    <button type="submit">
+                        <i class="fa fa-search" aria-hidden="true"></i> Buscar
+                    </button>
+                </form>
+            </div>*@
 
             <!-- Menú desplegable para seleccionar la cantidad de filas a mostrar -->
             @*<select id="rowsToShow">
-                    <option value="all">Todos</option>
-                    <option value="100">100</option>
-                    <option value="50">50</option>
-                    <option value="25">25</option>
-                    <option value="10">10</option>
-                </select>*@
+                <option value="all">Todos</option>
+                <option value="100">100</option>
+                <option value="50">50</option>
+                <option value="25">25</option>
+                <option value="10">10</option>
+            </select>*@
             <table id="tblEmpleados" class="table" style="width:100%;">
             </table>
 
             @*<table id="employeeTable">
-                    <thead>
-                        <tr>
-                            <th><i class="fa fa-user" aria-hidden="true"></i> Nombre</th>
-                            <th><i class="fa fa-industry" aria-hidden="true"></i> Área de Trabajo</th>
-                            <th><i class="fa fa-dollar-sign" aria-hidden="true"></i> Salario MXN</th>
-                            <th><i class="fa fa-clock" aria-hidden="true"></i> Horario</th>
-                            <th><i class="fa fa-shield" aria-hidden="true"></i> Seguro</th>
-                            <th><i class="fa fa-hourglass-start" aria-hidden="true"></i> Retardos</th>
-                            <th><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Faltas</th>
-                        </tr>
-                    </thead>
-                    <tbody style="font-size: 16px;"></tbody>
-                </table>*@
+                <thead>
+                    <tr>
+                        <th><i class="fa fa-user" aria-hidden="true"></i> Nombre</th>
+                        <th><i class="fa fa-industry" aria-hidden="true"></i> Área de Trabajo</th>
+                        <th><i class="fa fa-dollar-sign" aria-hidden="true"></i> Salario MXN</th>
+                        <th><i class="fa fa-clock" aria-hidden="true"></i> Horario</th>
+                        <th><i class="fa fa-shield" aria-hidden="true"></i> Seguro</th>
+                        <th><i class="fa fa-hourglass-start" aria-hidden="true"></i> Retardos</th>
+                        <th><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Faltas</th>
+                    </tr>
+                </thead>
+                <tbody style="font-size: 16px;"></tbody>
+            </table>*@
             <br>
             <!-- Contenedor para la paginación -->
             @*<div id="pagination"></div>*@
