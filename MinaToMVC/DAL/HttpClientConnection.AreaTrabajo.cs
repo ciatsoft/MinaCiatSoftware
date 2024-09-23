@@ -29,7 +29,7 @@ namespace MinaToMVC.DAL
 
         public async Task<ModelResponse> SaveOrUpdateAreaTrabajo (DtoAreaTrabajo ar)
         {
-            var result = await RequestAsync<object>("api/AreaTrabajo", HttpMethod.Post, ar,
+            var result = await RequestAsync<object>("api/AreaTrabajo/", HttpMethod.Post, ar,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
@@ -40,7 +40,7 @@ namespace MinaToMVC.DAL
 
         public async Task<ModelResponse> GetAreaTrabajoById(long areatrabajoId)
         {
-            var result = await RequestAsync($"api/AreaTrabajo/{areatrabajoId}", HttpMethod.Get, null,
+            var result = RequestAsync("api/AreaTrabajo/GetAreaTrabajoById/{areatrabajoId}", HttpMethod.Get, null,
                 new Func<string, string>((responseString) =>
                 {
                     return responseString;

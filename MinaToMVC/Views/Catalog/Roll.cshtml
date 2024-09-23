@@ -1,14 +1,15 @@
-﻿@{
-    ViewBag.Title = "TipoVehiculo";
+﻿
+@{
+    ViewBag.Title = "Roll";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    var tVehiculo = (MinaTolEntidades.DtoClientes.TipoVehiculo)Model;
+    var roll = (MinaTolEntidades.DtoCatalogos.DtoRoll)Model;
 }
 
 <link href="@Url.Content("~/Assets/css/EstilosBtnCambios/EstiloBtn.css")" rel="stylesheet" />
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
-<script src="~/Scripts/Catalogos/AltaTipoVehiculo.js"></script>
+<script src="~/Scripts/Catalogos/AltaRoll.js"></script>
 <style>
     .btn-success {
         background-color: #28a745; /* Verde para el botón Guardar */
@@ -22,7 +23,6 @@
             transform: scale(1.1); /* Aumenta el tamaño del botón */
             color: white; /* Color de texto blanco */
         }
-
     .btn-custom-cancel {
         background-color: red; /*  para el botón Guardar */
         color: white;
@@ -35,7 +35,6 @@
             transform: scale(1.1); /* Aumenta el tamaño del botón */
             color: white; /* Color de texto blanco */
         }
-
     .btn-custom-clean {
         background-color: dodgerblue; /*  para el botón Guardar */
         color: white;
@@ -50,19 +49,19 @@
         }
 </style>
 
-<form id="frmtipovehiculo" name="frmtipovehiculo" method="post" enctype="multipart/form-data">
+<form id="frmroll" name="frmroll" method="post" enctype="multipart/form-data">
     <div class="content">
         <br>
-        <center><h1>Tipo de vehiculo</h1></center>
-        <div class="tabla-consultas-tipovehiculo">
+        <center><h1>Roles</h1></center>
+        <div class="tabla-consultas-roll">
             <div class="rectangulos" style="width: 100%;">
                 <div class="row">
                     <div class="col-lg-3">
-                        <label>ID Tipo Vehiculo:</label>
-                        <input type="text" id="txtidtipovehiculo" name="txtidtipovehiculo" class="form-control" disabled />
+                        <label>ID Rol:</label>
+                        <input type="text" id="txtidroll" name="idroll" class="form-control" disabled />
                     </div>
                     <div class="col-lg-3">
-                        <label>Nombre del Vehiculo:</label>
+                        <label>Nombre del Rol:</label>
                         <input type="text" id="txtNombre" name="txtNombre" class="form-control" />
                     </div>
                     <div class="col-lg-3">
@@ -78,9 +77,9 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <input href="/Catalog/Roll" type="button" value="Guardar" onclick="SaveOrUpdateTipoVehiculo()" class="btn btn-success" />
-                        <a href="/Catalog/TipoVehiculo" class="btn btn-custom-clean">limpiar</a>
-
+                        <input href="/Catalog/Roll" type="button" value="Guardar" onclick="SaveOrUpdateRoll()" class="btn btn-success" />
+                        <a href="/Catalog/Roll" class="btn btn-custom-clean">limpiar</a>
+                        
                     </div>
                 </div>
 
@@ -91,15 +90,15 @@
             </div>
         </div>
 
-
         <br />
 
-        <table id="tblTipoVehiculo" class="display" style="width:100%;">
+        <table id="tblRoll" class="display" style="width:100%;">
+            <!-- Aquí se llenarán los datos de los roles -->
         </table>
 
     </div>
 
 </form>
 <script>
-    var tVehiculoJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(tVehiculo))');
+    var rollJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(roll))');
 </script>

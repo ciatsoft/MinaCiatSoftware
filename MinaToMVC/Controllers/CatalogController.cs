@@ -1,4 +1,5 @@
 ﻿using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.DtoSucursales;
 using Newtonsoft.Json;
 using System;
@@ -7,9 +8,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using static MinaToMVC.Controllers.Filters.FiltersHelper;
 
 namespace MinaToMVC.Controllers
 {
+    [Autenticated]
     public class CatalogController : BaseController
     {
         // GET: Catalog
@@ -22,21 +25,14 @@ namespace MinaToMVC.Controllers
 
         #region Unidad de Medida
 
-        public async Task<ActionResult> UnidadMedida(long id = 0)
+        public ActionResult UnidadMedida()
         {
-            var unidadmedida = new UnidadMedida();
-            if (id !=0)
-            {
-                var result = await httpClientConnection.GetUnidadMedidaById(id);
-                unidadmedida = JsonConvert.DeserializeObject<UnidadMedida>(result.Response.ToString());
-            }
-            return View(unidadmedida);
+            return View();
         }
         public async Task<string> GetAllUnidadmedida()
         {
-            var token = Helpers.SessionHelper.GetSessionUser();
-            var result = await httpClientConnection.GetAllUnidadMedida(token.Token.access_token);
-            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+            var result = await httpClientConnection.GetAllUnidadMedida();
+            return JsonConvert.SerializeObject(result);
         }
         public async Task<ActionResult> SaveOrUpdateUnidadMedida(UnidadMedida u)
         {
@@ -88,85 +84,76 @@ namespace MinaToMVC.Controllers
 
         #region Tipo de Vehiculo
 
-        public ActionResult TipoVehiculo()
+        public async Task<ActionResult> TipoVehiculo(long id = 0)
         {
-            return View();
-        }
 
-        #endregion
+            TipoVehiculo tVehiculo;
 
-        #region Ubicacion 
-        public async Task<ActionResult> Ubicacion( long id = 0)
-        {
-            var ubicacion = new DtoUbicacion();
             if (id != 0)
             {
-                var result = await httpClientConnection.GetUbicacionById(id);
-                ubicacion = JsonConvert.DeserializeObject<DtoUbicacion>(result.Response.ToString());
+                var response = await httpClientConnection.GetTipoDeVehiculoById(id);
+                tVehiculo = JsonConvert.DeserializeObject<TipoVehiculo>(response.Response.ToString());
             }
-            return View(ubicacion);
+            else
+                tVehiculo = new TipoVehiculo();
 
+
+            return View(tVehiculo);
         }
-
-        public async Task<string> GetAllUbicacion()
+        public string SaveOrUpdateTipoVehiculo(TipoVehiculo tv)
         {
-            var token = Helpers.SessionHelper.GetSessionUser();
-            var result = await httpClientConnection.GetAllUbicacion(token.Token.access_token);
-            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+
+            var result = httpClientConnection.SaveOrUpdateTipoVehiculo(tv);
+            return JsonConvert.SerializeObject(result);
+
+            
         }
-
-        public async Task<ActionResult> SaveOrUpdateUbicacion(DtoUbicacion u)
+        public async Task<string> GetAllTipoVehiculo()
         {
-            httpClientConnection.MappingColumSecurity(u);
-            var result = await httpClientConnection.SaveOrUpdateUbicacion(u);
-            return RedirectToAction("Ubicacion", "Catalog");
-        }
+            var result = await httpClientConnection.GetAllTipoVehiculo();
 
-        public async Task<string> GetUbicacionById(long id)
-        {
-            var result = await httpClientConnection.GetUbicacionById(id);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
 
         #endregion
 
-        #region TipoMaterialUbicacion
-        public async Task<ActionResult> TipoMaterialUbicacion(long id= 0)
+        #region Roles
+
+        public async Task<ActionResult> Roll(long id = 0)
         {
-            var tipoMaterial = new DtoTipoMaterialUbicacion();
+            
+            DtoRoll roll;
+
             if (id != 0)
             {
-                var result = await httpClientConnection.GetTipoMaterialUbicacionById(id);
-                tipoMaterial = JsonConvert.DeserializeObject<DtoTipoMaterialUbicacion>(result.Response.ToString());
+                var response = await httpClientConnection.GetRollById(id);
+                roll = JsonConvert.DeserializeObject<DtoRoll>(response.Response.ToString());
             }
-            return View(tipoMaterial);
-        }
+            else
+                roll = new DtoRoll();
 
-        public async Task<string> GetAllTipoMaterialUbicacion()
+
+            return View(roll);
+        }
+        /// <summary>
+        /// El procedimiento nos permite guardar o actualizar los roles mediante un procedimiento almacenado
+        /// </summary>
+        /// <param name="t"> nos ayuda a pasar la inmformacion del formulario y ocuparla para el procedimiento almacenado</param>
+        /// <returns></returns>
+        public string SaveOrUpdateRoll(DtoRoll t)
         {
-            var token = Helpers.SessionHelper.GetSessionUser();
-            var result = await httpClientConnection.GetAllTipoMaterialUbicacion(token.Token.access_token);
+            
+            var result = httpClientConnection.SaveOrUpdateRoll(t);
+            return JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetAllRoll()
+        {
+            var result = await httpClientConnection.GetAllRoll();
+
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-
-        public async Task<ActionResult> SaveOrUpdateTipoMaterialUbicacion(DtoTipoMaterialUbicacion tmu)
-        {
-            httpClientConnection.MappingColumSecurity(tmu);
-            var result = await httpClientConnection.SaveOrUpdateTipoMaterialUbicacion(tmu);
-            return RedirectToAction("TipoMaterialUbicacion", "Catalog");
-
-        }
-
-        public async Task<string> GetTipoMaterialUbicacionById(long id)
-        {
-            var result = await httpClientConnection.GetTipoMaterialUbicacionById(id);
-            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
-        }
-        #endregion
-
-
-
     }
-
+        #endregion
+    
 }

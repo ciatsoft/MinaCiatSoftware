@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace MinaTolEntidades.DtoCatalogos
 {
-   public class DtoUbicacion :BaseObject
+   public class DtoRoll: BaseObject
     {
-        public string NombreUbicacion { get; set; }
-        public string DescripcionUbicacion { get; set; }
+        public string Nombre { get; set; }
+        public string Descripcion { get; set; }
     }
 }

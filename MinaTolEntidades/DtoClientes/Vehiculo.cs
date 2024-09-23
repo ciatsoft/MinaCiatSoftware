@@ -8,7 +8,6 @@ namespace MinaTolEntidades.DtoClientes
 {
  public  class Vehiculo : BaseObject
     {
-        public TipoVehiculo TipoVehiculo { get; set; }
         public string Placa { get; set; }
         public string Color { get; set; }
     }
