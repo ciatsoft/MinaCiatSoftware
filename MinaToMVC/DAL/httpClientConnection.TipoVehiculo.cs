@@ -38,6 +38,18 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
+        public async Task<ModelResponse> GetTipoDeVehiculoById(long id)
+        {
+            var result = await RequestAsync<object>($"api/TipoVehiculo/{id}", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
 
     }
 }

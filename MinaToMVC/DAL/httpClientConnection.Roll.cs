@@ -1,4 +1,4 @@
-﻿using MinaTolEntidades.DtoClientes;
+﻿using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades;
 using Newtonsoft.Json;
 using System;
@@ -14,9 +14,22 @@ namespace MinaToMVC.DAL
     public partial class HttpClientConnection
     {
 
-        public async Task<ModelResponse> SaveOrUpdateRoll(Roll u)
+        public async Task<ModelResponse> SaveOrUpdateRoll(DtoRoll u)
         {
+            MappingColumSecurity(u);
             var result = await RequestAsync<object>("api/Roll", HttpMethod.Post, u,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
+        public async Task<ModelResponse> GetAllRoll()
+        {
+            var result = await RequestAsync<object>("api/Roll", HttpMethod.Get, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
@@ -26,9 +39,9 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
-        public async Task<ModelResponse> GetAllRoll()
+        public async Task<ModelResponse> GetRollById(long id)
         {
-            var result = await RequestAsync<object>("api/Roll", HttpMethod.Get, null,
+            var result = await RequestAsync<object>($"api/Roll/{id}", HttpMethod.Get, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;

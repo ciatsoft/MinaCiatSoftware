@@ -1,5 +1,5 @@
 ﻿using MinaTolEntidades;
-using MinaTolEntidades.DtoClientes;
+using MinaTolEntidades.DtoCatalogos;
 using MinaTolWebApi.DAL;
 using System;
 using System.Collections.Generic;
@@ -32,7 +32,7 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
         [HttpPost, Route("")]
-        public async Task<ModelResponse> SaveOrUpdateRoll(Roll t)
+        public async Task<ModelResponse> SaveOrUpdateRoll(DtoRoll t)
         {
             var result = wrapper.SaveOrUpdateRoll(t);
             return result;

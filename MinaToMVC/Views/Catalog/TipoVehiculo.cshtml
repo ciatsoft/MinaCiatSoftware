@@ -1,7 +1,8 @@
-﻿@model IEnumerable<MinaTolEntidades.DtoClientes.TipoVehiculo>
-@{
+﻿@{
     ViewBag.Title = "TipoVehiculo";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var tVehiculo = (MinaTolEntidades.DtoClientes.TipoVehiculo)Model;
 }
 
 <link href="@Url.Content("~/Assets/css/EstilosBtnCambios/EstiloBtn.css")" rel="stylesheet" />
@@ -21,6 +22,32 @@
             transform: scale(1.1); /* Aumenta el tamaño del botón */
             color: white; /* Color de texto blanco */
         }
+
+    .btn-custom-cancel {
+        background-color: red; /*  para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-custom-cancel:hover {
+            background-color: orange; /* Color  más oscuro al pasar el ratón */
+            transform: scale(1.1); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+
+    .btn-custom-clean {
+        background-color: dodgerblue; /*  para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-custom-clean:hover {
+            background-color: deepskyblue; /* Color  más oscuro al pasar el ratón */
+            transform: scale(1.1); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
 </style>
 
 <form id="frmtipovehiculo" name="frmtipovehiculo" method="post" enctype="multipart/form-data">
@@ -32,7 +59,7 @@
                 <div class="row">
                     <div class="col-lg-3">
                         <label>ID Tipo Vehiculo:</label>
-                        <input type="text" id="txtidtipovehiculo" name="idtipovehiculo" class="form-control" disabled />
+                        <input type="text" id="txtidtipovehiculo" name="txtidtipovehiculo" class="form-control" disabled />
                     </div>
                     <div class="col-lg-3">
                         <label>Nombre del Vehiculo:</label>
@@ -51,8 +78,9 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <input type="button" value="Guardar" onclick="SaveOrUpdateTipoVehiculo()" class="btn btn-success" />
-                        <input type="button" value="Cancelar" class="btn btn-custom-cancel" />
+                        <input href="/Catalog/Roll" type="button" value="Guardar" onclick="SaveOrUpdateTipoVehiculo()" class="btn btn-success" />
+                        <a href="/Catalog/TipoVehiculo" class="btn btn-custom-clean">limpiar</a>
+
                     </div>
                 </div>
 
@@ -67,9 +95,11 @@
         <br />
 
         <table id="tblTipoVehiculo" class="display" style="width:100%;">
-            
         </table>
 
     </div>
 
 </form>
+<script>
+    var tVehiculoJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(tVehiculo))');
+</script>

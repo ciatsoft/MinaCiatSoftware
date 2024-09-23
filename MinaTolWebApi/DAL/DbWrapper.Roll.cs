@@ -1,5 +1,5 @@
 ﻿using MinaTolEntidades;
-using MinaTolEntidades.DtoClientes;
+using MinaTolEntidades.DtoCatalogos;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -10,7 +10,7 @@ namespace MinaTolWebApi.DAL
 {
     public partial class DbWrapper
     {
-        public ModelResponse SaveOrUpdateRoll(Roll tv)
+        public ModelResponse SaveOrUpdateRoll(DtoRoll tv)
 
         {
             var response = new ModelResponse();
@@ -19,9 +19,9 @@ namespace MinaTolWebApi.DAL
                 response.IsSuccess = true;
                 var parameters = GenerateSQLParameters(tv);
                 var result = GetObject("SaveOrUpdateRoll", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, Roll>((reader) =>
+                    parameters, new Func<System.Data.IDataReader, DtoRoll>((reader) =>
                     {
-                        var r = FillEntity<Roll>(reader);
+                        var r = FillEntity<DtoRoll>(reader);
                         return r;
                     }));
                 response.Response = result;
@@ -44,9 +44,9 @@ namespace MinaTolWebApi.DAL
                 response.IsSuccess = true;
                 var parameters = new List<SqlParameter>();
                 var result = GetObjects("GetAllRoll", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, Roll>((reader) =>
+                    parameters, new Func<System.Data.IDataReader, DtoRoll>((reader) =>
                     {
-                        var r = FillEntity<Roll>(reader);
+                        var r = FillEntity<DtoRoll>(reader);
                         return r;
                     }));
                 response.Response = result;
@@ -77,9 +77,9 @@ namespace MinaTolWebApi.DAL
                 });
 
                 var result = GetObject("GetRollById", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, Roll>((reader) =>
+                    parameters, new Func<System.Data.IDataReader, DtoRoll>((reader) =>
                     {
-                        var r = FillEntity<Roll>(reader);
+                        var r = FillEntity<DtoRoll>(reader);
                         return r;
                     }));
                 response.Response = result;

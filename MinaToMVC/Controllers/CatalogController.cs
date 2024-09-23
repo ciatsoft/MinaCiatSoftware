@@ -84,15 +84,29 @@ namespace MinaToMVC.Controllers
 
         #region Tipo de Vehiculo
 
-        public ActionResult TipoVehiculo()
-        {
-            return View();
-        }
-        public string SaveOrUpdateTipoVehiculo(TipoVehiculo t)
+        public async Task<ActionResult> TipoVehiculo(long id = 0)
         {
 
-            var result = httpClientConnection.SaveOrUpdateTipoVehiculo(t);
+            TipoVehiculo tVehiculo;
+
+            if (id != 0)
+            {
+                var response = await httpClientConnection.GetTipoDeVehiculoById(id);
+                tVehiculo = JsonConvert.DeserializeObject<TipoVehiculo>(response.Response.ToString());
+            }
+            else
+                tVehiculo = new TipoVehiculo();
+
+
+            return View(tVehiculo);
+        }
+        public string SaveOrUpdateTipoVehiculo(TipoVehiculo tv)
+        {
+
+            var result = httpClientConnection.SaveOrUpdateTipoVehiculo(tv);
             return JsonConvert.SerializeObject(result);
+
+            
         }
         public async Task<string> GetAllTipoVehiculo()
         {
@@ -106,13 +120,30 @@ namespace MinaToMVC.Controllers
 
         #region Roles
 
-        public ActionResult Roll()
+        public async Task<ActionResult> Roll(long id = 0)
         {
-            return View();
-        }
-        public string SaveOrUpdateRoll(Roll t)
-        {
+            
+            DtoRoll roll;
 
+            if (id != 0)
+            {
+                var response = await httpClientConnection.GetRollById(id);
+                roll = JsonConvert.DeserializeObject<DtoRoll>(response.Response.ToString());
+            }
+            else
+                roll = new DtoRoll();
+
+
+            return View(roll);
+        }
+        /// <summary>
+        /// El procedimiento nos permite guardar o actualizar los roles mediante un procedimiento almacenado
+        /// </summary>
+        /// <param name="t"> nos ayuda a pasar la inmformacion del formulario y ocuparla para el procedimiento almacenado</param>
+        /// <returns></returns>
+        public string SaveOrUpdateRoll(DtoRoll t)
+        {
+            
             var result = httpClientConnection.SaveOrUpdateRoll(t);
             return JsonConvert.SerializeObject(result);
         }

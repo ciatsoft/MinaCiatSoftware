@@ -1,7 +1,9 @@
-﻿@model IEnumerable<MinaTolEntidades.DtoClientes.Roll>
+﻿
 @{
-    ViewBag.Title = "Roles";
+    ViewBag.Title = "Roll";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var roll = (MinaTolEntidades.DtoCatalogos.DtoRoll)Model;
 }
 
 <link href="@Url.Content("~/Assets/css/EstilosBtnCambios/EstiloBtn.css")" rel="stylesheet" />
@@ -30,6 +32,18 @@
 
         .btn-custom-cancel:hover {
             background-color: orange; /* Color  más oscuro al pasar el ratón */
+            transform: scale(1.1); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+    .btn-custom-clean {
+        background-color: dodgerblue; /*  para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-custom-clean:hover {
+            background-color: deepskyblue; /* Color  más oscuro al pasar el ratón */
             transform: scale(1.1); /* Aumenta el tamaño del botón */
             color: white; /* Color de texto blanco */
         }
@@ -63,8 +77,9 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <input type="button" value="Guardar" onclick="SaveOrUpdateRoll()" class="btn btn-success" />
-                        <input type="button" value="Eliminar" class="btn btn-custom-cancel" />
+                        <input href="/Catalog/Roll" type="button" value="Guardar" onclick="SaveOrUpdateRoll()" class="btn btn-success" />
+                        <a href="/Catalog/Roll" class="btn btn-custom-clean">limpiar</a>
+                        
                     </div>
                 </div>
 
@@ -84,3 +99,6 @@
     </div>
 
 </form>
+<script>
+    var rollJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(roll))');
+</script>

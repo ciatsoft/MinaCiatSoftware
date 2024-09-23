@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinaTolEntidades.DtoClientes
+namespace MinaTolEntidades.DtoCatalogos
 {
-   public class Roll: BaseObject
+   public class DtoRoll: BaseObject
     {
         public string Nombre { get; set; }
         public string Descripcion { get; set; }
