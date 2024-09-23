@@ -79,6 +79,7 @@ namespace MinaToMVC.Controllers
         public async Task<string> SaveOrupdateSalario(DtoSalario s)
         {
             //t.FechaContratacion = DateTime.Now;
+            httpClientConnection.MappingColumSecurity(s);
             var result = await httpClientConnection.SaveOrUpdateSalario(s);
             return JsonConvert.SerializeObject(result);
         }

@@ -165,6 +165,8 @@
     <Content Include="Scripts\Catalogos\AltaRoll.js" />
     <Content Include="Scripts\Catalogos\AltaTipoVehiculo.js" />
     <Content Include="Scripts\Catalogos\AreaTrabajo.js" />
+    <Content Include="Scripts\Catalogos\TipoMaterialUbicacion.js" />
+    <Content Include="Scripts\Catalogos\Ubicacion.js" />
     <Content Include="Scripts\Catalogos\UnidadMedida.js" />
     <Content Include="Scripts\Comun\Comun.js" />
     <Content Include="Scripts\Home\Autenticacion.js" />
@@ -233,7 +235,7 @@
     <Content Include="Views\Taller\Reportes_SStock.cshtml" />
     <Content Include="Views\Catalog\AreaTrabajo.cshtml" />
     <Content Include="Views\Catalog\TipoVehiculo.cshtml" />
-    <Content Include="Views\Catalog\Roll.cshtml" />
+    <Content Include="Views\Catalog\Ubicacion.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

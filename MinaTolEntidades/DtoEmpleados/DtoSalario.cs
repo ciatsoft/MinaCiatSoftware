@@ -9,7 +9,7 @@ namespace MinaTolEntidades.DtoEmpleados
 {
     public class DtoSalario : BaseObject
     {
-        public DateTime FechaInicial { get; set; }
+        public DateTime FechaInicio { get; set; }
         public DateTime? FechaFinal { get; set; }
         public decimal Monto { get; set; }
         public bool EsSalarioActual { get; set; }
