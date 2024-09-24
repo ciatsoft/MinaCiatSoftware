@@ -147,6 +147,7 @@ namespace MinaToMVC.Controllers
             var result = httpClientConnection.SaveOrUpdateRoll(t);
             return JsonConvert.SerializeObject(result);
         }
+
         public async Task<string> GetAllRoll()
         {
             var result = await httpClientConnection.GetAllRoll();

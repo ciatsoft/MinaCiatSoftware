@@ -24,7 +24,8 @@
             },
             {
                 data: "id", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarTVehiculo(' + data + ')" /> <input type="button" value="Eliminar" class="btn btn-custom-cancel" />';
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarTVehiculo(' + data + ')" />' +
+                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarTVehiculo(' + data + ', this)" />';
 
                 }
             }
@@ -55,13 +56,51 @@ function SaveOrUpdateTipoVehiculo() {
             UpdatedBy: $("#txtUpdatedBy").val(),
             UpdatedDt: $("#txtUpdatedDt").val()
         };
-
+        window.location.href = '/Catalog/TipoVehiculo';
         // Llamada al servidor para guardar o actualizar los datos
         PostMVC('/Catalog/SaveOrUpdateTipoVehiculo', parametro, function (r) {
             if (r.IsSuccess) {
                 location.href = "/Catalog/TipoVehiculo/" + r.Response.id;
             } else {
                 alert("Error al guardar los datos: " + r.ErrorMessage);
+            }
+        });
+    }
+}
+
+
+// Función para eliminar el rol con confirmación y actualización de estatus
+function EliminarTVehiculo(id, boton) {
+    // Obtener la fila correspondiente al botón de eliminación
+    var row = $(boton).closest("tr");
+
+    // Obtener los valores de la fila y almacenarlos en variables
+    var nombre = row.find("td:eq(0)").text();  // Nombre
+    var descripcion = row.find("td:eq(1)").text();  // Descripción
+
+    // Confirmación de eliminación
+    if (confirm("¿Estás seguro de que deseas eliminar este Vehiculo? \nNombre: " + nombre + "\nDescripción: " + descripcion)) {
+        // Actualizamos el estatus a "Inactivo" (0) y preparamos el parámetro
+        var parametro = {
+            Id: id,
+            Nombre: nombre,
+            Descripcion: descripcion,
+            Estatus: 0,  // Cambiamos el estatus a inactivo (0)
+            CreatedBy: $("#txtCreatedBy").val(),
+            CreatedDt: $("#txtCreatedDt").val(),
+            UpdatedBy: $("#txtUpdatedBy").val(),  // Asignamos el valor de quien está actualizando
+            UpdatedDt: new Date().toISOString()  // Asignamos la fecha y hora actual como fecha de actualización
+        };
+
+        window.location.href = '/Catalog/TipoVehiculo';
+        // Llamada para guardar o actualizar el rol
+        PostMVC('/Catalog/SaveOrUpdateTipoVehiculo', parametro, function (r) {
+            if (r.IsSuccess) {
+                alert("vehiculo eliminado exitosamente.");
+                // Actualiza la interfaz de usuario, por ejemplo, eliminando la fila de la tabla
+                row.remove();  // Eliminar la fila de la tabla si es necesario
+            } else {
+                alert("Error al eliminar el rol: " + r.ErrorMessage);
             }
         });
     }
