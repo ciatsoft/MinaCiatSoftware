@@ -1,0 +1,102 @@
+﻿
+@{
+    ViewBag.Title = "Internos";
+}
+
+<form enctype="multipart/form-data" id="frmViajesInternos" method="post" name="frmViajesInternos">
+    <div class="content">
+        <!-- Campos ocultos para los datos automáticos -->
+        <input type="hidden" id="txtCreatedBy" value="@User.Identity.Name" />
+        <input type="hidden" id="txtCreatedDt" value="@DateTime.Now" />
+        <input type="hidden" id="txtUpdatedBy" value="@User.Identity.Name" />
+        <input type="hidden" id="txtUpdatedDt" value="@DateTime.Now" />
+        <br>
+        <center><h1>Viajes Internos</h1></center>
+        <div class="tabla-consultas-empleados">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>ID del Viaje:</label>
+                        <input type="text" id="txtViajeinterno" name="txtTrabajadorId" class="form-control" disabled />
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Ubicación Origne:</label>
+                        <select id="ddlUOrigen" class="form-control"></select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Ubicación Destino:</label>
+                        <select id="ddlUOrigen" class="form-control"></select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Timo de Material:</label>
+                        <select id="ddlTipoMaterial" class="form-control"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Transportista:</label>
+                        <select id="ddlTransportistas" class="form-control"></select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Vehiculo:</label>
+                        <select id="ddlVehiculo" class="form-control"></select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Fecha del viaje:</label>
+                        <input type="date" id="dtpFechaViaje" name="dtpFechaContratacion" class="form-control" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Observaciones:</label>
+                        <textarea name="txtObservaciones" id="txtObservaciones" class="form-control" rows="6"></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <input type="button" onclick="SaveOrupdateTrabajador()" value="Guadar" class="btn btn-success" />
+                        <a class="btn btn-warning" href="/Empleado/AltaEdicion">Cancelar</a>
+                        <input type="button" name="btnEliminar" id="btnEliminar" value="Eliminar" class="btn btn-danger" />
+                    </div>
+                </div>
+            </div>
+            <table id="tblViajesLocales" class="table" style="width:100%;">
+            </table>
+        </div>
+    </div>
+</form>
+<script>
+    $(document).ready(function () {
+        $("#tblViajesLocales").dataTable({
+            processing: true,
+            destroy: true,
+            paging: true,
+            searching: true,
+            //order: [[2, "asc"]],
+            columns: [
+                { data: "id", "visible": false, title: "Id" },
+                {
+                    data: "fechaInicio", title: "Fecha Inicial", render: function (data) {
+                        return formatDate(data);
+                    }
+                },
+                { data: "fechaFinal", title: "Fecha Termino" },
+                {
+                    data: "monto", title: "Monto", render: function (data) {
+                        return formatMoney(data);
+                    }
+                },
+                { data: "esSalarioActual", title: "Salario Actual" },
+                {
+                    data: "id", render: function (data) {
+                        return '<input type="button" value="Editar" class="btn btn-primary" onclick="EditarTrabajador(' + data + ')" />';
+                    }
+                }
+            ]
+        });
+
+        $("#titleGenerciModal").text('Salarios del trabajador');
+        $('#genericModal').modal('show');
+    });
+    });
+</script>
