@@ -60,29 +60,29 @@ namespace MinaTolWebApi.DAL
 
         public ModelResponse GetUbicacionById(long id)
         {
-            var response = new ModelResponse();
+            var modelResponse = new ModelResponse();
             var parameters = new List<SqlParameter>();
-            parameters.Add(new SqlParameter("@Id", id));
+            //parameters.Add(new SqlParameter("@Id", id));
             try
             {
-                var result = GetObject("GetUbicacionById", CommandType.StoredProcedure, parameters,
-                    new Func<IDataReader, DtoUbicacion>((reader) =>
-                    {
-                        var r = FillEntity<DtoUbicacion>(reader);
+                var user = GetObject($"SELECT * FROM Ubicacion where id = {id}", CommandType.Text, parameters,
+                   new Func<IDataReader, DtoUbicacion>((reader) =>
+                   {
+                       var r = FillEntity<DtoUbicacion>(reader);
 
-                        return r;
-                    }));
+                       return r;
+                   }));
 
-                response.Response = result;
+                modelResponse.Response = user;
             }
             catch (Exception ex)
             {
-                response.IsSuccess = false;
-                response.Message = ex.Message;
-                response.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.IsSuccess = false;
+                modelResponse.Message = ex.Message;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
             }
 
-            return response;
+            return modelResponse;
         }
 
 

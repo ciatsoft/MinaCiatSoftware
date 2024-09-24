@@ -10,10 +10,10 @@
         //order: [[2, "asc"]],
         columns: [
             { data: "id", "visible": false, title: "Id" },
-            { data: "nombreTipoMaterial", title: "NombreTipoMaterial" },
-            { data: "descripcionTipoMaterial", title: "DescripcionTipoMaterial" },
-            { data: "unidadMedida", title: "UnidadMedida" },
-            { data: "dtoUbicacion", title: "DtoUbicacion" },
+            { data: "nombreTipoMaterial", title: "Nombre Material" },
+            { data: "descripcionTipoMaterial", title: "Tipo Material" },
+            { data: "dtoUbicacion.nombreUbicacion", title: "Ubicacion" },
+            { data: "unidadMedida.nombre", title: "UnidadMedida" },
             {
                 data: "id", title: "Editar", render: function (data) {
                     return "<a href='/Catalog/TipoMaterialUbicacion/" + data + "' class='btn btn-primary'>Editar</a>";
@@ -51,8 +51,13 @@ function SaveOrUpdateTipoMaterialUbicacion() {
             Id: $("#txtidtipomaterial").val(),
             NombreTipoMaterial: $("#txtNombreTipoMaterial").val(),
             DescripcionTipoMaterial: $("#txtDescripcionTipoMaterial").val(),
-            UnidadMedida: $("#txtUnidadMedida").val(),
-            DtoUbicacion: $("#txtDtoUbicacion").val(),
+            DtoUbicacion: {
+                Id: $("#ddlUbicacion").val(),
+            },
+                
+            UnidadMedida: {
+                Id: $("#ddlUnidadDeMedida").val(),
+            },
             CreatedBy: $("#txtCreatedBy").val(),
             CreatedDt: $("#txtCreatedDt").val(),
             UpdatedBy: $("#txtUpdateBy").val(),
@@ -77,15 +82,15 @@ function GetTipoMaterialUbicacionById(id) {
             $("#txtidtipomaterial").val(response.Id);
             $("#txtNombreTipoMaterial").val(response.NombreTipoMaterial);
             $("#txtDescripcionTipoMaterial").val(response.DescripcionTipoMaterial);
-            $("#txtUnidadMedida").val(response.UnidadMedida);
-            $("#txtDtoUbicacion").val(response.DtoUbicacion);
+            $("#ddlDtoUbicacion").val(response.UnidadMedida);
+            $("#ddlUbicacion").val(response.DtoUbicacion);
             $("#txtCreatedBy").val(response.CreatedBy);
             $("#txtCreatedDt").val(response.CreatedDt);
             $("#txtUpdateBy").val(response.UpdatedBy);
             $("#txtUpdateDt").val(response.UpdatedDt);
         }
 
-        else {
+            else {
 
             console.log(response);
             alert("OCurrio un error");

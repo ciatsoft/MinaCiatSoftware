@@ -1,5 +1,6 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.DtoSucursales;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -22,9 +23,22 @@ namespace MinaTolWebApi.DAL
                     new Func<IDataReader, DtoTipoMaterialUbicacion>((reader) =>
                     {
                         var r = FillEntity<DtoTipoMaterialUbicacion>(reader);
-
+                        r.UnidadMedida = new UnidadMedida()
+                        {
+                            Id = Convert.ToInt64(reader["UnidadMedidaID"].ToString())
+                        };
+                        r.DtoUbicacion = new DtoUbicacion()
+                        {
+                            Id = Convert.ToInt64(reader["UbicacionID"].ToString())
+                        };
                         return r;
                     }));
+                //más facil
+                foreach (var i in result)
+                {
+                    i.UnidadMedida = (UnidadMedida)GetUnidadMedidaById(i.UnidadMedida.Id).Response;
+                    i.DtoUbicacion = (DtoUbicacion)GetUbicacionById(i.DtoUbicacion.Id).Response;
+                }
 
                 modelResponse.Response = result;
             }

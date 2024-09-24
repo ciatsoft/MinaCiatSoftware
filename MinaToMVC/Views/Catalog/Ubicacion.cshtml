@@ -1,6 +1,7 @@
 ﻿@model MinaTolEntidades.DtoCatalogos.DtoUbicacion
 @{
     ViewBag.Title = "Ubicacion";
+    var ubicacion = (List<MinaTolEntidades.DtoCatalogos.DtoUbicacion>)ViewBag.AreaDeUbicacion;
     Layout = "~/Views/Shared/_Layout.cshtml";
     var estatus = new List<string> { "Activo", "Inactivo" };
 }
@@ -22,11 +23,11 @@
                         <input type="text" id="txtIdUbicacion" class="form-control" disabled />
                     </div>
                     <div class="col-lg-3">
-                        <label>Nombre Ubicacion:</label>
+                        <label>NombreUbicacion:</label>
                         <input type="text" id="txtNombreUbicacion" class="form-control" />
                     </div>
                     <div class=" col-lg-3">
-                        <label>Descripcion Ubicacion:</label>
+                        <label>DescripcionUbicacion:</label>
                         <input type="text" id="txtDescripcionUbicacion" class="form-control" />
                     </div>
                     <div class=" col-lg-3">
@@ -37,6 +38,7 @@
                 <div class="row form-group">
                     <div class="col-md-12">
                         <input type="button" id="btnGuardarUbicacion" value="Guardar" class="btn btn-success" />
+                        <a class="btn btn-warning" href="/Catalog/Ubicacion">Cancelar</a>
                         <input type="button" value="Cancelar" class="btn btn-warning" />
                     </div>
                 </div>
@@ -56,14 +58,30 @@
 
 <script>
     $(function () {
+         jQuery.validator.addMethod("lettersonly", function (value, element) {
+        return this.optional(element) || /^[a-z\s]+$/i.test(value);
+         }, "Only alphabetical characters");
         $("#frmubicacion").validate({
             rules: {
-                "NombreUbicacion": "required",
-                "DescripcionUbicacion": "required"
+                "txtNombreUbicacion": {
+                    lettersonly: true,
+                    required: true
+                },
+                "txtDescripcionUbicacion": {
+                    lettersonly: true,
+                    required: true
+                }               
             },
             messages: {
-                "NombreUbicacion": "Campo Obligatorio",
-                "DescripcionUbicacion": "Campo Obligatorio"
+                "txtDescripcionUbicacion": {
+                    required: "El campo '   Ubicacion' es requerido.",
+                    lettersonly: "Este campo no acepta valores númericos."
+                },
+                "txtNombreUbicacion": {
+                    required: "El campo 'Nombre' es requerido.",
+                    lettersonly: "Este campo no acepta valores númericos."
+                }
+                
 
             }
         });

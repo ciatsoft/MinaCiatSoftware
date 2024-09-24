@@ -98,12 +98,19 @@ namespace MinaToMVC.Controllers
         #region Ubicacion 
         public async Task<ActionResult> Ubicacion( long id = 0)
         {
-            var ubicacion = new DtoUbicacion();
+            var token = Helpers.SessionHelper.GetSessionUser();
+            var result = await httpClientConnection.GetAllAreaTrabajo(token.Token.access_token);
+            var areaDeUbicacion = JsonConvert.DeserializeObject<List<DtoUbicacion>>(result.Response.ToString());
+            DtoUbicacion ubicacion;
             if (id != 0)
             {
-                var result = await httpClientConnection.GetUbicacionById(id);
-                ubicacion = JsonConvert.DeserializeObject<DtoUbicacion>(result.Response.ToString());
+                var response = await httpClientConnection.GetUbicacionById(id);
+                ubicacion = JsonConvert.DeserializeObject<DtoUbicacion>(response.Response.ToString());
             }
+            else
+            
+                ubicacion = new DtoUbicacion();
+            ViewBag.AreaDeUbicacion = areaDeUbicacion;
             return View(ubicacion);
 
         }
@@ -134,12 +141,25 @@ namespace MinaToMVC.Controllers
         #region TipoMaterialUbicacion
         public async Task<ActionResult> TipoMaterialUbicacion(long id= 0)
         {
+            var token = Helpers.SessionHelper.GetSessionUser();
             var tipoMaterial = new DtoTipoMaterialUbicacion();
             if (id != 0)
             {
                 var result = await httpClientConnection.GetTipoMaterialUbicacionById(id);
                 tipoMaterial = JsonConvert.DeserializeObject<DtoTipoMaterialUbicacion>(result.Response.ToString());
             }
+            else
+                tipoMaterial = new DtoTipoMaterialUbicacion();
+
+            //esto del token lo vamos a cambiar
+            //y a hacerlo automatico como en los otros proyectos pero no me ha dado tiempo 
+
+            var unidadesDeMedida = await httpClientConnection.GetAllUnidadMedida(token.Token.access_token);
+            var ubicacion = await httpClientConnection.GetAllUbicacion(token.Token.access_token);
+
+            ViewBag.UnidadDeMedida = JsonConvert.DeserializeObject<List<UnidadMedida>>(unidadesDeMedida.Response.ToString());             
+            ViewBag.Ubicacionnombre = JsonConvert.DeserializeObject<List<DtoUbicacion>>(ubicacion.Response.ToString());
+
             return View(tipoMaterial);
         }
 

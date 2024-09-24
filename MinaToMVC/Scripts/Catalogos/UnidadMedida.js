@@ -11,18 +11,23 @@
         //order: [[2, "asc"]],
         columns: [
             { data: "id", "visible": false, title: "Id" },
-            { data: "nombre", title: "Unidad Medida" },
-            { data: "descripcion", title: "Descripción" }
+            { data: "nombre", title: "Nombre" },
+            { data: "descripcion", title: "Descripción" },
+            {
+                data: "id", title: "Editar", render: function (data) {
+                    return "<a href='/Catalog/UnidadMedida/" + data + "' class='btn btn-primary'>Editar</a>";
+                }
+            }
         ]
     });
-    GetAllUnidadMedida();
+    GetAllUnidadmedida();
     $("#btnGuardarUnidadMedida").on("click", function () {
         SaveOrUpdateUnidadMedida();
     });
 
 });
 
-function GetAllUnidadMedida() {
+function GetAllUnidadmedida() {
     GetMVC("/Catalog/GetAllUnidadmedida", function (r) {
         if (r.IsSuccess) {
             $('#tableUnidadMedida').dataTable().fnAddData(r.Response);
@@ -43,9 +48,9 @@ function SaveOrUpdateUnidadMedida()
 {
     if ($("#frmunidadmedida").valid()) {
         var parametro = {
-            Id: $("#txtIdUnidadMedida").val(),
-            Nombre: $("#txtnombreUnidadmedida").val(),
-            Descripcion: $("#txtdescripcion").val(),
+            Id: $("#txtunidadmedida").val(),
+            Nombre: $("#txtNombre").val(),
+            Descripcion: $("#txtDescripcion").val(),
             CreatedBy: $("#txtCreatedBy").val(),
             CreatedDt: $("#txtCreatedDt").val(),
             UpdatedBy: $("#txtUpdateBy").val(),
@@ -65,22 +70,23 @@ function SaveOrUpdateUnidadMedida()
 }
 
 function GetUnidadMedidaById(id) {
-    PostMVC(urlUnidadmedidaPorId) + "/" + id, function (success, response) {
+    PostMVC(urlUnidadmedidaPorId + "/" + id, function (success, response) {
         if (success) {
-            $("#txtIdUnidadMedida").val(response.Id);
-            $("#txtnombreUnidadmedida").val(response.Nombre);
-            $("#txtdescripcion").val(response.Descripcion);
+            $("#txtunidadmedida").val(response.Id);
+            $("#txtNombre").val(response.Nombre);
+            $("#txtDescripcion").val(response.Descripcion);
             $("#txtCreatedBy").val(response.CreatedBy);
             $("#txtCreatedDt").val(response.CreatedDt);
             $("#txtUpdateBy").val(response.UpdatedBy);
             $("#txtUpdateDt").val(response.UpdatedDt);
         }
     
-        else {
+             else {
 
             console.log(response);
             alert("OCurrio un error");
         }
     });
 }
+//le habias puesto un parentesis de más
 //te falta aquí el método de saveorupdate que llame al controlador

@@ -10,5 +10,6 @@ namespace MinaTolEntidades.DtoCatalogos
     {
         public string NombreUbicacion { get; set; }
         public string DescripcionUbicacion { get; set; }
+
     }
 }

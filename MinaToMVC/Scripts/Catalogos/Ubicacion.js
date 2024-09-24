@@ -10,19 +10,26 @@
         //order: [[2, "asc"]],
         columns: [
             { data: "id", "visible": false, title: "Id" },
-            { data: "nombreUbicacion", title: "Nombre Ubicacion" },
-            { data: "descripcionUbicacion", title: "Descripcion Ubicacion" },
+            { data: "nombreUbicacion", title: "NombreUbicacion" },
+            { data: "descripcionUbicacion", title: "DescripcionUbicacion" },
             {
-                data: "id", title: "Editar", render: function (data) {
-                    return "<a href='/Catalog/Ubicacion/" + data + "' class='btn btn-primary'>Editar</a>";
+                data: "id", render: function (data) {
+                    return '<input type="button" value="Editar" class="btn btn-primary" onclick="EditarUbicacion(' + data + ')" />';
                 }
             }
         ]
+
     });
     GetAllUbicacion();
     $("#btnGuardarUbicacion").on("click", function () {
-        SaveOrUpdateUbicacion();
+        //SaveOrUpdateUbicacion();
     });
+   
+     GetAllUbicacion();//if (UbicacionJson.Id != 0) {
+    //    GetUbicacionById(UbicacionJson.Id);
+    //    //se te fueron bien feo las cabras al monte heee
+
+    //}
 
 });
 
@@ -68,22 +75,27 @@ function SaveOrUpdateUbicacion() {
 }
 
 
-    function GetUbicacionById(id) {
-        PostMVC(urlTipoMaterialPorId + "/" + id, function (success, response) {
-            if (success) {
-                $("#txtIdUbicacion").val(response.Id);
-                $("#txtNombreUbicacion").val(response.NombreUbicacion);
-                $("#txtDescripcionUbicacion").val(response.DescripcionUbicacion);
-                $("#txtCreatedBy").val(response.CreatedBy);
-                $("#txtCreatedDt").val(response.CreatedDt);
-                $("#txtUpdateBy").val(response.UpdatedBy);
-                $("#txtUpdateDt").val(response.UpdatedDt);
-            }
+function GetUbicacionById(id) {
+    //esta mal implememntado tu código ino
+    GetMVC(urlUbicacionPorId + "/" + id, function (response) {
+        if (response.IsSuccess) {
+            $("#txtIdUbicacion").val(response.Response.id);
+            $("#txtNombreUbicacion").val(response.Response.NombreUbicacion);
+            $("#txtDescripcionUbicacion").val(response.Response.DescripcionUbicacion);
+            $("#txtCreatedBy").val(response.Response.CreatedBy);
+            $("#txtCreatedDt").val(response.Response.CreatedDt);
+            $("#txtUpdateBy").val(response.Response.UpdatedBy);
+            $("#txtUpdateDt").val(response.Response.UpdatedDt);
+        }
 
-            else {
+        else {
 
-                console.log(response);
-                alert("OCurrio un error");
-            }
-        });
-    }
+            console.log(response);
+            alert("OCurrio un error");
+        }
+    });
+}
+
+function EditarUbicacion(id) {
+    location.href = "/Catalog/Ubicacion/" + id;
+}
