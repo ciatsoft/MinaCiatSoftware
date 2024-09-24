@@ -199,6 +199,7 @@
     <Compile Include="Helpers\Cryptography.cs" />
     <Compile Include="Helpers\EmailHelper.cs" />
     <Compile Include="Helpers\SessionHelper.cs" />
+    <Compile Include="Helpers\StaticFileHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
