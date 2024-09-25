@@ -1,6 +1,9 @@
 ﻿
 @{
     ViewBag.Title = "Internos";
+
+    var ubicaciones = (List<MinaTolEntidades.DtoCatalogos.DtoUbicacion>)ViewBag.Ubicaciones;
+    var tipoMateriales = (List<MinaTolEntidades.DtoCatalogos.DtoTipoMaterialUbicacion>)ViewBag.TipoMaterial;
 }
 
 <form enctype="multipart/form-data" id="frmViajesInternos" method="post" name="frmViajesInternos">
@@ -21,15 +24,30 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Ubicación Origne:</label>
-                        <select id="ddlUOrigen" class="form-control"></select>
+                        <select id="ddlUOrigen" class="form-control">
+                            @foreach (var i in ubicaciones)
+                            { 
+                                <option value="@i.Id">@i.NombreUbicacion</option>
+                            }
+                        </select>
                     </div>
                     <div class="col-lg-3">
                         <label>Ubicación Destino:</label>
-                        <select id="ddlUOrigen" class="form-control"></select>
+                        <select id="ddlUOrigen" class="form-control">
+                            @foreach (var i in ubicaciones)
+                            {
+                                <option value="@i.Id">@i.NombreUbicacion</option>
+                            }
+                        </select>
                     </div>
                     <div class="col-lg-3">
                         <label>Timo de Material:</label>
-                        <select id="ddlTipoMaterial" class="form-control"></select>
+                        <select id="ddlTipoMaterial" class="form-control">
+                            @foreach (var i in tipoMateriales)
+                            {
+                                <option value="@i.Id">@i.NombreTipoMaterial</option>
+                            }
+                        </select>
                     </div>
                 </div>
                 <div class="row">

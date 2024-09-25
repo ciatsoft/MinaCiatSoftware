@@ -99,5 +99,32 @@ namespace MinaTolWebApi.DAL
 
             return response;
         }
+
+        public ModelResponse GetTipoMaterialByUnicacion(long id)
+        {
+            var response = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("@UbicacionID", id));
+            try
+            {
+                var result = GetObjects("GetTipoMaterialByUnicacion", CommandType.StoredProcedure, parameters,
+                     new Func<IDataReader, DtoTipoMaterialUbicacion>((reader) =>
+                     {
+                         var r = FillEntity<DtoTipoMaterialUbicacion>(reader);
+
+                         return r;
+                     }));
+
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
     }
 }

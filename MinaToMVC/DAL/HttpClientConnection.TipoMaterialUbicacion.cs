@@ -45,5 +45,15 @@ namespace MinaToMVC.DAL
                }));
             return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
         }
+
+        public async Task<ModelResponse> GetTipoMaterialByUnicacion(long id)
+        {
+            var result = await RequestAsync($"api/TipoMaterialUbicacion/Ubicacion/{id}", HttpMethod.Get, null,
+               new Func<string, string>((responseString) =>
+               {
+                   return responseString;
+               }));
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+        }
     }
 }
