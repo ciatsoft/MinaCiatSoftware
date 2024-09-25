@@ -157,7 +157,7 @@ namespace MinaToMVC.Controllers
             var roll = new DtoRoll();
             if (id != 0)
             {
-                var result = await httpClientConnection.GetTipoMaterialUbicacionById(id);
+                var result = await httpClientConnection.GetRollById(id);
                 roll = JsonConvert.DeserializeObject<DtoRoll>(result.Response.ToString());
             }
             return View(roll);
