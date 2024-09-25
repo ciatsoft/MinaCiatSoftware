@@ -68,8 +68,8 @@ function SaveOrUpdateUnidadMedida()
     }
 }
 
-function GetUnidadMedidaById() {
-    PostMVC(urlUnidadmedidaPorId) + "/" + unidadMedidaId, function (success, response) {
+function GetUnidadMedidaById(id) {
+    PostMVC(urlUnidadmedidaPorId) + "/" + id, function (success, response) {
         if (success) {
             $("#txtunidadmedida").val(response.Id);
             $("#txtNombre").val(response.Nombre);

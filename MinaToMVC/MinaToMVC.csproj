@@ -171,6 +171,7 @@
     <Content Include="Scripts\Comun\Comun.js" />
     <Content Include="Scripts\Home\Autenticacion.js" />
     <Content Include="Scripts\Trabajador\AltaEdicion.js" />
+    <Content Include="Scripts\Viajes\Internos.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

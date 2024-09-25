@@ -94,13 +94,40 @@ namespace MinaToMVC.Controllers
         #region Ubicacion 
         public async Task<ActionResult> Ubicacion( long id = 0)
         {
-            var ubicacion = new DtoUbicacion();
+            var token = Helpers.SessionHelper.GetSessionUser();
+            var result = await httpClientConnection.GetAllAreaTrabajo(token.Token.access_token);
+            var areaDeUbicacion = JsonConvert.DeserializeObject<List<DtoUbicacion>>(result.Response.ToString());
+            DtoUbicacion ubicacion;
             if (id != 0)
             {
-                var result = await httpClientConnection.GetUbicacionById(id);
-                ubicacion = JsonConvert.DeserializeObject<DtoUbicacion>(result.Response.ToString());
+                var response = await httpClientConnection.GetUbicacionById(id);
+                ubicacion = JsonConvert.DeserializeObject<DtoUbicacion>(response.Response.ToString());
             }
+            else
+            
+                ubicacion = new DtoUbicacion();
+				
+            ViewBag.AreaDeUbicacion = areaDeUbicacion;
             return View(ubicacion);
+
+        }
+		
+		
+		public async Task<ActionResult> TipoVehiculo(long id = 0)
+        {
+            TipoVehiculo tVehiculo;
+
+            if (id != 0)
+            {
+                var response = await httpClientConnection.GetTipoDeVehiculoById(id);
+                tVehiculo = JsonConvert.DeserializeObject<TipoVehiculo>(response.Response.ToString());
+            }
+            else
+                tVehiculo = new TipoVehiculo();
+
+
+            return View(tVehiculo);
+        }
 
 
         public async Task<string> GetAllUbicacion()
