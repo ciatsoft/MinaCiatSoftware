@@ -133,7 +133,7 @@ namespace MinaToMVC.Controllers
         public async Task<string> GetAllUbicacion()
         {
             var token = Helpers.SessionHelper.GetSessionUser();
-            var result = await httpClientConnection.GetAllUbicacion(token.Token.access_token);
+            var result = await httpClientConnection.GetAllUbicacion();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
         public string SaveOrUpdateTipoVehiculo(TipoVehiculo tv)

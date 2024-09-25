@@ -25,6 +25,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetAllTipoMaterialUbicacion();
             return result;
         }
+        [Route("Ubicacion/{id:long}"), HttpGet]
+        public ModelResponse GetTipoMaterialByUnicacion(long id)
+        {
+            var result = wrapper.GetTipoMaterialByUnicacion(id);
+            return result;
+        }
 
         [HttpGet, Route("{id:long}")]
         public ModelResponse GetTipoMaterialUbicacionById(int id)

@@ -12,14 +12,14 @@ namespace MinaToMVC.DAL
 {
     public partial class HttpClientConnection
     {
-        public async Task<ModelResponse> GetAllUbicacion(string token)
+        public async Task<ModelResponse> GetAllUbicacion()
         {
 
             var result = await RequestAsync<object>("api/Ubicacion/List", HttpMethod.Get, null,
                 new Func<string, string>((responseString) =>
                 {
                     return responseString;
-                }), token);
+                }), token.Token.access_token);
 
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
 
