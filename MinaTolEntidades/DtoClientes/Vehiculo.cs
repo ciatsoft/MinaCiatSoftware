@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace MinaTolEntidades.DtoClientes
 {
- public  class Vehiculo : BaseObject
+    public class Vehiculo : BaseObject
     {
         public string Placa { get; set; }
         public string Color { get; set; }
+        
     }
 }
