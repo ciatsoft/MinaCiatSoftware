@@ -139,6 +139,7 @@
     <Compile Include="Controllers\PrecioController.cs" />
     <Compile Include="Controllers\ProductoController.cs" />
     <Compile Include="Controllers\RollController.cs" />
+    <Compile Include="Controllers\TipoMaterialUbicacionController.cs" />
     <Compile Include="Controllers\TrabajadorController.cs" />
     <Compile Include="Controllers\TipoVehiculoController.cs" />
     <Compile Include="Controllers\UnidadMedidaController.cs" />
@@ -152,8 +153,10 @@
     <Compile Include="DAL\DbWrapper.Producto.cs" />
     <Compile Include="DAL\DbWrapper.Salario.cs" />
     <Compile Include="DAL\DbWrapper.Roll.cs" />
+    <Compile Include="DAL\DbWrapper.TipoMaterialUbicacion.cs" />
     <Compile Include="DAL\DbWrapper.TipoVehiculo.cs" />
     <Compile Include="DAL\DbWrapper.Trabajador.cs" />
+    <Compile Include="DAL\DbWrapper.Ubicacion.cs" />
     <Compile Include="DAL\DbWrapper.UnidadMedida.cs" />
     <Compile Include="DAL\DbWrapper.Usuario.cs" />
     <Compile Include="DAL\DbWrapper.Vehiculo.cs" />
