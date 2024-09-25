@@ -89,11 +89,23 @@ namespace MinaToMVC.Controllers
 
             TipoVehiculo tVehiculo;
 
+        #region Ubicacion 
+        public async Task<ActionResult> Ubicacion( long id = 0)
+        {
+            var token = Helpers.SessionHelper.GetSessionUser();
+            var result = await httpClientConnection.GetAllAreaTrabajo(token.Token.access_token);
+            var areaDeUbicacion = JsonConvert.DeserializeObject<List<DtoUbicacion>>(result.Response.ToString());
+            DtoUbicacion ubicacion;
             if (id != 0)
             {
                 var response = await httpClientConnection.GetTipoDeVehiculoById(id);
                 tVehiculo = JsonConvert.DeserializeObject<TipoVehiculo>(response.Response.ToString());
             }
+            else
+            
+                ubicacion = new DtoUbicacion();
+            ViewBag.AreaDeUbicacion = areaDeUbicacion;
+            return View(ubicacion);
             else
                 tVehiculo = new TipoVehiculo();
 
@@ -122,17 +134,14 @@ namespace MinaToMVC.Controllers
 
         public async Task<ActionResult> Roll(long id = 0)
         {
-            
-            DtoRoll roll;
-
+            var tipoMaterial = new DtoTipoMaterialUbicacion();
             if (id != 0)
             {
-                var response = await httpClientConnection.GetRollById(id);
-                roll = JsonConvert.DeserializeObject<DtoRoll>(response.Response.ToString());
+                var result = await httpClientConnection.GetTipoMaterialUbicacionById(id);
+                tipoMaterial = JsonConvert.DeserializeObject<DtoTipoMaterialUbicacion>(result.Response.ToString());
             }
-            else
-                roll = new DtoRoll();
-
+            return View(tipoMaterial);
+        }
 
             return View(roll);
         }

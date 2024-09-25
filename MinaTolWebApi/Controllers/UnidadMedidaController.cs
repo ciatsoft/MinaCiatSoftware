@@ -30,7 +30,7 @@ namespace MinaTolWebApi.Controllers
 
         [AllowAnonymous]
         [HttpGet , Route("{id:long}")]
-        public async Task<ModelResponse> GetUnidadMedidaById(int id)
+        public ModelResponse GetUnidadMedidaById(long id)
         {
             var result = wrapper.GetUnidadMedidaById(id);
             return result;
