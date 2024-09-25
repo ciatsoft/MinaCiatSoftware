@@ -64,7 +64,7 @@ namespace MinaTolWebApi.DAL
             return response;
         }
 
-        public ModelResponse GetUnidadMedidaById(int id)
+        public ModelResponse GetUnidadMedidaById(long id)
         {
             var response = new ModelResponse();
             try

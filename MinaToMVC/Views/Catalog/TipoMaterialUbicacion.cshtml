@@ -1,5 +1,7 @@
 ﻿@model MinaTolEntidades.DtoCatalogos.DtoTipoMaterialUbicacion
 @{
+    var unidadmedida = (List<MinaTolEntidades.DtoSucursales.UnidadMedida>)ViewBag.UnidadDeMedida;
+    var ubicacion = (List<MinaTolEntidades.DtoCatalogos.DtoUbicacion>)ViewBag.Ubicacionnombre;
     ViewBag.Title = "TipoMaterialUbicacion";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var estatus = new List<string> { "Activo", "Inactivo" };
@@ -30,14 +32,26 @@
                         <input type="text" id="txtDescripcionTipoMaterial" class="form-control" />
                     </div>
                     <div class="col-lg-3">
-                        <label>UnidadDeMedida:</label>
-                        <input type="text" id="txtUnidadMedida" class="form-control" />
-                    </div>
+                        <label>Ubicacion:</label>
+                        <select id="ddlUbicacion" name="ddlUbicacion" class="form-control">
+                            @foreach (var ubica in ubicacion)
+                            {
+                                <option value="@ubica.Id">@ubica.NombreUbicacion</option>
+                            }
+                        </select>
+                  </div>
+                   
                 </div>
                 <div class="row">
+
                     <div class="col-lg-3">
-                        <label>Ubicacion:</label>
-                        <input type="text" id="txtDtoUbicacion" class="form-control" />
+                        <label>Unidad de medida:</label>
+                        <select id="ddlUnidadDeMedida" name="ddlUnidadDeMedida" class="form-control">
+                            @foreach (var unidad in unidadmedida)
+                            {
+                                <option value="@unidad.Id">@unidad.Nombre</option>
+                            }
+                        </select>
                     </div>
                     <div class=" col-lg-3">
                         <label>Estatus:</label>
