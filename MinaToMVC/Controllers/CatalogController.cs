@@ -84,10 +84,12 @@ namespace MinaToMVC.Controllers
 
         #region Tipo de Vehiculo
 
-        public async Task<ActionResult> TipoVehiculo(long id = 0)
+        public ActionResult TipoVehiculo()
         {
+            return View();
+        }
 
-            TipoVehiculo tVehiculo;
+        #endregion
 
         #region Ubicacion 
         public async Task<ActionResult> Ubicacion( long id = 0)
@@ -98,19 +100,41 @@ namespace MinaToMVC.Controllers
             DtoUbicacion ubicacion;
             if (id != 0)
             {
-                var response = await httpClientConnection.GetTipoDeVehiculoById(id);
-                tVehiculo = JsonConvert.DeserializeObject<TipoVehiculo>(response.Response.ToString());
+                var response = await httpClientConnection.GetUbicacionById(id);
+                ubicacion = JsonConvert.DeserializeObject<DtoUbicacion>(response.Response.ToString());
             }
             else
             
                 ubicacion = new DtoUbicacion();
+				
             ViewBag.AreaDeUbicacion = areaDeUbicacion;
             return View(ubicacion);
+
+        }
+		
+		
+		public async Task<ActionResult> TipoVehiculo(long id = 0)
+        {
+            TipoVehiculo tVehiculo;
+
+            if (id != 0)
+            {
+                var response = await httpClientConnection.GetTipoDeVehiculoById(id);
+                tVehiculo = JsonConvert.DeserializeObject<TipoVehiculo>(response.Response.ToString());
+            }
             else
                 tVehiculo = new TipoVehiculo();
 
 
             return View(tVehiculo);
+        }
+
+
+        public async Task<string> GetAllUbicacion()
+        {
+            var token = Helpers.SessionHelper.GetSessionUser();
+            var result = await httpClientConnection.GetAllUbicacion(token.Token.access_token);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
         public string SaveOrUpdateTipoVehiculo(TipoVehiculo tv)
         {
@@ -130,9 +154,8 @@ namespace MinaToMVC.Controllers
 
         #endregion
 
-        #region Roles
-
-        public async Task<ActionResult> Roll(long id = 0)
+        #region TipoMaterialUbicacion
+        public async Task<ActionResult> TipoMaterialUbicacion(long id= 0)
         {
             var tipoMaterial = new DtoTipoMaterialUbicacion();
             if (id != 0)
@@ -143,7 +166,11 @@ namespace MinaToMVC.Controllers
             return View(tipoMaterial);
         }
 
-            return View(roll);
+        public async Task<string> GetAllTipoMaterialUbicacion()
+        {
+            var token = Helpers.SessionHelper.GetSessionUser();
+            var result = await httpClientConnection.GetAllTipoMaterialUbicacion(token.Token.access_token);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
         /// <summary>
         /// El procedimiento nos permite guardar o actualizar los roles mediante un procedimiento almacenado

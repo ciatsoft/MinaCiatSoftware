@@ -1,7 +1,7 @@
 ﻿$(document).ready(function () {
 
-    if (unidadMedidaId.Id != 0){
-        GetUnidadMedidaById();
+    if (unidadMedidaJson.Id != 0) {
+        GetUnidadMedidaById(unidadMedidaJson.Id);
     }
     $("#tableUnidadMedida").dataTable({
         processing: true,
