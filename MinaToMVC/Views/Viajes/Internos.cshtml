@@ -4,6 +4,7 @@
 
     var ubicaciones = (List<MinaTolEntidades.DtoCatalogos.DtoUbicacion>)ViewBag.Ubicaciones;
     var tipoMateriales = (List<MinaTolEntidades.DtoCatalogos.DtoTipoMaterialUbicacion>)ViewBag.TipoMaterial;
+    var trabajadores = (List<MinaTolEntidades.DtoSucursales.DtoTrabajador>)ViewBag.Trabajadores;
 }
 
 <form enctype="multipart/form-data" id="frmViajesInternos" method="post" name="frmViajesInternos">
@@ -53,7 +54,12 @@
                 <div class="row">
                     <div class="col-lg-3">
                         <label>Transportista:</label>
-                        <select id="ddlTransportistas" class="form-control"></select>
+                        <select id="ddlTransportistas" class="form-control">
+                            @foreach (var i in trabajadores)
+                            {
+                                <option value="@i.Id">@i.Nombre</option>
+                            }
+                        </select>
                     </div>
                     <div class="col-lg-3">
                         <label>Vehiculo:</label>

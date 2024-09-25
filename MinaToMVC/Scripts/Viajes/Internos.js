@@ -8,17 +8,19 @@
         columns: [
             { data: "id", "visible": false, title: "Id" },
             {
-                data: "fechaInicio", title: "Fecha Inicial", render: function (data) {
+                data: "fechaInicio", title: "Origen", render: function (data) {
                     return formatDate(data);
                 }
             },
-            { data: "fechaFinal", title: "Fecha Termino" },
+            { data: "fechaFinal", title: "Destino" },
             {
-                data: "monto", title: "Monto", render: function (data) {
+                data: "monto", title: "Material a transportar", render: function (data) {
                     return formatMoney(data);
                 }
             },
-            { data: "esSalarioActual", title: "Salario Actual" },
+            { data: "esSalarioActual", title: "Transportista" },
+            { data: "esSalarioActual", title: "Vehiculo" },
+            { data: "esSalarioActual", title: "Fecha de transporte" },
             {
                 data: "id", render: function (data) {
                     return '<input type="button" value="Editar" class="btn btn-primary" onclick="EditarTrabajador(' + data + ')" />';
