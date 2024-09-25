@@ -1,4 +1,5 @@
 ﻿using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.DtoSucursales;
 using Newtonsoft.Json;
 using System;
@@ -20,6 +21,7 @@ namespace MinaToMVC.Controllers
             var ubicaciones = new List<DtoUbicacion>();
             var tipoMateriales = new List<DtoTipoMaterialUbicacion>();
             var trabajadores = new List<DtoTrabajador>();
+            var vehiculos = new List<Vehiculo>();
 
             var responseUbicaciones = await httpClientConnection.GetAllUbicacion();
             ubicaciones = JsonConvert.DeserializeObject<List<DtoUbicacion>>(responseUbicaciones.Response.ToString());
@@ -29,6 +31,7 @@ namespace MinaToMVC.Controllers
 
             var responsetrabajadores = await httpClientConnection.GetAllTrabajador();
             trabajadores = JsonConvert.DeserializeObject<List<DtoTrabajador>>(responsetrabajadores.Response.ToString());
+
 
             ViewBag.Ubicaciones = ubicaciones;
             ViewBag.TipoMaterial = tipoMateriales;
