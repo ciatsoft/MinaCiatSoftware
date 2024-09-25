@@ -84,9 +84,35 @@ namespace MinaToMVC.Controllers
 
         #region Tipo de Vehiculo
 
-        public ActionResult TipoVehiculo()
+
+        public async Task<ActionResult> TipoVehiculo(long id = 0)
         {
-            return View();
+            TipoVehiculo tVehiculo;
+
+            if (id != 0)
+            {
+                var response = await httpClientConnection.GetTipoDeVehiculoById(id);
+                tVehiculo = JsonConvert.DeserializeObject<TipoVehiculo>(response.Response.ToString());
+            }
+            else
+                tVehiculo = new TipoVehiculo();
+
+
+            return View(tVehiculo);
+        }
+        public string SaveOrUpdateTipoVehiculo(TipoVehiculo tv)
+        {
+
+            var result = httpClientConnection.SaveOrUpdateTipoVehiculo(tv);
+            return JsonConvert.SerializeObject(result);
+
+
+        }
+        public async Task<string> GetAllTipoVehiculo()
+        {
+            var result = await httpClientConnection.GetAllTipoVehiculo();
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
         #endregion
@@ -113,21 +139,6 @@ namespace MinaToMVC.Controllers
         }
 		
 		
-		public async Task<ActionResult> TipoVehiculo(long id = 0)
-        {
-            TipoVehiculo tVehiculo;
-
-            if (id != 0)
-            {
-                var response = await httpClientConnection.GetTipoDeVehiculoById(id);
-                tVehiculo = JsonConvert.DeserializeObject<TipoVehiculo>(response.Response.ToString());
-            }
-            else
-                tVehiculo = new TipoVehiculo();
-
-
-            return View(tVehiculo);
-        }
 
 
         public async Task<string> GetAllUbicacion()
@@ -136,22 +147,34 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllUbicacion();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-        public string SaveOrUpdateTipoVehiculo(TipoVehiculo tv)
+
+
+        #endregion
+
+        #region Roles
+        public async Task<ActionResult> Roll(long id = 0)
         {
-
-            var result = httpClientConnection.SaveOrUpdateTipoVehiculo(tv);
-            return JsonConvert.SerializeObject(result);
-
-            
+            var roll = new DtoRoll();
+            if (id != 0)
+            {
+                var result = await httpClientConnection.GetTipoMaterialUbicacionById(id);
+                roll = JsonConvert.DeserializeObject<DtoRoll>(result.Response.ToString());
+            }
+            return View(roll);
         }
-        public async Task<string> GetAllTipoVehiculo()
+        public string SaveOrUpdateRoll(DtoRoll t)
         {
-            var result = await httpClientConnection.GetAllTipoVehiculo();
+
+            var result = httpClientConnection.SaveOrUpdateRoll(t);
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetAllRoll()
+        {
+            var result = await httpClientConnection.GetAllRoll();
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-
-
         #endregion
 
         #region TipoMaterialUbicacion
@@ -177,19 +200,9 @@ namespace MinaToMVC.Controllers
         /// </summary>
         /// <param name="t"> nos ayuda a pasar la inmformacion del formulario y ocuparla para el procedimiento almacenado</param>
         /// <returns></returns>
-        public string SaveOrUpdateRoll(DtoRoll t)
-        {
-            
-            var result = httpClientConnection.SaveOrUpdateRoll(t);
-            return JsonConvert.SerializeObject(result);
-        }
+        /// 
 
-        public async Task<string> GetAllRoll()
-        {
-            var result = await httpClientConnection.GetAllRoll();
-
-            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
-        }
+        
     }
         #endregion
     
