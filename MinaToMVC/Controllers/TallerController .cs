@@ -1,4 +1,5 @@
 ﻿using MinaTolEntidades;
+using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.Security;
 using MinaToMVC.Helpers;
 using Newtonsoft.Json;
@@ -12,39 +13,36 @@ using static MinaToMVC.Controllers.Filters.FiltersHelper;
 
 namespace MinaToMVC.Controllers
 {
+    [Autenticated]
     public class TallerController : BaseController
     {
         #region View
-        [Autenticated]
+        
         public ActionResult Index()
         {
             return View();
         }
-        [NoAutenticated]
         public ActionResult Autenticacion()
         {
             return View();
         }
-        [Autenticated]
         public ActionResult Vehiculos()
         {
             return View();
         }
-        [Autenticated]
         public ActionResult Inventario_Taller()
         {
             return View();
         }
-        [Autenticated]
         public ActionResult ReportesCStock()
         {
             return View();
         }
-        [Autenticated]
         public ActionResult Reportes_SStock()
         {
             return View();
         }
+        
         #endregion
 
         #region Data Acces

@@ -44,9 +44,17 @@ $(document).ready(function () {
                 //order: [[2, "asc"]],
                 columns: [
                     { data: "id", "visible": false, title: "Id" },
-                    { data: "fechaInicial", title: "Fecha Inicial" },
+                    {
+                        data: "fechaInicio", title: "Fecha Inicial", render: function (data) {
+                            return formatDate(data);
+                        }
+                    },
                     { data: "fechaFinal", title: "Fecha Termino" },
-                    { data: "monto", title: "Monto" },
+                    {
+                        data: "monto", title: "Monto", render: function (data) {
+                            return formatMoney(data);
+                        }
+                    },
                     { data: "esSalarioActual", title: "Salario Actual" },
                     {
                         data: "id", render: function (data) {
@@ -59,6 +67,8 @@ $(document).ready(function () {
             $("#titleGenerciModal").text('Salarios del trabajador');
             $('#genericModal').modal('show');
         });
+
+        GetSalarioByTrabajador();
     });
 
     $("#tblEmpleados").dataTable({
@@ -93,6 +103,9 @@ $(document).ready(function () {
         $("#ddlTurno").val(trabajadorJson.Turno);
         $("#chbEstatus").prop('checked', trabajadorJson.Estatus);
     }
+    else {
+        $("#imgAddSalario").hide();
+    }
 });
 
 function GetAllTrabajadores() {
@@ -110,7 +123,7 @@ function GetAllTrabajadores() {
 function SaveOrupdateTrabajador() {
     if ($("#frmTrabajador").valid()) {
         var date = new Date($("#dtpFechaContratacion").val());
-        var fc = ((dateI.getDate() > 9) ? dateI.getDate() : ('0' + dateI.getDate())) + '/' + ((dateI.getMonth() > 8) ? (dateI.getMonth() + 1) : ('0' + (dateI.getMonth() + 1))) + '/' + dateI.getFullYear();
+        var fc = ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear();
         var parametro = {
             Id: $("#txtTrabajadorId").val(),
             Nombre: $("#txtNombre").val(),
@@ -139,7 +152,7 @@ function SaveOrupdateTrabajador() {
 }
 
 function EditarTrabajador(id) {
-    location.href = "/Empleado/AltaEdicion/"+id;
+    location.href = "/Empleado/AltaEdicion/" + id;
 }
 
 function ChanegChebSalariOActual() {
@@ -153,26 +166,44 @@ function ChanegChebSalariOActual() {
 }
 
 function SaveOrUpdateSalario() {
-    var dateI = new Date($("#dtpFI").val());
-    var fi = ((dateI.getDate() > 9) ? dateI.getDate() : ('0' + dateI.getDate())) + '/' + ((dateI.getMonth() > 8) ? (dateI.getMonth() + 1) : ('0' + (dateI.getMonth() + 1))) + '/' + dateI.getFullYear();
-    var dateF = new Date($("#drpFF").val());
-    var ff = ((dateF.getDate() > 9) ? dateF.getDate() : ('0' + dateF.getDate())) + '/' + ((dateF.getMonth() > 8) ? (dateF.getMonth() + 1) : ('0' + (dateF.getMonth() + 1))) + '/' + dateF.getFullYear();
-    var parametros = {
-        FechaInicial: fi,
-        FechaFinal: ff,
-        Monto: $("#txtMonto").val(),
-        EsSalarioActual: $("#chbEsSalarioActual").is(':checked'),
-        Empleado: {
-            Id: $("#txtTrabajadorId").val()
-        }
-    };
+    if ($("#dtpFI").val() != '' && $("#txtMonto").val() != '' && (!$("#chbEsSalarioActual").is(':checked') ? ($("#drpFF").val() != '') : true)) {
+        var dateI = new Date($("#dtpFI").val());
+        var fi = ((dateI.getDate() > 9) ? dateI.getDate() : ('0' + dateI.getDate())) + '/' + ((dateI.getMonth() > 8) ? (dateI.getMonth() + 1) : ('0' + (dateI.getMonth() + 1))) + '/' + dateI.getFullYear();
+        var dateF = new Date($("#drpFF").val());
+        var ff = ((dateF.getDate() > 9) ? dateF.getDate() : ('0' + dateF.getDate())) + '/' + ((dateF.getMonth() > 8) ? (dateF.getMonth() + 1) : ('0' + (dateF.getMonth() + 1))) + '/' + dateF.getFullYear();
+        var parametros = {
+            FechaInicial: fi,
+            FechaFinal: ff,
+            Monto: $("#txtMonto").val(),
+            EsSalarioActual: $("#chbEsSalarioActual").is(':checked'),
+            Empleado: {
+                Id: $("#txtTrabajadorId").val()
+            }
+        };
 
-    PostMVC('/Empleado/SaveOrupdateTrabajador', parametros, function (r) {
+        PostMVC('/Empleado/SaveOrupdateSalario', parametros, function (r) {
+            if (r.IsSuccess) {
+                location.href = "/Empleado/AltaEdicion";
+            }
+            else {
+                //alert(r.Message);
+            }
+        });
+    }
+    else {
+        alert("Faltan datos requeridos.");
+    }
+}
+
+function GetSalarioByTrabajador() {
+    var trabajadorId = $("#txtTrabajadorId").val();
+    GetMVC("/Empleado/GetSalarioByTrabajador/" + trabajadorId, function (r) {
         if (r.IsSuccess) {
-            location.href = "/Empleado/AltaEdicion";
+            MapingPropertiesDataTable("tableSalario", r.Response);
         }
         else {
+            alert("Error");
             //alert(r.Message);
         }
     });
-} 
+}

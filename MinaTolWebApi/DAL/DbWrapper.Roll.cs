@@ -1,5 +1,5 @@
 ﻿using MinaTolEntidades;
-using MinaTolEntidades.DtoSucursales;
+using MinaTolEntidades.DtoCatalogos;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -10,67 +10,63 @@ namespace MinaTolWebApi.DAL
 {
     public partial class DbWrapper
     {
-        public ModelResponse SaveOrUpdateUnidadMedida(UnidadMedida u)
+        public ModelResponse SaveOrUpdateRoll(DtoRoll tv)
+
         {
             var response = new ModelResponse();
             try
             {
                 response.IsSuccess = true;
-                var parameters = GenerateSQLParameters(u);
-                var result = GetObject("SaveOrUpdateUnidadMedida", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, UnidadMedida>((reader) =>
+                var parameters = GenerateSQLParameters(tv);
+                var result = GetObject("SaveOrUpdateRoll", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, DtoRoll>((reader) =>
                     {
-                        var r = FillEntity<UnidadMedida>(reader);
+                        var r = FillEntity<DtoRoll>(reader);
                         return r;
                     }));
                 response.Response = result;
+
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 response.IsSuccess = false;
                 response.Message = ex.Message;
                 response.Enum = Enumeration.ErrorNoControlado;
+
             }
             return response;
-
-            
         }
-
-        public ModelResponse GetAllUnidadMedida()
+        public ModelResponse GetAllRoll()
         {
             var response = new ModelResponse();
-
             try
             {
                 response.IsSuccess = true;
-
                 var parameters = new List<SqlParameter>();
-                var result = GetObjects("GetAllUnidadMedida", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, UnidadMedida>((reader) =>
+                var result = GetObjects("GetAllRoll", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, DtoRoll>((reader) =>
                     {
-                        var r = FillEntity<UnidadMedida>(reader);
+                        var r = FillEntity<DtoRoll>(reader);
                         return r;
                     }));
-
                 response.Response = result;
+
             }
-            catch (Exception ex)
+            catch(Exception ex )
             {
                 response.IsSuccess = false;
                 response.Message = ex.Message;
                 response.Enum = Enumeration.ErrorNoControlado;
             }
-
             return response;
         }
 
-        public ModelResponse GetUnidadMedidaById(long id)
+        public ModelResponse GetRollById (int id)
         {
             var response = new ModelResponse();
             try
             {
                 response.IsSuccess = true;
-
                 var parameters = new List<SqlParameter>();
                 parameters.Add(new SqlParameter()
                 {
@@ -80,23 +76,23 @@ namespace MinaTolWebApi.DAL
                     SqlDbType = System.Data.SqlDbType.Int
                 });
 
-                var result = GetObject("GetUnidadMedidaById", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, UnidadMedida>((reader) =>
+                var result = GetObject("GetRollById", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, DtoRoll>((reader) =>
                     {
-                        var r = FillEntity<UnidadMedida>(reader);
+                        var r = FillEntity<DtoRoll>(reader);
                         return r;
                     }));
-
                 response.Response = result;
+
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 response.IsSuccess = false;
                 response.Message = ex.Message;
                 response.Enum = Enumeration.ErrorNoControlado;
             }
-
             return response;
         }
+
     }
 }

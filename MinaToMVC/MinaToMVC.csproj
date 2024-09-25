@@ -100,6 +100,7 @@
     <Content Include="Assets\css\brands.min.css" />
     <Content Include="Assets\css\dataTables.dataTables.min.css" />
     <Content Include="Assets\css\estiloClientes.css" />
+    <Content Include="Assets\css\EstilosBtnCambios\EstiloBtn.css" />
     <Content Include="Assets\css\estiloVentas.css" />
     <Content Include="Assets\css\fontawesome.css" />
     <Content Include="Assets\css\fontawesome.min.css" />
@@ -161,6 +162,8 @@
     <Content Include="Assets\styles.css" />
     <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\Catalogos\AltaRoll.js" />
+    <Content Include="Scripts\Catalogos\AltaTipoVehiculo.js" />
     <Content Include="Scripts\Catalogos\AreaTrabajo.js" />
     <Content Include="Scripts\Catalogos\TipoMaterialUbicacion.js" />
     <Content Include="Scripts\Catalogos\Ubicacion.js" />
@@ -168,6 +171,7 @@
     <Content Include="Scripts\Comun\Comun.js" />
     <Content Include="Scripts\Home\Autenticacion.js" />
     <Content Include="Scripts\Trabajador\AltaEdicion.js" />
+    <Content Include="Scripts\Viajes\Internos.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -182,10 +186,11 @@
     <Compile Include="Controllers\RHController.cs" />
     <Compile Include="Controllers\AlmacenController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ViajesController.cs" />
+    <Compile Include="DAL\httpClientConnection.Roll.cs" />
+    <Compile Include="DAL\httpClientConnection.TipoVehiculo.cs" />
     <Compile Include="DAL\HttpClientConnection.AreaTrabajo.cs" />
-    <Compile Include="DAL\HttpClientConnection.TipoMaterialUbicacion.cs" />
     <Compile Include="DAL\HttpClientConnection.Trabajador.cs" />
-    <Compile Include="DAL\HttpClientConnection.Ubicacion.cs" />
     <Compile Include="DAL\HttpClientConnection.UnidadMedida.cs" />
     <Compile Include="DAL\HttpClientConnection.Usuario.cs" />
     <Compile Include="DAL\HttpClientBase.cs" />
@@ -196,6 +201,7 @@
     <Compile Include="Helpers\Cryptography.cs" />
     <Compile Include="Helpers\EmailHelper.cs" />
     <Compile Include="Helpers\SessionHelper.cs" />
+    <Compile Include="Helpers\StaticFileHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -233,7 +239,7 @@
     <Content Include="Views\Catalog\AreaTrabajo.cshtml" />
     <Content Include="Views\Catalog\TipoVehiculo.cshtml" />
     <Content Include="Views\Catalog\Ubicacion.cshtml" />
-    <Content Include="Views\Catalog\TipoMaterialUbicacion.cshtml" />
+    <Content Include="Views\Viajes\Internos.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -244,7 +250,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
-    <Folder Include="Views\Ubicacion\" />
+    <Folder Include="Views\Default\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MinaTolEntidades\MinaTolEntidades.csproj">

@@ -6,36 +6,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace MinaTolWebApi.Controllers
 {
-    [RoutePrefix("api/Ubicacion")]
-    public class UbicacionController : ApiController
+    [RoutePrefix("api/Roll")]
+    public class RollController : ApiController
     {
         private DbWrapper wrapper { get; set; }
-        public UbicacionController()
+        public RollController()
         {
             wrapper = new DbWrapper();
         }
-        [Route("List"), HttpGet]
-        public ModelResponse GetAllUbicacion()
+        [HttpGet, Route("")]
+        public ModelResponse GetAllRoll()
         {
-            var result = wrapper.GetAllUbicacion();
+            var result = wrapper.GetAllRoll();
             return result;
         }
         [HttpGet, Route("{id:long}")]
-
-        public ModelResponse GetUbicacionById (int id)
+        public async Task<ModelResponse> GetRollById(int id)
         {
-            var result = wrapper.GetUbicacionById(id);
+            var result = wrapper.GetRollById(id);
             return result;
         }
-
         [HttpPost, Route("")]
-        public ModelResponse SaveOrUpdateUbicacion(DtoUbicacion u)
+        public async Task<ModelResponse> SaveOrUpdateRoll(DtoRoll t)
         {
-            var result = wrapper.SaveOrUpdateUbicacion(u);
+            var result = wrapper.SaveOrUpdateRoll(t);
             return result;
         }
     }

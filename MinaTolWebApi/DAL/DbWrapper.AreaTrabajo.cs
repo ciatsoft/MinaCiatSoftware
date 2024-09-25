@@ -67,7 +67,7 @@ namespace MinaTolWebApi.DAL
             try
             {
 
-                var result = GetObject("GetAreaTrabajoById", CommandType.StoredProcedure, parameters,
+                var result = GetObjects("GetAreaTrabajoById", CommandType.StoredProcedure, parameters,
                      new Func<IDataReader, DtoAreaTrabajo>((reader) =>
                      {
                          var r = FillEntity<DtoAreaTrabajo>(reader);
