@@ -29,7 +29,30 @@
 
                 }
             }
-        ]
+        ],
+        language: {
+            "decimal": ",",
+            "thousands": ".",
+            "processing": "Procesando...",
+            "lengthMenu": "Mostrar _MENU_ entradas",
+            "zeroRecords": "No se encontraron resultados",
+            "emptyTable": "Ningún dato disponible en esta tabla",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+            "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+            "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+            "search": "Buscar:",
+            "loadingRecords": "Cargando...",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                "sortDescending": ": activar para ordenar la columna de manera descendente"
+            }
+        }
     });
 
     GetAllTipoVehiculo();
@@ -79,7 +102,7 @@ function EliminarTVehiculo(id, boton) {
     var descripcion = row.find("td:eq(1)").text();  // Descripción
 
     // Confirmación de eliminación
-    if (confirm("¿Estas seguro de que deseas eliminar este Vehiculo? \nNombre: " + nombre + "\nDescripcion: " + descripcion)) {
+    if (confirm("¿Usted desea eliminar el siguiente Vehiculo? \nNombre: " + nombre + "\nDescripcion: " + descripcion)) {
         // Actualizamos el estatus a "Inactivo" (0) y preparamos el parámetro
         var parametro = {
             Id: id,
