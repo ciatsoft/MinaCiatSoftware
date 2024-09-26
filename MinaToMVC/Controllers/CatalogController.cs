@@ -53,14 +53,14 @@ namespace MinaToMVC.Controllers
         public async Task<ActionResult> AreaTrabajo(long id = 0)
         {
 
-            var areaTrabajo = new DtoAreaTrabajo();
+            var areat = new DtoAreaTrabajo();
             if (id != 0)
             {
                 var result = await httpClientConnection.GetAreaTrabajoById(id);
-                areaTrabajo = JsonConvert.DeserializeObject<DtoAreaTrabajo>(result.Response.ToString());
+                areat = JsonConvert.DeserializeObject<DtoAreaTrabajo>(result.Response.ToString());
             }
 
-            return View(areaTrabajo);
+            return View(areat);
         }
         public async Task<string> GetAllAreaTrabajo()
         {
@@ -68,16 +68,10 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllAreaTrabajo(token.Token.access_token);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-        public async Task<ActionResult> SaveOrUpdateAreaTrabajo(DtoAreaTrabajo ar)
+        public string SaveOrUpdateAreaTrabajo(DtoAreaTrabajo ar)
         {
-            httpClientConnection.MappingColumSecurity(ar);
-            var result = await httpClientConnection.SaveOrUpdateAreaTrabajo(ar);
-            return RedirectToAction("AreaTrabajo", "Catalog");
-        }
-        public async Task<string> GetAreaTrabajoById (long id)
-        {
-            var result = await httpClientConnection.GetAreaTrabajoById(id);
-            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+            var result = httpClientConnection.SaveOrUpdateAreaTrabajo(ar);
+            return JsonConvert.SerializeObject(result);
         }
 
         #endregion

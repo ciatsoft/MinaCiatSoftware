@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    $("#frmroll").validate({
+    $("#frmtipovehiculo").validate({
         rules: {
             "txtNombre": "required",
             "txtDescripcion": "required",
@@ -13,7 +13,7 @@
         columns: [
             { data: "id", "visible": false, title: "Id" },
             { data: "nombre", title: "Nombre" },
-            { data: "descripcion", title: "Descripcion" },
+            { data: "descripcion", title: "Descripción" },
             {
                 data: "estatus",
                 title: "Estatus",
@@ -79,7 +79,7 @@ function EliminarTVehiculo(id, boton) {
     var descripcion = row.find("td:eq(1)").text();  // Descripción
 
     // Confirmación de eliminación
-    if (confirm("¿Estás seguro de que deseas eliminar este Vehiculo? \nNombre: " + nombre + "\nDescripción: " + descripcion)) {
+    if (confirm("¿Estas seguro de que deseas eliminar este Vehiculo? \nNombre: " + nombre + "\nDescripcion: " + descripcion)) {
         // Actualizamos el estatus a "Inactivo" (0) y preparamos el parámetro
         var parametro = {
             Id: id,
@@ -98,7 +98,7 @@ function EliminarTVehiculo(id, boton) {
             if (r.IsSuccess) {
                 alert("vehiculo eliminado exitosamente.");
                 // Actualiza la interfaz de usuario, por ejemplo, eliminando la fila de la tabla
-                row.remove();  // Eliminar la fila de la tabla si es necesario
+
             } else {
                 alert("Error al eliminar el rol: " + r.ErrorMessage);
             }

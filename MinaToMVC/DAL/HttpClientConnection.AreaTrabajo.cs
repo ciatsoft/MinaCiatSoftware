@@ -38,14 +38,17 @@ namespace MinaToMVC.DAL
             return modelResponse;
         }
 
-        public async Task<ModelResponse> GetAreaTrabajoById(long areatrabajoId)
+        public async Task<ModelResponse> GetAreaTrabajoById(long id)
         {
-            var result = RequestAsync("api/AreaTrabajo/GetAreaTrabajoById/{areatrabajoId}", HttpMethod.Get, null,
-                new Func<string, string>((responseString) =>
-                {
-                    return responseString;
-                }));
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            var result = await RequestAsync<object>($"api/AreaTrabajo/{id}", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
         }
     }
 }

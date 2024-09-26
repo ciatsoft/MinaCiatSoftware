@@ -59,23 +59,29 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
-        public ModelResponse GetAreaTrabajoById(long id)
+        public ModelResponse GetAreaTrabajoById(int id)
         {
             var response = new ModelResponse();
-            var parameters = new List<SqlParameter>();
-            parameters.Add(new SqlParameter("@Id",id));
             try
             {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id",
+                    SqlDbType = System.Data.SqlDbType.Int
+                });
 
-                var result = GetObjects("GetAreaTrabajoById", CommandType.StoredProcedure, parameters,
-                     new Func<IDataReader, DtoAreaTrabajo>((reader) =>
-                     {
-                         var r = FillEntity<DtoAreaTrabajo>(reader);
-
-                         return r;
-                     }));
-
+                var result = GetObject("GetAreaTrabajoById", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, DtoAreaTrabajo>((reader) =>
+                    {
+                        var r = FillEntity<DtoAreaTrabajo>(reader);
+                        return r;
+                    }));
                 response.Response = result;
+
             }
             catch (Exception ex)
             {
@@ -83,7 +89,6 @@ namespace MinaTolWebApi.DAL
                 response.Message = ex.Message;
                 response.Enum = Enumeration.ErrorNoControlado;
             }
-
             return response;
         }
     }
