@@ -243,6 +243,7 @@
     <Content Include="Views\Catalog\Ubicacion.cshtml" />
     <Content Include="Views\Viajes\Internos.cshtml" />
     <Content Include="Views\Catalog\Roll.cshtml" />
+    <Content Include="Views\Viajes\Locales.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

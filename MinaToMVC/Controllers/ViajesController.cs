@@ -46,5 +46,35 @@ namespace MinaToMVC.Controllers
 
             return View();
         }
+        public async Task<ActionResult> Locales()
+        {
+            var ubicaciones = new List<DtoUbicacion>();
+            var tipoMateriales = new List<DtoTipoMaterialUbicacion>();
+            var trabajadores = new List<DtoTrabajador>();
+            var vehiculos = new List<Vehiculo>();
+            vehiculos.Add(new Vehiculo()
+            {
+                Id = 1,
+                Placa = "ABC123"
+            });
+
+            var responseUbicaciones = await httpClientConnection.GetAllUbicacion();
+            ubicaciones = JsonConvert.DeserializeObject<List<DtoUbicacion>>(responseUbicaciones.Response.ToString());
+
+            var responseTipoMaterial = await httpClientConnection.GetTipoMaterialByUnicacion(ubicaciones.FirstOrDefault().Id);
+            tipoMateriales = JsonConvert.DeserializeObject<List<DtoTipoMaterialUbicacion>>(responseTipoMaterial.Response.ToString());
+
+            var responsetrabajadores = await httpClientConnection.GetAllTrabajador();
+            trabajadores = JsonConvert.DeserializeObject<List<DtoTrabajador>>(responsetrabajadores.Response.ToString());
+
+
+
+            ViewBag.Ubicaciones = ubicaciones;
+            ViewBag.TipoMaterial = tipoMateriales;
+            ViewBag.Trabajadores = trabajadores;
+            ViewBag.Vehiculos = vehiculos;
+
+            return View();
+        }
     }
 }
