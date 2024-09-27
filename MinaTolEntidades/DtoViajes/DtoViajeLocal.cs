@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MinaTolEntidades.DtoViajes
 {
-    public class DtoViajeInterno : BaseObject
+    public class DtoViajeLocal : BaseObject
     {
         public DtoUbicacion UbicacionOrigen { get; set; }
         public DtoUbicacion UbicacionDestino { get; set; }
@@ -18,5 +18,6 @@ namespace MinaTolEntidades.DtoViajes
         public Vehiculo Vehiculo { get; set; }
         public DateTime FechaViaje { get; set; }
         public string Observaciones { get; set; }
+        public Cliente Cliente { get; set; }
     }
 }
