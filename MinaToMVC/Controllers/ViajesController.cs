@@ -52,6 +52,7 @@ namespace MinaToMVC.Controllers
             var tipoMateriales = new List<DtoTipoMaterialUbicacion>();
             var trabajadores = new List<DtoTrabajador>();
             var vehiculos = new List<Vehiculo>();
+            var clientes = new List<Cliente>();
             vehiculos.Add(new Vehiculo()
             {
                 Id = 1,
@@ -67,12 +68,14 @@ namespace MinaToMVC.Controllers
             var responsetrabajadores = await httpClientConnection.GetAllTrabajador();
             trabajadores = JsonConvert.DeserializeObject<List<DtoTrabajador>>(responsetrabajadores.Response.ToString());
 
-
+            var responseClientes = await httpClientConnection.GetAllCliente();
+            clientes = JsonConvert.DeserializeObject<List<Cliente>>(responseClientes.Response.ToString());
 
             ViewBag.Ubicaciones = ubicaciones;
             ViewBag.TipoMaterial = tipoMateriales;
             ViewBag.Trabajadores = trabajadores;
             ViewBag.Vehiculos = vehiculos;
+            ViewBag.Clientes = clientes;
 
             return View();
         }

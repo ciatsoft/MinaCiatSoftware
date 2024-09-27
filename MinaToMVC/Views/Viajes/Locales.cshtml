@@ -6,6 +6,7 @@
     var tipoMateriales = (List<MinaTolEntidades.DtoCatalogos.DtoTipoMaterialUbicacion>)ViewBag.TipoMaterial;
     var trabajadores = (List<MinaTolEntidades.DtoSucursales.DtoTrabajador>)ViewBag.Trabajadores;
     var vehiculos = (List<MinaTolEntidades.DtoClientes.Vehiculo>)ViewBag.Vehiculos;
+    var clientes = (List<MinaTolEntidades.DtoClientes.Cliente>)ViewBag.Clientes;
 }
 
 <form enctype="multipart/form-data" id="frmViajesInternos" method="post" name="frmViajesInternos">
@@ -68,6 +69,15 @@
                             @foreach (var i in vehiculos)
                             {
                                 <option value="@i.Id">@i.Placa</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Cliente:</label>
+                        <select id="ddlCliente" class="form-control">
+                            @foreach (var i in clientes)
+                            {
+                                <option value="@i.Id">@i.Nombre</option>
                             }
                         </select>
                     </div>

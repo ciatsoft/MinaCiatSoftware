@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MinaTolEntidades.DtoViajes
 {
-    public class DtoViajeinterno : BaseObject
+    public class DtoViajeInterno : BaseObject
     {
         public DtoUbicacion UbicacionOrigen { get; set; }
         public DtoUbicacion UbicacionDestino { get; set; }

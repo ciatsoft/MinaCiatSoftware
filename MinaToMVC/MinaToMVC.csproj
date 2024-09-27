@@ -191,6 +191,7 @@
     <Compile Include="DAL\HttpClientConnection.TipoMaterialUbicacion.cs" />
     <Compile Include="DAL\httpClientConnection.TipoVehiculo.cs" />
     <Compile Include="DAL\HttpClientConnection.AreaTrabajo.cs" />
+    <Compile Include="DAL\HttpClientConnection.Cliente.cs" />
     <Compile Include="DAL\HttpClientConnection.Trabajador.cs" />
     <Compile Include="DAL\HttpClientConnection.Ubicacion.cs" />
     <Compile Include="DAL\HttpClientConnection.UnidadMedida.cs" />
