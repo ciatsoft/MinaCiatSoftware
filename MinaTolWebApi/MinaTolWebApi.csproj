@@ -161,6 +161,7 @@
     <Compile Include="DAL\DbWrapper.UnidadMedida.cs" />
     <Compile Include="DAL\DbWrapper.Usuario.cs" />
     <Compile Include="DAL\DbWrapper.Vehiculo.cs" />
+    <Compile Include="DAL\DbWrapper.Viajes.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

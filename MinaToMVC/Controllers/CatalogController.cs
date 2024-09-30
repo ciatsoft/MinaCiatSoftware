@@ -25,26 +25,28 @@ namespace MinaToMVC.Controllers
 
         #region Unidad de Medida
 
-        public ActionResult UnidadMedida()
+        public async Task<ActionResult> UnidadMedida(long id = 0)
         {
-            return View();
+
+            var unidad = new UnidadMedida();
+            if (id != 0)
+            {
+                var result = await httpClientConnection.GetUnidadMedidaById(id);
+                unidad = JsonConvert.DeserializeObject<UnidadMedida>(result.Response.ToString());
+            }
+
+            return View(unidad);
         }
-        public async Task<string> GetAllUnidadmedida()
+        public async Task<string> GetAllUnidadMedida()
         {
             var result = await httpClientConnection.GetAllUnidadMedida();
-            return JsonConvert.SerializeObject(result);
-        }
-        public async Task<ActionResult> SaveOrUpdateUnidadMedida(UnidadMedida u)
-        {
-            httpClientConnection.MappingColumSecurity(u);
-            var result = await httpClientConnection.SaveOrUpdateUnidadMedida(u);
-            return RedirectToAction("UnidadMedida", "Catalog");
 
-        }
-        public async Task<string> GetUnidadMedidaById (long id )
-        {
-            var result = await httpClientConnection.GetUnidadMedidaById(id);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public string SaveOrUpdateUnidadMedida(UnidadMedida ar)
+        {
+            var result = httpClientConnection.SaveOrUpdateUnidadMedida(ar);
+            return JsonConvert.SerializeObject(result);
         }
 
         #endregion
@@ -172,15 +174,40 @@ namespace MinaToMVC.Controllers
         #endregion
 
         #region TipoMaterialUbicacion
-        public async Task<ActionResult> TipoMaterialUbicacion(long id= 0)
+        public async Task<ActionResult> TipoMaterialUbicacion(long id = 0)
         {
             var tipoMaterial = new DtoTipoMaterialUbicacion();
+            var ubicaciones = new List<DtoUbicacion>();
+            var unidadmedida = new List<UnidadMedida>();
+
+            // Si se proporciona un id, obtener el tipo de material de ubicación
             if (id != 0)
             {
                 var result = await httpClientConnection.GetTipoMaterialUbicacionById(id);
+
+                // Deserializar el resultado en un objeto
                 tipoMaterial = JsonConvert.DeserializeObject<DtoTipoMaterialUbicacion>(result.Response.ToString());
             }
-            return View(tipoMaterial);
+
+            var responseUbicaciones = await httpClientConnection.GetAllUbicacion();
+            ubicaciones = JsonConvert.DeserializeObject<List<DtoUbicacion>>(responseUbicaciones.Response.ToString());
+
+            var responseunidadmedida = await httpClientConnection.GetAllUnidadMedida();
+            unidadmedida = JsonConvert.DeserializeObject<List<UnidadMedida>>(responseunidadmedida.Response.ToString());
+
+            ViewBag.Ubicaciones = ubicaciones;
+            ViewBag.TipoMaterial = tipoMaterial;
+            ViewBag.UnidadDeMedida = unidadmedida;
+
+
+            return View();
+        }
+
+        public string SaveOrUpdateTipoMaterialUbicacion(DtoTipoMaterialUbicacion t)
+        {
+
+            var result = httpClientConnection.SaveOrUpdateTipoMaterialUbicacion(t);
+            return JsonConvert.SerializeObject(result);
         }
 
         public async Task<string> GetAllTipoMaterialUbicacion()
