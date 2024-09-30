@@ -27,7 +27,7 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-        [HttpGet, Route("AreaTrabajo/AreaTrabajo/{id:long}")]
+        [HttpGet, Route("{id:long}")]
         public ModelResponse GetAreaTrabajoById(int id)
         {
             var result = wrapper.GetAreaTrabajoById(id);

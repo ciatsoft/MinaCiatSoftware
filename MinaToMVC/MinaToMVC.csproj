@@ -160,6 +160,8 @@
     <Content Include="Assets\js\jquery.dataTables.min.js" />
     <Content Include="Assets\script.js" />
     <Content Include="Assets\styles.css" />
+    <Content Include="bin\MinaToMVC.dll" />
+    <Content Include="bin\MinaToMVC.pdb" />
     <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\Catalogos\AltaRoll.js" />
@@ -205,6 +207,7 @@
     <Compile Include="Helpers\EmailHelper.cs" />
     <Compile Include="Helpers\SessionHelper.cs" />
     <Compile Include="Helpers\StaticFileHelper.cs" />
+    <Compile Include="obj\Debug\.NETFramework,Version=v4.6.AssemblyAttributes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
