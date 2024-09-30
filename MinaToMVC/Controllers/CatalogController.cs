@@ -184,8 +184,6 @@ namespace MinaToMVC.Controllers
             if (id != 0)
             {
                 var result = await httpClientConnection.GetTipoMaterialUbicacionById(id);
-
-                // Deserializar el resultado en un objeto
                 tipoMaterial = JsonConvert.DeserializeObject<DtoTipoMaterialUbicacion>(result.Response.ToString());
             }
 
@@ -196,11 +194,10 @@ namespace MinaToMVC.Controllers
             unidadmedida = JsonConvert.DeserializeObject<List<UnidadMedida>>(responseunidadmedida.Response.ToString());
 
             ViewBag.Ubicaciones = ubicaciones;
-            ViewBag.TipoMaterial = tipoMaterial;
             ViewBag.UnidadDeMedida = unidadmedida;
 
 
-            return View();
+            return View(tipoMaterial);
         }
 
         public string SaveOrUpdateTipoMaterialUbicacion(DtoTipoMaterialUbicacion t)
@@ -216,15 +213,7 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllTipoMaterialUbicacion(token.Token.access_token);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-        /// <summary>
-        /// El procedimiento nos permite guardar o actualizar los roles mediante un procedimiento almacenado
-        /// </summary>
-        /// <param name="t"> nos ayuda a pasar la inmformacion del formulario y ocuparla para el procedimiento almacenado</param>
-        /// <returns></returns>
-        /// 
 
-        
-    }
         #endregion
-    
+    }
 }

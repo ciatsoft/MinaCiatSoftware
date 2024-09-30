@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    // Validación del formulario usando el mismo estilo que el código 2
+    // Validación del formulario usando el mismo 
     $("#frmTipoMaterialUbicacion").validate({
         rules: {
             "txtNombreTipoMaterial": "required",
@@ -7,7 +7,7 @@
         }
     });
 
-    // Inicialización de la tabla de tipo de material con formato similar al código 2
+    // Inicialización de la tabla de tipo de material con formato 
     $("#tableTipodematerial").dataTable({
         processing: true,
         destroy: true,
@@ -27,7 +27,7 @@
                 }
             },
             {
-                data: "id", render: function (data) {
+                data: "id", title: "Acciones" , render: function (data) {
                     return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarTipoMaterial(' + data + ')" />' +
                         ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarTipoMaterial(' + data + ', this)" />';
                 }
@@ -60,7 +60,7 @@
 
     GetAllTipoMaterialUbicacion();
 
-    // Cargar el registro en caso de edición con el mismo enfoque que el código 2
+    // Cargar el registro en caso de edición 
     if (typeof tipoMaterialUbicacionJson != 0) {
         $("#txtidtipomaterial").val(tipoMaterialUbicacionJson.Id);
         $("#txtNombreTipoMaterial").val(tipoMaterialUbicacionJson.NombreTipoMaterial);
@@ -69,7 +69,7 @@
     }
 });
 
-// Función para obtener todos los tipos de material (idéntica a la estructura del código 2)
+// Función para obtener todos los tipos de material
 function GetAllTipoMaterialUbicacion() {
     GetMVC("/Catalog/GetAllTipoMaterialUbicacion", function (r) {
         if (r.IsSuccess) {
@@ -80,7 +80,7 @@ function GetAllTipoMaterialUbicacion() {
     });
 }
 
-// Función para guardar o actualizar, adaptada para ser similar al código 2
+// Función para guardar o actualizar
 function SaveOrUpdateTipoMaterialUbicacion() {
     if ($("#frmTipoMaterialUbicacion").valid()) {
         var parametro = {
@@ -98,7 +98,7 @@ function SaveOrUpdateTipoMaterialUbicacion() {
 
         // Actualizar la navegación
         window.location.href = '/Catalog/TipoMaterialUbicacion';
-        PostMVC("/Catalog/SaveOrUpdateTipoMaterial", parametro, function (success, response) {
+        PostMVC("/Catalog/SaveOrUpdateTipoMaterialUbicacion", parametro, function (success, response) {
             if (success) {
                 LimpiarFormulario();
                 alert("Datos guardados exitosamente.");
@@ -109,27 +109,37 @@ function SaveOrUpdateTipoMaterialUbicacion() {
     }
 }
 
-// Función para eliminar con confirmación y estructura de mensajes similares al código 2
+// Función para eliminar con confirmación y estructura de mensajes 
 function EliminarTipoMaterial(id, boton) {
+    // Obtener la fila correspondiente al botón de eliminación.
     var row = $(boton).closest("tr");
-    var nombre = row.find("td:eq(1)").text();
-    var descripcion = row.find("td:eq(2)").text();
 
-    if (confirm("¿Usted desea eliminar este tipo de material?\nNombre: " + nombre + "\nDescripción: " + descripcion)) {
+    // Extraer el nombre y la descripción de las celdas correspondientes.
+    var nombre = row.find("td:eq(0)").text();
+    var descripcion = row.find("td:eq(1)").text();
+
+    // Asignar los valores de los campos ocultos que contienen el usuario y la fecha actual.
+    var UpdatedBy = $("#txtUpdatedBy").val();
+    var UpdatedDt = $("#txtUpdatedDt").val();
+
+    // Confirmar la eliminación con el usuario.
+    if (confirm("¿Usted desea eliminar este tipo de material?\nNombre: " + nombre + "\nDescripción: " + descripcion + "\nUsuario: " + UpdatedBy)) {
+        // Crear el objeto con los parámetros para enviar al servidor.
         var parametro = {
             Id: id,
             NombreTipoMaterial: nombre,
             DescripcionTipoMaterial: descripcion,
-            Estatus: 0,  // Se establece como inactivo
-            UpdatedBy: $("#txtUpdateBy").val(),
-            UpdatedDt: new Date().toISOString()
+            Estatus: 0,  // Se establece como inactivo.
+            UpdatedBy: UpdatedBy,
+            UpdatedDt: UpdatedDt
         };
 
         window.location.href = '/Catalog/TipoMaterialUbicacion';
-        PostMVC("/Catalog/SaveOrUpdateTipoMaterial", parametro, function (success, response) {
+        // Enviar la solicitud POST usando la función `PostMVC`.
+        PostMVC("/Catalog/SaveOrUpdateTipoMaterialUbicacion", parametro, function (success, response) {
             if (success) {
                 alert("Tipo de material eliminado exitosamente.");
-                row.remove();
+                
             } else {
                 alert("Error al eliminar el tipo de material: " + response.ErrorMessage);
             }
@@ -137,7 +147,8 @@ function EliminarTipoMaterial(id, boton) {
     }
 }
 
-// Función para editar con estilo de redireccionamiento similar al código 2
+
+// Función para editar con estilo de redireccionamiento 
 function EditarTipoMaterial(id) {
     location.href = "/Catalog/TipoMaterialUbicacion/" + id;
 }
