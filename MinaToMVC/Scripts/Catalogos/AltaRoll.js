@@ -5,8 +5,6 @@ $(document).ready(function () {
             "txtDescripcion": "required",
         }
     });
-
-    // Inicialización de la tabla de roles
     $("#tblRoll").dataTable({
         processing: true,
         destroy: true,
@@ -15,7 +13,7 @@ $(document).ready(function () {
         columns: [
             { data: "id", "visible": false, title: "Id" },
             { data: "nombre", title: "Nombre" },
-            { data: "descripcion", title: "Descripción" },
+            { data: "descripcion", title: "Descripcion" },
             {
                 data: "estatus",
                 title: "Estatus",

@@ -101,7 +101,7 @@ function Eliminarareat(id, boton) {
     var descripcion = row.find("td:eq(1)").text();  // Descripción
 
     // Confirmación de eliminación
-    if (confirm("¿Usted desea eliminar la siguiente Area? \nNombre: " + nombre + "\nDescripcion: " + descripcion)) {
+    if (confirm("¿Usted desea eliminar la siguiente Área? \nNombre: " + nombre + "\nDescripcion: " + descripcion)) {
         // Actualizamos el estatus a "Inactivo" (0) y preparamos el parámetro
         var parametro = {
             Id: id,
