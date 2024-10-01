@@ -88,102 +88,12 @@
                     </div>
                 </div>
             </div>
-
-            <br>
-
-            @*<div class="busqueda">
-                <form method="get">
-                    <input type="text" id="search" name="search" placeholder="Buscar por nombre o área" />
-                    <button type="submit">
-                        <i class="fa fa-search" aria-hidden="true"></i> Buscar
-                    </button>
-                </form>
-            </div>*@
-
-            <!-- Menú desplegable para seleccionar la cantidad de filas a mostrar -->
-            @*<select id="rowsToShow">
-                <option value="all">Todos</option>
-                <option value="100">100</option>
-                <option value="50">50</option>
-                <option value="25">25</option>
-                <option value="10">10</option>
-            </select>*@
             <table id="tblEmpleados" class="table" style="width:100%;">
             </table>
-
-            @*<table id="employeeTable">
-                <thead>
-                    <tr>
-                        <th><i class="fa fa-user" aria-hidden="true"></i> Nombre</th>
-                        <th><i class="fa fa-industry" aria-hidden="true"></i> Área de Trabajo</th>
-                        <th><i class="fa fa-dollar-sign" aria-hidden="true"></i> Salario MXN</th>
-                        <th><i class="fa fa-clock" aria-hidden="true"></i> Horario</th>
-                        <th><i class="fa fa-shield" aria-hidden="true"></i> Seguro</th>
-                        <th><i class="fa fa-hourglass-start" aria-hidden="true"></i> Retardos</th>
-                        <th><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Faltas</th>
-                    </tr>
-                </thead>
-                <tbody style="font-size: 16px;"></tbody>
-            </table>*@
             <br>
-            <!-- Contenedor para la paginación -->
-            @*<div id="pagination"></div>*@
         </div>
     </div>
 </form>
 <script>
-    $(document).ready(function () {
-        function actualizarTabla(filtro) {
-            $.ajax({
-                url: "actualizar_tabla.php",
-                type: "POST",
-                data: { filtro: filtro },
-                success: function (response) {
-                    $("#employeeTable tbody").html(response);
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error al actualizar la tabla: " + error);
-                }
-            });
-        }
-
-        // Eventos de clic para diferentes filtros
-        $("#empleadosConSeguroButton, #empleadosConFaltasButton, #empleadosConRetardosButton").click(function () {
-            const filtro = $(this).data("filtro");
-            actualizarTabla(filtro);
-        });
-
-        // Evento para mostrar todas las filas al recargar la página
-        $("#totaldeempleados").click(function () {
-            location.reload();
-        });
-
-        // Evento para mostrar las filas según la selección
-        $('#rowsToShow').change(function () {
-            const table = $('#employeeTable tbody');
-            const rows = table.find('tr');
-            const show = $(this).val();
-            const displayCount = show === 'all' ? rows.length : parseInt(show, 10);
-
-            let totalPages = Math.ceil(rows.length / displayCount);
-            createPagination(totalPages, displayCount);
-
-            function createPagination(totalPages, displayCount) {
-                const paginationContainer = $('#pagination').empty();
-
-                for (let i = 1; i <= totalPages; i++) {
-                    $('<button/>', {
-                        text: i,
-                        click: function () {
-                            rows.hide().slice((i - 1) * displayCount, i * displayCount).show();
-                        }
-                    }).appendTo(paginationContainer);
-                }
-
-                if (totalPages > 0) paginationContainer.children().first().click();
-            }
-        }).trigger('change');
-    });
-
-    var trabajadorJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(trabajador))');
+        var trabajadorJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(trabajador))');
 </script>

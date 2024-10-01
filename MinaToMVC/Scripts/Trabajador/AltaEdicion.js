@@ -82,6 +82,25 @@ $(document).ready(function () {
             { data: "nombre", title: "Nombre" },
             { data: "email", title: "Email" },
             { data: "telefono", title: "Teléfono" },
+            { data: "seguro", title: "NSS" },
+            {
+                data: "turno", title: "Turno", render: function (data) {
+                    var turnoString = "";
+                    switch (data) {
+                        case "M":
+                            turnoString = "Matutino";
+                            break;
+                        case "V":
+                            turnoString = "Vespertino";
+                            break;
+                        case "N":
+                            turnoString = "Nocturno";
+                            break;
+                    }
+
+                    return turnoString;
+                }
+            },
             {
                 data: "id", render: function (data) {
                     return '<input type="button" value="Editar" class="btn btn-primary" onclick="EditarTrabajador(' + data + ')" />';
