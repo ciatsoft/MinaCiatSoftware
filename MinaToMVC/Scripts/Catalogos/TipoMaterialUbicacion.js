@@ -15,10 +15,12 @@
         searching: true,
         columns: [
             { data: "id", "visible": false, title: "Id" },
-            { data: "nombreTipoMaterial", title: "Nombre Material" },
+            { data: "nombreTipoMaterial", title: "Nombre" },
             { data: "descripcionTipoMaterial", title: "Descripción Material" },
             { data: "dtoUbicacion.nombreUbicacion", title: "Ubicación" },
             { data: "unidadMedida.nombre", title: "Unidad Medida" },
+            { data: "dtoUbicacion.id", title: "Ubicación" },
+            { data: "unidadMedida.id", title: "Unidad Medida" },
             {
                 data: "estatus",
                 title: "Estatus",
@@ -69,16 +71,7 @@
     }
 });
 
-// Función para obtener todos los tipos de material
-function GetAllTipoMaterialUbicacion() {
-    GetMVC("/Catalog/GetAllTipoMaterialUbicacion", function (r) {
-        if (r.IsSuccess) {
-            MapingPropertiesDataTable("tableTipodematerial", r.Response);
-        } else {
-            alert("Error al cargar los materiales: " + r.ErrorMessage);
-        }
-    });
-}
+
 
 // Función para guardar o actualizar
 function SaveOrUpdateTipoMaterialUbicacion() {
@@ -98,6 +91,7 @@ function SaveOrUpdateTipoMaterialUbicacion() {
 
         // Actualizar la navegación
         window.location.href = '/Catalog/TipoMaterialUbicacion';
+        console.log("Parámetros enviados para la eliminación:", parametro);
         PostMVC("/Catalog/SaveOrUpdateTipoMaterialUbicacion", parametro, function (success, response) {
             if (success) {
                 LimpiarFormulario();
@@ -115,31 +109,37 @@ function EliminarTipoMaterial(id, boton) {
     var row = $(boton).closest("tr");
 
     // Extraer el nombre y la descripción de las celdas correspondientes.
-    var nombre = row.find("td:eq(0)").text();
-    var descripcion = row.find("td:eq(1)").text();
+    var nombre = row.find("td:eq(0)").text(); // Columna para el nombre
+    var descripcion = row.find("td:eq(1)").text(); // Columna para la descripción
+    var idUbicacion = row.find("td:eq(4)").text(); // Columna oculta para el ID de ubicación
+    var idUnidadMedida = row.find("td:eq(5)").text(); // Columna oculta para el ID de unidad de medida
 
     // Asignar los valores de los campos ocultos que contienen el usuario y la fecha actual.
     var UpdatedBy = $("#txtUpdatedBy").val();
     var UpdatedDt = $("#txtUpdatedDt").val();
 
     // Confirmar la eliminación con el usuario.
-    if (confirm("¿Usted desea eliminar este tipo de material?\nNombre: " + nombre + "\nDescripción: " + descripcion + "\nUsuario: " + UpdatedBy)) {
+    if (confirm("¿Usted desea eliminar este tipo de material?\nNombre: " + nombre + "\nDescripción: " + descripcion
+        + "\nID Ubicación: " + idUbicacion + "\nID Unidad de Medida: " + idUnidadMedida + "\nUsuario: " + UpdatedBy + " " + UpdatedDt)) {
         // Crear el objeto con los parámetros para enviar al servidor.
         var parametro = {
             Id: id,
             NombreTipoMaterial: nombre,
             DescripcionTipoMaterial: descripcion,
+            DtoUbicacion: idUbicacion, // Añadir ID de ubicación
+            UnidadMedida: idUnidadMedida, // Añadir ID de unidad de medida
             Estatus: 0,  // Se establece como inactivo.
             UpdatedBy: UpdatedBy,
             UpdatedDt: UpdatedDt
         };
 
+        // Actualizar la navegación
         window.location.href = '/Catalog/TipoMaterialUbicacion';
         // Enviar la solicitud POST usando la función `PostMVC`.
+        console.log("Parámetros enviados para la eliminación:", parametro);
         PostMVC("/Catalog/SaveOrUpdateTipoMaterialUbicacion", parametro, function (success, response) {
             if (success) {
                 alert("Tipo de material eliminado exitosamente.");
-                
             } else {
                 alert("Error al eliminar el tipo de material: " + response.ErrorMessage);
             }
@@ -161,4 +161,15 @@ function LimpiarFormulario() {
     $("#ddlUbicacion").val('');
     $("#ddlUnidadDeMedida").val('');
     $("#chbEstatus").prop('checked', false);
+}
+
+// Función para obtener todos los tipos de material
+function GetAllTipoMaterialUbicacion() {
+    GetMVC("/Catalog/GetAllTipoMaterialUbicacion", function (r) {
+        if (r.IsSuccess) {
+            MapingPropertiesDataTable("tableTipodematerial", r.Response);
+        } else {
+            alert("Error al cargar los materiales: " + r.ErrorMessage);
+        }
+    });
 }

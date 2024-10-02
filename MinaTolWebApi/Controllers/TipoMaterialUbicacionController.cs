@@ -40,8 +40,7 @@ namespace MinaTolWebApi.Controllers
         }
 
         [HttpPost, Route("")]
-        public ModelResponse SaveOrUpdateTipoMaterialUbicacion(DtoTipoMaterialUbicacion tm
-            )
+        public ModelResponse SaveOrUpdateTipoMaterialUbicacion(DtoTipoMaterialUbicacion tm)
         {
             var result = wrapper.SaveOrUpdateTipoMaterialUbicacion(tm);
             return result;
