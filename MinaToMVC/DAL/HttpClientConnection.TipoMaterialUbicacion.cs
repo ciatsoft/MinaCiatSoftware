@@ -27,13 +27,16 @@ namespace MinaToMVC.DAL
 
         public async Task<ModelResponse> SaveOrUpdateTipoMaterialUbicacion(DtoTipoMaterialUbicacion tmu)
         {
+            MappingColumSecurity(tmu);
             var result = await RequestAsync<object>("api/TipoMaterialUbicacion", HttpMethod.Post, tmu,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
-            }));
+            }), token.Token.access_token);
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
             return modelResponse;
+
         }
 
         public async Task<ModelResponse> GetTipoMaterialUbicacionById(long TipoMaterialUbicacionId)
