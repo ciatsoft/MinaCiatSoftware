@@ -19,7 +19,7 @@
                 }
             },
             { data: "esSalarioActual", title: "Transportista" },
-            { data: "esSalarioActual", title: "Vehiculo" },
+            { data: "esSalarioActual", title: "Vehículo" },
             { data: "esSalarioActual", title: "Fecha de transporte" },
             {
                 data: "id", render: function (data) {

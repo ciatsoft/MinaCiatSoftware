@@ -5,8 +5,6 @@ $(document).ready(function () {
             "txtDescripcion": "required",
         }
     });
-
-    // Inicialización de la tabla de roles
     $("#tblRoll").dataTable({
         processing: true,
         destroy: true,
