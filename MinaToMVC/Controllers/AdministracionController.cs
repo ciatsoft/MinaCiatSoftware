@@ -1,4 +1,5 @@
 ﻿using MinaTolEntidades;
+using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.Security;
 using MinaToMVC.Helpers;
 using Newtonsoft.Json;
@@ -26,10 +27,32 @@ namespace MinaToMVC.Controllers
             return View();
         }
         [Autenticated]
-        public ActionResult Clientes()
+        #region cliente
+        public async Task<ActionResult> Clientes(long id = 0)
         {
-            return View();
+            var Cliente = new Cliente();
+            if (id != 0)
+            {
+                var result = await httpClientConnection.GetClienteById(id);
+                Cliente = JsonConvert.DeserializeObject<Cliente>(result.Response.ToString());
+            }
+            return View(Cliente);
         }
+        public string SaveOrUpdateCliente(Cliente t)
+        {
+
+            var result = httpClientConnection.SaveOrupdateCliente(t);
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetAllCliente()
+        {
+            var result = await httpClientConnection.GetAllCliente();
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        #endregion
         [Autenticated]
         public ActionResult Solicitudes()
         {
