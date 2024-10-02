@@ -13,7 +13,7 @@ $(document).ready(function () {
         columns: [
             { data: "id", "visible": false, title: "Id" },
             { data: "nombre", title: "Nombre" },
-            { data: "descripcion", title: "Descripcion" },
+            { data: "descripcion", title: "Descripción" },
             {
                 data: "estatus",
                 title: "Estatus",
