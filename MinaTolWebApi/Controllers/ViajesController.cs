@@ -26,6 +26,14 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetAllViajeInterno();
             return result;
         }
+
+        [HttpGet, Route("List")]
+        public ModelResponse GetAllViajeLocal()
+        {
+            var result = wrapper.GetAllViajeLocal();
+            return result;
+        }
+
         [HttpGet, Route("{id:long}")]
         public ModelResponse GetViajeInternoById(long id)
         {

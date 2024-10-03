@@ -18,7 +18,7 @@ namespace MinaToMVC.DAL
         public async Task<ModelResponse> SaveOrUpdateViajeLocal(DtoViajeLocal u)
         {
             MappingColumSecurity(u);
-            var result = await RequestAsync<object>("api/ViajeLocal", HttpMethod.Post, u,
+            var result = await RequestAsync<object>("api/Viajes", HttpMethod.Post, u,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
@@ -30,7 +30,7 @@ namespace MinaToMVC.DAL
         }
         public async Task<ModelResponse> GetAllViajeLocal(string token)
         {
-            var result = await RequestAsync<object>("api/TipoMaterialUbicacion/List", HttpMethod.Get, null,
+            var result = await RequestAsync<object>("api/Viajes/List", HttpMethod.Get, null,
                 new Func<string, string>((responseString) =>
                 {
                     return responseString;
@@ -43,7 +43,7 @@ namespace MinaToMVC.DAL
 
         public async Task<ModelResponse> GetViajeLocalById(long id)
         {
-            var result = await RequestAsync<object>($"api/ViajeLocal/{id}", HttpMethod.Get, null,
+            var result = await RequestAsync<object>($"api/Viajes/{id}", HttpMethod.Get, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;

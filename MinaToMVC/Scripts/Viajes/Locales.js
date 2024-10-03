@@ -6,17 +6,18 @@
         paging: true,
         searching: true,
         columns: [
-            { data: "id", visible: false, title: "Id" },
-            { data: "fechaInicio", title: "Origen", render: function (data) { return formatDate(data); } },
-            { data: "fechaFinal", title: "Destino" },
-            { data: "monto", title: "Material a transportar", render: function (data) { return formatMoney(data); } },
-            { data: "transportista", title: "Transportista" },
-            { data: "vehiculo", title: "Vehículo" },
-            { data: "fechaTransporte", title: "Fecha de transporte" },
+            { data: "id", title: "Id" },
+            { data: "dtoUbicacion.nombreUbicacion", title: "Origen" },
+            { data: "dtoUbicacion.nombreUbicacion", title: "Destino" },
+            { data: "unidadMedida.nombre", title: "Unidad Medida" },
+            { data: "dtoTipoMaterialUbicacion.nombreTipoMaterial", title: "Material a transportar" },
+            { data: "dtoTrabajador.nombre", title: "Transportista" },
+            { data: "Vehiculo.nombre", title: "Vehículo" },
+            { data: "FechaViaje", title: "Fecha de transporte" },
             {
-                data: "id", title: "Acciones", render: function (data) {
+                data: "Id", title: "Acciones", render: function (data) {
                     return '<input type="button" value="Editar" class="btn btn-primary" onclick="EditarViajeLocal(' + data + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-danger" onclick="EliminarViajeLocal(' + data + ', this)" />';
+                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarViajeLocal(' + data + ', this)" />';
                 }
             }
         ],
@@ -44,6 +45,7 @@
             }
         }
     });
+
 
     GetAllViajeLocal(); // Llamada a la función para cargar todos los viajes locales
 
@@ -158,10 +160,12 @@ function LimpiarFormulario() {
 // Función para obtener todos los tipos de material
 function GetAllViajeLocal() {
     GetMVC("/Viajes/GetAllViajeLocal", function (r) {
+        console.log("Datos recibidos:", r); // Añadir esta línea para inspeccionar la respuesta
         if (r.IsSuccess) {
-            MapingPropertiesDataTable("tableTipodematerial", r.Response);
+            MapingPropertiesDataTable("tblViajesLocales", r.Response); // Asegúrate que sea el ID correcto
         } else {
             alert("Error al cargar los materiales: " + r.ErrorMessage);
         }
     });
 }
+
