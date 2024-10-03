@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Roll";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
@@ -7,6 +6,7 @@
 }
 
 <link href="@Url.Content("~/Assets/css/EstilosBtnCambios/EstiloBtn.css")" rel="stylesheet" />
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 <script src="~/Scripts/Catalogos/AltaRoll.js"></script>
@@ -23,6 +23,7 @@
             transform: scale(1.3); /* Aumenta el tamaño del botón */
             color: white; /* Color de texto blanco */
         }
+
     .btn-custom-cancel {
         background-color: red; /*  para el botón Guardar */
         color: white;
@@ -35,6 +36,7 @@
             transform: scale(1.3); /* Aumenta el tamaño del botón */
             color: white; /* Color de texto blanco */
         }
+
     .btn-custom-clean {
         background-color: dodgerblue; /*  para el botón Guardar */
         color: white;
@@ -65,8 +67,8 @@
                         <input type="text" id="txtNombre" name="txtNombre" class="form-control" />
                     </div>
                     <div class="col-lg-3">
-                        <label>Descripcion:</label>
-                        <textarea type="text" id="txtDescripcion" name="Descripción" class="form-control"></textarea>
+                        <label>Descripción:</label>
+                        <textarea type="text" id="txtDescripcion" name="Descripcion" class="form-control"></textarea>
                     </div>
                     <div class="col-lg-3">
                         <div class="col-lg-6">
@@ -79,7 +81,7 @@
                     <div class="col-md-12">
                         <input href="/Catalog/Roll" type="button" value="Guardar" onclick="SaveOrUpdateRoll()" class="btn btn-success" />
                         <a href="/Catalog/Roll" class="btn btn-custom-cancel">Cancelar</a>
-                        
+
                     </div>
                 </div>
 

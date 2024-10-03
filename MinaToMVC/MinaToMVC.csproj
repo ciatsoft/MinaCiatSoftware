@@ -166,6 +166,7 @@
     <Content Include="Global.asax" />
     <Content Include="Scripts\Catalogos\AltaRoll.js" />
     <Content Include="Scripts\Catalogos\AltaTipoVehiculo.js" />
+    <Content Include="Scripts\Catalogos\AltCliente.js" />
     <Content Include="Scripts\Catalogos\AreaTrabajo.js" />
     <Content Include="Scripts\Catalogos\TipoMaterialUbicacion.js" />
     <Content Include="Scripts\Catalogos\Ubicacion.js" />

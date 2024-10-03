@@ -1,11 +1,13 @@
 ﻿$(document).ready(function () {
-    $("#frmareaTrabajo").validate({
+    $("#frmCliente").validate({
         rules: {
             "txtNombre": "required",
             "txtDescripcion": "required",
         }
     });
-    $("#tableareaTrabajo").dataTable({
+
+    // Inicialización de la tabla de roles
+    $("#tbCliente").dataTable({
         processing: true,
         destroy: true,
         paging: true,
@@ -13,7 +15,9 @@
         columns: [
             { data: "id", "visible": false, title: "Id" },
             { data: "nombre", title: "Nombre" },
-            { data: "descripcion", title: "Descripción" },
+            { data: "telefono", title: "Telefono" },
+            { data: "email", title: "Email" },
+            { data: "comentarios", title: "Comentarios" },
             {
                 data: "estatus",
                 title: "Estatus",
@@ -23,11 +27,12 @@
             },
             {
                 data: "id", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="Editarareat(' + data + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="Eliminarareat(' + data + ', this)" />';
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarCliente(' + data + ')" />' +
+                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarCliente(' + data + ', this)" />'; // 'this' se pasa para obtener la fila
                 }
             }
-        ],
+        ]
+        ,
         language: {
             "decimal": ",",
             "thousands": ".",
@@ -53,36 +58,41 @@
         }
     });
 
-    GetAllAreaTrabajo();
+    GetAllCliente();
 
-    if (typeof areatJson.Id != 0) {
-        $("#txtidareatrabajo").val(areatJson.Id);
-        $("#txtNombre").val(areatJson.Nombre);
-        $("#txtDescripcion").val(areatJson.Descripcion);
-        $("#chbEstatus").prop('checked', areatJson.Estatus);
+    if (typeof clienteJson.Id != 0) {
+        $("#txtIdCliente").val(clienteJson.Id);
+        $("#txtNombre").val(clienteJson.Nombre);
+        $("#txtTelefono").val(clienteJson.Telefono);
+        $("#txtEmail").val(clienteJson.Email);
+        $("#txtComentarios").val(clienteJson.Comentarios);
+        $("#chbEstatus").prop('checked', clienteJson.Estatus);
+        
     }
 });
 
-
 // Función que se ejecuta al hacer clic en el botón de Guardar
-function SaveOrUpdateAreaTrabajo() {
-    // Validamos el formulario antes de proceder
-    if ($("#frmareaTrabajo").valid()) {
+function SaveOrupdateCliente() {
+    if ($("#frmCliente").valid()) {
         var parametro = {
-            Id: $("#txtidareatrabajo").val(),
+            Id: $("#txtIdCliente").val(),
             Nombre: $("#txtNombre").val(),
-            Descripcion: $("#txtDescripcion").val(),
-            Estatus: $("#chbEstatus").is(':checked'),  // Booleano directo
+            Nombre: $("#txtTelefono").val(),
+            Nombre: $("#txtEmail").val(),
+            Descripcion: $("#txtComentarios").val(),
+            Estatus: $("#chbEstatus").is(':checked'),
             CreatedBy: $("#txtCreatedBy").val(),
             CreatedDt: $("#txtCreatedDt").val(),
             UpdatedBy: $("#txtUpdatedBy").val(),
             UpdatedDt: $("#txtUpdatedDt").val()
         };
-        window.location.href = '/Catalog/AreaTrabajo';
+
+        window.location.href = '/Administracion/Clientes';
         // Llamada al servidor para guardar o actualizar los datos
-        PostMVC('/Catalog/SaveOrUpdateAreaTrabajo', parametro, function (r) {
+        PostMVC('/Administracion/SaveOrUpdateCliente', parametro, function (r) {
             if (r.IsSuccess) {
-                location.href = "/Catalog/AreaTrabajo/" + r.Response.id;
+                LimpiarFormulario();
+                alert("Datos guardados exitosamente.");
             } else {
                 alert("Error al guardar los datos: " + r.ErrorMessage);
             }
@@ -90,23 +100,22 @@ function SaveOrUpdateAreaTrabajo() {
     }
 }
 
-
 // Función para eliminar el rol con confirmación y actualización de estatus
-function Eliminarareat(id, boton) {
+function EliminarCliente(id, boton) {
     // Obtener la fila correspondiente al botón de eliminación
     var row = $(boton).closest("tr");
 
     // Obtener los valores de la fila y almacenarlos en variables
     var nombre = row.find("td:eq(0)").text();  // Nombre
-    var descripcion = row.find("td:eq(1)").text();  // Descripción
+    var Comentario = row.find("td:eq(1)").text();  // 
 
     // Confirmación de eliminación
-    if (confirm("¿Usted desea eliminar la siguiente Área? \nNombre: " + nombre + "\nDescripcion: " + descripcion)) {
+    if (confirm("¿Usted desea eliminar el siguiente rol? \nNombre: " + nombre + "\nComentario: " + Comentario)) {
         // Actualizamos el estatus a "Inactivo" (0) y preparamos el parámetro
         var parametro = {
             Id: id,
             Nombre: nombre,
-            Descripcion: descripcion,
+            Comentario: Comentario,
             Estatus: 0,  // Cambiamos el estatus a inactivo (0)
             CreatedBy: $("#txtCreatedBy").val(),
             CreatedDt: $("#txtCreatedDt").val(),
@@ -114,39 +123,41 @@ function Eliminarareat(id, boton) {
             UpdatedDt: new Date().toISOString()  // Asignamos la fecha y hora actual como fecha de actualización
         };
 
-        window.location.href = '/Catalog/AreaTrabajo';
-        // Llamada para guardar o actualizar el rol
-        PostMVC('/Catalog/SaveOrUpdateAreaTrabajo', parametro, function (r) {
+        window.location.href = '/Administracion/Clientes';
+        // Llamada para guardar o actualizar el Cliente
+        PostMVC('/Administracion/SaveOrUpdateCliente', parametro, function (r) {
             if (r.IsSuccess) {
-                alert("Area eliminada exitosamente.");
+                alert("Cliente eliminado exitosamente.");
                 // Actualiza la interfaz de usuario, por ejemplo, eliminando la fila de la tabla
-
             } else {
-                alert("Error al eliminar el area: " + r.ErrorMessage);
+                alert("Error al eliminar el rol: " + r.ErrorMessage);
             }
         });
     }
 }
 
-function Editarareat(id) {
-    location.href = "/Catalog/AreaTrabajo/" + id;
-}
-function LimpiarFormulario() {
-    $("#txtidareatrabajo").val('');
-    $("#txtNombre").val('');
-    $("#txtDescripcion").val('');
-    $("#chbEstatus").prop('checked', false);  // Desmarcar el checkbox
+
+function EditarCliente(id) {
+    location.href = "/Administracion/Clientes/" + id;
 }
 
-
-// Función que llama al servidor para obtener todos los vehículos
-function GetAllAreaTrabajo() {
-    GetMVC("/Catalog/GetAllAreaTrabajo", function (r) {
+// Función que obtiene todos los roles
+function GetAllCliente() {
+    GetMVC("/Administracion/GetAllCliente", function (r) {
         if (r.IsSuccess) {
-            // Mapea los datos recibidos a la tabla DataTable
-            MapingPropertiesDataTable("tableareaTrabajo", r.Response);
+            MapingPropertiesDataTable("tbCliente", r.Response);
         } else {
-            alert("Error al cargar las areas disponibles: " + r.ErrorMessage);
+            alert("Error al cargar los roles: " + r.ErrorMessage);
         }
     });
+}
+
+// Función para limpiar el formulario
+function LimpiarFormulario() {
+    $("#txtidroll").val('');
+    $("#txtNombre").val('');
+    $("#txtTelefono").val('');
+    $("#txtEmail").val('');
+    $("#txtComentarios").val('');
+    $("#chbEstatus").prop('checked', false);
 }
