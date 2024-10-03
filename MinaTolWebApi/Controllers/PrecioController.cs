@@ -19,21 +19,21 @@ namespace MinaTolWebApi.Controllers
         {
             wrapper = new DbWrapper();
         }
-        [AllowAnonymous]
+        
         [Route("List"), HttpGet]
         public async Task<ModelResponse> GetAllPrecio()
         {
             var result = wrapper.GetAllPrecio();
             return result;
         }
-        [AllowAnonymous]
+        
         [HttpGet, Route("{id:long}")]
         public async Task<ModelResponse> GetPrecioById(int id)
         {
             var result = wrapper.GetPrecioById(id);
             return result;
         }
-        [AllowAnonymous]
+        
         [HttpPost, Route("")]
         public async Task<ModelResponse> SaveOrUpdatePrecio(Precio p)
         {

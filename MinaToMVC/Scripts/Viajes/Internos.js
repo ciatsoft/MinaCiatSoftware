@@ -29,3 +29,36 @@
         ]
     });
 });
+
+function SaveOrUpdateViajeinterno() {
+    var date = new Date($("#dtpFechaViaje").val());
+    var fc = ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + date.getFullYear();
+    var parametros = {
+        UbicacionOrigen: {
+            Id: $("#ddlUOrigen").val()
+        },
+        UbicacionDestino: {
+            Id: $("#ddlDestino").val()
+        },
+        TipoMaterial: {
+            Id: $("#ddlTipoMaterial").val()
+        },
+        Chofer: {
+            Id: $("#ddlTransportistas").val()
+        },
+        Vehiculo: {
+            Id: $("#ddlVehiculo").val()
+        },
+        FechaViaje: fc,
+        Observaciones: $("#txtObservaciones").val()
+    };
+
+    PostMVC('/Empleado/SaveOrupdateTrabajador', parametro, function (r) {
+        if (r.IsSuccess) {
+            location.href = "/Empleado/AltaEdicion";
+        }
+        else {
+            //alert(r.Message);
+        }
+    });
+}

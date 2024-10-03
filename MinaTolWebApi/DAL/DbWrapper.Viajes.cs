@@ -1,11 +1,89 @@
-﻿using System;
+﻿using MinaTolEntidades.DtoEmpleados;
+using MinaTolEntidades;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Data;
 using System.Linq;
 using System.Web;
+using MinaTolEntidades.DtoViajes;
 
 namespace MinaTolWebApi.DAL
 {
     public partial class DbWrapper
     {
+        public ModelResponse GetAllViajeInterno()
+        {
+            var modelResponse = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+
+            try
+            {
+                var user = GetObjects($"GetAllViajeInterno", CommandType.StoredProcedure, parameters,
+                    new Func<IDataReader, DtoSalario>((reader) =>
+                    {
+                        var r = FillEntity<DtoSalario>(reader);
+
+                        return r;
+                    }));
+
+                modelResponse.Response = user;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
+        public ModelResponse GetViajeInternoById(long id)
+        {
+            var modelResponse = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("@Id", id));
+
+            try
+            {
+                var user = GetObject($"GetViajeInternoById", CommandType.StoredProcedure, parameters,
+                    new Func<IDataReader, DtoSalario>((reader) =>
+                    {
+                        var r = FillEntity<DtoSalario>(reader);
+
+                        return r;
+                    }));
+
+                modelResponse.Response = user;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
+        public ModelResponse SaveOrUpdateViajeInterno(DtoViajeInterno vi)
+        {
+            var modelResponse = new ModelResponse();
+
+            try
+            {
+                var salarioId = ExecuteScalar($"SaveOrUpdateViajeInterno", CommandType.StoredProcedure, GenerateSQLParameters(vi));
+                s.Id = Convert.ToInt64(salarioId);
+
+                modelResponse.Response = s;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
     }
 }

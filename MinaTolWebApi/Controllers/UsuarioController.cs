@@ -54,5 +54,6 @@ namespace MinaTolWebApi.Controllers
             var result = dbWrapper.SaveOrUpdateUsuario(u);
             return result;
         }
+     
     }
 }
