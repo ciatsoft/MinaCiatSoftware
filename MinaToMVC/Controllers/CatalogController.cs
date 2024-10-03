@@ -195,7 +195,12 @@ namespace MinaToMVC.Controllers
 
             ViewBag.Ubicaciones = ubicaciones;
             ViewBag.UnidadDeMedida = unidadmedida;
+            //este por que marca error ino? intente hacer el foreach para el dll de unidad medida
+            //foreach(var tipomateriales in tipoMaterial)
+            //{
+            //    tipomateriales.UnidadMedida = GetAllUnidadMedida(tipoMaterial.UnidadMedida);
 
+            //}
 
             return View(tipoMaterial);
         }

@@ -173,6 +173,7 @@
     <Content Include="Scripts\Catalogos\UnidadMedida.js" />
     <Content Include="Scripts\Comun\Comun.js" />
     <Content Include="Scripts\Home\Autenticacion.js" />
+    <Content Include="Scripts\Seguridad\Usuario.js" />
     <Content Include="Scripts\Trabajador\AltaEdicion.js" />
     <Content Include="Scripts\Viajes\Internos.js" />
     <Content Include="Web.config" />
@@ -184,6 +185,7 @@
     <Compile Include="Controllers\EmpleadoController.cs" />
     <Compile Include="Controllers\Filters\FiltersHelper.cs" />
     <Compile Include="Controllers\AdministracionController.cs" />
+    <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Controllers\VentaController.cs" />
     <Compile Include="Controllers\TallerController .cs" />
     <Compile Include="Controllers\RHController.cs" />
@@ -250,6 +252,7 @@
     <Content Include="Views\Catalog\Roll.cshtml" />
     <Content Include="Views\Viajes\Locales.cshtml" />
     <Content Include="Views\Catalog\TipoMaterialUbicacion.cshtml" />
+    <Content Include="Views\Usuario\AltaEdicion.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

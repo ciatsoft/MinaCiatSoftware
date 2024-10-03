@@ -47,5 +47,40 @@ namespace MinaToMVC.DAL
 
             return modelResponse;
         }
+        public async Task<ModelResponse> GetAllUsuario(string token)
+        {
+
+            var result = await RequestAsync<object>("api/Usuario/List", HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+        public async Task<ModelResponse> SaveOrUpdateUsuario(Usuario u)
+        {
+            var result = await RequestAsync<object>("api/Usuario/", HttpMethod.Post, u,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        public async Task<ModelResponse> GetUsuarioById(long UserID)
+        {
+            var result = await RequestAsync<object>($"api/Usuario/{UserID}", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
     }
 }
