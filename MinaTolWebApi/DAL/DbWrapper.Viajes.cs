@@ -38,6 +38,33 @@ namespace MinaTolWebApi.DAL
 
             return modelResponse;
         }
+
+        public ModelResponse GetAllViajeLocal()
+        {
+            var modelResponse = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+
+            try
+            {
+                var user = GetObjects($"GetAllViajeLocal", CommandType.StoredProcedure, parameters,
+                    new Func<IDataReader, DtoSalario>((reader) =>
+                    {
+                        var r = FillEntity<DtoSalario>(reader);
+
+                        return r;
+                    }));
+
+                modelResponse.Response = user;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
         public ModelResponse GetViajeInternoById(long id)
         {
             var modelResponse = new ModelResponse();
@@ -72,9 +99,9 @@ namespace MinaTolWebApi.DAL
             try
             {
                 var salarioId = ExecuteScalar($"SaveOrUpdateViajeInterno", CommandType.StoredProcedure, GenerateSQLParameters(vi));
-                s.Id = Convert.ToInt64(salarioId);
+                vi.Id = Convert.ToInt64(salarioId);
 
-                modelResponse.Response = s;
+                modelResponse.Response = vi;
             }
             catch (Exception ex)
             {
