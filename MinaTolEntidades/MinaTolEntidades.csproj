@@ -52,6 +52,7 @@
     <Compile Include="DtoClientes\Vehiculo.cs" />
     <Compile Include="DtoEmpleados\DtoTrabajador.cs" />
     <Compile Include="DtoEmpleados\DtoSalario.cs" />
+    <Compile Include="DtoSeguridad\Seguridad.cs" />
     <Compile Include="DtoSucursales\Precio.cs" />
     <Compile Include="DtoSucursales\Producto.cs" />
     <Compile Include="DtoSucursales\UnidadMedida.cs" />
