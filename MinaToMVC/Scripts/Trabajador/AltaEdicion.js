@@ -121,6 +121,8 @@ $(document).ready(function () {
         $("#dtpFechaContratacion").val(trabajadorJson.FechaContratacion.substring(0, 10));
         $("#ddlTurno").val(trabajadorJson.Turno);
         $("#chbEstatus").prop('checked', trabajadorJson.Estatus);
+
+        GetSalarioActualTrabajador();
     }
     else {
         $("#imgAddSalario").hide();
@@ -222,7 +224,22 @@ function GetSalarioByTrabajador() {
         }
         else {
             alert("Error");
-            //alert(r.Message);
+        }
+    });
+}
+
+function GetSalarioActualTrabajador() {
+    var trabajadorId = $("#txtTrabajadorId").val();
+    GetMVC("/Empleado/GetSalarioByTrabajador/" + trabajadorId, function (r) {
+        if (r.IsSuccess) {
+            $.each(r.Response, function (i, v) {
+                if (v.esSalarioActual) {
+                    $("#txtSalarioTexto").val(formatMoney(v.monto));
+                }
+            });
+        }
+        else {
+            alert("Error");
         }
     });
 }
