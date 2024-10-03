@@ -77,8 +77,8 @@ function SaveOrupdateCliente() {
         var parametro = {
             Id: $("#txtIdCliente").val(),
             Nombre: $("#txtNombre").val(),
-            Nombre: $("#txtTelefono").val(),
-            Nombre: $("#txtEmail").val(),
+            Telefono: $("#txtTelefono").val(),
+            Email: $("#txtEmail").val(),
             Descripcion: $("#txtComentarios").val(),
             Estatus: $("#chbEstatus").is(':checked'),
             CreatedBy: $("#txtCreatedBy").val(),

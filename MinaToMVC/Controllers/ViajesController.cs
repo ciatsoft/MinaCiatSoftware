@@ -1,4 +1,5 @@
 ﻿using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.DtoViajes;
 using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.DtoSucursales;
 using Newtonsoft.Json;
@@ -46,18 +47,27 @@ namespace MinaToMVC.Controllers
 
             return View();
         }
-        public async Task<ActionResult> Locales()
+        public async Task<ActionResult> Locales(long id = 0)
         {
             var ubicaciones = new List<DtoUbicacion>();
             var tipoMateriales = new List<DtoTipoMaterialUbicacion>();
             var trabajadores = new List<DtoTrabajador>();
             var vehiculos = new List<Vehiculo>();
+            var unidadmedida = new List<UnidadMedida>();
             var clientes = new List<Cliente>();
+
+            var ViajeLocal = new DtoViajeLocal();
             vehiculos.Add(new Vehiculo()
             {
                 Id = 1,
                 Placa = "ABC123"
             });
+
+            if (id != 0)
+            {
+                var result = await httpClientConnection.GetViajeLocalById(id);
+                ViajeLocal = JsonConvert.DeserializeObject<DtoViajeLocal>(result.Response.ToString());
+            }
 
             var responseUbicaciones = await httpClientConnection.GetAllUbicacion();
             ubicaciones = JsonConvert.DeserializeObject<List<DtoUbicacion>>(responseUbicaciones.Response.ToString());
@@ -71,13 +81,31 @@ namespace MinaToMVC.Controllers
             var responseClientes = await httpClientConnection.GetAllCliente();
             clientes = JsonConvert.DeserializeObject<List<Cliente>>(responseClientes.Response.ToString());
 
+            var responseunidadmedida = await httpClientConnection.GetAllUnidadMedida();
+            unidadmedida = JsonConvert.DeserializeObject<List<UnidadMedida>>(responseunidadmedida.Response.ToString());
+
+            ViewBag.UnidadDeMedida = unidadmedida;
+
             ViewBag.Ubicaciones = ubicaciones;
             ViewBag.TipoMaterial = tipoMateriales;
             ViewBag.Trabajadores = trabajadores;
             ViewBag.Vehiculos = vehiculos;
             ViewBag.Clientes = clientes;
 
-            return View();
+            return View(ViajeLocal);
+        }
+        public string SaveOrUpdateViajeLocal(DtoViajeLocal t)
+        {
+
+            var result = httpClientConnection.SaveOrUpdateViajeLocal(t);
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetAllViajeLocal()
+        {
+            var token = Helpers.SessionHelper.GetSessionUser();
+            var result = await httpClientConnection.GetAllViajeLocal(token.Token.access_token);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
     }
 }
