@@ -16,6 +16,7 @@ namespace MinaTolEntidades.DtoViajes
         public DtoTipoMaterialUbicacion TipoMaterial { get; set; }
         public DtoTrabajador Chofer { get; set; }
         public Vehiculo Vehiculo { get; set; }
+        public UnidadMedida UnidadMedida { get; set; }
         public DateTime FechaViaje { get; set; }
         public string Observaciones { get; set; }
         public Cliente Cliente { get; set; }

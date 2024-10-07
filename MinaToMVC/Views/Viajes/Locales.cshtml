@@ -1,13 +1,16 @@
 ﻿
 @{
     ViewBag.Title = "Locales";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var estatus = new List<string> { "Activo", "Inactivo" };
 
-    var ubicaciones = (List<MinaTolEntidades.DtoCatalogos.DtoUbicacion>)ViewBag.Ubicaciones;
+
     var tipoMateriales = (List<MinaTolEntidades.DtoCatalogos.DtoTipoMaterialUbicacion>)ViewBag.TipoMaterial;
     var trabajadores = (List<MinaTolEntidades.DtoSucursales.DtoTrabajador>)ViewBag.Trabajadores;
     var vehiculos = (List<MinaTolEntidades.DtoClientes.Vehiculo>)ViewBag.Vehiculos;
-    var clientes = (List<MinaTolEntidades.DtoClientes.Cliente>)ViewBag.Clientes;
+    var clientes = (List<MinaTolEntidades.DtoClientes.Cliente>)ViewBag.Clientes; 
     var unidadmedida = (List<MinaTolEntidades.DtoSucursales.UnidadMedida>)ViewBag.UnidadDeMedida;
+    var ubicaciones = (List<MinaTolEntidades.DtoCatalogos.DtoUbicacion>)ViewBag.Ubicaciones;
 
     var ViajeLocal = (MinaTolEntidades.DtoViajes.DtoViajeLocal)Model;
 }
@@ -155,15 +158,16 @@
                         <a href="/Viajes/Locales" class="btn btn-custom-cancel">Cancelar</a>
                     </div>
                 </div>
-            </div>
-            <table id="tblViajesLocales" class="table" style="width:100%;">
-            </table>
-        </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <table class="table table-bordered table-striped" id="tblViajesLocales" style="width: 100%;"></table>
+                    </div>
+                </div>
+        </form>
     </div>
-</form>
 
 <script src="~/Scripts/Viajes/Locales.js"></script>
-     
+
 <script>
     var viajeLocalJson = JSON.parse('@Html.Raw((Newtonsoft.Json.JsonConvert.SerializeObject(ViajeLocal)))');
 </script>

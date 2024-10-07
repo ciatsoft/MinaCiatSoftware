@@ -20,9 +20,9 @@ namespace MinaTolWebApi.DAL
             try
             {
                 var user = GetObjects($"GetAllViajeInterno", CommandType.StoredProcedure, parameters,
-                    new Func<IDataReader, DtoSalario>((reader) =>
+                    new Func<IDataReader, DtoViajeInterno>((reader) =>
                     {
-                        var r = FillEntity<DtoSalario>(reader);
+                        var r = FillEntity<DtoViajeInterno>(reader);
 
                         return r;
                     }));
@@ -47,9 +47,9 @@ namespace MinaTolWebApi.DAL
             try
             {
                 var user = GetObjects($"GetAllViajeLocal", CommandType.StoredProcedure, parameters,
-                    new Func<IDataReader, DtoSalario>((reader) =>
+                    new Func<IDataReader, DtoViajeLocal>((reader) =>
                     {
-                        var r = FillEntity<DtoSalario>(reader);
+                        var r = FillEntity<DtoViajeLocal>(reader);
 
                         return r;
                     }));
@@ -74,9 +74,9 @@ namespace MinaTolWebApi.DAL
             try
             {
                 var user = GetObject($"GetViajeInternoById", CommandType.StoredProcedure, parameters,
-                    new Func<IDataReader, DtoSalario>((reader) =>
+                    new Func<IDataReader, DtoViajeInterno>((reader) =>
                     {
-                        var r = FillEntity<DtoSalario>(reader);
+                        var r = FillEntity<DtoViajeInterno>(reader);
 
                         return r;
                     }));
@@ -112,5 +112,27 @@ namespace MinaTolWebApi.DAL
 
             return modelResponse;
         }
+
+        public ModelResponse SaveOrUpdateViajeLocal(DtoViajeLocal vi)
+        {
+            var modelResponse = new ModelResponse();
+
+            try
+            {
+                var salarioId = ExecuteScalar($"SaveOrUpdateViajeLocal", CommandType.StoredProcedure, GenerateSQLParameters(vi));
+                vi.Id = Convert.ToInt64(salarioId);
+
+                modelResponse.Response = vi;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
+
     }
 }
