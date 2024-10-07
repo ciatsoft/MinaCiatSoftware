@@ -27,7 +27,7 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-        [HttpGet, Route("List")]
+        [HttpGet, Route("Listlocal")]
         public ModelResponse GetAllViajeLocal()
         {
             var result = wrapper.GetAllViajeLocal();
@@ -44,6 +44,12 @@ namespace MinaTolWebApi.Controllers
         public ModelResponse SaveOrUpdateViajeInterno(DtoViajeInterno vi)
         {
             var result = wrapper.SaveOrUpdateViajeInterno(vi);
+            return result;
+        }
+        [HttpPost, Route("")]
+        public ModelResponse SaveOrUpdateViajeLocal(DtoViajeLocal vi)
+        {
+            var result = wrapper.SaveOrUpdateViajeLocal(vi);
             return result;
         }
     }

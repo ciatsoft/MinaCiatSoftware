@@ -30,7 +30,7 @@ namespace MinaToMVC.DAL
         }
         public async Task<ModelResponse> GetAllViajeLocal(string token)
         {
-            var result = await RequestAsync<object>("api/Viajes/List", HttpMethod.Get, null,
+            var result = await RequestAsync<object>("api/Viajes/Listlocal", HttpMethod.Get, null,
                 new Func<string, string>((responseString) =>
                 {
                     return responseString;

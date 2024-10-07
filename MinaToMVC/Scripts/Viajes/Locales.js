@@ -1,22 +1,34 @@
 ﻿$(document).ready(function () {
+
+
+
     // Inicialización de la tabla de viajes locales con formato
-    $("#tblViajesLocales").DataTable({
+    $("#tblViajesLocales").dataTable({
         processing: true,
         destroy: true,
         paging: true,
         searching: true,
         columns: [
             { data: "id", title: "Id" },
-            { data: "dtoUbicacion.nombreUbicacion", title: "Origen" },
-            { data: "dtoUbicacion.nombreUbicacion", title: "Destino" },
-            { data: "unidadMedida.nombre", title: "Unidad Medida" },
-            { data: "dtoTipoMaterialUbicacion.nombreTipoMaterial", title: "Material a transportar" },
-            { data: "dtoTrabajador.nombre", title: "Transportista" },
-            { data: "Vehiculo.nombre", title: "Vehículo" },
-            { data: "FechaViaje", title: "Fecha de transporte" },
+            { data: "ubicacionOrigen.nombreUbicacion", title: "Origen" },  // Cambiar dtoUbicacion a UbicacionOrigen
+            { data: "ubicacionDestino.nombreUbicacion", title: "Destino" },  // Cambiar dtoUbicacionDestino a UbicacionDestino
+            { data: "chofer.nombreTrabajador", title: "Transportista" },  // Cambiar dtoTransportista a Chofer
+            { data: "tipoMaterial.nombreTipoMaterial", title: "Material" },  // Cambiar dtoMaterial a TipoMaterial
+            { data: "vehiculo.nombreVehiculo", title: "Vehículo" },
+            { data: "cliente.nombreCliente", title: "Cliente" },
+            { data: "unidadMedida.nombreUnidad", title: "Unidad de Medida" },
+            { data: "fechaViaje", title: "Fecha de transporte" },
+            { data: "observaciones", title: "Observaciones" },
+            {
+                data: "estatus",
+                title: "Estatus",
+                render: function (data, type, row) {
+                    return data == 1 ? "Activo" : "Inactivo";
+                }
+            },
             {
                 data: "Id", title: "Acciones", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-primary" onclick="EditarViajeLocal(' + data + ')" />' +
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarViajeLocal(' + data + ')" />' +
                         ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarViajeLocal(' + data + ', this)" />';
                 }
             }
@@ -65,7 +77,7 @@
 
 // Función para guardar o actualizar
 function SaveOrUpdateViajeLocal() {
-    if ($("#frmTipoMaterialUbicacion").valid()) {
+    if ($("#frmViajesInternos").valid()) {
         var parametro = {
             Id: $("#txtViajeInterno").val(),
             UbicacionOrigenId: { Id: $("#ddlUOrigen").val() },
@@ -87,12 +99,12 @@ function SaveOrUpdateViajeLocal() {
         // Actualizar la navegación
         window.location.href = '/Viajes/Locales';
         console.log("Parámetros enviados para la eliminación:", parametro);
-        PostMVC("/Viajes/SaveOrUpdateViajeLocal", parametro, function (success, response) {
-            if (success) {
+        PostMVC("/Viajes/SaveOrUpdateViajeLocal", function (r) {
+            if (r.IsSuccess) {
                 LimpiarFormulario();
                 alert("Datos guardados exitosamente.");
             } else {
-                alert("Error al guardar los datos: " + response.ErrorMessage);
+                alert("Error al guardar los datos: " + r.response.ErrorMessage);
             }
         });
     }
@@ -160,12 +172,14 @@ function LimpiarFormulario() {
 // Función para obtener todos los tipos de material
 function GetAllViajeLocal() {
     GetMVC("/Viajes/GetAllViajeLocal", function (r) {
-        console.log("Datos recibidos:", r); // Añadir esta línea para inspeccionar la respuesta
+        console.log("Datos recibidos:", r); // Inspecciona la respuesta en la consola
         if (r.IsSuccess) {
-            MapingPropertiesDataTable("tblViajesLocales", r.Response); // Asegúrate que sea el ID correcto
+            console.log("Estructura de los datos:", r.Response); // Verificar el contenido exacto de la respuesta
+            MapingPropertiesDataTable("tblViajesLocales", r.Response);
         } else {
-            alert("Error al cargar los materiales: " + r.ErrorMessage);
+            alert("Error al cargar los viajes: " + r.ErrorMessage);
         }
     });
 }
+
 
