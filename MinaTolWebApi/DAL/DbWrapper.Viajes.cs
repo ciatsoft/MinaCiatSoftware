@@ -38,7 +38,33 @@ namespace MinaTolWebApi.DAL
 
             return modelResponse;
         }
+        public ModelResponse GetViajeLocalById(long id)
+        {
+            var modelResponse = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("@Id", id));
 
+            try
+            {
+                var user = GetObject($"GetViajeLocalById", CommandType.StoredProcedure, parameters,
+                    new Func<IDataReader, DtoViajeLocal>((reader) =>
+                    {
+                        var r = FillEntity<DtoViajeLocal>(reader);
+
+                        return r;
+                    }));
+
+                modelResponse.Response = user;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
         public ModelResponse GetAllViajeLocal()
         {
             var modelResponse = new ModelResponse();
@@ -50,6 +76,13 @@ namespace MinaTolWebApi.DAL
                     new Func<IDataReader, DtoViajeLocal>((reader) =>
                     {
                         var r = FillEntity<DtoViajeLocal>(reader);
+                        r.UbicacionOrigen.NombreUbicacion = MappingProperties<string>(reader["Origen"]);
+                        r.UbicacionDestino.NombreUbicacion = MappingProperties<string>(reader["Destino"]);
+                        r.Transportista.Nombre = MappingProperties<string>(reader["Chofer"]);
+                        r.TipoMaterial.NombreTipoMaterial = MappingProperties<string>(reader["Material"]);
+                        r.Vehiculo.Placa = MappingProperties<string>(reader["Auto"]);
+                        r.Cliente.Nombre = MappingProperties<string>(reader["ClienteNombre"]);
+                        r.UnidadMedida.Nombre = MappingProperties<string>(reader["Unidad"]);
 
                         return r;
                     }));

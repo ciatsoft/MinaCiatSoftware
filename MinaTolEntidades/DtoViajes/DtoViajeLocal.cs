@@ -11,10 +11,19 @@ namespace MinaTolEntidades.DtoViajes
 {
     public class DtoViajeLocal : BaseObject
     {
+        public DtoViajeLocal() {
+            UbicacionOrigen = new DtoUbicacion();
+            UbicacionDestino = new DtoUbicacion();
+            TipoMaterial = new DtoTipoMaterialUbicacion();
+            Transportista = new DtoTrabajador();
+            Vehiculo = new Vehiculo();
+            UnidadMedida = new UnidadMedida();
+            Cliente = new Cliente();
+        }
         public DtoUbicacion UbicacionOrigen { get; set; }
         public DtoUbicacion UbicacionDestino { get; set; }
         public DtoTipoMaterialUbicacion TipoMaterial { get; set; }
-        public DtoTrabajador Chofer { get; set; }
+        public DtoTrabajador Transportista { get; set; }
         public Vehiculo Vehiculo { get; set; }
         public UnidadMedida UnidadMedida { get; set; }
         public DateTime FechaViaje { get; set; }
