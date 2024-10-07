@@ -10,13 +10,13 @@
         searching: true,
         columns: [
             { data: "id", title: "Id" },
-            { data: "ubicacionOrigen.nombreUbicacion", title: "Origen" },  // Cambiar dtoUbicacion a UbicacionOrigen
-            { data: "ubicacionDestino.nombreUbicacion", title: "Destino" },  // Cambiar dtoUbicacionDestino a UbicacionDestino
-            { data: "chofer.nombreTrabajador", title: "Transportista" },  // Cambiar dtoTransportista a Chofer
-            { data: "tipoMaterial.nombreTipoMaterial", title: "Material" },  // Cambiar dtoMaterial a TipoMaterial
-            { data: "vehiculo.nombreVehiculo", title: "Vehículo" },
-            { data: "cliente.nombreCliente", title: "Cliente" },
-            { data: "unidadMedida.nombreUnidad", title: "Unidad de Medida" },
+            { data: "ubicacionOrigen.nombreUbicacion", title: "Origen" },  
+            { data: "ubicacionDestino.nombreUbicacion", title: "Destino" },  
+            { data: "transportista.nombre", title: "Transportista" },  
+            { data: "tipoMaterial.nombreTipoMaterial", title: "Material" },  
+            { data: "vehiculo.placa", title: "Vehículo" },
+            { data: "cliente.nombre", title: "Cliente" },
+            { data: "unidadMedida.nombre", title: "Unidad de Medida" },
             { data: "fechaViaje", title: "Fecha de transporte" },
             { data: "observaciones", title: "Observaciones" },
             {
@@ -27,8 +27,8 @@
                 }
             },
             {
-                data: "Id", title: "Acciones", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarViajeLocal(' + data + ')" />' +
+                data: "id", title: "Acciones", render: function (data) {
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarViajeLocal(' + data + ', this)" />' +
                         ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarViajeLocal(' + data + ', this)" />';
                 }
             }
@@ -156,7 +156,7 @@ function EliminarViajeLocal(id, boton) {
 
 // Función para editar con estilo de redireccionamiento 
 function EditarViajeLocal(id) {
-    location.href = "/Viajes/ViajeLocal/" + id;
+    location.href = "/Viajes/Locales/" + id;
 }
 
 // Función para limpiar el formulario con estilo uniforme
