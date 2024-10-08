@@ -158,6 +158,9 @@
     <Content Include="Assets\js\dataTables.min.js" />
     <Content Include="Assets\js\jquery-3.4.1.min.js" />
     <Content Include="Assets\js\jquery.dataTables.min.js" />
+    <Content Include="Assets\js\SweetAlert\sb-admin-2.js" />
+    <Content Include="Assets\js\SweetAlert\sb-admin-2.min.js" />
+    <Content Include="Assets\js\SweetAlert\sweetalert2.min.js" />
     <Content Include="Assets\script.js" />
     <Content Include="Assets\styles.css" />
     <Content Include="bin\MinaToMVC.dll" />
@@ -213,7 +216,6 @@
     <Compile Include="Helpers\EmailHelper.cs" />
     <Compile Include="Helpers\SessionHelper.cs" />
     <Compile Include="Helpers\StaticFileHelper.cs" />
-    
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
