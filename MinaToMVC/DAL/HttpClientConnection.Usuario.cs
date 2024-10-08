@@ -1,5 +1,7 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.Security;
+using MinaToMVC.Controllers;
+using MinaToMVC.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,6 +14,7 @@ namespace MinaToMVC.DAL
 {
     public partial class HttpClientConnection
     {
+         public HttpClientConnection httpClientConnection { get; set; }
         public async Task<ModelResponse> FirstValidation(string userName, string password)
         {
             var userTemp = new Usuario()

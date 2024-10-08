@@ -213,7 +213,7 @@
     <Compile Include="Helpers\EmailHelper.cs" />
     <Compile Include="Helpers\SessionHelper.cs" />
     <Compile Include="Helpers\StaticFileHelper.cs" />
-    <Compile Include="obj\Debug\.NETFramework,Version=v4.6.AssemblyAttributes.cs" />
+    
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
