@@ -74,11 +74,11 @@
                 <div class="row">
                     <div class="col-lg-3">
                         <label>ID del Viaje:</label>
-                        <input type="text" id="txtViajeinterno" name="txtTrabajadorId" class="form-control" disabled />
+                        <input type="text" id="txtViajeinterno" name="txtViajeinterno" class="form-control" disabled />
                     </div>
                     <div class="col-lg-3">
                         <label>Ubicación Origen:</label>
-                        <select id="ddlUOrigen" class="form-control">
+                        <select id="ddlUOrigen" name="ddlUOrigen" class="form-control">
                             @foreach (var i in ubicaciones)
                             {
                                 <option value="@i.Id">@i.NombreUbicacion</option>
@@ -87,7 +87,7 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Ubicación Destino:</label>
-                        <select id="ddlUDestino" class="form-control">
+                        <select id="ddlUDestino" name="ddlUDestino" class="form-control">
                             @foreach (var i in ubicaciones)
                             {
                                 <option value="@i.Id">@i.NombreUbicacion</option>
@@ -143,7 +143,7 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Fecha del viaje:</label>
-                        <input type="date" id="dtpFechaViaje" name="dtpFechaContratacion" class="form-control" />
+                        <input type="date" id="dtpFechaViaje" name="dtpFechaViaje" class="form-control" />
                     </div>
                 </div>
                 <div class="row">

@@ -102,7 +102,17 @@ function EliminarTVehiculo(id, boton) {
     var descripcion = row.find("td:eq(1)").text();  // Descripción
 
     // Confirmación de eliminación
-    if (confirm("¿Usted desea eliminar el siguiente Vehiculo? \nNombre: " + nombre + "\nDescripcion: " + descripcion)) {
+    Swal.fire({
+        title: '¿Está seguro?',
+        text: "¿Desea eliminar la siguiente tipo de vehiculo?\nNombre: " + nombre + "\nDescripcion: " + descripcion,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
         // Actualizamos el estatus a "Inactivo" (0) y preparamos el parámetro
         var parametro = {
             Id: id,
@@ -117,16 +127,27 @@ function EliminarTVehiculo(id, boton) {
 
         window.location.href = '/Catalog/TipoVehiculo';
         // Llamada para guardar o actualizar el rol
-        PostMVC('/Catalog/SaveOrUpdateTipoVehiculo', parametro, function (r) {
-            if (r.IsSuccess) {
-                alert("vehiculo eliminado exitosamente.");
-                // Actualiza la interfaz de usuario, por ejemplo, eliminando la fila de la tabla
-
-            } else {
-                alert("Error al eliminar el rol: " + r.ErrorMessage);
-            }
-        });
-    }
+            PostMVC('/Catalog/SaveOrUpdateTipoVehiculo', parametro, function (r) {
+                window.location.href = '/Catalog/TipoVehiculo';
+                if (r.IsSuccess) {
+                    Swal.fire(
+                        'Eliminado',
+                        'El tipo de vehiculo ha sido eliminada.',
+                        'success'
+                    ).then(() => {
+                        window.location.href = '/Catalog/TipoVehiculo';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al eliminar El tipo de vehiculo: ' + r.ErrorMessage,
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            });
+        }
+    });
 }
 
 function EditarTVehiculo(id) {

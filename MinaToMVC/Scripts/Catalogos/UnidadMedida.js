@@ -103,32 +103,51 @@ function EliminarUnidad(id, boton) {
     var descripcion = row.find("td:eq(1)").text();  // Descripción
 
     // Confirmación de eliminación
-    if (confirm("¿Usted desea eliminar la siguiente medida? \nNombre: " + nombre + "\nDescripcion: " + descripcion)) {
-        // Actualizamos el estatus a "Inactivo" (0) y preparamos el parámetro
-        var parametro = {
-            Id: id,
-            Nombre: nombre,
-            Descripcion: descripcion,
-            Estatus: 0,  // Cambiamos el estatus a inactivo (0)
-            CreatedBy: $("#txtCreatedBy").val(),
-            CreatedDt: $("#txtCreatedDt").val(),
-            UpdatedBy: $("#txtUpdatedBy").val(),  // Asignamos el valor de quien está actualizando
-            UpdatedDt: new Date().toISOString()  // Asignamos la fecha y hora actual como fecha de actualización
-        };
-        console.log(parametro);
-        window.location.href = '/Catalog/UnidadMedida';
-        // Llamada para guardar o actualizar el rol
-        PostMVC('/Catalog/SaveOrUpdateUnidadMedida', parametro, function (r) {
-            if (r.IsSuccess) {
-                alert("Rol eliminado exitosamente.");
-                console.log(parametro);
+    // Confirmación de eliminación con SweetAlert
+    Swal.fire({
+        title: '¿Está seguro?',
+        text: "¿Desea eliminar la siguiente medida?\nNombre: " + nombre + "\nDescripcion: " + descripcion,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Actualizamos el estatus a "Inactivo" (0) y preparamos el parámetro
+            var parametro = {
+                Id: id,
+                Nombre: nombre,
+                Descripcion: descripcion,
+                Estatus: 0,  // Cambiamos el estatus a inactivo (0)
+                CreatedBy: $("#txtCreatedBy").val(),
+                CreatedDt: $("#txtCreatedDt").val(),
+                UpdatedBy: $("#txtUpdatedBy").val(),
+                UpdatedDt: new Date().toISOString()
+            };
+            window.location.href = '/Catalog/UnidadMedida';
+            PostMVC('/Catalog/SaveOrUpdateUnidadMedida', parametro, function (r) {
                 window.location.href = '/Catalog/UnidadMedida';
-                // Actualiza la interfaz de usuario, por ejemplo, eliminando la fila de la tabla
-            } else {
-                alert("Error al eliminar el rol: " + r.ErrorMessage);
-            }
-        });
-    }
+                if (r.IsSuccess) {
+                    Swal.fire(
+                        'Eliminado',
+                        'La medida ha sido eliminada.',
+                        'success'
+                    ).then(() => {
+                        window.location.href = '/Catalog/UnidadMedida';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al eliminar la medida: ' + r.ErrorMessage,
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            });
+        }
+    });
 }
 
 
