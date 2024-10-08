@@ -79,7 +79,17 @@ function SaveOrUpdateTipoVehiculo() {
             UpdatedBy: $("#txtUpdatedBy").val(),
             UpdatedDt: $("#txtUpdatedDt").val()
         };
-        window.location.href = '/Catalog/TipoVehiculo';
+        Swal.fire({
+            title: "Registro guardado!",
+            text: "El registro se ha guardado correctamente.",
+            icon: "success",
+            confirmButtonText: 'OK'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/Catalog/TipoVehiculo';
+            }
+        });
+
         // Llamada al servidor para guardar o actualizar los datos
         PostMVC('/Catalog/SaveOrUpdateTipoVehiculo', parametro, function (r) {
             if (r.IsSuccess) {
