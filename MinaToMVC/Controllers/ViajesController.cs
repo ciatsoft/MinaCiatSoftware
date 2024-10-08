@@ -47,7 +47,7 @@ namespace MinaToMVC.Controllers
 
             return View();
         }
-        public async Task<ActionResult> Locales(long id = 0)
+        public async Task<ActionResult> Locales(long idlocal = 0)
         {
             var ubicaciones = new List<DtoUbicacion>();
             var tipoMateriales = new List<DtoTipoMaterialUbicacion>();
@@ -63,9 +63,9 @@ namespace MinaToMVC.Controllers
                 Placa = "ABC123"
             });
 
-            if (id != 0)
+            if (idlocal != 0)
             {
-                var result = await httpClientConnection.GetViajeLocalById(id);
+                var result = await httpClientConnection.GetViajeLocalById(idlocal);
                 ViajeLocal = JsonConvert.DeserializeObject<DtoViajeLocal>(result.Response.ToString());
             }
 

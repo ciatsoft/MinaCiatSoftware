@@ -63,13 +63,14 @@
 
     // Cargar el registro en caso de edición
     if (typeof viajeLocalJson != 0) {
-        $("#txtViajeInterno").val(viajeLocalJson.Id);
-        $("#ddlUbicacionOrigen").val(viajeLocalJson.UbicacionOrigenId);
-        $("#ddlUbicacionDestino").val(viajeLocalJson.UbicacionDestinoId);
+        $("#txtViajeinterno").val(viajeLocalJson.Id);
+        $("#ddlUOrigen").val(viajeLocalJson.UbicacionOrigenId);
+        $("#ddlUDestino").val(viajeLocalJson.UbicacionDestinoId);
         $("#ddlTipoMaterial").val(viajeLocalJson.TipoMaterialId);
-        $("#ddlTransportista").val(viajeLocalJson.TransportistaId);
+        $("#ddlTransportistas").val(viajeLocalJson.TransportistaId);
         $("#ddlVehiculo").val(viajeLocalJson.VehiculoId);
         $("#ddlCliente").val(viajeLocalJson.ClienteId);
+        $("#ddlUnidadM").val(viajeLocalJson.idUnidadMedida);
         $("#dtpFechaViaje").val(viajeLocalJson.FechaViaje);
         $("#txtObservaciones").val(viajeLocalJson.Observaciones);
     }
