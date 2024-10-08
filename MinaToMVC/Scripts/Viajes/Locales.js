@@ -79,14 +79,14 @@
 function SaveOrUpdateViajeLocal() {
     if ($("#frmViajesInternos").valid()) {
         var parametro = {
-            Id: $("#txtViajeInterno").val(),
+            Id: $("#txtViajeinterno").val(),
             UbicacionOrigenId: { Id: $("#ddlUOrigen").val() },
-            UbicacionDestinoId: { Id: $("#ddlUOrigen").val() },
-            choferId: { Id: $("#ddlTransportistas").val() },
+            UbicacionDestinoId: { Id: $("#ddlDestino").val() },
+            ChoferId: { Id: $("#ddlTransportistas").val() },
             MaterialId: { Id: $("#ddlTipoMaterial").val() },
             VehiculoId: { Id: $("#ddlVehiculo").val() },
             ClienteId: { Id: $("#ddlCliente").val() },
-            UnidadId: { Id: $("#ddlUnidadDeMedida").val() },
+            UnidadId: { Id: $("#ddlUnidadM").val() },
             FechaViaje: { Id: $("#dtpFechaViaje").val() },
             Observaciones: $("#txtObservaciones").val(),
             Estatus: $("#chbEstatus").is(':checked'),
