@@ -80,7 +80,17 @@ function SaveOrUpdateUnidadMedida() {
             UpdatedDt: $("#txtUpdatedDt").val()
         };
 
-        window.location.href = '/Catalog/UnidadMedida';
+        Swal.fire({
+            title: "Registro guardado!",
+            text: "El registro se ha guardado correctamente.",
+            icon: "success",
+            confirmButtonText: 'OK'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/Catalog/UnidadMedida';
+            }
+        });
+
         // Llamada al servidor para guardar o actualizar los datos
         PostMVC('/Catalog/SaveOrUpdateUnidadMedida', parametro, function (r) {
             if (r.IsSuccess) {
