@@ -38,13 +38,13 @@ namespace MinaToMVC.DAL
 
         }
 
-       public async Task<ModelResponse> GetUnidadMedidaById(long unidadId)
+        public async Task<ModelResponse> GetUnidadMedidaById(long unidadId)
         {
-            var result = RequestAsync("api/UnidadMedida/GetUnidadMedidaById/{unidadId}", HttpMethod.Get, null,
-                new Func<string, string>((responseString) =>
-                {
-                    return responseString;
-                }));
+            var result = await RequestAsync($"api/UnidadMedida/{unidadId}", HttpMethod.Get, null,
+               new Func<string, string>((responseString) =>
+               {
+                   return responseString;
+               }));
             return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
         }
     }

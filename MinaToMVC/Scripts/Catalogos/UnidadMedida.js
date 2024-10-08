@@ -115,12 +115,14 @@ function EliminarUnidad(id, boton) {
             UpdatedBy: $("#txtUpdatedBy").val(),  // Asignamos el valor de quien está actualizando
             UpdatedDt: new Date().toISOString()  // Asignamos la fecha y hora actual como fecha de actualización
         };
-
+        console.log(parametro);
         window.location.href = '/Catalog/UnidadMedida';
         // Llamada para guardar o actualizar el rol
         PostMVC('/Catalog/SaveOrUpdateUnidadMedida', parametro, function (r) {
             if (r.IsSuccess) {
                 alert("Rol eliminado exitosamente.");
+                console.log(parametro);
+                window.location.href = '/Catalog/UnidadMedida';
                 // Actualiza la interfaz de usuario, por ejemplo, eliminando la fila de la tabla
             } else {
                 alert("Error al eliminar el rol: " + r.ErrorMessage);
