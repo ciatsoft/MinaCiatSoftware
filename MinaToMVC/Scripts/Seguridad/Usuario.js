@@ -85,9 +85,8 @@ function SaveOrUpdateUsuario() {
             UpdatedBy: $("#txtUpdatedBy").val(),
             UpdatedDt: $("#txtUpdatedDt").val()
         };
-        window.location.href = '/Seguridad/Usuario';
         // Llamada al servidor para guardar o actualizar los datos
-        PostMVC('/Seguridad/SaveOrUpdateUsuario', parametro, function (r) {
+        PostMVC('/Usuario/SaveOrUpdateUsuario', parametro, function (r) {
             if (r.IsSuccess) {
                 LimpiarFormulario();
                 alert("Datos guardados exitosamente.");
