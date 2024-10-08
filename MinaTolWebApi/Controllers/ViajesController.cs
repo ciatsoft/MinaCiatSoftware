@@ -53,10 +53,10 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.SaveOrUpdateViajeInterno(vi);
             return result;
         }
-        [HttpPost, Route("")]
-        public ModelResponse SaveOrUpdateViajeLocal(DtoViajeLocal vi)
+        [HttpPost, Route("Local")]
+        public ModelResponse SaveOrUpdateViajeLocal(DtoViajeLocal vl)
         {
-            var result = wrapper.SaveOrUpdateViajeLocal(vi);
+            var result = wrapper.SaveOrUpdateViajeLocal(vl);
             return result;
         }
     }

@@ -78,37 +78,41 @@
 // Función para guardar o actualizar
 function SaveOrUpdateViajeLocal() {
     if ($("#frmViajesInternos").valid()) {
+        // Se construye el objeto de parámetros para el viaje local
         var parametro = {
             Id: $("#txtViajeinterno").val(),
-            UbicacionOrigenId: { Id: $("#ddlUOrigen").val() },
-            UbicacionDestinoId: { Id: $("#ddlDestino").val() },
-            ChoferId: { Id: $("#ddlTransportistas").val() },
-            MaterialId: { Id: $("#ddlTipoMaterial").val() },
-            VehiculoId: { Id: $("#ddlVehiculo").val() },
-            ClienteId: { Id: $("#ddlCliente").val() },
-            UnidadId: { Id: $("#ddlUnidadM").val() },
-            FechaViaje: { Id: $("#dtpFechaViaje").val() },
-            Observaciones: $("#txtObservaciones").val(),
-            Estatus: $("#chbEstatus").is(':checked'),
-            CreatedBy: $("#txtCreatedBy").val(),
-            CreatedDt: $("#txtCreatedDt").val(),
-            UpdatedBy: $("#txtUpdateBy").val(),
-            UpdatedDt: $("#txtUpdateDt").val()
+            UbicacionOrigen: { Id: $("#ddlUOrigen").val() },  // Objeto DtoUbicacion con el ID
+            UbicacionDestino: { Id: $("#ddlUDestino").val() },  // Objeto DtoUbicacion con el ID
+            Transportista: { Id: $("#ddlTransportistas").val() },  // Objeto DtoTrabajador con el ID
+            TipoMaterial: { Id: $("#ddlTipoMaterial").val() },  // Objeto DtoTipoMaterialUbicacion con el ID
+            Vehiculo: { Id: $("#ddlVehiculo").val() },  // Objeto Vehiculo con el ID
+            Cliente: { Id: $("#ddlCliente").val() },  // Objeto Cliente con el ID
+            UnidadMedida: { Id: $("#ddlUnidadM").val() },  // Objeto UnidadMedida con el ID
+            FechaViaje: $("#dtpFechaViaje").val(),  // Fecha del viaje
+            Observaciones: $("#txtObservaciones").val(),  // Observaciones del viaje
+            Estatus: true,  // El estatus siempre debe ser 1 (Activo)
+            CreatedBy: $("#txtCreatedBy").val(),  // Usuario que crea el registro
+            CreatedDt: $("#txtCreatedDt").val(),  // Fecha de creación
+            UpdatedBy: $("#txtUpdatedBy").val(),  // Usuario que actualiza el registro
+            UpdatedDt: $("#txtUpdatedDt").val()   // Fecha de actualización
         };
 
-        // Actualizar la navegación
-        window.location.href = '/Viajes/Locales';
-        console.log("Parámetros enviados para la eliminación:", parametro);
-        PostMVC("/Viajes/SaveOrUpdateViajeLocal", function (r) {
+        console.log(JSON.stringify(parametro));
+
+        // Se envían los datos al controlador con la función `PostMVC`
+        PostMVC("/Viajes/SaveOrUpdateViajeLocal", parametro, function (r) {
+            console.log("Parámetros enviados:", parametro);
             if (r.IsSuccess) {
-                LimpiarFormulario();
+                LimpiarFormulario();  // Limpia el formulario si la operación es exitosa
                 alert("Datos guardados exitosamente.");
+                window.location.href = '/Viajes/Locales';  // Redirecciona después de guardar exitosamente
             } else {
                 alert("Error al guardar los datos: " + r.response.ErrorMessage);
             }
         });
     }
 }
+
 
 // Función para eliminar con confirmación y estructura de mensajes 
 function EliminarViajeLocal(id, boton) {

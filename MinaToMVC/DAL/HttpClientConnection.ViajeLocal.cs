@@ -18,7 +18,7 @@ namespace MinaToMVC.DAL
         public async Task<ModelResponse> SaveOrUpdateViajeLocal(DtoViajeLocal u)
         {
             MappingColumSecurity(u);
-            var result = await RequestAsync<object>("api/Viajes", HttpMethod.Post, u,
+            var result = await RequestAsync<object>("api/Viajes/Local", HttpMethod.Post, u,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
