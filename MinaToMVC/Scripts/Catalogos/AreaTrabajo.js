@@ -78,7 +78,19 @@ function SaveOrUpdateAreaTrabajo() {
             UpdatedBy: $("#txtUpdatedBy").val(),
             UpdatedDt: $("#txtUpdatedDt").val()
         };
-        window.location.href = '/Catalog/AreaTrabajo';
+        Swal.fire({
+            title: "Registro guardado!",
+            text: "El registro se ha guardado correctamente.",
+            icon: "success",
+            confirmButtonText: 'OK'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/Catalog/AreaTrabajo';
+            }
+        });
+
+
+        
         // Llamada al servidor para guardar o actualizar los datos
         PostMVC('/Catalog/SaveOrUpdateAreaTrabajo', parametro, function (r) {
             if (r.IsSuccess) {
@@ -100,32 +112,50 @@ function Eliminarareat(id, boton) {
     var nombre = row.find("td:eq(0)").text();  // Nombre
     var descripcion = row.find("td:eq(1)").text();  // Descripción
 
-    // Confirmación de eliminación
-    if (confirm("¿Usted desea eliminar la siguiente Área? \nNombre: " + nombre + "\nDescripcion: " + descripcion)) {
-        // Actualizamos el estatus a "Inactivo" (0) y preparamos el parámetro
-        var parametro = {
-            Id: id,
-            Nombre: nombre,
-            Descripcion: descripcion,
-            Estatus: 0,  // Cambiamos el estatus a inactivo (0)
-            CreatedBy: $("#txtCreatedBy").val(),
-            CreatedDt: $("#txtCreatedDt").val(),
-            UpdatedBy: $("#txtUpdatedBy").val(),  // Asignamos el valor de quien está actualizando
-            UpdatedDt: new Date().toISOString()  // Asignamos la fecha y hora actual como fecha de actualización
-        };
-
-        window.location.href = '/Catalog/AreaTrabajo';
-        // Llamada para guardar o actualizar el rol
-        PostMVC('/Catalog/SaveOrUpdateAreaTrabajo', parametro, function (r) {
-            if (r.IsSuccess) {
-                alert("Area eliminada exitosamente.");
-                // Actualiza la interfaz de usuario, por ejemplo, eliminando la fila de la tabla
-
-            } else {
-                alert("Error al eliminar el area: " + r.ErrorMessage);
-            }
-        });
-    }
+    Swal.fire({
+        title: '¿Está seguro?',
+        text: "¿Desea eliminar la siguiente area de trabajo? \nNombre: " + nombre,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Actualizamos el estatus a "Inactivo" (0) y preparamos el parámetro
+            var parametro = {
+                Id: id,
+                Nombre: nombre,
+                Descripcion: descripcion,
+                Estatus: 0,  // Cambiamos el estatus a inactivo (0)
+                CreatedBy: $("#txtCreatedBy").val(),
+                CreatedDt: $("#txtCreatedDt").val(),
+                UpdatedBy: $("#txtUpdatedBy").val(),
+                UpdatedDt: new Date().toISOString()
+            };
+            window.location.href = '/Catalog/AreaTrabajo';
+            PostMVC('/Catalog/SaveOrUpdateAreaTrabajo', parametro, function (r) {
+                window.location.href = '/Catalog/AreaTrabajo';
+                if (r.IsSuccess) {
+                    Swal.fire(
+                        'Eliminado',
+                        'El area de trabajo ha sido eliminada.',
+                        'success'
+                    ).then(() => {
+                        window.location.href = '/Catalog/AreaTrabajo';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al eliminar el area de trabajo: ' + r.ErrorMessage,
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            });
+        }
+    });
 }
 
 function Editarareat(id) {
