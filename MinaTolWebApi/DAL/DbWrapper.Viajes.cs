@@ -38,11 +38,11 @@ namespace MinaTolWebApi.DAL
 
             return modelResponse;
         }
-        public ModelResponse GetViajeLocalById(long idlocal)
+        public ModelResponse GetViajeLocalById(long id)
         {
             var modelResponse = new ModelResponse();
             var parameters = new List<SqlParameter>();
-            parameters.Add(new SqlParameter("@Id", idlocal));
+            parameters.Add(new SqlParameter("@Id", id));
 
             try
             {
@@ -50,6 +50,7 @@ namespace MinaTolWebApi.DAL
                     new Func<IDataReader, DtoViajeLocal>((reader) =>
                     {
                         var r = FillEntity<DtoViajeLocal>(reader);
+
 
                         return r;
                     }));

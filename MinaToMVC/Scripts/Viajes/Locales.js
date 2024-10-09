@@ -63,14 +63,15 @@
 
     // Cargar el registro en caso de edición
     if (typeof viajeLocalJson != 0) {
+        console.log("Datos recibidos: " + viajeLocalJson);
         $("#txtViajeinterno").val(viajeLocalJson.Id);
-        $("#ddlUOrigen").val(viajeLocalJson.UbicacionOrigenId);
-        $("#ddlUDestino").val(viajeLocalJson.UbicacionDestinoId);
-        $("#ddlTipoMaterial").val(viajeLocalJson.TipoMaterialId);
-        $("#ddlTransportistas").val(viajeLocalJson.TransportistaId);
-        $("#ddlVehiculo").val(viajeLocalJson.VehiculoId);
-        $("#ddlCliente").val(viajeLocalJson.ClienteId);
-        $("#ddlUnidadM").val(viajeLocalJson.idUnidadMedida);
+        $("#ddlUOrigen").val(viajeLocalJson.UbicacionOrigenId).change(); // Agregar .change() si necesitas disparar eventos
+        $("#ddlUDestino").val(viajeLocalJson.UbicacionDestinoId).change();
+        $("#ddlTipoMaterial").val(viajeLocalJson.TipoMaterialId).change();
+        $("#ddlTransportistas").val(viajeLocalJson.TransportistaId).change();
+        $("#ddlVehiculo").val(viajeLocalJson.VehiculoId).change();
+        $("#ddlCliente").val(viajeLocalJson.ClienteId).change();
+        $("#ddlUnidadM").val(viajeLocalJson.idUnidadMedida).change();
         $("#dtpFechaViaje").val(viajeLocalJson.FechaViaje);
         $("#txtObservaciones").val(viajeLocalJson.Observaciones);
     }
@@ -128,7 +129,7 @@ function SaveOrUpdateViajeLocal() {
         }).then((result) => {
             if (result.isConfirmed) {
                 // Enviar los datos al servidor
-                //window.location.href = '/Viajes/Locales';
+                window.location.href = '/Viajes/Locales';
                 PostMVC("/Viajes/SaveOrUpdateViajeLocal", parametro, function (r) {
                     if (r.IsSuccess) {
                         LimpiarFormulario();
@@ -193,6 +194,7 @@ function EliminarViajeLocal(id, boton) {
 // Función para editar con estilo de redireccionamiento 
 function EditarViajeLocal(id) {
     location.href = "/Viajes/Locales/" + id;
+    console.log(id);
 }
 
 // Función para limpiar el formulario con estilo uniforme

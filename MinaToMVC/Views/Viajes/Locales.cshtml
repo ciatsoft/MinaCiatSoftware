@@ -79,6 +79,7 @@
                     <div class="col-lg-3">
                         <label>Ubicación Origen:</label>
                         <select id="ddlUOrigen" name="ddlUOrigen" class="form-control">
+                            <option value="">Seleccione una ubicación</option>
                             @foreach (var i in ubicaciones)
                             {
                                 <option value="@i.Id">@i.NombreUbicacion</option>
@@ -88,6 +89,7 @@
                     <div class="col-lg-3">
                         <label>Ubicación Destino:</label>
                         <select id="ddlUDestino" name="ddlUDestino" class="form-control">
+                            <option value="">Seleccione una ubicación</option>
                             @foreach (var i in ubicaciones)
                             {
                                 <option value="@i.Id">@i.NombreUbicacion</option>
@@ -97,6 +99,7 @@
                     <div class="col-lg-3">
                         <label>Tipo de Material:</label>
                         <select id="ddlTipoMaterial" class="form-control">
+                            <option value="">Seleccione un material</option>
                             @foreach (var i in tipoMateriales)
                             {
                                 <option value="@i.Id">@i.NombreTipoMaterial</option>
@@ -108,6 +111,7 @@
                     <div class="col-lg-3">
                         <label>Transportista:</label>
                         <select id="ddlTransportistas" class="form-control">
+                            <option value="">Seleccione una chofer</option>
                             @foreach (var i in trabajadores)
                             {
                                 <option value="@i.Id">@i.Nombre</option>
@@ -117,6 +121,7 @@
                     <div class="col-lg-3">
                         <label>Vehículo:</label>
                         <select id="ddlVehiculo" class="form-control">
+                            <option value="">Seleccione un vehiculo</option>
                             @foreach (var i in vehiculos)
                             {
                                 <option value="@i.Id">@i.Placa</option>
@@ -126,6 +131,7 @@
                     <div class="col-lg-3">
                         <label>Cliente:</label>
                         <select id="ddlCliente" class="form-control">
+                            <option value="">Seleccione un cliente</option>
                             @foreach (var i in clientes)
                             {
                                 <option value="@i.Id">@i.Nombre</option>
@@ -135,6 +141,7 @@
                     <div class="col-lg-3">
                         <label>Unidad De Medida:</label>
                         <select id="ddlUnidadM" class="form-control">
+                            <option value="">Seleccione una ubicación</option>
                             @foreach (var unidad in unidadmedida)
                             {
                                 <option value="@unidad.Id">@unidad.Nombre</option>

@@ -208,7 +208,7 @@
     <Compile Include="DAL\HttpClientConnection.Usuario.cs" />
     <Compile Include="DAL\HttpClientBase.cs" />
     <Compile Include="DAL\HttpClientConnection.cs" />
-    <Compile Include="DAL\HttpClientConnection.ViajeLocal.cs" />
+    <Compile Include="DAL\HttpClientConnection.Viajes.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
