@@ -41,14 +41,19 @@ namespace MinaToMVC.DAL
             return modelResponse;
         }
 
-        public async Task<ModelResponse> GetViajeLocalById(long idlocal)
+        public async Task<ModelResponse> GetViajeLocalById(long id)
         {
-            var result = await RequestAsync($"api/Viajes/{idlocal}", HttpMethod.Get, null,
-               new Func<string, string>((responseString) =>
-               {
-                   return responseString;
-               }));
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            var result = await RequestAsync<object>($"api/Viajes/{id}", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+
+            {
+                return responseString;
+            }));
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
         }
 
     }
