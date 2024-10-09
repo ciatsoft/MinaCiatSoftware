@@ -158,10 +158,10 @@ namespace MinaToMVC.Controllers
             }
             return View(roll);
         }
-        public string SaveOrUpdateRoll(DtoRoll t)
+        public string SaveOrUpdateRoll(DtoRoll rol)
         {
 
-            var result = httpClientConnection.SaveOrUpdateRoll(t);
+            var result = httpClientConnection.SaveOrUpdateRoll(rol);
             return JsonConvert.SerializeObject(result);
         }
 

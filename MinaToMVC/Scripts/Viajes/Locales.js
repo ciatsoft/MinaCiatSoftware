@@ -78,39 +78,70 @@
 
 // Función para guardar o actualizar
 function SaveOrUpdateViajeLocal() {
-    if ($("#frmViajesInternos").valid()) {
+    // Validar que los campos estén llenos
+    var valid = true;
+    $(".required").each(function () {
+        if ($(this).val() === "") {
+            valid = false;
+            $(this).addClass("is-invalid");
+        } else {
+            $(this).removeClass("is-invalid");
+        }
+    });
+
+    if (valid) {
         // Se construye el objeto de parámetros para el viaje local
         var parametro = {
             Id: $("#txtViajeinterno").val(),
-            UbicacionOrigen: { Id: $("#ddlUOrigen").val() },  // Objeto DtoUbicacion con el ID
-            UbicacionDestino: { Id: $("#ddlUDestino").val() },  // Objeto DtoUbicacion con el ID
-            Transportista: { Id: $("#ddlTransportistas").val() },  // Objeto DtoTrabajador con el ID
-            TipoMaterial: { Id: $("#ddlTipoMaterial").val() },  // Objeto DtoTipoMaterialUbicacion con el ID
-            Vehiculo: { Id: $("#ddlVehiculo").val() },  // Objeto Vehiculo con el ID
-            Cliente: { Id: $("#ddlCliente").val() },  // Objeto Cliente con el ID
-            UnidadMedida: { Id: $("#ddlUnidadM").val() },  // Objeto UnidadMedida con el ID
-            FechaViaje: $("#dtpFechaViaje").val(),  // Fecha del viaje
-            Observaciones: $("#txtObservaciones").val(),  // Observaciones del viaje
-            Estatus: true,  // El estatus siempre debe ser 1 (Activo)
-            CreatedBy: $("#txtCreatedBy").val(),  // Usuario que crea el registro
-            CreatedDt: $("#txtCreatedDt").val(),  // Fecha de creación
-            UpdatedBy: $("#txtUpdatedBy").val(),  // Usuario que actualiza el registro
-            UpdatedDt: $("#txtUpdatedDt").val()   // Fecha de actualización
+            UbicacionOrigen: { Id: $("#ddlUOrigen").val() },
+            UbicacionDestino: { Id: $("#ddlUDestino").val() },
+            Transportista: { Id: $("#ddlTransportistas").val() },
+            TipoMaterial: { Id: $("#ddlTipoMaterial").val() },
+            Vehiculo: { Id: $("#ddlVehiculo").val() },
+            Cliente: { Id: $("#ddlCliente").val() },
+            UnidadMedida: { Id: $("#ddlUnidadM").val() },
+            FechaViaje: $("#dtpFechaViaje").val(),
+            Observaciones: $("#txtObservaciones").val(),
+            Estatus: true,
+            CreatedBy: $("#txtCreatedBy").val(),
+            CreatedDt: $("#txtCreatedDt").val(),
+            UpdatedBy: $("#txtUpdatedBy").val(),
+            UpdatedDt: $("#txtUpdatedDt").val()
         };
 
-        console.log(JSON.stringify(parametro));
-
-        // Se envían los datos al controlador con la función `PostMVC`
-        PostMVC("/Viajes/SaveOrUpdateViajeLocal", parametro, function (r) {
-            console.log("Parámetros enviados:", parametro);
-            if (r.IsSuccess) {
-                LimpiarFormulario();  // Limpia el formulario si la operación es exitosa
-                alert("Datos guardados exitosamente.");
-                window.location.href = '/Viajes/Locales';  // Redirecciona después de guardar exitosamente
-            } else {
-                alert("Error al guardar los datos: " + r.response.ErrorMessage);
+        // Mostrar los datos capturados en una alerta usando SweetAlert
+        Swal.fire({
+            title: 'Datos del viaje',
+            html: `<strong>Origen:</strong> ${$("#ddlUOrigen option:selected").text()}<br/>
+                   <strong>Destino:</strong> ${$("#ddlUDestino option:selected").text()}<br/>
+                   <strong>Transportista:</strong> ${$("#ddlTransportistas option:selected").text()}<br/>
+                   <strong>Material:</strong> ${$("#ddlTipoMaterial option:selected").text()}<br/>
+                   <strong>Vehículo:</strong> ${$("#ddlVehiculo option:selected").text()}<br/>
+                   <strong>Cliente:</strong> ${$("#ddlCliente option:selected").text()}<br/>
+                   <strong>Unidad de Medida:</strong> ${$("#ddlUnidadM option:selected").text()}<br/>
+                   <strong>Fecha del Viaje:</strong> ${$("#dtpFechaViaje").val()}<br/>
+                   <strong>Observaciones:</strong> ${$("#txtObservaciones").val()}`,
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Confirmar y Guardar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Enviar los datos al servidor
+                //window.location.href = '/Viajes/Locales';
+                PostMVC("/Viajes/SaveOrUpdateViajeLocal", parametro, function (r) {
+                    if (r.IsSuccess) {
+                        LimpiarFormulario();
+                        Swal.fire('Éxito', 'Datos guardados exitosamente', 'success');
+                        window.location.href = '/Viajes/Locales';
+                    } else {
+                        Swal.fire('Error', 'Error al guardar los datos: ' + r.response.ErrorMessage, 'error');
+                    }
+                });
             }
         });
+    } else {
+        Swal.fire('Advertencia', 'Por favor, complete todos los campos obligatorios.', 'warning');
     }
 }
 
