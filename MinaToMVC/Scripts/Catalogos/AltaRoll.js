@@ -113,8 +113,8 @@ function EliminarRoll(id, boton) {
 
     // Confirmaci�n de eliminaci�n
     Swal.fire({
-        title: '�Est� seguro?',
-        text: "�Desea eliminar el siguiente Roll? \nNombre: " + nombre,
+        title: '¿Está seguro?',
+        text: "¿Desea eliminar el siguiente Roll? \nNombre: " + nombre,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
