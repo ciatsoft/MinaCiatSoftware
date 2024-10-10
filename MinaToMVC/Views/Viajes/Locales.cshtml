@@ -34,13 +34,26 @@
         }
 
     .btn-custom-cancel {
-        background-color: red; /*  para el botón Guardar */
+        background-color: #FF5733; /*  para el botón Guardar */
         color: white;
         border: none;
         transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
     }
 
         .btn-custom-cancel:hover {
+            background-color: darkred; /* Color  más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+
+    .btn-custom-delete {
+        background-color: #C70039; /*  para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-custom-delete:hover {
             background-color: darkred; /* Color  más oscuro al pasar el ratón */
             transform: scale(1.3); /* Aumenta el tamaño del botón */
             color: white; /* Color de texto blanco */
@@ -78,7 +91,7 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Ubicación Origen:</label>
-                        <select id="ddlUOrigen" name="ddlUOrigen" class="form-control">
+                        <select id="ddlUOrigen" name="ddlUOrigen" class="form-control" onchange="actualizarTiposDeMaterial()">
                             @foreach (var i in ubicaciones)
                             {
                                 <option value="@i.Id">@i.NombreUbicacion</option>
@@ -153,11 +166,17 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-12">
-                        <input href="/Viajes/Locales" type="button" value="Guardar" onclick="SaveOrUpdateViajeLocal()" class="btn btn-success" />
+                    <div class="col-lg-12 d-flex justify-content-between">
+                        <!-- Contenedor para los botones de la izquierda -->
+                        <div>
+                            <input id="btnGuardar" href="/Viajes/Locales" type="button" value="Guardar" onclick="SaveOrUpdateViajeLocal()" class="btn btn-success" />
+                            <input id="btnEliminar" href="/Viajes/Locales" type="button" value="Eliminar" class="btn btn-custom-delete" onclick="EliminarViajeLocal()" />
+                        </div>
+                        <!-- Botón cancelar a la derecha -->
                         <a href="/Viajes/Locales" class="btn btn-custom-cancel">Cancelar</a>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-lg-12">
                         <table class="table table-bordered table-striped" id="tblViajesLocales" style="width: 100%;"></table>
