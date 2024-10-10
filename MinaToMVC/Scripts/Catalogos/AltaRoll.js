@@ -1,4 +1,4 @@
-$(document).ready(function () {
+ï»¿$(document).ready(function () {
     $("#frmroll").validate({
         rules: {
             "txtNombre": "required",
@@ -13,7 +13,7 @@ $(document).ready(function () {
         columns: [
             { data: "id", "visible": false, title: "Id" },
             { data: "nombre", title: "Nombre" },
-            { data: "descripcion", title: "Descripción" },
+            { data: "descripcion", title: "DescripciÃ³n" },
             {
                 data: "estatus",
                 title: "Estatus",
@@ -35,7 +35,7 @@ $(document).ready(function () {
             "processing": "Procesando...",
             "lengthMenu": "Mostrar _MENU_ entradas",
             "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningún dato disponible en esta tabla",
+            "emptyTable": "Ningï¿½n dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -43,7 +43,7 @@ $(document).ready(function () {
             "loadingRecords": "Cargando...",
             "paginate": {
                 "first": "Primero",
-                "last": "Último",
+                "last": "ï¿½ltimo",
                 "next": "Siguiente",
                 "previous": "Anterior"
             },
@@ -64,7 +64,7 @@ $(document).ready(function () {
     }
 });
 
-// Función que se ejecuta al hacer clic en el botón de Guardar
+// Funciï¿½n que se ejecuta al hacer clic en el botï¿½n de Guardar
 function SaveOrUpdateRoll() {
     if ($("#frmroll").valid()) {
         var parametro = {
@@ -102,28 +102,28 @@ function SaveOrUpdateRoll() {
     }
 }
 
-// Función para eliminar el rol con confirmación y actualización de estatus
+// Funciï¿½n para eliminar el rol con confirmaciï¿½n y actualizaciï¿½n de estatus
 function EliminarRoll(id, boton) {
-    // Obtener la fila correspondiente al botón de eliminación
+    // Obtener la fila correspondiente al botï¿½n de eliminaciï¿½n
     var row = $(boton).closest("tr");
 
     // Obtener los valores de la fila y almacenarlos en variables
     var nombre = row.find("td:eq(0)").text();  // Nombre
-    var descripcion = row.find("td:eq(1)").text();  // Descripción
+    var descripcion = row.find("td:eq(1)").text();  // Descripciï¿½n
 
-    // Confirmación de eliminación
+    // Confirmaciï¿½n de eliminaciï¿½n
     Swal.fire({
-        title: '¿Está seguro?',
-        text: "¿Desea eliminar el siguiente Roll? \nNombre: " + nombre,
+        title: 'ï¿½Estï¿½ seguro?',
+        text: "ï¿½Desea eliminar el siguiente Roll? \nNombre: " + nombre,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, eliminar',
+        confirmButtonText: 'Sï¿½, eliminar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Actualizamos el estatus a "Inactivo" (0) y preparamos el parámetro
+            // Actualizamos el estatus a "Inactivo" (0) y preparamos el parï¿½metro
             var parametro = {
                 Id: id,
                 Nombre: nombre,
@@ -164,7 +164,7 @@ function EditarRoll(id) {
     location.href = "/Catalog/Roll/" + id;
 }
 
-// Función que obtiene todos los roles
+// Funciï¿½n que obtiene todos los roles
 function GetAllRoll() {
     GetMVC("/Catalog/GetAllRoll", function (r) {
         if (r.IsSuccess) {
@@ -175,7 +175,7 @@ function GetAllRoll() {
     });
 }
 
-// Función para limpiar el formulario
+// Funciï¿½n para limpiar el formulario
 function LimpiarFormulario() {
     $("#txtidroll").val('');
     $("#txtNombre").val('');
