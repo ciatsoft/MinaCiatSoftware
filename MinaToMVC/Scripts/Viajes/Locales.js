@@ -62,7 +62,7 @@
     GetAllViajeLocal(); // Llamada a la función para cargar todos los viajes locales
 
     // Cargar el registro en caso de edición
-    if (typeof viajeLocalJson != 0) {
+    if (viajeLocalJson.Id != 0) {
         console.log("Datos recibidos: " + viajeLocalJson);
         $("#txtViajeinterno").val(viajeLocalJson.Id);
         $("#ddlUOrigen").val(viajeLocalJson.UbicacionOrigenId).change(); // Agregar .change() si necesitas disparar eventos
