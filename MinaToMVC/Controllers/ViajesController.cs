@@ -100,12 +100,17 @@ namespace MinaToMVC.Controllers
             var result = httpClientConnection.SaveOrUpdateViajeLocal(t);
             return JsonConvert.SerializeObject(result);
         }
-
         public async Task<string> GetAllViajeLocal()
         {
             var token = Helpers.SessionHelper.GetSessionUser();
             var result = await httpClientConnection.GetAllViajeLocal(token.Token.access_token);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetTipoMaterialByUbicacion(long id)
+        {
+            var result = await httpClientConnection.GetTipoMaterialByUnicacion(id);
+            return JsonConvert.SerializeObject(result);
         }
     }
 }
