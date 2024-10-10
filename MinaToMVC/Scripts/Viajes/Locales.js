@@ -9,15 +9,28 @@
         paging: true,
         searching: true,
         columns: [
-            { data: "id", title: "Id" },
-            { data: "ubicacionOrigen.nombreUbicacion", title: "Origen" },  
+            { data: "id", "visible": false, title: "Id" },
+            { data: "ubicacionOrigen.nombreUbicacion", title: "Origen" },
             { data: "ubicacionDestino.nombreUbicacion", title: "Destino" },  
             { data: "transportista.nombre", title: "Transportista" },  
             { data: "tipoMaterial.nombreTipoMaterial", title: "Material" },  
             { data: "vehiculo.placa", title: "Vehículo" },
             { data: "cliente.nombre", title: "Cliente" },
             { data: "unidadMedida.nombre", title: "Unidad de Medida" },
-            { data: "fechaViaje", title: "Fecha de transporte" },
+            {
+                data: "fechaViaje",
+                title: "Fecha de transporte",
+                render: function (data, type, row) {
+                    if (data) {
+                        var date = new Date(data);
+                        var day = ("0" + date.getDate()).slice(-2);
+                        var month = ("0" + (date.getMonth() + 1)).slice(-2);
+                        var year = date.getFullYear();
+                        return `${day}/${month}/${year}`;
+                    }
+                    return "";
+                }
+            },
             { data: "observaciones", title: "Observaciones" },
             {
                 data: "estatus",
@@ -28,8 +41,7 @@
             },
             {
                 data: "id", title: "Acciones", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarViajeLocal(' + data + ', this)" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarViajeLocal(' + data + ', this)" />';
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarViajeLocal(' + data + ', this)" />';
                 }
             }
         ],
@@ -75,6 +87,13 @@
         $("#ddlUnidadM").val(viajeLocalJson.UnidadMedida.Id);
         $("#dtpFechaViaje").val(viajeLocalJson.FechaViaje.substring(0, 10));
         $("#txtObservaciones").val(viajeLocalJson.Observaciones);
+        // Mostrar botón de eliminar y ocultar el de guardar
+        $("#btnEliminar").show();
+        $("#btnGuardar").show();
+    } else {
+        // Si el ID es 0 (nuevo registro)
+        $("#btnEliminar").hide();
+        $("#btnGuardar").show();
     }
 });
 
@@ -147,50 +166,76 @@ function SaveOrUpdateViajeLocal() {
     }
 }
 
-
-// Función para eliminar con confirmación y estructura de mensajes 
+// Función para eliminar con confirmación y estructura de mensajes de SweetAlert
 function EliminarViajeLocal(id, boton) {
-    // Obtener la fila correspondiente al botón de eliminación.
-    var row = $(boton).closest("tr");
+    var valid = true;
+    $(".required").each(function () {
+        if ($(this).val() === "") {
+            valid = false;
+            $(this).addClass("is-invalid");
+        } else {
+            $(this).removeClass("is-invalid");
+        }
+    });
 
-    // Extraer el nombre y la descripción de las celdas correspondientes.
-    var nombre = row.find("td:eq(0)").text(); // Columna para el nombre
-    var descripcion = row.find("td:eq(1)").text(); // Columna para la descripción
-    var idUbicacion = row.find("td:eq(4)").text(); // Columna oculta para el ID de ubicación
-    var idUnidadMedida = row.find("td:eq(5)").text(); // Columna oculta para el ID de unidad de medida
-
-    // Asignar los valores de los campos ocultos que contienen el usuario y la fecha actual.
-    var UpdatedBy = $("#txtUpdatedBy").val();
-    var UpdatedDt = $("#txtUpdatedDt").val();
-
-    // Confirmar la eliminación con el usuario.
-    if (confirm("¿Usted desea eliminar este viaje local?\nNombre: " + nombre + "\nDescripción: " + descripcion
-        + "\nID Ubicación: " + idUbicacion + "\nID Unidad de Medida: " + idUnidadMedida + "\nUsuario: " + UpdatedBy + " " + UpdatedDt)) {
-        // Crear el objeto con los parámetros para enviar al servidor.
+    if (valid) {
+        // Se construye el objeto de parámetros para el viaje local
         var parametro = {
-            Id: id,
-            NombreTipoMaterial: nombre,
-            DescripcionTipoMaterial: descripcion,
-            DtoUbicacion: idUbicacion, // Añadir ID de ubicación
-            UnidadMedida: idUnidadMedida, // Añadir ID de unidad de medida
-            Estatus: 0,  // Se establece como inactivo.
-            UpdatedBy: UpdatedBy,
-            UpdatedDt: UpdatedDt
+            Id: $("#txtViajeinterno").val(),
+            UbicacionOrigen: { Id: $("#ddlUOrigen").val() },
+            UbicacionDestino: { Id: $("#ddlUDestino").val() },
+            Transportista: { Id: $("#ddlTransportistas").val() },
+            TipoMaterial: { Id: $("#ddlTipoMaterial").val() },
+            Vehiculo: { Id: $("#ddlVehiculo").val() },
+            Cliente: { Id: $("#ddlCliente").val() },
+            UnidadMedida: { Id: $("#ddlUnidadM").val() },
+            FechaViaje: $("#dtpFechaViaje").val(),
+            Observaciones: $("#txtObservaciones").val(),
+            Estatus: false,
+            CreatedBy: $("#txtCreatedBy").val(),
+            CreatedDt: $("#txtCreatedDt").val(),
+            UpdatedBy: $("#txtUpdatedBy").val(),
+            UpdatedDt: $("#txtUpdatedDt").val()
         };
 
-        // Actualizar la navegación
-        window.location.href = '/Viajes/Locales';
-        // Enviar la solicitud POST usando la función `PostMVC`.
-        console.log("Parámetros enviados para la eliminación:", parametro);
-        PostMVC("/Viajes/SaveOrUpdateViajeLocal", parametro, function (success, response) {
-            if (success) {
-                alert("Tipo de material eliminado exitosamente.");
-            } else {
-                alert("Error al eliminar el tipo de material: " + response.ErrorMessage);
+        // Mostrar los datos capturados en una alerta usando SweetAlert
+        Swal.fire({
+            title: 'Confirmar eliminación',
+            html: `<strong>¿Estás seguro de que deseas eliminar este viaje?</strong><br/>
+                   <strong>Origen:</strong> ${$("#ddlUOrigen option:selected").text()}<br/>
+                   <strong>Destino:</strong> ${$("#ddlUDestino option:selected").text()}<br/>
+                   <strong>Transportista:</strong> ${$("#ddlTransportistas option:selected").text()}<br/>
+                   <strong>Material:</strong> ${$("#ddlTipoMaterial option:selected").text()}<br/>
+                   <strong>Vehículo:</strong> ${$("#ddlVehiculo option:selected").text()}<br/>
+                   <strong>Cliente:</strong> ${$("#ddlCliente option:selected").text()}<br/>
+                   <strong>Unidad de Medida:</strong> ${$("#ddlUnidadM option:selected").text()}<br/>
+                   <strong>Fecha del Viaje:</strong> ${$("#dtpFechaViaje").val()}<br/>
+                   <strong>Observaciones:</strong> ${$("#txtObservaciones").val()}`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            window.location.href = '/Viajes/Locales';
+            if (result.isConfirmed) {
+                // Enviar los datos al servidor para eliminar
+                PostMVC("/Viajes/SaveOrUpdateViajeLocal", parametro, function (r) {
+                    if (r.IsSuccess) {
+                        LimpiarFormulario();
+                        Swal.fire('Éxito', 'El viaje ha sido eliminado exitosamente', 'success');
+                        window.location.href = '/Viajes/Locales';
+                    } else {
+                        Swal.fire('Error', 'Error al eliminar el viaje: ' + r.response.ErrorMessage, 'error');
+                    }
+                });
             }
         });
+    } else {
+        Swal.fire('Advertencia', 'Por favor, complete todos los campos obligatorios antes de continuar.', 'warning');
     }
 }
+
+
 
 // Función para editar con estilo de redireccionamiento 
 function EditarViajeLocal(id) {
@@ -222,3 +267,26 @@ function GetAllViajeLocal() {
 }
 
 
+function actualizarTiposDeMaterial() {
+    var ubicacionId = $("#ddlUOrigen").val(); // Obtener el ID de la ubicación seleccionada
+
+    // Realizar una llamada AJAX al controlador para obtener los tipos de material
+    $.ajax({
+        url: '/Viajes/GetTipoMaterialByUnicacion', // Cambia esto al nombre de tu controlador y acción
+        type: 'GET',
+        data: { ubicacionId: ubicacionId }, // Enviar el ID de la ubicación
+        success: function (data) {
+            // Limpiar el DDL de "Tipo de Material"
+            $("#ddlTipoMaterial").empty();
+
+            // Llenar el DDL con los nuevos tipos de material
+            $.each(data, function (index, item) {
+                $("#ddlTipoMaterial").append($("<option></option>")
+                    .attr("value", item.Id).text(item.NombreTipoMaterial));
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("Error al obtener los tipos de material:", error);
+        }
+    });
+}
