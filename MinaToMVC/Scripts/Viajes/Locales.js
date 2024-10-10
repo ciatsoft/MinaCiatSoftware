@@ -63,16 +63,17 @@
 
     // Cargar el registro en caso de edición
     if (viajeLocalJson.Id != 0) {
-        console.log("Datos recibidos: " + viajeLocalJson);
+
+        console.log("Datos recibidos: " + JSON.stringify(viajeLocalJson)); 
         $("#txtViajeinterno").val(viajeLocalJson.Id);
-        $("#ddlUOrigen").val(viajeLocalJson.UbicacionOrigenId).change(); // Agregar .change() si necesitas disparar eventos
-        $("#ddlUDestino").val(viajeLocalJson.UbicacionDestinoId).change();
-        $("#ddlTipoMaterial").val(viajeLocalJson.TipoMaterialId).change();
-        $("#ddlTransportistas").val(viajeLocalJson.TransportistaId).change();
-        $("#ddlVehiculo").val(viajeLocalJson.VehiculoId).change();
-        $("#ddlCliente").val(viajeLocalJson.ClienteId).change();
-        $("#ddlUnidadM").val(viajeLocalJson.idUnidadMedida).change();
-        $("#dtpFechaViaje").val(viajeLocalJson.FechaViaje);
+        $("#ddlUOrigen").val(viajeLocalJson.UbicacionOrigen.Id);
+        $("#ddlUDestino").val(viajeLocalJson.UbicacionDestino.Id);
+        $("#ddlTipoMaterial").val(viajeLocalJson.TipoMaterial.Id);
+        $("#ddlTransportistas").val(viajeLocalJson.Transportista.Id);
+        $("#ddlVehiculo").val(viajeLocalJson.Vehiculo.Id);
+        $("#ddlCliente").val(viajeLocalJson.Cliente.Id);
+        $("#ddlUnidadM").val(viajeLocalJson.UnidadMedida.Id);
+        $("#dtpFechaViaje").val(viajeLocalJson.FechaViaje.substring(0, 10));
         $("#txtObservaciones").val(viajeLocalJson.Observaciones);
     }
 });

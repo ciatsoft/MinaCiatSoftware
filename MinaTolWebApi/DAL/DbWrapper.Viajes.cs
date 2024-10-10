@@ -50,7 +50,34 @@ namespace MinaTolWebApi.DAL
                     new Func<IDataReader, DtoViajeLocal>((reader) =>
                     {
                         var r = FillEntity<DtoViajeLocal>(reader);
-
+                        r.UbicacionOrigen = new MinaTolEntidades.DtoCatalogos.DtoUbicacion()
+                        {
+                            Id = MappingProperties<long>(reader["UbicacionOrigenId"])
+                        };
+                        r.UbicacionDestino = new MinaTolEntidades.DtoCatalogos.DtoUbicacion()
+                        {
+                            Id = MappingProperties<long>(reader["UbicacionDestinoId"])
+                        };
+                        r.TipoMaterial = new MinaTolEntidades.DtoCatalogos.DtoTipoMaterialUbicacion()
+                        {
+                            Id = MappingProperties<long>(reader["MaterialId"])
+                        };
+                        r.Transportista = new MinaTolEntidades.DtoSucursales.DtoTrabajador()
+                        {
+                            Id = MappingProperties<long>(reader["ChoferId"])
+                        };
+                        r.Vehiculo = new MinaTolEntidades.DtoClientes.Vehiculo()
+                        {
+                            Id = MappingProperties<long>(reader["VehiculoId"])
+                        };
+                        r.Cliente = new MinaTolEntidades.DtoClientes.Cliente()
+                        {
+                            Id = MappingProperties<long>(reader["ClienteId"])
+                        };
+                        r.UnidadMedida = new MinaTolEntidades.DtoSucursales.UnidadMedida()
+                        {
+                            Id = MappingProperties<long>(reader["UnidadId"])
+                        };
 
                         return r;
                     }));
