@@ -272,21 +272,29 @@ function actualizarTiposDeMaterial() {
 
     // Realizar una llamada AJAX al controlador para obtener los tipos de material
     $.ajax({
-        url: '/Viajes/GetTipoMaterialByUnicacion', // Cambia esto al nombre de tu controlador y acción
+        url: '/Viajes/GetTipoMaterialByUbicacion', // Cambia esto al nombre de tu controlador y acción
         type: 'GET',
-        data: { ubicacionId: ubicacionId }, // Enviar el ID de la ubicación
-        success: function (data) {
-            // Limpiar el DDL de "Tipo de Material"
-            $("#ddlTipoMaterial").empty();
+        data: { id: ubicacionId }, // Enviar el ID de la ubicación
+        success: function (response) {
+            response = JSON.parse(response);
+            if (response.IsSuccess) {
+                // Limpiar el DDL de "Tipo de Material"
+                $("#ddlTipoMaterial").empty();
 
-            // Llenar el DDL con los nuevos tipos de material
-            $.each(data, function (index, item) {
-                $("#ddlTipoMaterial").append($("<option></option>")
-                    .attr("value", item.Id).text(item.NombreTipoMaterial));
-            });
+                // Llenar el DDL con los nuevos tipos de material
+                $.each(response.Response, function (index, item) {
+                    var templateoption = "<option value='" + item.id +"'>" + item.nombreTipoMaterial +"</option>";
+
+                    $("#ddlTipoMaterial").append(templateoption);
+                });
+            }
+            /*
+             Else 
+             Alert
+             */
         },
         error: function (xhr, status, error) {
-            console.error("Error al obtener los tipos de material:", error);
+            console.log("Error al obtener los tipos de material:", error);
         }
     });
 }
