@@ -9,6 +9,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 <script src="~/Scripts/Catalogos/AltCliente.js"></script>
+
 <style>
     .btn-success {
         background-color: #28a745; /* Verde para el botón Guardar */
@@ -50,7 +51,7 @@
         }
 </style>
 
-<form id="frmroll" name="frmroll" method="post" enctype="multipart/form-data">
+<form id="frmCliente" name="frmCliente" method="post" enctype="multipart/form-data">
     <div class="content">
         <br>
         <center><h1>Clientes</h1></center>
@@ -84,11 +85,11 @@
                 <div class="row">
                     <div class="col-md-12">
                         <label>Comentarios:</label>
-                        <textarea name="txtComentarios" id="txt" class="form-control" rows="6"></textarea>
+                        <textarea name="txtComentarios" id="txtComentarios" class="form-control" rows="6"></textarea>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <input href="/Administracion/Clientes" type="button" value="Guardar" onclick="SaveOrupdateCliente()" class="btn btn-success" />
+                            <input href="/Administracion/Clientes" type="button" value="Guardar" onclick="SaveOrUpdateCliente()" class="btn btn-success" />
                             <a href="/Administracion/Clientes" class="btn btn-custom-cancel">Cancelar</a>
 
                         </div>
@@ -106,7 +107,7 @@
         <table id="tbCliente" class="table table-bordered table-striped" style="width: 100%;"></table>
 
     </div>
-
+        </div>
 </form>
 <script>
     var clienteJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Cliente))');
