@@ -6,7 +6,7 @@
         }
     });
 
-    // Inicialización de la tabla de roles
+    // Inicialización de la tabla de clientes
     $("#tbCliente").dataTable({
         processing: true,
         destroy: true,
@@ -15,7 +15,7 @@
         columns: [
             { data: "id", "visible": false, title: "Id" },
             { data: "nombre", title: "Nombre" },
-            { data: "telefono", title: "Telefono" },
+            { data: "telefono", title: "Télefono" },
             { data: "email", title: "Email" },
             { data: "comentarios", title: "Comentarios" },
             {
@@ -28,11 +28,10 @@
             {
                 data: "id", render: function (data) {
                     return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarCliente(' + data + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarCliente(' + data + ', this)" />'; // 'this' se pasa para obtener la fila
+                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarCliente(' + data + ', this)" />';
                 }
             }
-        ]
-        ,
+        ],
         language: {
             "decimal": ",",
             "thousands": ".",
@@ -67,7 +66,6 @@
         $("#txtEmail").val(clienteJson.Email);
         $("#txtComentarios").val(clienteJson.Comentarios);
         $("#chbEstatus").prop('checked', clienteJson.Estatus);
-        
     }
 });
 
@@ -87,74 +85,92 @@ function SaveOrupdateCliente() {
             UpdatedDt: $("#txtUpdatedDt").val()
         };
 
-        window.location.href = '/Administracion/Clientes';
+        // Mostrar una alerta de éxito con SweetAlert
+        Swal.fire({
+            title: "Registro guardado!",
+            text: "El cliente se ha guardado correctamente.",
+            icon: "success",
+            confirmButtonText: 'OK'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/Administracion/Clientes';
+            }
+        });
+
         // Llamada al servidor para guardar o actualizar los datos
         PostMVC('/Administracion/SaveOrUpdateCliente', parametro, function (r) {
             if (r.IsSuccess) {
                 LimpiarFormulario();
-                alert("Datos guardados exitosamente.");
+                Swal.fire("Éxito", "Datos guardados exitosamente.", "success");
             } else {
-                alert("Error al guardar los datos: " + r.ErrorMessage);
+                Swal.fire("Error", "Error al guardar los datos: " + r.ErrorMessage, "error");
             }
         });
     }
 }
 
-// Función para eliminar el rol con confirmación y actualización de estatus
+// Función para eliminar el cliente con confirmación y actualización de estatus
 function EliminarCliente(id, boton) {
-    // Obtener la fila correspondiente al botón de eliminación
     var row = $(boton).closest("tr");
+    var nombre = row.find("td:eq(0)").text();
+    var telefono = row.find("td:eq(1)").text();
+    var Email = row.find("td:eq(2)").text();
+    var comentario = row.find("td:eq(3)").text();
 
-    // Obtener los valores de la fila y almacenarlos en variables
-    var nombre = row.find("td:eq(0)").text();  // Nombre
-    var Comentario = row.find("td:eq(1)").text();  // 
+    // Confirmación de eliminación con SweetAlert
+    Swal.fire({
+        title: '¿Está seguro?',
+        text: "¿Desea eliminar el siguiente cliente? \nNombre: " + nombre + "\nTelefono: " + telefono + "\nEmail: " + Email + "\nComentario: " + comentario,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var parametro = {
+                Id: id,
+                Nombre: nombre,
+                Comentario: comentario,
+                Estatus: 0,
+                CreatedBy: $("#txtCreatedBy").val(),
+                CreatedDt: $("#txtCreatedDt").val(),
+                UpdatedBy: $("#txtUpdatedBy").val(),
+                UpdatedDt: new Date().toISOString()
+            };
 
-    // Confirmación de eliminación
-    if (confirm("¿Usted desea eliminar el siguiente rol? \nNombre: " + nombre + "\nComentario: " + Comentario)) {
-        // Actualizamos el estatus a "Inactivo" (0) y preparamos el parámetro
-        var parametro = {
-            Id: id,
-            Nombre: nombre,
-            Comentario: Comentario,
-            Estatus: 0,  // Cambiamos el estatus a inactivo (0)
-            CreatedBy: $("#txtCreatedBy").val(),
-            CreatedDt: $("#txtCreatedDt").val(),
-            UpdatedBy: $("#txtUpdatedBy").val(),  // Asignamos el valor de quien está actualizando
-            UpdatedDt: new Date().toISOString()  // Asignamos la fecha y hora actual como fecha de actualización
-        };
-
-        window.location.href = '/Administracion/Clientes';
-        // Llamada para guardar o actualizar el Cliente
-        PostMVC('/Administracion/SaveOrUpdateCliente', parametro, function (r) {
-            if (r.IsSuccess) {
-                alert("Cliente eliminado exitosamente.");
-                // Actualiza la interfaz de usuario, por ejemplo, eliminando la fila de la tabla
-            } else {
-                alert("Error al eliminar el rol: " + r.ErrorMessage);
-            }
-        });
-    }
+            PostMVC('/Administracion/SaveOrUpdateCliente', parametro, function (r) {
+                if (r.IsSuccess) {
+                    Swal.fire("Eliminado", "El cliente ha sido eliminado.", "success").then(() => {
+                        window.location.href = '/Administracion/Clientes';
+                    });
+                } else {
+                    Swal.fire("Error", "Error al eliminar el cliente: " + r.ErrorMessage, "error");
+                }
+            });
+        }
+    });
 }
-
 
 function EditarCliente(id) {
     location.href = "/Administracion/Clientes/" + id;
 }
 
-// Función que obtiene todos los roles
+// Función que obtiene todos los clientes
 function GetAllCliente() {
     GetMVC("/Administracion/GetAllCliente", function (r) {
         if (r.IsSuccess) {
             MapingPropertiesDataTable("tbCliente", r.Response);
         } else {
-            alert("Error al cargar los roles: " + r.ErrorMessage);
+            Swal.fire("Error", "Error al cargar los clientes: " + r.ErrorMessage, "error");
         }
     });
 }
 
 // Función para limpiar el formulario
 function LimpiarFormulario() {
-    $("#txtidroll").val('');
+    $("#txtIdCliente").val('');
     $("#txtNombre").val('');
     $("#txtTelefono").val('');
     $("#txtEmail").val('');
