@@ -85,6 +85,15 @@ namespace MinaTolWebApi.DAL
                      {
                          var r = FillEntity<DtoTipoMaterialUbicacion>(reader);
 
+                         r.DtoUbicacion = new MinaTolEntidades.DtoCatalogos.DtoUbicacion()
+                         {
+                             Id = MappingProperties<long>(reader["UbicacionId"])
+                         };
+                         r.UnidadMedida = new MinaTolEntidades.DtoSucursales.UnidadMedida()
+                         {
+                             Id = MappingProperties<long>(reader["UnidadMedidaId"])
+                         };
+
                          return r;
                      }));
 
