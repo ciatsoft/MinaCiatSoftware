@@ -15,7 +15,7 @@ namespace MinaToMVC.DAL
 {
     public partial class HttpClientConnection
     {
-        public async Task<ModelResponse> SaveOrupdateCliente(Cliente t)
+        public async Task<ModelResponse> SaveOrUpdateCliente(Cliente t)
         {
             var result = await RequestAsync<object>("api/Cliente", HttpMethod.Post, t,
             new Func<string, string>((responseString) =>

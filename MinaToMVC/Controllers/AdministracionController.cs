@@ -41,7 +41,7 @@ namespace MinaToMVC.Controllers
         public string SaveOrUpdateCliente(Cliente t)
         {
 
-            var result = httpClientConnection.SaveOrupdateCliente(t);
+            var result = httpClientConnection.SaveOrUpdateCliente(t);
             return JsonConvert.SerializeObject(result);
         }
 

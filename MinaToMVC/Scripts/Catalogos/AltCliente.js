@@ -70,14 +70,14 @@
 });
 
 // Función que se ejecuta al hacer clic en el botón de Guardar
-function SaveOrupdateCliente() {
+function SaveOrUpdateCliente() {
     if ($("#frmCliente").valid()) {
         var parametro = {
             Id: $("#txtIdCliente").val(),
             Nombre: $("#txtNombre").val(),
             Telefono: $("#txtTelefono").val(),
             Email: $("#txtEmail").val(),
-            Descripcion: $("#txtComentarios").val(),
+            Comentarios: $("#txtComentarios").val(),
             Estatus: $("#chbEstatus").is(':checked'),
             CreatedBy: $("#txtCreatedBy").val(),
             CreatedDt: $("#txtCreatedDt").val(),
@@ -132,18 +132,21 @@ function EliminarCliente(id, boton) {
             var parametro = {
                 Id: id,
                 Nombre: nombre,
-                Comentario: comentario,
+                Telefono: telefono,
+                Email: Email,
+                Comentarios: comentario,
                 Estatus: 0,
                 CreatedBy: $("#txtCreatedBy").val(),
                 CreatedDt: $("#txtCreatedDt").val(),
                 UpdatedBy: $("#txtUpdatedBy").val(),
                 UpdatedDt: new Date().toISOString()
             };
-
+            window.location.href = '/Administracion/Clientes';
             PostMVC('/Administracion/SaveOrUpdateCliente', parametro, function (r) {
+                
                 if (r.IsSuccess) {
                     Swal.fire("Eliminado", "El cliente ha sido eliminado.", "success").then(() => {
-                        window.location.href = '/Administracion/Clientes';
+                        
                     });
                 } else {
                     Swal.fire("Error", "Error al eliminar el cliente: " + r.ErrorMessage, "error");
