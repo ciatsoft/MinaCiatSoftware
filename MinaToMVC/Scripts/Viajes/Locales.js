@@ -1,4 +1,29 @@
-﻿$(document).ready(function () {
+﻿$(function () {
+    jQuery.validator.addMethod("lettersonly", function (value, element) {
+        return this.optional(element) || /^[a-z\s]+$/i.test(value);
+    }, "Only alphabetical characters");
+
+    $("#frmViajesInternos").validate({
+        rules: {
+            "dtpFechaViaje": {
+                required: true
+            },
+            "txtObservaciones": {
+                required: true
+            }
+        },
+        messages: {
+            "dtpFechaViaje": {
+                required: "El campo 'Fecha del viaje' es requerido.",
+            },
+            "txtObservaciones": {
+                required: "El campo 'Observaciones' es requerido.",
+            }
+        }
+    });
+});
+
+$(document).ready(function () {
 
 
 
@@ -99,18 +124,7 @@
 
 // Función para guardar o actualizar
 function SaveOrUpdateViajeLocal() {
-    // Validar que los campos estén llenos
-    var valid = true;
-    $(".required").each(function () {
-        if ($(this).val() === "") {
-            valid = false;
-            $(this).addClass("is-invalid");
-        } else {
-            $(this).removeClass("is-invalid");
-        }
-    });
-
-    if (valid) {
+    if ($("#frmViajesInternos").valid()) {
         // Se construye el objeto de parámetros para el viaje local
         var parametro = {
             Id: $("#txtViajeinterno").val(),
@@ -148,13 +162,13 @@ function SaveOrUpdateViajeLocal() {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
+
                 // Enviar los datos al servidor
-                window.location.href = '/Viajes/Locales';
                 PostMVC("/Viajes/SaveOrUpdateViajeLocal", parametro, function (r) {
                     if (r.IsSuccess) {
-                        LimpiarFormulario();
+                        //LimpiarFormulario();
                         Swal.fire('Éxito', 'Datos guardados exitosamente', 'success');
-                        window.location.href = '/Viajes/Locales';
+                        location.reload();
                     } else {
                         Swal.fire('Error', 'Error al guardar los datos: ' + r.response.ErrorMessage, 'error');
                     }
