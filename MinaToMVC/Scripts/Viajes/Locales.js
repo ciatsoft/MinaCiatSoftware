@@ -162,13 +162,12 @@ function SaveOrUpdateViajeLocal() {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-
+                window.location.href = '/Viajes/Locales';
                 // Enviar los datos al servidor
                 PostMVC("/Viajes/SaveOrUpdateViajeLocal", parametro, function (r) {
                     if (r.IsSuccess) {
                         //LimpiarFormulario();
                         Swal.fire('Éxito', 'Datos guardados exitosamente', 'success');
-                        location.reload();
                     } else {
                         Swal.fire('Error', 'Error al guardar los datos: ' + r.response.ErrorMessage, 'error');
                     }
@@ -181,7 +180,7 @@ function SaveOrUpdateViajeLocal() {
 }
 
 // Función para eliminar con confirmación y estructura de mensajes de SweetAlert
-function EliminarViajeLocal(id, boton) {
+function EliminarViajeLocal() {
     var valid = true;
     $(".required").each(function () {
         if ($(this).val() === "") {
@@ -232,12 +231,12 @@ function EliminarViajeLocal(id, boton) {
         }).then((result) => {
             window.location.href = '/Viajes/Locales';
             if (result.isConfirmed) {
+                window.location.href = '/Viajes/Locales';
                 // Enviar los datos al servidor para eliminar
                 PostMVC("/Viajes/SaveOrUpdateViajeLocal", parametro, function (r) {
                     if (r.IsSuccess) {
                         LimpiarFormulario();
                         Swal.fire('Éxito', 'El viaje ha sido eliminado exitosamente', 'success');
-                        window.location.href = '/Viajes/Locales';
                     } else {
                         Swal.fire('Error', 'Error al eliminar el viaje: ' + r.response.ErrorMessage, 'error');
                     }
