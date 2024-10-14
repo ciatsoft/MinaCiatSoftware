@@ -1,4 +1,5 @@
-﻿using MinaTolEntidades.DtoSucursales;
+﻿using MinaTolEntidades.DtoClientes;
+using MinaTolEntidades.DtoSucursales;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,13 @@ namespace MinaTolEntidades.DtoCatalogos
 {
     public class DtoTipoMaterialUbicacion : BaseObject
     {
+
+        public DtoTipoMaterialUbicacion()
+        {
+            DtoUbicacion = new DtoUbicacion();
+            UnidadMedida = new UnidadMedida();
+        }
+
         public string NombreTipoMaterial { get; set; }
         public string DescripcionTipoMaterial { get; set; }
         public UnidadMedida UnidadMedida { get; set; }
