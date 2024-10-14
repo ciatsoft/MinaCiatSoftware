@@ -1,7 +1,7 @@
 ﻿@model MinaTolEntidades.DtoCatalogos.DtoUbicacion
 @{
     ViewBag.Title = "Ubicacion";
-    var ubicacion = (List<MinaTolEntidades.DtoCatalogos.DtoUbicacion>)ViewBag.AreaDeUbicacion;
+    var ubicacion = (MinaTolEntidades.DtoCatalogos.DtoUbicacion)Model;
     Layout = "~/Views/Shared/_Layout.cshtml";
     var estatus = new List<string> { "Activo", "Inactivo" };
 }
@@ -51,7 +51,7 @@
 </style>
 <div class="content">
 
-    <form id="frmubicacion" name="frmubicacion" method="post" enctype="multipart/form-data" action="@Url.Action("SaveOrUpdateUbicacion","Catalog")">
+    <form id="frmubicacion" name="frmubicacion" method="post" enctype="multipart/form-data">
         @Html.HiddenFor(x => x.Id)
         <br>
         <center><h1> Ubicación </h1></center>
@@ -77,7 +77,7 @@
                 </div>
                 <div class="row form-group">
                     <div class="col-md-12">
-                        <input href="/Catalog/Ubicacion"  type="button" id="btnGuardarUbicacion" value="Guardar" class="btn btn-success" />
+                        <input href="/Catalog/Ubicacion"  type="button" id="btnGuardarUbicacion" value="Guardar" onclick="SaveOrUpdateUbicacion()" class="btn btn-success" />
                         <a href="/Catalog/Ubicacion" class="btn btn-custom-cancel">Cancelar</a>
                     </div>
                 </div>
@@ -125,10 +125,7 @@
             }
         });
     });
-     var UbicacionJson = JSON.parse('@Html.Raw((Newtonsoft.Json.JsonConvert.SerializeObject(Model)))');
-     var urlGetAllUbicacion  = "@Url.Action("GetAllUbicacion", "Catalog")";
-     var urlUbicacionPorId = "@Url.Action("GetUbicacionById", "Catalog")";
-    var urlSaveOrUpdateUbicacion= "@Url.Action("SaveOrUpdateUbicacion", "Catalog")";
+     var UbicacionJson = JSON.parse('@Html.Raw((Newtonsoft.Json.JsonConvert.SerializeObject(ubicacion)))');
 
 </script>
 <script src="~/Scripts/Catalogos/Ubicacion.js"></script>

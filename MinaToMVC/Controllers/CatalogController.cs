@@ -133,8 +133,12 @@ namespace MinaToMVC.Controllers
             return View(ubicacion);
 
         }
-		
-		
+
+        public string SaveOrUpdateUbicacion(DtoUbicacion ub)
+        {
+            var result = httpClientConnection.SaveOrUpdateUbicacion(ub);
+            return JsonConvert.SerializeObject(result);
+        }
 
 
         public async Task<string> GetAllUbicacion()
