@@ -17,17 +17,24 @@ namespace MinaToMVC.Controllers
     public class ViajesController : BaseController
     {
         // GET: Viajes
-        public async Task<ActionResult> Internos()
+        public async Task<ActionResult> Internos(long id = 0)
         {
             var ubicaciones = new List<DtoUbicacion>();
             var tipoMateriales = new List<DtoTipoMaterialUbicacion>();
             var trabajadores = new List<DtoTrabajador>();
             var vehiculos = new List<Vehiculo>();
+            var ViajeInterno = new DtoViajeInterno();
             vehiculos.Add(new Vehiculo()
             { 
                 Id = 1,
                 Placa = "ABC123"
             });
+
+            if (id != 0)
+            {
+                var result = await httpClientConnection.GetViajeInternoById(id);
+                ViajeInterno = JsonConvert.DeserializeObject<DtoViajeInterno>(result.Response.ToString());
+            }
 
             var responseUbicaciones = await httpClientConnection.GetAllUbicacion();
             ubicaciones = JsonConvert.DeserializeObject<List<DtoUbicacion>>(responseUbicaciones.Response.ToString());
@@ -44,9 +51,25 @@ namespace MinaToMVC.Controllers
             ViewBag.TipoMaterial = tipoMateriales;
             ViewBag.Trabajadores = trabajadores;
             ViewBag.Vehiculos = vehiculos;
+            ViewBag.ViajeInterno = ViajeInterno;
 
-            return View();
+            return View(ViajeInterno);
         }
+
+        public string SaveOrUpdateViajeInterno(DtoViajeInterno t)
+        {
+
+            var result = httpClientConnection.SaveOrUpdateViajeInterno(t);
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetAllViajeInterno()
+        {
+            var token = Helpers.SessionHelper.GetSessionUser();
+            var result = await httpClientConnection.GetAllViajeInterno(token.Token.access_token);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
         public async Task<ActionResult> Locales(long id = 0)
         {
             var ubicaciones = new List<DtoUbicacion>();

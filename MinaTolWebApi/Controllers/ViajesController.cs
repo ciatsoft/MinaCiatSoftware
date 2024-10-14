@@ -34,6 +34,13 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
+        [HttpGet, Route("Interno/{id:long}")]
+        public ModelResponse GetViajeInternoById(long id)
+        {
+            var result = wrapper.GetViajeInternoById(id);
+            return result;
+        }
+
         [HttpGet, Route("{id:long}")]
         public ModelResponse GetViajeLocalById(long id)
         {
@@ -41,7 +48,7 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-        [HttpPost, Route("")]
+        [HttpPost, Route("Interno")]
         public ModelResponse SaveOrUpdateViajeInterno(DtoViajeInterno vi)
         {
             var result = wrapper.SaveOrUpdateViajeInterno(vi);

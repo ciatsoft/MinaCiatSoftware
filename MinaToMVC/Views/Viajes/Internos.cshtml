@@ -6,8 +6,67 @@
     var tipoMateriales = (List<MinaTolEntidades.DtoCatalogos.DtoTipoMaterialUbicacion>)ViewBag.TipoMaterial;
     var trabajadores = (List<MinaTolEntidades.DtoSucursales.DtoTrabajador>)ViewBag.Trabajadores;
     var vehiculos = (List<MinaTolEntidades.DtoClientes.Vehiculo>)ViewBag.Vehiculos;
+    var ViajeInterno = (MinaTolEntidades.DtoViajes.DtoViajeInterno)Model;
+
 }
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<link href="~/Assets/css/dataTables.dataTables.min.css" rel="stylesheet" />
+<script src="~/Assets/js/dataTables.min.js"></script>
+
+<style>
+    .btn-success {
+        background-color: #28a745; /* Verde para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-success:hover {
+            background-color: #218838; /* Color verde más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+
+    .btn-custom-cancel {
+        background-color: #FF5733; /*  para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-custom-cancel:hover {
+            background-color: darkred; /* Color  más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+
+    .btn-custom-delete {
+        background-color: #C70039; /*  para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-custom-delete:hover {
+            background-color: darkred; /* Color  más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+
+    .btn-custom-clean {
+        background-color: dodgerblue; /*  para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-custom-clean:hover {
+            background-color: deepskyblue; /* Color  más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+</style>
 <form enctype="multipart/form-data" id="frmViajesInternos" method="post" name="frmViajesInternos">
     <div class="content">
         <!-- Campos ocultos para los datos automáticos -->
@@ -26,9 +85,9 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Ubicación Origen:</label>
-                        <select id="ddlUOrigen" class="form-control">
+                        <select id="ddlUOrigen" class="form-control" onchange="actualizarTiposDeMaterial()">
                             @foreach (var i in ubicaciones)
-                            { 
+                            {
                                 <option value="@i.Id">@i.NombreUbicacion</option>
                             }
                         </select>
@@ -83,10 +142,12 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-12">
-                        <input type="button" onclick="SaveOrUpdateViajeinterno()" value="Guadar" class="btn btn-success" />
-                        <a class="btn btn-warning" href="/Empleado/AltaEdicion">Cancelar</a>
-                        <input type="button" name="btnEliminar" id="btnEliminar" value="Eliminar" class="btn btn-danger" />
+                    <div class="col-lg-12 d-flex justify-content-between">
+                        <div>
+                            <input type="button" onclick="SaveOrUpdateViajeinterno()" value="Guadar" class="btn btn-success" />
+                            <input id="btnEliminar" href="/Viajes/Locales" type="button" value="Eliminar" class="btn btn-custom-delete" onclick="EliminarViajeInterno()" />
+                        </div>
+                        <a class="btn btn-custom-cancel" href="/Viajes/Internos">Cancelar</a>
                     </div>
                 </div>
             </div>
@@ -97,3 +158,6 @@
 </form>
 
 <script src="@(Url.StaticFile("Scripts/Viajes/Internos.js"))"></script>
+<script>
+    var viajeInternoJson = JSON.parse('@Html.Raw((Newtonsoft.Json.JsonConvert.SerializeObject(ViajeInterno)))');
+</script>
