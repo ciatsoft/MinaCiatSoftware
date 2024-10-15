@@ -64,7 +64,7 @@ $(document).ready(function () {
             },
             {
                 data: "id", title: "Acciones", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarViajeInterno(' + data + ', this)" />';
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarViajeInterno(' + data + ')" />';
                 }
             }
         ],
@@ -125,7 +125,7 @@ function SaveOrUpdateViajeInterno() {
         var parametro = {
             Id: $("#txtViajeinterno").val(),
             UbicacionOrigen: { Id: $("#ddlUOrigen").val() },
-            UbicacionDestino: { Id: $("#ddlUDestino").val() },
+            UbicacionDestino: { Id: $("#ddlDestino").val() },
             Transportista: { Id: $("#ddlTransportistas").val() },
             TipoMaterial: { Id: $("#ddlTipoMaterial").val() },
             Vehiculo: { Id: $("#ddlVehiculo").val() },
@@ -188,7 +188,7 @@ function EliminarViajeInterno() {
         var parametro = {
             Id: $("#txtViajeinterno").val(),
             UbicacionOrigen: { Id: $("#ddlUOrigen").val() },
-            UbicacionDestino: { Id: $("#ddlUDestino").val() },
+            UbicacionDestino: { Id: $("#ddlDestino").val() },
             Transportista: { Id: $("#ddlTransportistas").val() },
             TipoMaterial: { Id: $("#ddlTipoMaterial").val() },
             Vehiculo: { Id: $("#ddlVehiculo").val() },
@@ -242,7 +242,7 @@ function EliminarViajeInterno() {
 
 
 // Función para editar con estilo de redireccionamiento 
-function EditarViajeLocal(id) {
+function EditarViajeInterno(id) {
     location.href = "/Viajes/Internos/" + id;
     console.log(id);
 }
