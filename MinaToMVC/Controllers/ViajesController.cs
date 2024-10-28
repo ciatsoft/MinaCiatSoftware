@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using static MinaToMVC.Controllers.Filters.FiltersHelper;
+using System.Net.Http;
+using MinaToMVC.DAL;
 
 namespace MinaToMVC.Controllers
 {
@@ -24,17 +26,20 @@ namespace MinaToMVC.Controllers
             var trabajadores = new List<DtoTrabajador>();
             var vehiculos = new List<Vehiculo>();
             var ViajeInterno = new DtoViajeInterno();
-            vehiculos.Add(new Vehiculo()
-            { 
-                Id = 1,
-                Placa = "ABC123"
-            });
+            //vehiculos.Add(new Vehiculo()
+            //{ 
+            //    Id = 1,
+            //    Placa = "ABC123"
+            //});
 
             if (id != 0)
             {
                 var result = await httpClientConnection.GetViajeInternoById(id);
                 ViajeInterno = JsonConvert.DeserializeObject<DtoViajeInterno>(result.Response.ToString());
             }
+
+            var responseVehiculo = await httpClientConnection.GetAllVehiculo();
+            vehiculos = JsonConvert.DeserializeObject<List<Vehiculo>>(responseVehiculo.Response.ToString());
 
             var responseUbicaciones = await httpClientConnection.GetAllUbicacion();
             ubicaciones = JsonConvert.DeserializeObject<List<DtoUbicacion>>(responseUbicaciones.Response.ToString());
@@ -80,11 +85,9 @@ namespace MinaToMVC.Controllers
             var clientes = new List<Cliente>();
 
             var ViajeLocal = new DtoViajeLocal();
-            vehiculos.Add(new Vehiculo()
-            {
-                Id = 1,
-                Placa = "ABC123"
-            });
+
+            var responseVehiculo = await httpClientConnection.GetAllVehiculo();
+            vehiculos = JsonConvert.DeserializeObject<List<Vehiculo>>(responseVehiculo.Response.ToString());
 
             if (id != 0)
             {

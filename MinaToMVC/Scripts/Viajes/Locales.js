@@ -252,6 +252,7 @@ function EliminarViajeLocal() {
 
 // Función para editar con estilo de redireccionamiento 
 function EditarViajeLocal(id) {
+    actualizarTiposDeMaterial();
     location.href = "/Viajes/Locales/" + id;
     console.log(id);
 }
