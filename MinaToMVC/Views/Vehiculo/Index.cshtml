@@ -1,0 +1,61 @@
+﻿@model MinaTolEntidades.DtoClientes.Vehiculo
+@{
+    ViewBag.Title = "Alta/Edición Vehiculos";
+    var tiposVehiculos = (IEnumerable<SelectListItem>)ViewBag.TipoVehiculos;
+}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+
+
+@using (Html.BeginForm("SaveOrupdateVehiculo", "Vehiculo", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmVehiculoCrud", @id = "frmVehiculoCrud" }))
+{
+    
+    @Html.HiddenFor(x => x.Estatus)
+    @Html.HiddenFor(x => x.CreatedDt)
+    @Html.HiddenFor(x => x.CreatedBy)
+    @Html.HiddenFor(x => x.UpdatedBy)
+    @Html.HiddenFor(x => x.UpdatedDt)
+
+    <div class="content">
+        <!-- Campos ocultos para los datos automáticos -->
+
+        <br>
+        <center><h1>Vehiculos</h1></center>
+        <div class="tabla-consultas-empleados">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>ID del Trabajador:</label>
+                        
+                        @Html.TextBoxFor(x => x.Id, new { @class = "form-control", @disabled = "" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Placa:</label>
+                        @Html.TextBoxFor(x => x.Placa, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Color:</label>
+                        @Html.TextBoxFor(x => x.Color, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Tipo de vehiculo:</label>
+                        @Html.DropDownListFor(x => x.TipoVehiculo.Id, tiposVehiculos, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <input type="button" onclick="SaveOrupdateTrabajador()" value="Guadar" class="btn btn-success" />
+                        <a class="btn btn-warning" href="/Empleado/AltaEdicion">Cancelar</a>
+                        <input type="button" name="btnEliminar" id="btnEliminar" value="Eliminar" class="btn btn-danger" />
+                    </div>
+                </div>
+            </div>
+            <table id="tblEmpleados" class="table" style="width:100%;">
+            </table>
+            <br>
+        </div>
+    </div>
+}
+
+
