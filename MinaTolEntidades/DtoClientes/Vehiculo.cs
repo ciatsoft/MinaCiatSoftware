@@ -10,6 +10,7 @@ namespace MinaTolEntidades.DtoClientes
     {
         public string Placa { get; set; }
         public string Color { get; set; }
-        
+        public TipoVehiculo TipoVehiculo { get; set; }
+
     }
 }

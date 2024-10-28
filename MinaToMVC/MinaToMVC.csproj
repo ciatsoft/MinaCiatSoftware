@@ -190,6 +190,7 @@
     <Compile Include="Controllers\Filters\FiltersHelper.cs" />
     <Compile Include="Controllers\AdministracionController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
+    <Compile Include="Controllers\VehiculoController.cs" />
     <Compile Include="Controllers\VentaController.cs" />
     <Compile Include="Controllers\TallerController .cs" />
     <Compile Include="Controllers\RHController.cs" />
@@ -258,6 +259,7 @@
     <Content Include="Views\Viajes\Locales.cshtml" />
     <Content Include="Views\Catalog\TipoMaterialUbicacion.cshtml" />
     <Content Include="Views\Usuario\AltaEdicion.cshtml" />
+    <Content Include="Views\Vehiculo\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
