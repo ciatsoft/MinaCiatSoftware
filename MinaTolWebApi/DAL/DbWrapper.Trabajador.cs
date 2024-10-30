@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using MinaTolEntidades.DtoEmpleados;
+using MinaTolEntidades.DtoCatalogos;
 using System.Data.SqlClient;
 using System.Data;
 
@@ -18,10 +19,13 @@ namespace MinaTolWebApi.DAL
             var parameters = new List<SqlParameter>();
             try
             {
-                var user = GetObjects($"SELECT * FROM TRABAJADOR", CommandType.Text, parameters,
+                var user = GetObjects($"GetAllTrabajador", System.Data.CommandType.StoredProcedure, parameters,
                     new Func<IDataReader, DtoTrabajador>((reader) =>
                     {
                         var r = FillEntity<DtoTrabajador>(reader);
+                        
+                        r.AreadeTrabajo.Nombre = MappingProperties<string>(reader["AreaTrabajo"]);
+                        r.Roles.Nombre = MappingProperties<string>(reader["RolTrabajador"]);
 
                         return r;
                     }));
@@ -47,9 +51,14 @@ namespace MinaTolWebApi.DAL
                     new Func<IDataReader, DtoTrabajador>((reader) =>
                     {
                         var r = FillEntity<DtoTrabajador>(reader);
-                        r.AreaTrabajo = new MinaTolEntidades.DtoCatalogos.DtoAreaTrabajo()
+
+                        r.AreadeTrabajo = new MinaTolEntidades.DtoCatalogos.DtoAreaTrabajo()
                         {
                             Id = MappingProperties<long>(reader["AreaTrabajoID"])
+                        };
+                        r.Roles = new MinaTolEntidades.DtoCatalogos.DtoRoll()
+                        {
+                            Id = MappingProperties<long>(reader["RollId"])
                         };
 
                         return r;

@@ -178,6 +178,8 @@
     <Content Include="Scripts\Home\Autenticacion.js" />
     <Content Include="Scripts\Seguridad\Usuario.js" />
     <Content Include="Scripts\Trabajador\AltaEdicion.js" />
+    <Content Include="Scripts\Vehiculo\Vehiculos.js" />
+    <Content Include="Scripts\Vehiculo\Vehiculo.js" />
     <Content Include="Scripts\Viajes\Internos.js" />
     <Content Include="Scripts\Viajes\Locales.js" />
     <Content Include="Web.config" />

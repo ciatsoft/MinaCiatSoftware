@@ -1,10 +1,66 @@
 ﻿@{
     ViewBag.Title = "Alta/Edición Empleado";
     var areasTrabajo = (List<MinaTolEntidades.DtoCatalogos.DtoAreaTrabajo>)ViewBag.AreasDeTrabajo;
+    var roles = (List<MinaTolEntidades.DtoCatalogos.DtoRoll>)ViewBag.Roles;
     //var turnos = new List<string> { "Mañana", "Tarde", "Noche" }; // Ejemplo de turnos
     var estatus = new List<string> { "Activo", "Inactivo" }; // Ejemplo de estatus
     var trabajador = (MinaTolEntidades.DtoSucursales.DtoTrabajador)Model;
 }
+
+<style>
+    .btn-success {
+        background-color: #28a745; /* Verde para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-success:hover {
+            background-color: #218838; /* Color verde más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+
+    .btn-custom-cancel {
+        background-color: #FF5733; /*  para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-custom-cancel:hover {
+            background-color: darkred; /* Color  más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+
+    .btn-custom-delete {
+        background-color: #C70039; /*  para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-custom-delete:hover {
+            background-color: darkred; /* Color  más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+
+    .btn-custom-clean {
+        background-color: dodgerblue; /*  para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-custom-clean:hover {
+            background-color: deepskyblue; /* Color  más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+</style>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 
 <script src="@(Url.StaticFile("Scripts/Trabajador/AltaEdicion.js"))"></script>
@@ -71,6 +127,15 @@
                         </select>
                     </div>
                     <div class="col-lg-3">
+                        <label>Rol:</label>
+                        <select id="ddlRoll" name="ddlRoll" class="form-control">
+                            @foreach (var Roll in roles)
+                            {
+                                <option value="@Roll.Id">@Roll.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
                         <label>Salario Actual</label>
                         <input type="text" name="txtSalario" id="txtSalario" value="" style="display:none;" />
                         <input type="text" name="txtSalarioTexto" id="txtSalarioTexto" value="" class="form-control" disabled />
@@ -81,10 +146,12 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-12">
-                        <input type="button" onclick="SaveOrupdateTrabajador()" value="Guadar" class="btn btn-success" />
-                        <a class="btn btn-warning" href="/Empleado/AltaEdicion">Cancelar</a>
-                        <input type="button" name="btnEliminar" id="btnEliminar" value="Eliminar" class="btn btn-danger" />
+                    <div class="col-lg-12 d-flex justify-content-between">
+                        <div>
+                            <input id="btnGuardar" type="button" onclick="SaveOrupdateTrabajador()" value="Guadar" class="btn btn-success" />
+                            <input type="button" name="btnEliminar" id="btnEliminar" value="Eliminar" class="btn btn-custom-delete"/>
+                        </div>
+                        <a class="btn btn-custom-cancel" href="/Empleado/AltaEdicion">Cancelar</a>
                     </div>
                 </div>
             </div>

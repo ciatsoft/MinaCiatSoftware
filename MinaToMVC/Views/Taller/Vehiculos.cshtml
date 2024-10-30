@@ -1,78 +1,111 @@
 ﻿@{
     ViewBag.Title = "Vehiculos"; // Establece el título de la vista.
+
+    var trabajadores = (List<MinaTolEntidades.DtoSucursales.DtoTrabajador>)ViewBag.trabajadores;
+    var vehiculos = (List<MinaTolEntidades.DtoClientes.TipoVehiculo>)ViewBag.vehiculos;
+    var areas = (List<MinaTolEntidades.DtoCatalogos.DtoAreaTrabajo>)ViewBag.areas;
+
 }
 <div class="content">
     <br>
-    <center><h1 class="main_title_html">Vehículos</h1></center>
+    <center><h1>Vehículos</h1></center>
     <div class="container">
         <div class="form-container">
             <form method="POST" action="">
                 <h2><i class="fas fa-clipboard-list"></i> Registrar Vehículo</h2>
                 <input type="hidden" name="action" value="add">
                 <label>Nombre del Vehículo:</label>
-                <input type="text" name="nombre" required><br>
+                <select id="txttvehiculo" name="txttvehiculo" class="form-control">
+                    @foreach (var i in vehiculos)
+                    {
+                        <option value="@i.Id">@i.Nombre</option>
+                    }
+                </select><br>
                 <label>Color:</label>
                 <input type="text" name="color" required><br>
                 <label>Placas:</label>
                 <input type="text" name="placas" required><br>
-                <label>Área:</label>
-                <input type="text" name="area" required><br>
+                    <label>Area:</label>
+                    <select id="txtarea" name="txtarea" class="form-control">
+                        @foreach (var i in areas)
+                        {
+                            <option value="@i.Id">@i.Nombre</option>
+                        }
+                    </select>
                 <label>Operador:</label>
-                <input type="text" name="operador" required><br>
-                <center><input style="background-color:#1f7f15;" type="submit" value="Registrar"></center>
+                <select id="txtoperador" name="txtoperador" class="form-control">
+                    @foreach (var i in trabajadores)
+                    {
+                        <option value="@i.Id">@i.Nombre</option>
+                    }
+                </select>
+                <center><input class="btn btn-success" type="submit" value="Registrar"></center>
             </form>
         </div>
 
         <div class="table-container">
             <h2 style="border: 2px; background-color:white; border-radius: 2px;"><i class="fas fa-list-ul"></i> Lista de Vehículos Registrados</h2>
-            <table>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Color</th>
-                    <th>Placas</th>
-                    <th>Área</th>
-                    <th>Operador</th>
-                    <th>Acciones</th>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <form method='POST' action='editar_vehiculo.php' style='display:inline-block;'>
-                            <input type='hidden' name='action' value='edit_form'>
-                            <input type='hidden' name='id' value='" . $row[' id'] . "'>
-                            <input type='submit' value='Editar'>
-                        </form>
-                        <form method='POST' action='' style='display:inline-block;'>
-                            <input type='hidden' name='action' value='delete'>
-                            <input type='hidden' name='id' value='" . $row[' id'] . "'>
-                            <input type='submit' style='background-color:#fa1f0c;' value='Eliminar'>
-                        </form>
-                    </td>
-                </tr>
-                <tr><td colspan='7'>No hay vehículos registrados</td></tr>
+            <table id="tblvehiculo" class="table" style="width:100%;">
             </table>
         </div>
     </div>
 </div>
-<style>
 
-    .main_title_html {
-        background-color: white;
-        font-family: Helvetica Neue;
-        font-size: 30px;
-        color: black;
-        width: 70%;
-        padding: 5px;
-        border: 20px;
-        border-radius: 100px;
-        border: 3px solid black;
+<style>
+    .btn-success {
+        background-color: #28a745; /* Verde para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
     }
+
+        .btn-success:hover {
+            background-color: #218838; /* Color verde más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+
+    .btn-custom-cancel {
+        background-color: #FF5733; /*  para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-custom-cancel:hover {
+            background-color: darkred; /* Color  más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+
+    .btn-custom-delete {
+        background-color: #C70039; /*  para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-custom-delete:hover {
+            background-color: darkred; /* Color  más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+
+    .btn-custom-clean {
+        background-color: dodgerblue; /*  para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-custom-clean:hover {
+            background-color: deepskyblue; /* Color  más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+</style>
+
+<style>
 
 
     body {
@@ -109,19 +142,6 @@
         border-radius: 4px;
         font-size: 14px;
     }
-
-    /* Estilos para el botón de enviar */
-    input[type="submit"] {
-        color: black;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 15px;
-    }
-
-
-
     /* Estilos generales para la tabla */
     table {
         width: 100%;
@@ -164,3 +184,8 @@
         max-width: 800px;
     }
 </style>
+
+<script src="@(Url.StaticFile("Scripts/Vehiculo/Vehiculos.js"))"></script>
+<script>
+
+</script>
