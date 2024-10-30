@@ -58,7 +58,7 @@ namespace MinaTolWebApi.DAL
                         };
                         r.Roles = new MinaTolEntidades.DtoCatalogos.DtoRoll()
                         {
-                            Id = MappingProperties<long>(reader["Roll"])
+                            Id = MappingProperties<long>(reader["RollId"])
                         };
 
                         return r;
