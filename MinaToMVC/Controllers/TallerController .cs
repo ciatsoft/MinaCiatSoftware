@@ -1,5 +1,7 @@
 ﻿using MinaTolEntidades;
+using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoClientes;
+using MinaTolEntidades.DtoSucursales;
 using MinaTolEntidades.Security;
 using MinaToMVC.Helpers;
 using Newtonsoft.Json;
@@ -26,8 +28,26 @@ namespace MinaToMVC.Controllers
         {
             return View();
         }
-        public ActionResult Vehiculos()
+        public async Task<ActionResult> Vehiculos(long id = 0)
         {
+            var trabajadores = new List<DtoTrabajador>();
+            var vehiculos = new List<TipoVehiculo>();
+            var areas = new List<DtoAreaTrabajo>();
+
+            var responseVehiculo = await httpClientConnection.GetAllTipoVehiculo();
+            vehiculos = JsonConvert.DeserializeObject<List<TipoVehiculo>>(responseVehiculo.Response.ToString());
+
+            var responsetrabajadores = await httpClientConnection.GetAllTrabajador();
+            trabajadores = JsonConvert.DeserializeObject<List<DtoTrabajador>>(responsetrabajadores.Response.ToString());
+
+            var token = Helpers.SessionHelper.GetSessionUser();
+            var responseareas = await httpClientConnection.GetAllAreaTrabajo(token.Token.access_token);
+            areas = JsonConvert.DeserializeObject<List<DtoAreaTrabajo>>(responseareas.Response.ToString());
+
+            ViewBag.vehiculos = vehiculos;
+            ViewBag.trabajadores = trabajadores;
+            ViewBag.areas = areas;
+
             return View();
         }
         public ActionResult Inventario_Taller()

@@ -34,6 +34,11 @@ namespace MinaToMVC.Controllers
 
             return View(vehiculo);
         }
+        public async Task<string> GetAllVehiculo()
+        {
+            var result = await httpClientConnection.GetAllVehiculo();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
 
     }
 }

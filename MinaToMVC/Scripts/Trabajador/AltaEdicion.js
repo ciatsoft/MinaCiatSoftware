@@ -83,6 +83,8 @@ $(document).ready(function () {
             { data: "email", title: "Email" },
             { data: "telefono", title: "Teléfono" },
             { data: "seguro", title: "NSS" },
+            { data: "areadeTrabajo.nombre", title: "Area de Trabajo" },
+            { data: "roles.nombre", title: "Rol" },
             {
                 data: "turno", title: "Turno", render: function (data) {
                     var turnoString = "";
@@ -103,10 +105,33 @@ $(document).ready(function () {
             },
             {
                 data: "id", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-primary" onclick="EditarTrabajador(' + data + ')" />';
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarTrabajador(' + data + ')" />';
                 }
             }
-        ]
+        ],
+        language: {
+            "decimal": ",",
+            "thousands": ".",
+            "processing": "Procesando...",
+            "lengthMenu": "Mostrar _MENU_ entradas",
+            "zeroRecords": "No se encontraron resultados",
+            "emptyTable": "Ningún dato disponible en esta tabla",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+            "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+            "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+            "search": "Buscar:",
+            "loadingRecords": "Cargando...",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                "sortDescending": ": activar para ordenar la columna de manera descendente"
+            }
+        }
     });
 
     GetAllTrabajadores();
@@ -116,16 +141,21 @@ $(document).ready(function () {
         $("#txtNombre").val(trabajadorJson.Nombre);
         $("#txtEmail").val(trabajadorJson.Email);
         $("#txtTelefono").val(trabajadorJson.Telefono);
-        $("#ddlAreaTrabajo").val(trabajadorJson.AreaTrabajo.Id);
+        $("#ddlAreaTrabajo").val(trabajadorJson.AreadeTrabajo.Id);
+        $("#ddlRoll").val(trabajadorJson.Roles.Id);
         $("#txtSeguro").val(trabajadorJson.Seguro);
         $("#dtpFechaContratacion").val(trabajadorJson.FechaContratacion.substring(0, 10));
         $("#ddlTurno").val(trabajadorJson.Turno);
         $("#chbEstatus").prop('checked', trabajadorJson.Estatus);
 
         GetSalarioActualTrabajador();
+        $("#btnEliminar").show();
+        $("#btnGuardar").show();
     }
     else {
         $("#imgAddSalario").hide();
+        $("#btnEliminar").hide();
+        $("#btnGuardar").show();
     }
 });
 
@@ -134,9 +164,8 @@ function GetAllTrabajadores() {
         if (r.IsSuccess) {
             MapingPropertiesDataTable("tblEmpleados", r.Response);
         }
-        else {
-            alert("Error");
-            //alert(r.Message);
+        else { 
+            alert("Error: " + r.Message);
         }
     });
 }
@@ -150,8 +179,11 @@ function SaveOrupdateTrabajador() {
             Nombre: $("#txtNombre").val(),
             Email: $("#txtEmail").val(),
             Telefono: $("#txtTelefono").val(),
-            AreaTrabajo: {
+            AreadeTrabajo: {
                 Id: $("#ddlAreaTrabajo").val()
+            },
+            Roles: {
+                Id: $("#ddlRoll").val()
             },
             FechaContratacion: fc,
             Seguro: $("#txtSeguro").val(),

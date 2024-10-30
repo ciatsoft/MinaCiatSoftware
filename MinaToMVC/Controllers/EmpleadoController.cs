@@ -1,4 +1,5 @@
 ﻿using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.DtoEmpleados;
 using MinaTolEntidades.DtoSucursales;
 using MinaToMVC.DAL;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using static MinaToMVC.Controllers.Filters.FiltersHelper;
 
 namespace MinaToMVC.Controllers
@@ -37,7 +39,13 @@ namespace MinaToMVC.Controllers
             else
                 trabajador = new DtoTrabajador();
 
+            var roles = new List<DtoRoll>();
+
+            var responseroles = await httpClientConnection.GetAllRoll();
+            roles = JsonConvert.DeserializeObject<List<DtoRoll>>(responseroles.Response.ToString());
+
             ViewBag.AreasDeTrabajo = areasDeTrabajo;
+            ViewBag.Roles = roles;
 
             return View(trabajador);
         }
