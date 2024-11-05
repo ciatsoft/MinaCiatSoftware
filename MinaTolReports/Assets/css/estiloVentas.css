@@ -1,0 +1,181 @@
+    .precios-table {
+        width: 100%;
+        margin: auto;
+        box-shadow: 0px 0px 15px rgba(0,0,0,0.5);
+        font-size: 14px;
+    }
+    .precios-table th, .precios-table td {
+        padding: 10px;
+    }
+    .precios-table thead tr {
+        background-color: #495057;
+        color: white;
+    }
+    .icon {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        color: white;
+        text-align: center;
+        line-height: 30px;
+        border-radius: 5px;
+    }
+    .icon-delete {
+        background-color: red;
+    }
+    .icon-edit {
+        background-color: yellow;
+    }
+
+    .card-header.bg-primary.text-white {
+        background-color: #495057 !important;
+        color: #ffffff;
+      }
+
+
+/* index.css */
+
+/* Estilos generales */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: Arial, sans-serif; /* Fuente consistente */
+    background-color: #f4f4f4; /* Color de fondo suave */
+    color: #333; /* Color de texto oscuro para mejor contraste */
+}
+
+/* Estilos para el formulario y sus elementos */
+.agregar_al_carrito {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.lista-agregar-carrito form {
+    width: 40%;
+    margin: 20px auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.lista-agregar-carrito input[type="text"],
+.lista-agregar-carrito input[type="number"],
+.lista-agregar-carrito select,
+.lista-agregar-carrito button {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px; /* Tamaño de fuente aumentado */
+}
+
+.lista-agregar-carrito button {
+    background-color: #007bff; /* Azul Bootstrap */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s; /* Suavizado de transición */
+    padding: 12px 20px; /* Mayor padding para mejor clicabilidad */
+    font-size: 16px; /* Tamaño de fuente aumentado */
+    border-radius: 8px; /* Esquinas más redondeadas */
+}
+
+.lista-agregar-carrito button:hover {
+    background-color: #0056b3;
+}
+
+/* Estilos para la tabla */
+.tabla-agregar-carrito {
+    width: 95%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.tabla-agregar-carrito th,
+.tabla-agregar-carrito td {
+    padding: 15px; /* Aumento del padding */
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.tabla-agregar-carrito tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.tabla-agregar-carrito th {
+    background-color: #343a40;
+    color: white;
+}
+
+/* Estilos para las imágenes de los productos */
+.product-image {
+    max-width: 100px;
+    height: auto;
+}
+
+/* Estilos para la sección de notificaciones */
+#notification-Container {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 300px;
+}
+
+.notification {
+    background-color: #343a40;
+    color: white;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+.close-btn {
+    float: right;
+    cursor: pointer;
+}
+
+.notification .close-btn:hover {
+    color: #ccc;
+}
+
+/* Flex container para formularios y otros contenedores */
+.contenedor-flex {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+#montoPagar {
+    color: black; /* Establece el color de texto a negro */
+}
+
+.row {
+    margin-bottom: 10px;
+}
+
+/* Media queries para responsividad */
+@media (max-width: 768px) {
+    .lista-agregar-carrito form {
+        width: 80%; /* Ajusta el ancho en dispositivos más pequeños */
+    }
+}
+
+
+
+
+
+.tabla-agregar-carrito {
+    order: 2;
+}
+
+.lista-agregar-carrito {
+    order: 1;
+}
+
