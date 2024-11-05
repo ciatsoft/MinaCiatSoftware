@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinaTolEntidades", "MinaTol
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinaToMVC", "MinaToMVC\MinaToMVC.csproj", "{9CDE2CB0-AA6A-47D0-A487-E875124CBBF9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinaTolReports", "MinaTolReports\MinaTolReports.csproj", "{4A2473E3-6B9F-4753-A0A5-6B10E378F455}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{9CDE2CB0-AA6A-47D0-A487-E875124CBBF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CDE2CB0-AA6A-47D0-A487-E875124CBBF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CDE2CB0-AA6A-47D0-A487-E875124CBBF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A2473E3-6B9F-4753-A0A5-6B10E378F455}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A2473E3-6B9F-4753-A0A5-6B10E378F455}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A2473E3-6B9F-4753-A0A5-6B10E378F455}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A2473E3-6B9F-4753-A0A5-6B10E378F455}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
