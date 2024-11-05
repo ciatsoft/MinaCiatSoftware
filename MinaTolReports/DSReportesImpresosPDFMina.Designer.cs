@@ -293,6 +293,12 @@ namespace MinaTolReports {
             
             private global::System.Data.DataColumn columnDestino;
             
+            private global::System.Data.DataColumn columnUnidad;
+            
+            private global::System.Data.DataColumn columnCliente;
+            
+            private global::System.Data.DataColumn columnOperador;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public rpt_GetReporteViajeLocalDataTable() {
@@ -384,6 +390,30 @@ namespace MinaTolReports {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn UnidadColumn {
+                get {
+                    return this.columnUnidad;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn ClienteColumn {
+                get {
+                    return this.columnCliente;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn OperadorColumn {
+                get {
+                    return this.columnOperador;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -419,7 +449,7 @@ namespace MinaTolReports {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public rpt_GetReporteViajeLocalRow Addrpt_GetReporteViajeLocalRow(System.DateTime Fecha, string Material, int Cantidad, string UnidadMediaNombre, string SurtirA, string Origen, string Destino) {
+            public rpt_GetReporteViajeLocalRow Addrpt_GetReporteViajeLocalRow(System.DateTime Fecha, string Material, int Cantidad, string UnidadMediaNombre, string SurtirA, string Origen, string Destino, string Unidad, string Cliente, string Operador) {
                 rpt_GetReporteViajeLocalRow rowrpt_GetReporteViajeLocalRow = ((rpt_GetReporteViajeLocalRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         Fecha,
@@ -428,7 +458,10 @@ namespace MinaTolReports {
                         UnidadMediaNombre,
                         SurtirA,
                         Origen,
-                        Destino};
+                        Destino,
+                        Unidad,
+                        Cliente,
+                        Operador};
                 rowrpt_GetReporteViajeLocalRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowrpt_GetReporteViajeLocalRow);
                 return rowrpt_GetReporteViajeLocalRow;
@@ -458,6 +491,9 @@ namespace MinaTolReports {
                 this.columnSurtirA = base.Columns["SurtirA"];
                 this.columnOrigen = base.Columns["Origen"];
                 this.columnDestino = base.Columns["Destino"];
+                this.columnUnidad = base.Columns["Unidad"];
+                this.columnCliente = base.Columns["Cliente"];
+                this.columnOperador = base.Columns["Operador"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -477,6 +513,12 @@ namespace MinaTolReports {
                 base.Columns.Add(this.columnOrigen);
                 this.columnDestino = new global::System.Data.DataColumn("Destino", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnDestino);
+                this.columnUnidad = new global::System.Data.DataColumn("Unidad", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnUnidad);
+                this.columnCliente = new global::System.Data.DataColumn("Cliente", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnCliente);
+                this.columnOperador = new global::System.Data.DataColumn("Operador", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnOperador);
                 this.columnMaterial.MaxLength = 250;
                 this.columnCantidad.ReadOnly = true;
                 this.columnUnidadMediaNombre.MaxLength = 250;
@@ -484,6 +526,10 @@ namespace MinaTolReports {
                 this.columnSurtirA.MaxLength = 1;
                 this.columnOrigen.MaxLength = 250;
                 this.columnDestino.MaxLength = 250;
+                this.columnUnidad.MaxLength = 250;
+                this.columnCliente.MaxLength = 250;
+                this.columnOperador.AllowDBNull = false;
+                this.columnOperador.MaxLength = 250;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -744,6 +790,51 @@ namespace MinaTolReports {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string Unidad {
+                get {
+                    try {
+                        return ((string)(this[this.tablerpt_GetReporteViajeLocal.UnidadColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("El valor de la columna \'Unidad\' de la tabla \'rpt_GetReporteViajeLocal\' es DBNull." +
+                                "", e);
+                    }
+                }
+                set {
+                    this[this.tablerpt_GetReporteViajeLocal.UnidadColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string Cliente {
+                get {
+                    try {
+                        return ((string)(this[this.tablerpt_GetReporteViajeLocal.ClienteColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("El valor de la columna \'Cliente\' de la tabla \'rpt_GetReporteViajeLocal\' es DBNull" +
+                                ".", e);
+                    }
+                }
+                set {
+                    this[this.tablerpt_GetReporteViajeLocal.ClienteColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public string Operador {
+                get {
+                    return ((string)(this[this.tablerpt_GetReporteViajeLocal.OperadorColumn]));
+                }
+                set {
+                    this[this.tablerpt_GetReporteViajeLocal.OperadorColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsFechaNull() {
                 return this.IsNull(this.tablerpt_GetReporteViajeLocal.FechaColumn);
             }
@@ -824,6 +915,30 @@ namespace MinaTolReports {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetDestinoNull() {
                 this[this.tablerpt_GetReporteViajeLocal.DestinoColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsUnidadNull() {
+                return this.IsNull(this.tablerpt_GetReporteViajeLocal.UnidadColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetUnidadNull() {
+                this[this.tablerpt_GetReporteViajeLocal.UnidadColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsClienteNull() {
+                return this.IsNull(this.tablerpt_GetReporteViajeLocal.ClienteColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetClienteNull() {
+                this[this.tablerpt_GetReporteViajeLocal.ClienteColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -993,6 +1108,9 @@ namespace MinaTolReports.DSReportesImpresosPDFMinaTableAdapters {
             tableMapping.ColumnMappings.Add("SurtirA", "SurtirA");
             tableMapping.ColumnMappings.Add("Origen", "Origen");
             tableMapping.ColumnMappings.Add("Destino", "Destino");
+            tableMapping.ColumnMappings.Add("Unidad", "Unidad");
+            tableMapping.ColumnMappings.Add("Cliente", "Cliente");
+            tableMapping.ColumnMappings.Add("Operador", "Operador");
             this._adapter.TableMappings.Add(tableMapping);
         }
         

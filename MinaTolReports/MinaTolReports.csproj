@@ -118,6 +118,77 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\css\all.css" />
+    <Content Include="Assets\css\all.min.css" />
+    <Content Include="Assets\css\bootstrap.css" />
+    <Content Include="Assets\css\bootstrap.min.css" />
+    <Content Include="Assets\css\brands.css" />
+    <Content Include="Assets\css\brands.min.css" />
+    <Content Include="Assets\css\dataTables.dataTables.min.css" />
+    <Content Include="Assets\css\estiloClientes.css" />
+    <Content Include="Assets\css\EstilosBtnCambios\EstiloBtn.css" />
+    <Content Include="Assets\css\estiloVentas.css" />
+    <Content Include="Assets\css\fontawesome.css" />
+    <Content Include="Assets\css\fontawesome.min.css" />
+    <Content Include="Assets\css\jquery.dataTables.min.css" />
+    <Content Include="Assets\css\regular.css" />
+    <Content Include="Assets\css\regular.min.css" />
+    <Content Include="Assets\css\responsive.css" />
+    <Content Include="Assets\css\solid.css" />
+    <Content Include="Assets\css\solid.min.css" />
+    <Content Include="Assets\css\style.css" />
+    <Content Include="Assets\css\svg-with-js.css" />
+    <Content Include="Assets\css\svg-with-js.min.css" />
+    <Content Include="Assets\css\v4-font-face.css" />
+    <Content Include="Assets\css\v4-font-face.min.css" />
+    <Content Include="Assets\css\v4-shims.css" />
+    <Content Include="Assets\css\v4-shims.min.css" />
+    <Content Include="Assets\css\v5-font-face.css" />
+    <Content Include="Assets\css\v5-font-face.min.css" />
+    <Content Include="Assets\img\abierto.png" />
+    <Content Include="Assets\img\actualizar.png" />
+    <Content Include="Assets\img\administracion.png" />
+    <Content Include="Assets\img\agregar.png" />
+    <Content Include="Assets\img\aprobado.png" />
+    <Content Include="Assets\img\borrar.png" />
+    <Content Include="Assets\img\cargando.png" />
+    <Content Include="Assets\img\cerrado.png" />
+    <Content Include="Assets\img\denegado.png" />
+    <Content Include="Assets\img\edit.png" />
+    <Content Include="Assets\img\fb_loading.gif" />
+    <Content Include="Assets\img\fondo-login.png" />
+    <Content Include="Assets\img\fondo.png" />
+    <Content Include="Assets\img\inventario.png" />
+    <Content Include="Assets\img\Logo.ico" />
+    <Content Include="Assets\img\Logo.png" />
+    <Content Include="Assets\img\logow.png" />
+    <Content Include="Assets\img\logow1.png" />
+    <Content Include="Assets\img\logow2.png" />
+    <Content Include="Assets\img\logow3.png" />
+    <Content Include="Assets\img\logow4.jpg" />
+    <Content Include="Assets\img\lupa.png" />
+    <Content Include="Assets\img\mas.png" />
+    <Content Include="Assets\img\MaterialDesign\cash-multiple.png" />
+    <Content Include="Assets\img\menu.png" />
+    <Content Include="Assets\img\minalogin.jpg" />
+    <Content Include="Assets\img\minas.png" />
+    <Content Include="Assets\img\reporte.png" />
+    <Content Include="Assets\img\rh.png" />
+    <Content Include="Assets\img\tel-icono.png" />
+    <Content Include="Assets\img\usuario.png" />
+    <Content Include="Assets\img\vector-escalado.png" />
+    <Content Include="Assets\img\venta.png" />
+    <Content Include="Assets\img\ver.png" />
+    <Content Include="Assets\js\all.min.css" />
+    <Content Include="Assets\js\bootstrap.js" />
+    <Content Include="Assets\js\dataTables.min.js" />
+    <Content Include="Assets\js\jquery-3.4.1.min.js" />
+    <Content Include="Assets\js\jquery.dataTables.min.js" />
+    <Content Include="Assets\js\SweetAlert\sb-admin-2.js" />
+    <Content Include="Assets\js\SweetAlert\sb-admin-2.min.js" />
+    <Content Include="Assets\js\SweetAlert\sweetalert2.min.js" />
+    <Content Include="Assets\script.js" />
+    <Content Include="Assets\styles.css" />
     <Content Include="Global.asax" />
     <Content Include="RptViajesLocales.aspx" />
     <Content Include="SqlServerTypes\readme.htm" />
@@ -146,6 +217,9 @@
     <Content Include="DSReportesImpresosPDFMina.xsc">
       <DependentUpon>DSReportesImpresosPDFMina.xsd</DependentUpon>
     </Content>
+    <Content Include="Assets\css\LibreBaskerville-Bold.ttf" />
+    <Content Include="Assets\css\style.css.map" />
+    <Content Include="Assets\css\style.scss" />
     <None Include="DSReportesImpresosPDFMina.xsd">
       <SubType>Designer</SubType>
       <Generator>MSDataSetGenerator</Generator>

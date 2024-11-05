@@ -1,0 +1,640 @@
+
+
+.body{
+    background-color: #ffffff;
+    color: #1C1C1C;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-weight: bolder;
+}
+
+/*clientes*/
+
+.editar-clientes-form {
+    background-color: white; /* Fondo claro */
+    color: black; /* Texto oscuro para contraste */
+    padding: 20px; /* Espaciado interno */
+    border-radius: 10px; /* Bordes redondeados */
+    max-width: 600px; /* Ancho máximo del formulario */
+    margin: 20px auto; /* Centrado con margen */
+}
+
+.editar-clientes-form h2 {
+    color: black; /* Color de texto */
+}
+
+.editar-clientes-form form {
+    display: flex;
+    flex-direction: column;
+    color: black; /* Color de texto */
+}
+
+.editar-clientes-form label {
+    margin-top: 10px; /* Margen superior para las etiquetas */
+    font-weight: bold; /* Texto en negrita */
+    color: black; /* Color de texto */
+}
+
+.editar-clientes-form input[type="text"],
+.editar-clientes-form textarea {
+    color: black; /* Color de texto */
+    padding: 10px; /* Relleno */
+    margin-top: 5px; /* Margen superior */
+    border: 1px solid #ccc; /* Borde */
+    border-radius: 5px; /* Bordes redondeados */
+    font-size: 16px; /* Tamaño de fuente */
+}
+
+.editar-clientes-form input[type="submit"] {
+    background-color: #333; /* Fondo negro */
+    color: rgb(255, 255, 255); /* Texto blanco */
+    padding: 10px 20px; /* Relleno */
+    border: none; /* Sin borde */
+    cursor: pointer; /* Cursor puntero */
+    margin-top: 20px; /* Margen superior */
+    border-radius: 5px; /* Bordes redondeados */
+    font-size: 16px; /* Tamaño de fuente */
+    transition: background-color 0.3s; /* Transición suave */
+}
+
+.editar-clientes-form input[type="submit"]:hover {
+    background-color: gray;
+color: white; /* Fondo gris al pasar el ratón */
+}
+
+/* Inventario */
+
+/* Index */
+
+/* Estilos generales para el área de inventario */
+.inventario, .inventario * {
+    margin: 10px;
+    color: #000; /* Texto en negro */
+    background-color: transparent; /* Fondo transparente */
+}
+
+/* Estilos para los títulos */
+.inventario h1 {
+    color: #000; /* Título en negro */
+}
+
+/* Estilos para la barra de búsqueda y botones */
+.inventario .top-bar input[type="text"] {
+    color: black; /* Texto en negro */
+    height: 40px; /* Altura del campo de texto */
+    /* Añade estilos adicionales para el campo de búsqueda aquí */
+}
+
+.inventario .top-bar button {
+    border: none; /* Remueve el borde del botón */
+    background-color: transparent; /* Fondo transparente */
+}
+
+.inventario .top-bar img {
+    width: 15px; /* Ancho automático */
+    height: auto; /* Altura fijada para los íconos */
+    background-color: transparent;
+}
+
+/* Estilos para la tabla */
+.inventario table {
+    border-spacing: 0 10px; /* Espacio entre filas de la tabla */
+    width: 98%; /* Ajusta esto según necesites */
+}
+
+.inventario th  {
+    text-align: left; /* Alineación del texto */
+    background-color: black;
+    color: white;
+    padding: 5px 10px; /* Espaciado interno para celdas */
+    /* Añade bordes o estilos adicionales aquí */
+}
+
+.inventario td{
+    background-color: white;
+    color: black;
+}
+/* Selecciona la primera celda de cada fila para aplicar márgenes específicos */
+.inventario tr th:first-child, .inventario tr td:first-child {
+    padding-left: 20px; /* Espacio adicional para la primera columna */
+}
+
+/* Selecciona la última celda de cada fila para aplicar márgenes específicos */
+.inventario tr th:last-child, .inventario tr td:last-child {
+    padding-right: 20px; /* Espacio adicional para la última columna */
+}
+
+
+
+
+
+
+
+
+
+
+
+/*RH
+
+/* Estilos Generales para el Formulario */
+.tabla-empleados-rh {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    color: black !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.tabla-empleados-rh h1 {
+    color: black;
+    text-align: center;
+}
+
+.tabla-empleados-rh label {
+    display: block;
+    margin: 10px 0 5px;
+    color: black;
+}
+
+.tabla-empleados-rh input[type="text"],
+.tabla-empleados-rh input[type="email"],
+.tabla-empleados-rh input[type="tel"],
+.tabla-empleados-rh input[type="number"],
+.tabla-empleados-rh input[type="date"],
+.tabla-empleados-rh input[type="time"],
+.tabla-empleados-rh input[type="password"],
+.tabla-empleados-rh select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color: black;
+}
+
+.tabla-empleados-rh select[multiple] {
+    height: auto;
+    min-height: 80px;
+    color: black;
+}
+
+.tabla-empleados-rh button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #636363;
+    border: none;
+    border-radius: 5px;
+    color: rgb(255, 255, 255);
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.tabla-empleados-rh button[type="submit"]:hover {
+    background-color: gray;
+color: white;
+}
+
+
+/* editar empleado*/
+
+.editar-empleado-table {
+    margin: 10px;
+    border-collapse: collapse;
+    width: 100%;
+    color: black !important;
+}
+
+h1 {
+    color: rgb(0, 0, 0);
+}
+
+/* Estilos del formulario */
+
+.editar-empleado {
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+    border-collapse: collapse;
+}
+
+form {
+    margin-bottom: 20px;
+    color: white;
+}
+
+input[type="text"] {
+    padding: 10px;
+    margin-right: 10px;
+    border: 2px solid rgb(0, 0, 0);
+}
+
+.editar-empleado-btn {
+    background-color: rgb(59, 59, 59);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.editar-empleado-btn:hover {
+    background-color: gray;
+color: white;
+    color: white;
+}
+
+.editar-empleado-buscar{
+    margin-left: 30px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+/* Estilos de la tabla */
+
+table.editar-empleado {
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%;
+    border-collapse: collapse;
+    color: white;
+}
+
+table.editar-empleado, th, td {
+    color: white;
+    border: 1px solid black;
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: black;
+    color: white;
+}
+
+td a img {
+    height: 20px;
+    background: none;
+    align-items: center;
+    margin: 0;
+    color: white;
+}
+
+/* Estilo para enlaces de editar y eliminar */
+td a {
+    color: white;
+    display: inline-block;
+    margin: 0 5px;
+}
+
+/* Ajuste para el color del texto en la tabla para mejor contraste */
+td {
+    color: rgb(0, 0, 0);
+}
+
+th {
+    color: #ffffff;
+}
+
+/* Edición del empleado*/
+
+/* Estilos para el formulario de edición de empleado */
+.edicion-empleado-form {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.edicion-empleado-form h1 {
+    text-align: center;
+    color: #333;
+}
+
+.edicion-empleado-form form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.edicion-empleado-form label {
+    margin-top: 10px;
+    color: #333;
+}
+
+.edicion-empleado-form input[type="text"],
+.edicion-empleado-form input[type="email"],
+.edicion-empleado-form input[type="tel"],
+.edicion-empleado-form input[type="number"],
+.edicion-empleado-form input[type="date"],
+.edicion-empleado-form input[type="time"],
+.edicion-empleado-form input[type="password"],
+.edicion-empleado-form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.edicion-empleado-form button {
+    grid-column: span 2;
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.edicion-empleado-form button:hover {
+    background-color: gray;
+color: white;
+}
+
+.edicion-empleado-form .submit.back {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: #ffffff;
+    text-decoration: none;
+    background-color: #313131;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: all 0.2s ease-in-out;
+}
+
+.edicion-empleado-form .submit.back:hover {
+    background-color: gray;
+color: white;
+}
+
+
+/* Sesion */
+
+
+.sesion {
+    background-color: white; /* Fondo blanco para la sesión */
+    width: 300px; /* Ancho del formulario */
+    margin: 100px auto; /* Centrado y margen superior */
+    padding: 20px; /* Relleno interior */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    color: black;
+}
+h2 {
+    color: black; /* Título en negro */
+    text-align: center; /* Centrar título */
+}
+label {
+    color: #333; /* Color de texto para las etiquetas */
+}
+input[type=email], input[type=password] {
+    width: calc(100% - 22px); /* Ancho del input */
+    padding: 10px; /* Relleno */
+    margin-bottom: 20px; /* Margen inferior */
+    border: 1px solid #ccc; /* Borde */
+}
+input[type=submit] {
+    width: 100%; /* Ancho */
+    padding: 10px; /* Relleno */
+    background-color: #333; /* Fondo negro */
+    color: white; /* Texto blanco */
+    border: none; /* Sin borde */
+    cursor: pointer; /* Cursor de mano */
+}
+input[type=submit]:hover {
+    background-color: #222222; /* Fondo más oscuro al pasar el mouse */
+}
+
+/* Salidas */
+
+/* Estilos para la barra de búsqueda y botones */
+#search_bar {
+    margin-top: 10px;
+    padding: 10px;
+    color: #333;
+}
+
+#search_bar input[type="text"], .form-control {
+    border: 1px solid #000000;
+    padding: 5px 10px;
+    color: #333;
+}
+
+#search_bar button {
+    background-color: transparent; /* Botones con fondo transparentes */
+    color: rgb(0, 0, 0);
+    border: none;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+#search_bar button:hover {
+    background-color: gray;
+color: white; /* Oscurecer al pasar el mouse */
+}
+
+#search_bar img {
+    height: 30px; /* Altura fija para las imágenes */
+    width: auto; /* Ancho automático */
+    background-color: transparent; /* Asegurarse de que el fondo es transparente */
+}
+
+/* Estilos para la tabla */
+.tabla-salidas-datos {
+    margin: 10px;
+    width: 98%;
+    border-collapse: collapse;
+}
+
+.tabla-salidas-datos, .tabla-salidas-datos th, .tabla-salidas-datos td {
+    border: 1px solid #ddd;
+}
+
+.tabla-salidas-datos th, .tabla-salidas-datos td {
+    text-align: left;
+    padding: 8px;
+}
+
+.tabla-salidas-datos tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Menu de agregar salidas*/
+
+#tabla-salidas-agregar {
+    background-color: white; /* Fondo blanco */
+    color: black !important; /* Letras en negro */
+    padding: 20px; /* Espaciado interno */
+    margin: 10px auto; /* Centrado con un margen automático y 10px de los lados */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra suave para dar profundidad */
+}
+
+#tabla-salidas-agregar h3 {
+    text-align: center; /* Título centrado */
+    color: black !important;
+}
+
+#tabla-salidas-agregar form {
+    color: black !important;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Centrar elementos del formulario */
+    gap: 10px; /* Espacio entre los elementos del formulario */
+}
+
+.form-control {
+    border: 1px solid #000; /* Bordes en negro */
+    background-color: #fff; /* Fondo blanco */
+    color: #000 !important; /* Texto en negro */
+}
+
+.btn-primary {
+    border: 1px solid #000; /* Borde en negro */
+    background-color: #fff; /* Fondo blanco */
+    color: #000; /* Texto en negro */
+    padding: 10px 20px; /* Espaciado interno */
+    cursor: pointer; /* Cursor tipo puntero */
+}
+
+.btn-primary:hover {
+    background-color: gray;
+color: white; /* Fondo ligeramente gris al pasar el mouse */
+}
+
+/* Editar productos */
+
+
+.editar-precios-salidas {
+    max-width: 600px; /* Ancho máximo del formulario */
+    margin: 20px auto; /* Centrado y margen arriba/abajo */
+    padding: 20px; /* Espaciado interno */
+    background-color: #fff; /* Fondo blanco */
+    border: 1px solid #000; /* Borde negro */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  }
+
+  .editar-precios-salidas h2 {
+    text-align: center; /* Título centrado */
+    color: #000; /* Color de texto negro */
+  }
+
+  .editar-precios-salidas form {
+    display: flex;
+    flex-direction: column; /* Organiza los campos del formulario en columna */
+  }
+
+  .editar-precios-salidas label {
+    margin-top: 10px; /* Margen superior para las etiquetas */
+    color: #000; /* Color de texto negro */
+  }
+
+  .editar-precios-salidas input[type="text"],
+  .editar-precios-salidas textarea {
+    padding: 8px; /* Espaciado interno */
+    margin-top: 5px; /* Margen superior */
+    border: 1px solid #000; /* Borde negro */
+    border-radius: 4px; /* Bordes redondeados ligeramente */
+    color: #000; /* Texto negro */
+    background-color: #fff; /* Fondo blanco */
+  }
+
+  .editar-precios-salidas input[type="submit"] {
+    margin-top: 20px; /* Margen superior */
+    padding: 10px 15px; /* Espaciado interno */
+    background-color: #000; /* Fondo negro */
+    color: #fff; /* Texto blanco */
+    border: none; /* Sin borde */
+    border-radius: 4px; /* Bordes redondeados ligeramente */
+    cursor: pointer; /* Cursor de puntero */
+  }
+
+  .editar-precios-salidas input[type="submit"]:hover {
+    background-color: gray;
+color: white; /* Oscurecer el botón al pasar el mouse */
+}
+
+/* Solicitudes procesadas administración e inventario*/
+
+/* Estilo básico del contenedor principal */
+.container.mt-4 {
+    background-color: #fff; /* Fondo blanco */
+    color: #000; /* Texto negro */
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra ligera para profundidad */
+}
+
+/* Estilo para las alertas de información */
+.alert.alert-info {
+    background-color: #f2f2f2; /* Gris muy claro */
+    border-color: #ddd; /* Borde gris */
+    color: #333; /* Texto gris oscuro */
+}
+
+/* Estilo para el formulario de filtrado */
+.solicitudes-tabla .form-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Espacio entre elementos */
+    margin-bottom: 20px;
+}
+
+.solicitudes-tabla .form-inline label {
+    color: #333; /* Texto gris oscuro */
+}
+
+.solicitudes-tabla .form-inline .form-control {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #333;
+}
+
+.solicitudes-tabla .form-inline .btn {
+    background-color: #333; /* Fondo gris oscuro */
+    color: #fff; /* Texto blanco */
+    border: none; /* Sin bordes */
+}
+
+.solicitudes-tabla .form-inline .btn:hover {
+    background-color: #555; /* Fondo más claro al pasar el mouse */
+}
+
+/* Estilo para las tablas dentro de .solicitudes-tabla */
+.solicitudes-tabla table {
+    width: 100%;
+    border-collapse: collapse; /* Colapsa los bordes de las celdas */
+}
+
+.solicitudes-tabla th, .solicitudes-tabla td {
+    border: 1px solid #ddd; /* Borde gris claro */
+    padding: 8px; /* Espaciado interno */
+}
+
+.solicitudes-tabla th {
+    background-color: #333; /* Fondo gris oscuro */
+    color: #fff; /* Texto blanco */
+}
+
+.solicitudes-tabla td {
+    background-color: #f9f9f9; /* Fondo gris muy claro */
+    color: #333; /* Texto gris oscuro */
+}
+
+/* Botones dentro de las celdas de acciones */
+.solicitudes-tabla td button {
+    background-color: #fff; /* Fondo blanco */
+    color: #333; /* Texto gris oscuro */
+    margin-top: 5px;
+    border: 1px solid black; /* Borde negro */
+    padding: 5px 10px; /* Espaciado interno */
+    cursor: pointer; /* Cambia el cursor */
+}
+
+.solicitudes-tabla td button:hover {
+    background-color: #eee; /* Fondo gris claro al pasar el mouse */
+}
+
