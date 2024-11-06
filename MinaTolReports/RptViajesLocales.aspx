@@ -7,7 +7,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <link rel="icon" href="Assets/img/Logo.ico" type="image/x-icon" />
-<title>Reporte de Viajes Locales</title>
+    <title>Reporte de Viajes Locales</title>
 
 </head>
 <body>
@@ -22,13 +22,17 @@
                 ToolBarItemBorderStyle="Solid" ToolBarItemBorderWidth="1px" ToolBarItemHoverBackColor="" ToolBarItemPressedBorderColor="51, 102, 153" 
                 ToolBarItemPressedBorderStyle="Solid" ToolBarItemPressedBorderWidth="1px" ToolBarItemPressedHoverBackColor="153, 187, 226" 
                 Width="100%" Height="1200px">
-                <LocalReport ReportPath="RDLViajesLocales.rdlc">
+                <LocalReport ReportPath="RDLViajesLocales.rdlc" EnableExternalImages="true">
                     <DataSources>
                         <rsweb:ReportDataSource DataSourceId="ObjectDataSource1" Name="DataSet1" />
                     </DataSources>
                 </LocalReport>
             </rsweb:ReportViewer>
-            <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" OldValuesParameterFormatString="original_{0}" SelectMethod="GetData" TypeName="MinaTolReports.DSReportesImpresosPDFMinaTableAdapters.rpt_GetReporteViajeLocalTableAdapter"></asp:ObjectDataSource>
+            <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" OldValuesParameterFormatString="original_{0}" SelectMethod="GetData" TypeName="MinaTolReports.DSReportesImpresosPDFMinaTableAdapters.rpt_GetReporteViajeLocalTableAdapter">
+                <SelectParameters>
+                    <asp:QueryStringParameter DefaultValue="0" Name="Id" QueryStringField="Id" Type="Int64" />
+                </SelectParameters>
+            </asp:ObjectDataSource>
         </div>
     </form>
 </body>

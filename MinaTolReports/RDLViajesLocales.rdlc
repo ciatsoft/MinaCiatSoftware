@@ -7,7 +7,7 @@
         <DataProvider>System.Data.DataSet</DataProvider>
         <ConnectString>/* Local Connection */</ConnectString>
       </ConnectionProperties>
-      <rd:DataSourceID>0f099633-5e5f-42ec-8a28-f52540047461</rd:DataSourceID>
+      <rd:DataSourceID>827372bc-a7ce-45d3-921f-0283cef97e50</rd:DataSourceID>
     </DataSource>
   </DataSources>
   <DataSets>
@@ -33,10 +33,6 @@
           <DataField>UnidadMediaNombre</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="SurtirA">
-          <DataField>SurtirA</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="Origen">
           <DataField>Origen</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -60,7 +56,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>DSReportesImpresosPDFMina</rd:DataSetName>
-        <rd:SchemaPath>C:\GIT\MinaCiatSoftware\MinaTolReports\DSReportesImpresosPDFMina.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Git\Proyectos CiatSofrtware\MinaCiatSoftware\MinaTolReports\DSReportesImpresosPDFMina.xsd</rd:SchemaPath>
         <rd:TableName>rpt_GetReporteViajeLocal</rd:TableName>
         <rd:TableAdapterFillMethod>Fill</rd:TableAdapterFillMethod>
         <rd:TableAdapterGetDataMethod>GetData</rd:TableAdapterGetDataMethod>
@@ -1618,23 +1614,10 @@
       </Page>
     </ReportSection>
   </ReportSections>
-  <ReportParameters>
-    <ReportParameter Name="Id">
-      <DataType>Integer</DataType>
-      <Prompt>ReportParameter1</Prompt>
-    </ReportParameter>
-  </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>4</NumberOfColumns>
       <NumberOfRows>2</NumberOfRows>
-      <CellDefinitions>
-        <CellDefinition>
-          <ColumnIndex>0</ColumnIndex>
-          <RowIndex>0</RowIndex>
-          <ParameterName>Id</ParameterName>
-        </CellDefinition>
-      </CellDefinitions>
     </GridLayoutDefinition>
   </ReportParametersLayout>
   <EmbeddedImages>
