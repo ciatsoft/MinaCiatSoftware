@@ -67,7 +67,7 @@ $(document).ready(function () {
             {
                 data: "id", title: "Acciones", render: function (data) {
                     return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarViajeLocal(' + data + ', this)" />' +
-                        '<a href="http://localhost:57871/RptViajesLocales.aspx?id=' + data + '" value="Imprimir" class="btn btn-custom-clean">Imprimir</a>';
+                        '<input type="button" value="Imprimir" class="btn btn-custom-clean" onclick="ImprimirReporte(' + data + ', this)" />';
                 }
             }
 
@@ -258,6 +258,12 @@ function EditarViajeLocal(id) {
     location.href = "/Viajes/Locales/" + id;
     console.log(id);
 }
+
+function ImprimirReporte(id) {
+    window.open("http://localhost:57871/RptViajesLocales.aspx?id=" + id, '_blank');
+    console.log(id);
+}
+
 
 // Función para limpiar el formulario con estilo uniforme
 function LimpiarFormulario() {
