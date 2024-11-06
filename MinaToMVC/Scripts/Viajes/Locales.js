@@ -66,9 +66,11 @@ $(document).ready(function () {
             },
             {
                 data: "id", title: "Acciones", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarViajeLocal(' + data + ', this)" />';
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarViajeLocal(' + data + ', this)" />' +
+                        '<a href="http://localhost:57871/RptViajesLocales.aspx?id=' + data + '" value="Imprimir" class="btn btn-custom-clean">Imprimir</a>';
                 }
             }
+
         ],
         language: {
             "decimal": ",",
