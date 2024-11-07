@@ -88,9 +88,9 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox1</rd:DefaultName>
-            <Left>1.98883cm</Left>
+            <Left>0.49618cm</Left>
             <Height>0.77639cm</Height>
-            <Width>21.18488cm</Width>
+            <Width>18.57904cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -195,7 +195,7 @@
             </TablixRowHierarchy>
             <DataSetName>DataSet1</DataSetName>
             <Top>1.31092cm</Top>
-            <Left>1.98883cm</Left>
+            <Left>0.49618cm</Left>
             <Height>0.6cm</Height>
             <Width>7.29305cm</Width>
             <ZIndex>1</ZIndex>
@@ -230,13 +230,13 @@
                   <Width>0.07938cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.63229cm</Width>
-                </TablixColumn>
-                <TablixColumn>
                   <Width>2.02375cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>4.63266cm</Width>
+                  <Width>1.91792cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>4.10348cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -1380,9 +1380,9 @@
             </TablixRowHierarchy>
             <DataSetName>DataSet1</DataSetName>
             <Top>1.91092cm</Top>
-            <Left>1.98883cm</Left>
+            <Left>0.49618cm</Left>
             <Height>4.8cm</Height>
-            <Width>19.82259cm</Width>
+            <Width>18.57904cm</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -1495,8 +1495,8 @@
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
-            <Top>0.56981cm</Top>
-            <Left>18.72933cm</Left>
+            <Top>0.60509cm</Top>
+            <Left>15.99313cm</Left>
             <Height>1.2cm</Height>
             <Width>3.08208cm</Width>
             <ZIndex>3</ZIndex>
@@ -1508,9 +1508,9 @@
           </Tablix>
           <Line Name="Line2">
             <Top>7.95224cm</Top>
-            <Left>1.78188cm</Left>
+            <Left>0.28923cm</Left>
             <Height>0cm</Height>
-            <Width>20.32974cm</Width>
+            <Width>18.78599cm</Width>
             <ZIndex>4</ZIndex>
             <Style>
               <Border>
@@ -1538,7 +1538,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox133</rd:DefaultName>
             <Top>6.88731cm</Top>
-            <Left>11.19787cm</Left>
+            <Left>8.53007cm</Left>
             <Height>0.6cm</Height>
             <Width>2.5cm</Width>
             <ZIndex>5</ZIndex>
@@ -1562,6 +1562,7 @@
                   <TextRun>
                     <Value>Camino a San Antonio la Isla a Calimaya Paraje los Cruzados, San Antonio la Isla Tels.: 7225220388 y 7224800420</Value>
                     <Style>
+                      <FontSize>9pt</FontSize>
                       <FontWeight>Bold</FontWeight>
                       <Color>Blue</Color>
                     </Style>
@@ -1574,9 +1575,9 @@
             </Paragraphs>
             <rd:DefaultName>Textbox134</rd:DefaultName>
             <Top>7.95224cm</Top>
-            <Left>1.98883cm</Left>
+            <Left>0.49618cm</Left>
             <Height>0.6cm</Height>
-            <Width>19.80974cm</Width>
+            <Width>18.57904cm</Width>
             <ZIndex>6</ZIndex>
             <Style>
               <Border>
@@ -1601,7 +1602,7 @@
           </BackgroundImage>
         </Style>
       </Body>
-      <Width>10.43067in</Width>
+      <Width>7.72234in</Width>
       <Page>
         <PageHeight>27.94cm</PageHeight>
         <PageWidth>21.59cm</PageWidth>
