@@ -90,7 +90,7 @@
             <rd:DefaultName>Textbox1</rd:DefaultName>
             <Left>0.49618cm</Left>
             <Height>0.77639cm</Height>
-            <Width>18.57904cm</Width>
+            <Width>16.67404cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -209,7 +209,7 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>2.92805cm</Width>
+                  <Width>2.58409cm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>0.48917cm</Width>
@@ -233,10 +233,10 @@
                   <Width>2.02375cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.91792cm</Width>
+                  <Width>1.30938cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>4.10348cm</Width>
+                  <Width>3.15098cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -1382,7 +1382,7 @@
             <Top>1.91092cm</Top>
             <Left>0.49618cm</Left>
             <Height>4.8cm</Height>
-            <Width>18.57904cm</Width>
+            <Width>16.67404cm</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -1495,8 +1495,8 @@
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
-            <Top>0.60509cm</Top>
-            <Left>15.99313cm</Left>
+            <Top>0.53453cm</Top>
+            <Left>14.08814cm</Left>
             <Height>1.2cm</Height>
             <Width>3.08208cm</Width>
             <ZIndex>3</ZIndex>
@@ -1510,7 +1510,7 @@
             <Top>7.95224cm</Top>
             <Left>0.28923cm</Left>
             <Height>0cm</Height>
-            <Width>18.78599cm</Width>
+            <Width>16.88099cm</Width>
             <ZIndex>4</ZIndex>
             <Style>
               <Border>
@@ -1562,7 +1562,7 @@
                   <TextRun>
                     <Value>Camino a San Antonio la Isla a Calimaya Paraje los Cruzados, San Antonio la Isla Tels.: 7225220388 y 7224800420</Value>
                     <Style>
-                      <FontSize>9pt</FontSize>
+                      <FontSize>8pt</FontSize>
                       <FontWeight>Bold</FontWeight>
                       <Color>Blue</Color>
                     </Style>
@@ -1577,7 +1577,7 @@
             <Top>7.95224cm</Top>
             <Left>0.49618cm</Left>
             <Height>0.6cm</Height>
-            <Width>18.57904cm</Width>
+            <Width>16.67404cm</Width>
             <ZIndex>6</ZIndex>
             <Style>
               <Border>
@@ -1602,7 +1602,7 @@
           </BackgroundImage>
         </Style>
       </Body>
-      <Width>7.72234in</Width>
+      <Width>6.9891in</Width>
       <Page>
         <PageHeight>27.94cm</PageHeight>
         <PageWidth>21.59cm</PageWidth>
