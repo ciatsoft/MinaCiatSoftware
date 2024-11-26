@@ -58,6 +58,7 @@
     <Compile Include="DtoSucursales\UnidadMedida.cs" />
     <Compile Include="DtoViajes\DtoViajeInterno.cs" />
     <Compile Include="DtoViajes\DtoViajeLocal.cs" />
+    <Compile Include="DtoViajes\DtoFoliador.cs" />
     <Compile Include="ModelResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\Token.cs" />
