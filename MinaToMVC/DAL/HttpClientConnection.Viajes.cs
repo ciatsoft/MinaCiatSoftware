@@ -98,5 +98,19 @@ namespace MinaToMVC.DAL
 
         }
 
+        public async Task<ModelResponse> GetFoliadorByNombre(string Nombre)
+        {
+            var result = await RequestAsync<object>($"api/Foliador/{Nombre}", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
+
+
     }
 }

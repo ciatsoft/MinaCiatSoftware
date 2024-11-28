@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace MinaTolEntidades.DtoViajes
 {
-    internal class DtoFoliador : BaseObject
+    public class DtoFoliador : BaseObject
     {
         public string Nombre { get; set; }
         public string Descripcion { get; set; }
-
-        public string Folio { get; set; }
+        public long Consecutivo { get; set; }
+        public string ConsecutivoString { get; set; } // Formateado para mostrar
     }
 }

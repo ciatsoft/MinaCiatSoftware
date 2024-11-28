@@ -35,6 +35,7 @@ $(document).ready(function () {
         searching: true,
         columns: [
             { data: "id", "visible": false, title: "Id" },
+            { data: "folio", title: "Folio" },
             { data: "ubicacionOrigen.nombreUbicacion", title: "Origen" },
             { data: "ubicacionDestino.nombreUbicacion", title: "Destino" },  
             { data: "transportista.nombre", title: "Transportista" },  
@@ -143,7 +144,8 @@ function SaveOrUpdateViajeLocal() {
             CreatedBy: $("#txtCreatedBy").val(),
             CreatedDt: $("#txtCreatedDt").val(),
             UpdatedBy: $("#txtUpdatedBy").val(),
-            UpdatedDt: $("#txtUpdatedDt").val()
+            UpdatedDt: $("#txtUpdatedDt").val(),
+            Folio: $("#Folio").val()
         };
 
         // Mostrar los datos capturados en una alerta usando SweetAlert
@@ -210,7 +212,8 @@ function EliminarViajeLocal() {
             CreatedBy: $("#txtCreatedBy").val(),
             CreatedDt: $("#txtCreatedDt").val(),
             UpdatedBy: $("#txtUpdatedBy").val(),
-            UpdatedDt: $("#txtUpdatedDt").val()
+            UpdatedDt: $("#txtUpdatedDt").val(),
+            Folio: $("#Folio").val()
         };
 
         // Mostrar los datos capturados en una alerta usando SweetAlert

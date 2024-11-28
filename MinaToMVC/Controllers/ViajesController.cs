@@ -83,6 +83,7 @@ namespace MinaToMVC.Controllers
             var vehiculos = new List<Vehiculo>();
             var unidadmedida = new List<UnidadMedida>();
             var clientes = new List<Cliente>();
+            var folio = new DtoFoliador();
 
             var ViajeLocal = new DtoViajeLocal();
 
@@ -94,6 +95,9 @@ namespace MinaToMVC.Controllers
                 var result = await httpClientConnection.GetViajeLocalById(id);
                 ViajeLocal = JsonConvert.DeserializeObject<DtoViajeLocal>(result.Response.ToString());
             }
+            string Nombre = "ViajeLocal";
+            var responsefolio = await httpClientConnection.GetFoliadorByNombre(Nombre);
+            folio = JsonConvert.DeserializeObject<DtoFoliador>(responsefolio.Response.ToString());
 
             var responseUbicaciones = await httpClientConnection.GetAllUbicacion();
             ubicaciones = JsonConvert.DeserializeObject<List<DtoUbicacion>>(responseUbicaciones.Response.ToString());
@@ -117,6 +121,7 @@ namespace MinaToMVC.Controllers
             ViewBag.Trabajadores = trabajadores;
             ViewBag.Vehiculos = vehiculos;
             ViewBag.Clientes = clientes;
+            ViewBag.Folio = folio;
 
             return View(ViajeLocal);
         }
