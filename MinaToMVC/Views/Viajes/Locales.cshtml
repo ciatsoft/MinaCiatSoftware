@@ -11,6 +11,7 @@
     var clientes = (List<MinaTolEntidades.DtoClientes.Cliente>)ViewBag.Clientes;
     var unidadmedida = (List<MinaTolEntidades.DtoSucursales.UnidadMedida>)ViewBag.UnidadDeMedida;
     var ubicaciones = (List<MinaTolEntidades.DtoCatalogos.DtoUbicacion>)ViewBag.Ubicaciones;
+    var folio = (MinaTolEntidades.DtoViajes.DtoFoliador)ViewBag.Folio;
 
     var ViajeLocal = (MinaTolEntidades.DtoViajes.DtoViajeLocal)Model;
 }
@@ -80,15 +81,21 @@
         <input type="hidden" id="txtCreatedDt" value="@DateTime.Now" />
         <input type="hidden" id="txtUpdatedBy" value="@User.Identity.Name" />
         <input type="hidden" id="txtUpdatedDt" value="@DateTime.Now" />
+        <input type="hidden" id="txtViajeinterno" />
         <br>
         <center><h1>Viajes Locales</h1></center>
         <div class="tabla-consultas-empleados">
             <div class="rectangulos" style="width: 100%;">
                 <div class="row">
                     <div class="col-lg-3">
-                        <label>ID del Viaje:</label>
-                        <input type="text" id="txtViajeinterno" name="txtViajeinterno" class="form-control" disabled />
+                        <label>Folio:</label>
+                        <!-- Input oculto para almacenar folio.Id -->
+                        <input type="hidden" id="FolioId" name="FolioId" value="@folio.Id" />
+
+                        <!-- Input visible para mostrar folio.Consecutivo -->
+                        <input type="text" id="Folio" name="Folio" class="form-control" value="@folio.ConsecutivoString" disabled />
                     </div>
+
                     <div class="col-lg-3">
                         <label>Ubicación Origen:</label>
                         <select id="ddlUOrigen" name="ddlUOrigen" class="form-control" onchange="actualizarTiposDeMaterial()">

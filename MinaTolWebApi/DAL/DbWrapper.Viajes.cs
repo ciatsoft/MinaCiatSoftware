@@ -221,6 +221,36 @@ namespace MinaTolWebApi.DAL
 
             return modelResponse;
         }
+        public ModelResponse UpdateFoliador(string nombre)
+        {
+            var modelResponse = new ModelResponse();
+
+            try
+            {
+                // Parámetros para el procedimiento almacenado UpdateFoliador
+                var foliadorParameters = new List<SqlParameter>
+        {
+            new SqlParameter("@Nombre", SqlDbType.VarChar) { Value = nombre }
+        };
+
+                // Ejecuta el procedimiento almacenado
+                ExecuteNonQuery("UpdateFoliador", CommandType.StoredProcedure, foliadorParameters);
+
+                // Asigna un resultado de éxito
+                modelResponse.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
+
+
+
 
     }
 }

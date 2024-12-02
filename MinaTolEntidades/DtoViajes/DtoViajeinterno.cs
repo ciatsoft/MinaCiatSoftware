@@ -26,5 +26,6 @@ namespace MinaTolEntidades.DtoViajes
         public Vehiculo Vehiculo { get; set; }
         public DateTime FechaViaje { get; set; }
         public string Observaciones { get; set; }
+        public string Folio { get; set; }
     }
 }

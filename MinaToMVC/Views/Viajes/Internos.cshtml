@@ -7,6 +7,7 @@
     var trabajadores = (List<MinaTolEntidades.DtoSucursales.DtoTrabajador>)ViewBag.Trabajadores;
     var vehiculos = (List<MinaTolEntidades.DtoClientes.Vehiculo>)ViewBag.Vehiculos;
     var ViajeInterno = (MinaTolEntidades.DtoViajes.DtoViajeInterno)Model;
+    var folio = (MinaTolEntidades.DtoViajes.DtoFoliador)ViewBag.Folio;
 
 }
 
@@ -74,14 +75,15 @@
         <input type="hidden" id="txtCreatedDt" value="@DateTime.Now" />
         <input type="hidden" id="txtUpdatedBy" value="@User.Identity.Name" />
         <input type="hidden" id="txtUpdatedDt" value="@DateTime.Now" />
+        <input type="hidden" id="txtViajeinterno" />
         <br>
         <center><h1>Viajes Internos</h1></center>
         <div class="tabla-consultas-empleados">
             <div class="rectangulos" style="width: 100%;">
                 <div class="row">
                     <div class="col-lg-3">
-                        <label>ID del Viaje:</label>
-                        <input type="text" id="txtViajeinterno" name="txtTrabajadorId" class="form-control" disabled />
+                        <label>Folio:</label>
+                        <input type="text" id="Folio" class="form-control" value="@folio.ConsecutivoString" disabled />
                     </div>
                     <div class="col-lg-3">
                         <label>Ubicación Origen:</label>
