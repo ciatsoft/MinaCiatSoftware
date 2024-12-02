@@ -111,6 +111,19 @@ namespace MinaToMVC.DAL
 
         }
 
+        public async Task<ModelResponse> UpdateFoliador(string nombre)
+        {
+            var result = await RequestAsync<object>($"api/Viajes/{nombre}", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
 
+            {
+                return responseString;
+            }));
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
     }
 }

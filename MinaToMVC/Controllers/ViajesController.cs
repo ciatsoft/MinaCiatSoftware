@@ -26,6 +26,7 @@ namespace MinaToMVC.Controllers
             var trabajadores = new List<DtoTrabajador>();
             var vehiculos = new List<Vehiculo>();
             var ViajeInterno = new DtoViajeInterno();
+            var folio = new DtoFoliador();
             //vehiculos.Add(new Vehiculo()
             //{ 
             //    Id = 1,
@@ -37,6 +38,10 @@ namespace MinaToMVC.Controllers
                 var result = await httpClientConnection.GetViajeInternoById(id);
                 ViajeInterno = JsonConvert.DeserializeObject<DtoViajeInterno>(result.Response.ToString());
             }
+
+            string Nombre = "ViajesInternos";
+            var responsefolio = await httpClientConnection.GetFoliadorByNombre(Nombre);
+            folio = JsonConvert.DeserializeObject<DtoFoliador>(responsefolio.Response.ToString());
 
             var responseVehiculo = await httpClientConnection.GetAllVehiculo();
             vehiculos = JsonConvert.DeserializeObject<List<Vehiculo>>(responseVehiculo.Response.ToString());
@@ -57,6 +62,7 @@ namespace MinaToMVC.Controllers
             ViewBag.Trabajadores = trabajadores;
             ViewBag.Vehiculos = vehiculos;
             ViewBag.ViajeInterno = ViajeInterno;
+            ViewBag.Folio = folio;
 
             return View(ViajeInterno);
         }
@@ -131,6 +137,13 @@ namespace MinaToMVC.Controllers
             var result = httpClientConnection.SaveOrUpdateViajeLocal(t);
             return JsonConvert.SerializeObject(result);
         }
+
+        public string UpdateFoliador(string nombre)
+        {
+            var result = httpClientConnection.UpdateFoliador(nombre);
+            return JsonConvert.SerializeObject(result);
+        }
+
         public async Task<string> GetAllViajeLocal()
         {
             var token = Helpers.SessionHelper.GetSessionUser();

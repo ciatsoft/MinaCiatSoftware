@@ -35,6 +35,7 @@ $(document).ready(function () {
         searching: true,
         columns: [
             { data: "id", "visible": false, title: "Id" },
+            { data: "folio", title: "Folio" },
             { data: "ubicacionOrigen.nombreUbicacion", title: "Origen" },
             { data: "ubicacionDestino.nombreUbicacion", title: "Destino" },
             { data: "transportista.nombre", title: "Transportista" },
@@ -119,9 +120,10 @@ $(document).ready(function () {
 });
 
 // Función para guardar o actualizar
+// Función para guardar o actualizar el viaje interno
 function SaveOrUpdateViajeInterno() {
     if ($("#frmViajesInternos").valid()) {
-        // Se construye el objeto de parámetros para el viaje local
+        // Se construye el objeto de parámetros para el viaje interno
         var parametro = {
             Id: $("#txtViajeinterno").val(),
             UbicacionOrigen: { Id: $("#ddlUOrigen").val() },
@@ -135,17 +137,19 @@ function SaveOrUpdateViajeInterno() {
             CreatedBy: $("#txtCreatedBy").val(),
             CreatedDt: $("#txtCreatedDt").val(),
             UpdatedBy: $("#txtUpdatedBy").val(),
-            UpdatedDt: $("#txtUpdatedDt").val()
+            UpdatedDt: $("#txtUpdatedDt").val(),
+            Folio: $("#Folio").val()
         };
 
         // Mostrar los datos capturados en una alerta usando SweetAlert
         Swal.fire({
             title: 'Datos del viaje',
             html: `<strong>Origen:</strong> ${$("#ddlUOrigen option:selected").text()}<br/>
-                   <strong>Destino:</strong> ${$("#ddlUDestino option:selected").text()}<br/>
+                   <strong>Destino:</strong> ${$("#ddlDestino option:selected").text()}<br/>
                    <strong>Transportista:</strong> ${$("#ddlTransportistas option:selected").text()}<br/>
                    <strong>Material:</strong> ${$("#ddlTipoMaterial option:selected").text()}<br/>
                    <strong>Vehículo:</strong> ${$("#ddlVehiculo option:selected").text()}<br/>
+                   <strong>Unidad de Medida:</strong> ${$("#ddlUnidadM option:selected").text()}<br/>
                    <strong>Fecha del Viaje:</strong> ${$("#dtpFechaViaje").val()}<br/>
                    <strong>Observaciones:</strong> ${$("#txtObservaciones").val()}`,
             icon: 'info',
@@ -154,22 +158,38 @@ function SaveOrUpdateViajeInterno() {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = '/Viajes/Internos';
-                // Enviar los datos al servidor
+                // Enviar los datos al servidor para guardar o actualizar el viaje
                 PostMVC("/Viajes/SaveOrUpdateViajeInterno", parametro, function (r) {
                     if (r.IsSuccess) {
-                        //LimpiarFormulario();
-                        Swal.fire('Éxito', 'Datos guardados exitosamente', 'success');
+                        // Llamar a la función que actualiza el foliador después de guardar el viaje
+                        UpdateFoliador();
                     } else {
                         Swal.fire('Error', 'Error al guardar los datos: ' + r.response.ErrorMessage, 'error');
                     }
                 });
             }
+            UpdateFoliador();
         });
     } else {
         Swal.fire('Advertencia', 'Por favor, complete todos los campos obligatorios.', 'warning');
     }
 }
+
+// Función para actualizar el foliador
+function UpdateFoliador() {
+    // Llamada para actualizar el foliador
+    PostMVC("/Viajes/UpdateFoliador", { nombre: 'ViajesInternos' }, function (rFoliador) {
+        if (rFoliador.IsSuccess) {
+            Swal.fire('Éxito', 'Datos guardados y foliador actualizado', 'success').then(() => {
+            });
+        } else {
+            Swal.fire('Error', 'Error al actualizar el foliador', 'error');
+        }
+        
+    });
+    window.location.href = '/Viajes/Internos';
+}
+
 
 // Función para eliminar con confirmación y estructura de mensajes de SweetAlert
 function EliminarViajeInterno() {
@@ -199,7 +219,8 @@ function EliminarViajeInterno() {
             CreatedBy: $("#txtCreatedBy").val(),
             CreatedDt: $("#txtCreatedDt").val(),
             UpdatedBy: $("#txtUpdatedBy").val(),
-            UpdatedDt: $("#txtUpdatedDt").val()
+            UpdatedDt: $("#txtUpdatedDt").val(),
+            Folio: $("#Folio").val()
         };
 
         // Mostrar los datos capturados en una alerta usando SweetAlert

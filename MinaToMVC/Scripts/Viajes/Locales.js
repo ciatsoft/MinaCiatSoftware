@@ -166,22 +166,38 @@ function SaveOrUpdateViajeLocal() {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = '/Viajes/Locales';
-                // Enviar los datos al servidor
+                // Enviar los datos al servidor para guardar o actualizar el viaje
                 PostMVC("/Viajes/SaveOrUpdateViajeLocal", parametro, function (r) {
                     if (r.IsSuccess) {
-                        //LimpiarFormulario();
-                        Swal.fire('Éxito', 'Datos guardados exitosamente', 'success');
+                        // Llamar a la función que actualiza el foliador después de guardar el viaje
+                        UpdateFoliador();
                     } else {
                         Swal.fire('Error', 'Error al guardar los datos: ' + r.response.ErrorMessage, 'error');
                     }
                 });
             }
+            UpdateFoliador();
         });
     } else {
         Swal.fire('Advertencia', 'Por favor, complete todos los campos obligatorios.', 'warning');
     }
 }
+
+// Función para actualizar el foliador
+function UpdateFoliador() {
+    // Llamada para actualizar el foliador
+    PostMVC("/Viajes/UpdateFoliador", { nombre: 'ViajeLocal' }, function (rFoliador) {
+        if (rFoliador.IsSuccess) {
+            Swal.fire('Éxito', 'Datos guardados y foliador actualizado', 'success').then(() => {
+            });
+        } else {
+            Swal.fire('Error', 'Error al actualizar el foliador', 'error');
+        }
+
+    });
+    window.location.href = '/Viajes/Locales';
+}
+
 
 // Función para eliminar con confirmación y estructura de mensajes de SweetAlert
 function EliminarViajeLocal() {

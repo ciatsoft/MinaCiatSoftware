@@ -60,5 +60,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.SaveOrUpdateViajeLocal(vl);
             return result;
         }
+
+        [HttpGet, Route("{nombre}")]
+        public ModelResponse UpdateFoliador(string nombre)
+        {
+            var result = wrapper.UpdateFoliador(nombre);
+            return result;
+        }
     }
 }
