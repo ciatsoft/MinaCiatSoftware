@@ -8,6 +8,7 @@
     var vehiculos = (List<MinaTolEntidades.DtoClientes.Vehiculo>)ViewBag.Vehiculos;
     var ViajeInterno = (MinaTolEntidades.DtoViajes.DtoViajeInterno)Model;
     var folio = (MinaTolEntidades.DtoViajes.DtoFoliador)ViewBag.Folio;
+    var clientes = (List<MinaTolEntidades.DtoClientes.Cliente>)ViewBag.Clientes;
 
 }
 
@@ -68,7 +69,7 @@
             color: white; /* Color de texto blanco */
         }
 </style>
-<form enctype="multipart/form-data" id="frmViajesInternos" method="post" name="frmViajesInternos"  onmouseover="actualizarTiposDeMaterial()">
+<form enctype="multipart/form-data" id="frmViajesInternos" method="post" name="frmViajesInternos"  >
     <div class="content">
         <!-- Campos ocultos para los datos automáticos -->
         <input type="hidden" id="txtCreatedBy" value="@User.Identity.Name" />
@@ -87,7 +88,7 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Ubicación Origen:</label>
-                        <select id="ddlUOrigen" class="form-control" onchange="actualizarTiposDeMaterial()">
+                        <select id="ddlUOrigen" class="form-control"  disabled >
                             @foreach (var i in ubicaciones)
                             {
                                 <option value="@i.Id">@i.NombreUbicacion</option>
@@ -95,11 +96,11 @@
                         </select>
                     </div>
                     <div class="col-lg-3">
-                        <label>Ubicación Destino:</label>
-                        <select id="ddlDestino" class="form-control">
-                            @foreach (var i in ubicaciones)
+                        <label>Cliente:</label>
+                        <select id="dllcliente" class="form-control" onchange="actualizarTiposDeMaterial()">
+                            @foreach (var i in clientes)
                             {
-                                <option value="@i.Id">@i.NombreUbicacion</option>
+                                <option value="@i.Id">@i.Nombre</option>
                             }
                         </select>
                     </div>

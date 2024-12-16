@@ -199,6 +199,7 @@
     <Compile Include="Controllers\AlmacenController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ViajesController.cs" />
+    <Compile Include="DAL\HttpClientConnection.ClienteTipoMaterial.cs" />
     <Compile Include="DAL\httpClientConnection.Roll.cs" />
     <Compile Include="DAL\HttpClientConnection.TipoMaterialUbicacion.cs" />
     <Compile Include="DAL\httpClientConnection.Vehiculo.cs" />

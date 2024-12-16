@@ -25,7 +25,7 @@ namespace MinaTolWebApi.DAL
                         var r = FillEntity<DtoViajeInterno>(reader);
 
                         r.UbicacionOrigen.NombreUbicacion = MappingProperties<string>(reader["Origen"]);
-                        r.UbicacionDestino.NombreUbicacion = MappingProperties<string>(reader["Destino"]);
+                        r.ClienteVI.Nombre = MappingProperties<string>(reader["Clientes"]);
                         r.Transportista.Nombre = MappingProperties<string>(reader["Chofer"]);
                         r.TipoMaterial.NombreTipoMaterial = MappingProperties<string>(reader["Material"]);
                         r.Vehiculo.Placa = MappingProperties<string>(reader["Auto"]);
@@ -149,9 +149,9 @@ namespace MinaTolWebApi.DAL
                         {
                             Id = MappingProperties<long>(reader["UbicacionOrigenId"])
                         };
-                        r.UbicacionDestino = new MinaTolEntidades.DtoCatalogos.DtoUbicacion()
+                        r.ClienteVI = new MinaTolEntidades.DtoClientes.Cliente()
                         {
-                            Id = MappingProperties<long>(reader["UbicacionDestinoId"])
+                            Id = MappingProperties<long>(reader["ClienteId"])
                         };
                         r.TipoMaterial = new MinaTolEntidades.DtoCatalogos.DtoTipoMaterialUbicacion()
                         {

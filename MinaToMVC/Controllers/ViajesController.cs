@@ -27,6 +27,7 @@ namespace MinaToMVC.Controllers
             var vehiculos = new List<Vehiculo>();
             var ViajeInterno = new DtoViajeInterno();
             var folio = new DtoFoliador();
+            var clientes = new List<Cliente>();
             //vehiculos.Add(new Vehiculo()
             //{ 
             //    Id = 1,
@@ -55,13 +56,16 @@ namespace MinaToMVC.Controllers
             var responsetrabajadores = await httpClientConnection.GetAllTrabajador();
             trabajadores = JsonConvert.DeserializeObject<List<DtoTrabajador>>(responsetrabajadores.Response.ToString());
 
-            
+            var responseClientes = await httpClientConnection.GetAllCliente();
+            clientes = JsonConvert.DeserializeObject<List<Cliente>>(responseClientes.Response.ToString());
+
 
             ViewBag.Ubicaciones = ubicaciones;
             ViewBag.TipoMaterial = tipoMateriales;
             ViewBag.Trabajadores = trabajadores;
             ViewBag.Vehiculos = vehiculos;
             ViewBag.ViajeInterno = ViajeInterno;
+            ViewBag.Clientes = clientes;
             ViewBag.Folio = folio;
 
             return View(ViajeInterno);
@@ -138,11 +142,6 @@ namespace MinaToMVC.Controllers
             return JsonConvert.SerializeObject(result);
         }
 
-        public string UpdateFoliador(string nombre)
-        {
-            var result = httpClientConnection.UpdateFoliador(nombre);
-            return JsonConvert.SerializeObject(result);
-        }
 
         public async Task<string> GetAllViajeLocal()
         {
@@ -151,9 +150,9 @@ namespace MinaToMVC.Controllers
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
-        public async Task<string> GetTipoMaterialByUbicacion(long id)
+        public async Task<string> GetTipoMaterialByCliente(long id)
         {
-            var result = await httpClientConnection.GetTipoMaterialByUnicacion(id);
+            var result = await httpClientConnection.GetTipoMaterialByCliente(id);
             return JsonConvert.SerializeObject(result);
         }
     }

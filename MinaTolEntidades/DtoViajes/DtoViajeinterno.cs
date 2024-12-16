@@ -14,13 +14,13 @@ namespace MinaTolEntidades.DtoViajes
         public DtoViajeInterno()
         {
             UbicacionOrigen = new DtoUbicacion();
-            UbicacionDestino = new DtoUbicacion();
+            ClienteVI = new Cliente();
             TipoMaterial = new DtoTipoMaterialUbicacion();
             Transportista = new DtoTrabajador();
             Vehiculo = new Vehiculo();
         }
         public DtoUbicacion UbicacionOrigen { get; set; }
-        public DtoUbicacion UbicacionDestino { get; set; }
+        public Cliente ClienteVI { get; set; }
         public DtoTipoMaterialUbicacion TipoMaterial { get; set; }
         public DtoTrabajador Transportista { get; set; }
         public Vehiculo Vehiculo { get; set; }
