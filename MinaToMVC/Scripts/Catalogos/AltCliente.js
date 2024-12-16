@@ -18,6 +18,8 @@
             { data: "telefono", title: "Télefono" },
             { data: "email", title: "Email" },
             { data: "comentarios", title: "Comentarios" },
+            { data: "rfc", title: "RFC" },
+            { data: "razon_Social", title: "Razon Social" },
             {
                 data: "estatus",
                 title: "Estatus",
@@ -72,13 +74,16 @@
 // Función que se ejecuta al hacer clic en el botón de Guardar
 function SaveOrUpdateCliente() {
     if ($("#frmCliente").valid()) {
+        Estatuscheck = 1;
         var parametro = {
             Id: $("#txtIdCliente").val(),
             Nombre: $("#txtNombre").val(),
             Telefono: $("#txtTelefono").val(),
             Email: $("#txtEmail").val(),
+            RFC: $("#txtRFC").val(),
+            Razon_Social: $("#txtrazon").val(),
             Comentarios: $("#txtComentarios").val(),
-            Estatus: $("#chbEstatus").is(':checked'),
+            Estatus: Estatuscheck,
             CreatedBy: $("#txtCreatedBy").val(),
             CreatedDt: $("#txtCreatedDt").val(),
             UpdatedBy: $("#txtUpdatedBy").val(),
@@ -116,11 +121,13 @@ function EliminarCliente(id, boton) {
     var telefono = row.find("td:eq(1)").text();
     var Email = row.find("td:eq(2)").text();
     var comentario = row.find("td:eq(3)").text();
+    var rfc = row.find("td:eq(4)").text();
+    var razon = row.find("td:eq(5)").text();
 
     // Confirmación de eliminación con SweetAlert
     Swal.fire({
         title: '¿Está seguro?',
-        text: "¿Desea eliminar el siguiente cliente? \nNombre: " + nombre + "\nTelefono: " + telefono + "\nEmail: " + Email + "\nComentario: " + comentario,
+        text: "¿Desea eliminar el siguiente cliente? \nNombre: " + nombre + "\nTelefono: " + telefono + "\nEmail: " + Email + "\nComentario: " + comentario + "\nRFC: " + rfc + "\nRazón social: " + razon,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -135,6 +142,8 @@ function EliminarCliente(id, boton) {
                 Telefono: telefono,
                 Email: Email,
                 Comentarios: comentario,
+                RFC: rfc,
+                Razon_Social: razon,
                 Estatus: 0,
                 CreatedBy: $("#txtCreatedBy").val(),
                 CreatedDt: $("#txtCreatedDt").val(),

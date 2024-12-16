@@ -76,17 +76,24 @@
                         <input type="email" id="txtEmail" name="txtEmail" class="form-control" />
                     </div>
                     <div class="col-lg-3">
-                        <div class="col-lg-6">
-                            <label>Estatus:</label>
-                            <input type="checkbox" name="chbEstatus" id="chbEstatus" value="" class="form-control" />
-                        </div>
+                        <label>RFC:</label>
+                        <input type="text" id="txtRFC" name="txtRFC" class="form-control" />
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Razón soocial:</label>
+                        <input type="text" id="txtrazon" name="txtrazon" class="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                        <label>Tipo de Material:</label>
+                        <input type="text" id="txtrazon" name="txtrazon" class="form-control" />
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <label>Comentarios:</label>
                         <textarea name="txtComentarios" id="txtComentarios" class="form-control" rows="6"></textarea>
                     </div>
+                    <br />
                     <div class="row">
                         <div class="col-md-12">
                             <input href="/Administracion/Clientes" type="button" value="Guardar" onclick="SaveOrUpdateCliente()" class="btn btn-success" />

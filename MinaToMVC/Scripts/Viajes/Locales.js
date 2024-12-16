@@ -149,7 +149,7 @@ function SaveOrUpdateViajeLocal() {
         };
 
         // Mostrar los datos capturados en una alerta usando SweetAlert
-        Swal.fire({
+        window.Swal.fire({
             title: 'Datos del viaje',
             html: `<strong>Origen:</strong> ${$("#ddlUOrigen option:selected").text()}<br/>
                    <strong>Destino:</strong> ${$("#ddlUDestino option:selected").text()}<br/>
@@ -166,36 +166,18 @@ function SaveOrUpdateViajeLocal() {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Enviar los datos al servidor para guardar o actualizar el viaje
                 PostMVC("/Viajes/SaveOrUpdateViajeLocal", parametro, function (r) {
                     if (r.IsSuccess) {
-                        // Llamar a la función que actualiza el foliador después de guardar el viaje
-                        UpdateFoliador();
                     } else {
-                        Swal.fire('Error', 'Error al guardar los datos: ' + r.response.ErrorMessage, 'error');
+                        window.Swal.fire('Error', 'Error al guardar los datos: ' + r.response.ErrorMessage, 'error');
                     }
                 });
             }
-            UpdateFoliador();
+            window.location.href = '/Viajes/Locales';
         });
     } else {
-        Swal.fire('Advertencia', 'Por favor, complete todos los campos obligatorios.', 'warning');
+        window.Swal.fire('Advertencia', 'Por favor, complete todos los campos obligatorios.', 'warning');
     }
-}
-
-// Función para actualizar el foliador
-function UpdateFoliador() {
-    // Llamada para actualizar el foliador
-    PostMVC("/Viajes/UpdateFoliador", { nombre: 'ViajeLocal' }, function (rFoliador) {
-        if (rFoliador.IsSuccess) {
-            Swal.fire('Éxito', 'Datos guardados y foliador actualizado', 'success').then(() => {
-            });
-        } else {
-            Swal.fire('Error', 'Error al actualizar el foliador', 'error');
-        }
-
-    });
-    window.location.href = '/Viajes/Locales';
 }
 
 

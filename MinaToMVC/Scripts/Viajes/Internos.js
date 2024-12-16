@@ -37,7 +37,7 @@ $(document).ready(function () {
             { data: "id", "visible": false, title: "Id" },
             { data: "folio", title: "Folio" },
             { data: "ubicacionOrigen.nombreUbicacion", title: "Origen" },
-            { data: "ubicacionDestino.nombreUbicacion", title: "Destino" },
+            { data: "clienteVI.nombre", title: "Cliente" },
             { data: "transportista.nombre", title: "Transportista" },
             { data: "tipoMaterial.nombreTipoMaterial", title: "Material" },
             { data: "vehiculo.placa", title: "Vehículo" },
@@ -103,7 +103,7 @@ $(document).ready(function () {
         console.log("Datos recibidos: " + JSON.stringify(viajeInternoJson));
         $("#txtViajeinterno").val(viajeInternoJson.Id);
         $("#ddlUOrigen").val(viajeInternoJson.UbicacionOrigen.Id);
-        $("#ddlUDestino").val(viajeInternoJson.UbicacionDestino.Id);
+        $("#dllcliente").val(viajeInternoJson.ClienteVI.Id);
         $("#ddlTipoMaterial").val(viajeInternoJson.TipoMaterial.Id);
         $("#ddlTransportistas").val(viajeInternoJson.Transportista.Id);
         $("#ddlVehiculo").val(viajeInternoJson.Vehiculo.Id);
@@ -127,7 +127,7 @@ function SaveOrUpdateViajeInterno() {
         var parametro = {
             Id: $("#txtViajeinterno").val(),
             UbicacionOrigen: { Id: $("#ddlUOrigen").val() },
-            UbicacionDestino: { Id: $("#ddlDestino").val() },
+            ClienteVI: { Id: $("#dllcliente").val() },
             Transportista: { Id: $("#ddlTransportistas").val() },
             TipoMaterial: { Id: $("#ddlTipoMaterial").val() },
             Vehiculo: { Id: $("#ddlVehiculo").val() },
@@ -145,7 +145,7 @@ function SaveOrUpdateViajeInterno() {
         Swal.fire({
             title: 'Datos del viaje',
             html: `<strong>Origen:</strong> ${$("#ddlUOrigen option:selected").text()}<br/>
-                   <strong>Destino:</strong> ${$("#ddlDestino option:selected").text()}<br/>
+                   <strong>Cliente:</strong> ${$("#ddlcliente option:selected").text()}<br/>
                    <strong>Transportista:</strong> ${$("#ddlTransportistas option:selected").text()}<br/>
                    <strong>Material:</strong> ${$("#ddlTipoMaterial option:selected").text()}<br/>
                    <strong>Vehículo:</strong> ${$("#ddlVehiculo option:selected").text()}<br/>
@@ -161,33 +161,16 @@ function SaveOrUpdateViajeInterno() {
                 // Enviar los datos al servidor para guardar o actualizar el viaje
                 PostMVC("/Viajes/SaveOrUpdateViajeInterno", parametro, function (r) {
                     if (r.IsSuccess) {
-                        // Llamar a la función que actualiza el foliador después de guardar el viaje
-                        UpdateFoliador();
                     } else {
                         Swal.fire('Error', 'Error al guardar los datos: ' + r.response.ErrorMessage, 'error');
                     }
                 });
             }
-            UpdateFoliador();
+            window.location.href = '/Viajes/Internos';
         });
     } else {
         Swal.fire('Advertencia', 'Por favor, complete todos los campos obligatorios.', 'warning');
     }
-}
-
-// Función para actualizar el foliador
-function UpdateFoliador() {
-    // Llamada para actualizar el foliador
-    PostMVC("/Viajes/UpdateFoliador", { nombre: 'ViajesInternos' }, function (rFoliador) {
-        if (rFoliador.IsSuccess) {
-            Swal.fire('Éxito', 'Datos guardados y foliador actualizado', 'success').then(() => {
-            });
-        } else {
-            Swal.fire('Error', 'Error al actualizar el foliador', 'error');
-        }
-        
-    });
-    window.location.href = '/Viajes/Internos';
 }
 
 
@@ -208,7 +191,7 @@ function EliminarViajeInterno() {
         var parametro = {
             Id: $("#txtViajeinterno").val(),
             UbicacionOrigen: { Id: $("#ddlUOrigen").val() },
-            UbicacionDestino: { Id: $("#ddlDestino").val() },
+            ClienteVI: { Id: $("#dllcliente").val() },
             Transportista: { Id: $("#ddlTransportistas").val() },
             TipoMaterial: { Id: $("#ddlTipoMaterial").val() },
             Vehiculo: { Id: $("#ddlVehiculo").val() },
@@ -293,13 +276,13 @@ function GetAllViajeInterno() {
 
 
 function actualizarTiposDeMaterial() {
-    var ubicacionId = $("#ddlUOrigen").val(); // Obtener el ID de la ubicación seleccionada
+    var ClienteId = $("#dllcliente").val(); // Obtener el ID de la ubicación seleccionada
 
     // Realizar una llamada AJAX al controlador para obtener los tipos de material
     $.ajax({
-        url: '/Viajes/GetTipoMaterialByUbicacion', // Cambia esto al nombre de tu controlador y acción
+        url: '/Viajes/GetTipoMaterialByCliente', // Cambia esto al nombre de tu controlador y acción
         type: 'GET',
-        data: { id: ubicacionId }, // Enviar el ID de la ubicación
+        data: { id: ClienteId }, // Enviar el ID del Cliente
         success: function (response) {
             response = JSON.parse(response);
             if (response.IsSuccess) {
@@ -308,7 +291,7 @@ function actualizarTiposDeMaterial() {
 
                 // Llenar el DDL con los nuevos tipos de material
                 $.each(response.Response, function (index, item) {
-                    var templateoption = "<option value='" + item.id + "'>" + item.nombreTipoMaterial + "</option>";
+                    var templateoption = "<option value='" + item.id + "'>" + item.tipoMaterial.nombreTipoMaterial + "</option>";
 
                     $("#ddlTipoMaterial").append(templateoption);
                 });
