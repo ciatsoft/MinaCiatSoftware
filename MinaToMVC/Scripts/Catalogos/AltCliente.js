@@ -19,7 +19,7 @@
             { data: "email", title: "Email" },
             { data: "comentarios", title: "Comentarios" },
             { data: "rfc", title: "RFC" },
-            { data: "razon_Social", title: "Razon Social" },
+            { data: "razon_Social", title: "Razón Social" },
             {
                 data: "estatus",
                 title: "Estatus",
