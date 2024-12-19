@@ -9,7 +9,6 @@
 <link href="@Url.Content("~/Assets/css/EstilosBtnCambios/EstiloBtn.css")" rel="stylesheet" />
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
-<script src="~/Scripts/Catalogos/AltCliente.js"></script>
 
 <style>
     .btn-success {
@@ -98,20 +97,8 @@
                     <div class="col-md-3 table-responsive">
                         <div class="row">
                             <div class="col-md-12">
-                                <table class="table table-bordered table-striped dataTable no-footer">
-                                    <thead>
-                                        <tr style="background-color: #f2f2f2;">
-                                            <td>Material</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var i in materialesCliente)
-                                        {
-                                            <tr>
-                                                <td>@i.TipoMaterial.NombreTipoMaterial</td>
-                                            </tr>
-                                        }
-                                    </tbody>
+                                <table class="table table-bordered table-striped dataTable no-footer" id="tableTipodematerial">
+
                                 </table>
                             </div>
                         </div>
@@ -147,7 +134,8 @@
             </div>
         </div>
 </form>
+<script src="@(Url.StaticFile("Scripts/Catalogos/AltCliente.js"))"></script>
 <script>
-
+    var materialesClienteJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(materialesCliente))');
     var clienteJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Cliente))');
 </script>
