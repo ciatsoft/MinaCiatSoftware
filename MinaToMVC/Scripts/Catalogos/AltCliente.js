@@ -6,6 +6,93 @@
         }
     });
 
+    
+    $(document).ready(function () {
+        // Arreglo para almacenar los IDs seleccionados
+        var materialesSeleccionados = [];
+
+        // Evento click del botón con id "btnmaterial"
+        $("#btnmaterial").on("click", function () {
+            // Limpiamos el contenedor y cargamos la vista parcial
+            $("#boddyGeericModal").empty()
+                .load("/Administracion/PartialCrudMaterial", function () {
+                    // Realizamos la petición AJAX para obtener los datos
+                    $.ajax({
+                        url: '/Catalog/GetAllTipoMaterialUbicacion',
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function (data) {
+                            $("#materialesTable").DataTable({
+                                processing: true,
+                                destroy: true,
+                                paging: true,
+                                searching: true,
+                                data: data,
+                                columns: [
+                                    { data: "id", "visible": true, title: "Id" },
+                                    { data: "nombreTipoMaterial", title: "Nombre" },
+                                    { data: "descripcionTipoMaterial", title: "Descripción Material" },
+                                    {
+                                        data: "id",
+                                        render: function (data) {
+                                            return '<input type="checkbox" class="material-check" value="' + data + '" />';
+                                        },
+                                        title: "Seleccionar"
+                                    }
+                                ],
+                                language: {
+                                    "processing": "Procesando...",
+                                    "search": "Buscar:",
+                                    "lengthMenu": "Mostrar _MENU_ registros",
+                                    "zeroRecords": "No se encontraron resultados",
+                                    "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                                    "infoEmpty": "Mostrando 0 de 0 registros",
+                                    "infoFiltered": "(filtrado de _MAX_ registros)",
+                                    "paginate": {
+                                        "previous": "Anterior",
+                                        "next": "Siguiente"
+                                    }
+                                },
+                                createdRow: function (row, data, index) {
+                                    // Evento de cambio en los checkboxes
+                                    $(row).find(".material-check").change(function () {
+                                        var idSeleccionado = $(this).val(); // Obtiene el valor del checkbox
+
+                                        if (this.checked) {
+                                            // Si está seleccionado, lo añadimos al arreglo
+                                            materialesSeleccionados.push(idSeleccionado);
+                                            console.log("Seleccionado: ID " + idSeleccionado);
+                                        } else {
+                                            // Si se deselecciona, lo removemos del arreglo
+                                            materialesSeleccionados = materialesSeleccionados.filter(function (id) {
+                                                return id !== idSeleccionado;
+                                            });
+                                            console.log("Deseleccionado: ID " + idSeleccionado);
+                                        }
+
+                                        // Mostramos en consola el arreglo actualizado
+                                        console.log("IDs seleccionados:", materialesSeleccionados);
+                                    });
+                                }
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error al cargar los datos del DataTable:", error);
+                        }
+                    });
+
+                    // Configurar título del modal y mostrarlo
+                    $("#titleGenerciModal").text('Agregar Materiales');
+                    $('#genericModal').modal('show');
+                    GetAllTipoMaterialUbicacion();
+                });
+
+            console.log("Vista parcial cargada correctamente.");
+        });
+    });
+
+
+
     // Inicialización de la tabla de clientes
     $("#tbCliente").dataTable({
         processing: true,
@@ -19,7 +106,7 @@
             { data: "email", title: "Email" },
             { data: "comentarios", title: "Comentarios" },
             { data: "rfc", title: "RFC" },
-            { data: "razon_Social", title: "Razón Social" },
+            { data: "razon_Social", title: "Razon Social" },
             {
                 data: "estatus",
                 title: "Estatus",
@@ -59,17 +146,44 @@
         }
     });
 
+
     GetAllCliente();
 
-    if (typeof clienteJson.Id != 0) {
+    if (clienteJson.Id !== null && clienteJson.Id !== 0 && !isNaN(clienteJson.Id)) {
         $("#txtIdCliente").val(clienteJson.Id);
         $("#txtNombre").val(clienteJson.Nombre);
         $("#txtTelefono").val(clienteJson.Telefono);
         $("#txtEmail").val(clienteJson.Email);
         $("#txtComentarios").val(clienteJson.Comentarios);
         $("#chbEstatus").prop('checked', clienteJson.Estatus);
+        $("#txtRFC").val(clienteJson.RFC);
+        $("#txtrazon").val(clienteJson.Razon_Social);
+
+        $("#btnmaterial").show();
+        
+    }
+    else {
+        $("#btnmaterial").hide();
     }
 });
+
+
+
+// Función para obtener todos los tipos de material
+function GetAllTipoMaterialUbicacion() {
+    GetMVC("/Catalog/GetAllTipoMaterialUbicacion", function (r) {
+        if (r.IsSuccess) {
+            MapingPropertiesDataTable("materialesTable", r.Response);
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al cargar los materiales: ' + r.ErrorMessage,
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
+}
 
 // Función que se ejecuta al hacer clic en el botón de Guardar
 function SaveOrUpdateCliente() {

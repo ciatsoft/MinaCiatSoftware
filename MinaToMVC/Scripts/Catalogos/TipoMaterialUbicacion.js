@@ -17,7 +17,6 @@
             { data: "id", "visible": false, title: "Id" },
             { data: "nombreTipoMaterial", title: "Nombre" },
             { data: "descripcionTipoMaterial", title: "Descripción Material" },
-            { data: "dtoUbicacion.nombreUbicacion", title: "Ubicación" },
             { data: "unidadMedida.nombre", title: "Unidad Medida" },
             {
                 data: "estatus",
@@ -66,7 +65,6 @@
         $("#txtidtipomaterial").val(tipoMaterialUbicacionJson.Id);
         $("#txtNombreTipoMaterial").val(tipoMaterialUbicacionJson.NombreTipoMaterial);
         $("#txtDescripcionTipoMaterial").val(tipoMaterialUbicacionJson.DescripcionTipoMaterial);
-        $("#ddlUbicacion").val(tipoMaterialUbicacionJson.DtoUbicacion.Id);
         $("#ddlUnidadDeMedida").val(tipoMaterialUbicacionJson.UnidadMedida.Id);
         $("#chbEstatus").prop('checked', tipoMaterialUbicacionJson.Estatus);
 
@@ -88,7 +86,6 @@ function SaveOrUpdateTipoMaterialUbicacion() {
             Id: $("#txtidtipomaterial").val(),
             NombreTipoMaterial: $("#txtNombreTipoMaterial").val(),
             DescripcionTipoMaterial: $("#txtDescripcionTipoMaterial").val(),
-            DtoUbicacion: { Id: $("#ddlUbicacion").val() },
             UnidadMedida: { Id: $("#ddlUnidadDeMedida").val() },
             Estatus: $("#chbEstatus").is(':checked'),
             CreatedBy: $("#txtCreatedBy").val(),
@@ -107,7 +104,6 @@ function SaveOrUpdateTipoMaterialUbicacion() {
             title: 'Datos del tipo de material',
             html: `<strong>Nombre:</strong> ${$("#txtNombreTipoMaterial").val()}<br/>
                    <strong>Descripción:</strong> ${$("#txtDescripcionTipoMaterial").val()}<br/>
-                   <strong>Ubicación:</strong> ${$("#ddlUbicacion option:selected").text()}<br/>
                    <strong>Unidad de Medida:</strong> ${$("#ddlUnidadDeMedida option:selected").text()}<br/>
                    <strong>Estatus:</strong> ${$("#chbEstatus").is(':checked') ? 'Activo' : 'Inactivo'}`,
             icon: 'info',
@@ -158,7 +154,6 @@ function EliminarTipoMaterial() {
             Id: $("#txtidtipomaterial").val(),
             NombreTipoMaterial: $("#txtNombreTipoMaterial").val(),
             DescripcionTipoMaterial: $("#txtDescripcionTipoMaterial").val(),
-            DtoUbicacion: { Id: $("#ddlUbicacion").val() },
             UnidadMedida: { Id: $("#ddlUnidadDeMedida").val() },
             Estatus: false,
             CreatedBy: $("#txtCreatedBy").val(),

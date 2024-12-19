@@ -50,13 +50,16 @@
             color: white; /* Color de texto blanco */
         }
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<!-- Contenedor donde se cargará la vista parcial -->
+<div id="contenedorMaterial"></div>
 
 <form id="frmCliente" name="frmCliente" method="post" enctype="multipart/form-data">
     <div class="content">
         <br>
         <center><h1>Clientes</h1></center>
         <div class="tabla-consultas-roll">
-
             <div class="rectangulos" style="width: 100%;">
                 <div class="row">
                     <div class="col-lg-3">
@@ -78,17 +81,13 @@
                 </div>
                 <div class="row">
                     <div class="col-md-9">
-                        <div class="col-lg-3">
+                        <div class="col-lg-6">
                             <label>RFC:</label>
                             <input type="text" id="txtRFC" name="txtRFC" class="form-control" />
                         </div>
-                        <div class="col-lg-3">
+                        <div class="col-lg-6">
                             <label>Razón social:</label>
                             <input type="text" id="txtrazon" name="txtrazon" class="form-control" />
-                        </div>
-                        <div class="col-md-6">
-                            <label>Tipo de Material:</label>
-                            <input type="text" id="txtmaterial" name="txtmaterial" class="form-control" />
                         </div>
                         <div class="col-md-12">
                             <label>Comentarios:</label>
@@ -98,12 +97,9 @@
                     <div class="col-md-3 table-responsive">
                         <div class="row">
                             <div class="col-md-12">
-                                <input type="button" value="Asociar materiales" />
-                            </div>
-                            <div class="col-md-12">
                                 <table class="table table-bordered table-striped dataTable no-footer">
                                     <thead>
-                                        <tr>
+                                        <tr style="background-color: #f2f2f2;">
                                             <td>Material</td>
                                         </tr>
                                     </thead>
@@ -111,35 +107,53 @@
                                         <tr>
                                             <td>Arena Fina</td>
                                         </tr>
+
+                                        <tr>
+                                            <td>Graba</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Caliza</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Arena de rio</td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-custom-clean" id="btnmaterial" name="btnmaterial">
+                                    <i class="fa fa-plus"></i> Asociar materiales
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <br />
+                        <input type="hidden" id="txtCreatedBy" name="CreatedBy" value="@User.Identity.Name" />
+                        <input type="hidden" id="txtCreatedDt" name="CreatedDt" value="@DateTime.Now" />
+                        <input type="hidden" id="txtUpdatedBy" name="UpdatedBy" value="@User.Identity.Name" />
+                        <input type="hidden" id="txtUpdatedDt" name="UpdatedDt" value="@DateTime.Now" />
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input href="/Administracion/Clientes" type="button" value="Guardar" onclick="SaveOrUpdateCliente()" class="btn btn-success" />
+                            <a href="/Administracion/Clientes" class="btn btn-custom-cancel">Cancelar</a>
+
+                        </div>
                     </div>
                 </div>
-                <div class="row">
 
-                    <br />
-                    <input type="hidden" id="txtCreatedBy" name="CreatedBy" value="@User.Identity.Name" />
-                    <input type="hidden" id="txtCreatedDt" name="CreatedDt" value="@DateTime.Now" />
-                    <input type="hidden" id="txtUpdatedBy" name="UpdatedBy" value="@User.Identity.Name" />
-                    <input type="hidden" id="txtUpdatedDt" name="UpdatedDt" value="@DateTime.Now" />
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <input href="/Administracion/Clientes" type="button" value="Guardar" onclick="SaveOrUpdateCliente()" class="btn btn-success" />
-                        <a href="/Administracion/Clientes" class="btn btn-custom-cancel">Cancelar</a>
+                <br />
 
-                    </div>
-                </div>
+                <table id="tbCliente" class="table table-bordered table-striped" style="width: 100%;"></table>
+
             </div>
-
-            <br />
-
-            <table id="tbCliente" class="table table-bordered table-striped" style="width: 100%;"></table>
-
         </div>
-    </div>
 </form>
 <script>
     var clienteJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Cliente))');

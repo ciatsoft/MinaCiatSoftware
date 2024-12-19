@@ -28,6 +28,12 @@ namespace MinaToMVC.Controllers
         }
         [Autenticated]
         #region cliente
+
+        public ActionResult PartialCrudMaterial()
+        {
+            return PartialView();
+        }
+
         public async Task<ActionResult> Clientes(long id = 0)
         {
             var Cliente = new Cliente();
