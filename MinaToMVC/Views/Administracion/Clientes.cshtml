@@ -3,6 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var Cliente = (MinaTolEntidades.DtoClientes.Cliente)Model;
+    var materialesCliente = (IEnumerable<MinaTolEntidades.DtoClientes.ClienteTipoMaterial>)ViewBag.MaterialesCliente;
 }
 
 <link href="@Url.Content("~/Assets/css/EstilosBtnCambios/EstiloBtn.css")" rel="stylesheet" />
@@ -104,21 +105,12 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>Arena Fina</td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Graba</td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Caliza</td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>Arena de rio</td>
-                                        </tr>
+                                        @foreach (var i in materialesCliente)
+                                        {
+                                            <tr>
+                                                <td>@i.TipoMaterial.NombreTipoMaterial</td>
+                                            </tr>
+                                        }
                                     </tbody>
                                 </table>
                             </div>
@@ -156,5 +148,6 @@
         </div>
 </form>
 <script>
+
     var clienteJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Cliente))');
 </script>
