@@ -13,13 +13,11 @@ namespace MinaTolEntidades.DtoCatalogos
 
         public DtoTipoMaterialUbicacion()
         {
-            DtoUbicacion = new DtoUbicacion();
             UnidadMedida = new UnidadMedida();
         }
 
         public string NombreTipoMaterial { get; set; }
         public string DescripcionTipoMaterial { get; set; }
         public UnidadMedida UnidadMedida { get; set; }
-        public DtoUbicacion DtoUbicacion { get; set; }
     }
 }

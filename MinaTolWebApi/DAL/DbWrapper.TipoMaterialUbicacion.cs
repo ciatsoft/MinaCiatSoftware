@@ -27,17 +27,12 @@ namespace MinaTolWebApi.DAL
                         {
                             Id = Convert.ToInt64(reader["UnidadMedidaID"].ToString())
                         };
-                        r.DtoUbicacion = new DtoUbicacion()
-                        {
-                            Id = Convert.ToInt64(reader["UbicacionID"].ToString())
-                        };
                         return r;
                     }));
                 //más facil
                 foreach (var i in result)
                 {
                     i.UnidadMedida = (UnidadMedida)GetUnidadMedidaById(i.UnidadMedida.Id).Response;
-                    i.DtoUbicacion = (DtoUbicacion)GetUbicacionById(i.DtoUbicacion.Id).Response;
                 }
 
                 modelResponse.Response = result;
@@ -85,10 +80,6 @@ namespace MinaTolWebApi.DAL
                      {
                          var r = FillEntity<DtoTipoMaterialUbicacion>(reader);
 
-                         r.DtoUbicacion = new MinaTolEntidades.DtoCatalogos.DtoUbicacion()
-                         {
-                             Id = MappingProperties<long>(reader["UbicacionId"])
-                         };
                          r.UnidadMedida = new MinaTolEntidades.DtoSucursales.UnidadMedida()
                          {
                              Id = MappingProperties<long>(reader["UnidadMedidaId"])

@@ -1,6 +1,5 @@
 ﻿@{
     var unidadmedida = (List<MinaTolEntidades.DtoSucursales.UnidadMedida>)ViewBag.UnidadDeMedida;
-    var ubicaciones = (List<MinaTolEntidades.DtoCatalogos.DtoUbicacion>)ViewBag.Ubicaciones;
     var tipoMaterial = (MinaTolEntidades.DtoCatalogos.DtoTipoMaterialUbicacion)Model;
 
     ViewBag.Title = "TipoMaterialUbicacion";
@@ -78,22 +77,13 @@
                         <label>ID Material:</label>
                         <input type="text" id="txtidtipomaterial" class="form-control" disabled />
                     </div>
-                    <div class="col-lg-3">
+                    <div class="col-lg-4">
                         <label>Nombre:</label>
                         <input type="text" id="txtNombreTipoMaterial" class="form-control" />
                     </div>
-                    <div class=" col-lg-3">
+                    <div class=" col-lg-5">
                         <label>Descripción:</label>
                         <textarea type="text" id="txtDescripcionTipoMaterial" class="form-control"></textarea>
-                    </div>
-                    <div class="col-lg-3">
-                        <label>Ubicaciones:</label>
-                        <select id="ddlUbicacion" name="ddlUbicacion" class="form-control">
-                            @foreach (var i in ubicaciones)
-                            {
-                                <option value="@i.Id">@i.NombreUbicacion</option>
-                            }
-                        </select>
                     </div>
 
                 </div>

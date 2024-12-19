@@ -263,6 +263,7 @@
     <Content Include="Views\Catalog\TipoMaterialUbicacion.cshtml" />
     <Content Include="Views\Usuario\AltaEdicion.cshtml" />
     <Content Include="Views\Vehiculo\Index.cshtml" />
+    <Content Include="Views\Administracion\PartialCrudMaterial.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
