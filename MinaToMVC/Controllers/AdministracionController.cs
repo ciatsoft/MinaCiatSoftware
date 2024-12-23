@@ -1,10 +1,13 @@
 ﻿using MinaTolEntidades;
+using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.Security;
 using MinaToMVC.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -28,14 +31,32 @@ namespace MinaToMVC.Controllers
         }
         [Autenticated]
         #region cliente
+
+        public ActionResult PartialCrudMaterial()
+        {
+            return PartialView();
+        }
+
         public async Task<ActionResult> Clientes(long id = 0)
         {
             var Cliente = new Cliente();
+            IEnumerable<ClienteTipoMaterial> materialesPorClientes;
             if (id != 0)
             {
                 var result = await httpClientConnection.GetClienteById(id);
                 Cliente = JsonConvert.DeserializeObject<Cliente>(result.Response.ToString());
+
+                var materialesPorClientesResponse = await httpClientConnection.GetTipoMaterialByCliente(id);
+                materialesPorClientes = JsonConvert.DeserializeObject<List<ClienteTipoMaterial>>(materialesPorClientesResponse.Response.ToString());
+
+                
             }
+            else
+            {
+                materialesPorClientes = Enumerable.Empty<ClienteTipoMaterial>().ToArray();
+            }
+            ViewBag.MaterialesCliente = materialesPorClientes;
+
             return View(Cliente);
         }
         public string SaveOrUpdateCliente(Cliente t)
