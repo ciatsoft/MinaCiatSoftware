@@ -234,7 +234,6 @@
     <Content Include="Views\Shared\_Autentication.cshtml" />
     <Content Include="Views\Home\Autenticacion.cshtml" />
     <Content Include="Views\Catalog\UnidadMedida.cshtml" />
-    <Content Include="Views\Administracion\Clientes.cshtml" />
     <Content Include="Views\Shared\_Menu.cshtml" />
     <Content Include="Views\Administracion\Solicitudes.cshtml" />
     <Content Include="Views\Administracion\Precios.cshtml" />
@@ -264,6 +263,7 @@
     <Content Include="Views\Usuario\AltaEdicion.cshtml" />
     <Content Include="Views\Vehiculo\Index.cshtml" />
     <Content Include="Views\Administracion\PartialCrudMaterial.cshtml" />
+    <Content Include="Views\Administracion\Clientes.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -193,7 +193,6 @@
     <Content Include="RptViajesLocales.aspx" />
     <Content Include="SqlServerTypes\readme.htm" />
     <Content Include="Web.config" />
-    <Content Include="WebFormSubReport.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DSReportesImpresosPDFMina.Designer.cs">
@@ -213,13 +212,6 @@
       <DependentUpon>RptViajesLocales.aspx</DependentUpon>
     </Compile>
     <Compile Include="SqlServerTypes\Loader.cs" />
-    <Compile Include="WebFormSubReport.aspx.cs">
-      <DependentUpon>WebFormSubReport.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="WebFormSubReport.aspx.designer.cs">
-      <DependentUpon>WebFormSubReport.aspx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="DSReportesImpresosPDFMina.xsc">
@@ -250,7 +242,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="RDLViajesLocales.rdlc" />
-    <EmbeddedResource Include="ReportePadre.rdlc" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

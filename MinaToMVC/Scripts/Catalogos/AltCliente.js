@@ -106,7 +106,7 @@
             { data: "email", title: "Email" },
             { data: "comentarios", title: "Comentarios" },
             { data: "rfc", title: "RFC" },
-            { data: "razon_Social", title: "Razon Social" },
+            { data: "razon_Social", title: "Razón Social" },
             {
                 data: "estatus",
                 title: "Estatus",
@@ -130,7 +130,7 @@
             "emptyTable": "Ningún dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-            "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+            "infoFiltered": "(filtrado de un total de _MAX_ entradas)"
             "search": "Buscar:",
             "loadingRecords": "Cargando...",
             "paginate": {
