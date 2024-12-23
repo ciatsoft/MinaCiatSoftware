@@ -60,7 +60,6 @@
         <br>
         <center><h1>Clientes</h1></center>
         <div class="tabla-consultas-roll">
-
             <div class="rectangulos" style="width: 100%;">
                 <div class="row">
                     <div class="col-lg-3">
@@ -82,16 +81,12 @@
                 </div>
                 <div class="row">
                     <div class="col-md-9">
-                        <div class="col-lg-3">
+                        <div class="col-lg-6">
                             <label>RFC:</label>
                             <input type="text" id="txtRFC" name="txtRFC" class="form-control" />
                         </div>
-                        <div class="col-lg-3">
-                            <label>Razón soocial:</label>
-                            <input type="text" id="txtrazon" name="txtrazon" class="form-control" />
-                        </div>
-                        <div class="col-md-6">
-                            <label>Tipo de Material:</label>
+                        <div class="col-lg-6">
+                            <label>Razon social:</label>
                             <input type="text" id="txtrazon" name="txtrazon" class="form-control" />
                         </div>
                         <div class="col-md-12">
@@ -102,48 +97,42 @@
                     <div class="col-md-3 table-responsive">
                         <div class="row">
                             <div class="col-md-12">
-                                <input type="button" value="Asociar materiales" />
-                            </div>
-                            <div class="col-md-12">
-                                <table class="table table-bordered table-striped dataTable no-footer">
-                                    <thead>
-                                        <tr>
-                                            <td>Material</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Arena Fina</td>
-                                        </tr>
-                                    </tbody>
+                                <table class="table table-bordered table-striped dataTable no-footer" id="tableTipodematerial">
+
                                 </table>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-custom-clean" id="btnmaterial" name="btnmaterial">
+                                    <i class="fa fa-plus"></i> Asociar materiales
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <br />
+                        <input type="hidden" id="txtCreatedBy" name="CreatedBy" value="@User.Identity.Name" />
+                        <input type="hidden" id="txtCreatedDt" name="CreatedDt" value="@DateTime.Now" />
+                        <input type="hidden" id="txtUpdatedBy" name="UpdatedBy" value="@User.Identity.Name" />
+                        <input type="hidden" id="txtUpdatedDt" name="UpdatedDt" value="@DateTime.Now" />
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input href="/Administracion/Clientes" type="button" value="Guardar" onclick="SaveOrUpdateCliente()" class="btn btn-success" />
+                            <a href="/Administracion/Clientes" class="btn btn-custom-cancel">Cancelar</a>
+
+                        </div>
                     </div>
                 </div>
-                <div class="row">
 
-                    <br />
-                    <input type="hidden" id="txtCreatedBy" name="CreatedBy" value="@User.Identity.Name" />
-                    <input type="hidden" id="txtCreatedDt" name="CreatedDt" value="@DateTime.Now" />
-                    <input type="hidden" id="txtUpdatedBy" name="UpdatedBy" value="@User.Identity.Name" />
-                    <input type="hidden" id="txtUpdatedDt" name="UpdatedDt" value="@DateTime.Now" />
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <input href="/Administracion/Clientes" type="button" value="Guardar" onclick="SaveOrUpdateCliente()" class="btn btn-success" />
-                        <a href="/Administracion/Clientes" class="btn btn-custom-cancel">Cancelar</a>
+                <br />
 
-                    </div>
-                </div>
+                <table id="tbCliente" class="table table-bordered table-striped" style="width: 100%;"></table>
+
             </div>
-
-            <br />
-
-            <table id="tbCliente" class="table table-bordered table-striped" style="width: 100%;"></table>
-
         </div>
-    </div>
 </form>
 <script src="@(Url.StaticFile("Scripts/Catalogos/AltCliente.js"))"></script>
 <script>
