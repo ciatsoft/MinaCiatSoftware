@@ -161,6 +161,7 @@
     });
 
     GetAllTipoMaterialUbicacion();
+
     GetAllCliente();
 
     if (clienteJson.Id !== null && clienteJson.Id !== 0 && !isNaN(clienteJson.Id)) {
