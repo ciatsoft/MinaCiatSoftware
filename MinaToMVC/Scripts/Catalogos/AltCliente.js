@@ -1,97 +1,12 @@
-﻿$(document).ready(function () {
+﻿var tipoMateriaList;
+
+$(document).ready(function () {
     $("#frmCliente").validate({
         rules: {
             "txtNombre": "required",
             "txtDescripcion": "required",
         }
     });
-
-    
-    //$(document).ready(function () {
-    //    // Arreglo para almacenar los IDs seleccionados
-    //    var materialesSeleccionados = [];
-
-    //    // Evento click del botón con id "btnmaterial"
-    //    $("#btnmaterial").on("click", function () {
-    //        // Limpiamos el contenedor y cargamos la vista parcial
-    //        $("#boddyGeericModal").empty()
-    //            .load("/Administracion/PartialCrudMaterial", function () {
-    //                // Realizamos la petición AJAX para obtener los datos
-    //                $.ajax({
-    //                    url: '/Catalog/GetAllTipoMaterialUbicacion',
-    //                    method: 'GET',
-    //                    dataType: 'json',
-    //                    success: function (data) {
-    //                        $("#materialesTable").DataTable({
-    //                            processing: true,
-    //                            destroy: true,
-    //                            paging: true,
-    //                            searching: true,
-    //                            data: data,
-    //                            columns: [
-    //                                { data: "id", "visible": true, title: "Id" },
-    //                                { data: "nombreTipoMaterial", title: "Nombre" },
-    //                                { data: "descripcionTipoMaterial", title: "Descripción Material" },
-    //                                {
-    //                                    data: "id",
-    //                                    render: function (data) {
-    //                                        return '<input type="checkbox" class="material-check" value="' + data + '" />';
-    //                                    },
-    //                                    title: "Seleccionar"
-    //                                }
-    //                            ],
-    //                            language: {
-    //                                "processing": "Procesando...",
-    //                                "search": "Buscar:",
-    //                                "lengthMenu": "Mostrar _MENU_ registros",
-    //                                "zeroRecords": "No se encontraron resultados",
-    //                                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-    //                                "infoEmpty": "Mostrando 0 de 0 registros",
-    //                                "infoFiltered": "(filtrado de _MAX_ registros)",
-    //                                "paginate": {
-    //                                    "previous": "Anterior",
-    //                                    "next": "Siguiente"
-    //                                }
-    //                            },
-    //                            createdRow: function (row, data, index) {
-    //                                // Evento de cambio en los checkboxes
-    //                                $(row).find(".material-check").change(function () {
-    //                                    var idSeleccionado = $(this).val(); // Obtiene el valor del checkbox
-
-    //                                    if (this.checked) {
-    //                                        // Si está seleccionado, lo añadimos al arreglo
-    //                                        materialesSeleccionados.push(idSeleccionado);
-    //                                        console.log("Seleccionado: ID " + idSeleccionado);
-    //                                    } else {
-    //                                        // Si se deselecciona, lo removemos del arreglo
-    //                                        materialesSeleccionados = materialesSeleccionados.filter(function (id) {
-    //                                            return id !== idSeleccionado;
-    //                                        });
-    //                                        console.log("Deseleccionado: ID " + idSeleccionado);
-    //                                    }
-
-    //                                    // Mostramos en consola el arreglo actualizado
-    //                                    console.log("IDs seleccionados:", materialesSeleccionados);
-    //                                });
-    //                            }
-    //                        });
-    //                    },
-    //                    error: function (xhr, status, error) {
-    //                        console.error("Error al cargar los datos del DataTable:", error);
-    //                    }
-    //                });
-
-    //                // Configurar título del modal y mostrarlo
-    //                $("#titleGenerciModal").text('Agregar Materiales');
-    //                $('#genericModal').modal('show');
-    //                GetAllTipoMaterialUbicacion();
-    //            });
-
-    //        console.log("Vista parcial cargada correctamente.");
-    //    });
-    //});
-
-    
 
     // Inicialización de la tabla de clientes
     $("#tbCliente").dataTable({
@@ -130,7 +45,7 @@
             "emptyTable": "Ningún dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-            "infoFiltered": "(filtrado de un total de _MAX_ entradas)"
+            "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
             "search": "Buscar:",
             "loadingRecords": "Cargando...",
             "paginate": {
@@ -151,16 +66,37 @@
             { data: "id", "visible": false, title: "Id" },
             { data: "nombreTipoMaterial", title: "Nombre del material" },
             {
-                data: "id",
-                render: function (data) {
-                    return '<input type="checkbox" class="material-check" value="' + data + '" />';
-                },
-                title: ""
+                data: "id", title: "", render: function (data) {
+                    return '<input type="checkbox" class="material-check" data-id="' + data + '" />';
+                }
             }
-        ]
+        ],
+        createdRow: function (row, data, index) {
+            var r = $(row).find(".material-check");
+            var rrr = materialesClienteJson.find(x => x.TipoMaterial.Id == data.id);
+
+            if (rrr != undefined) {
+                $(r).prop('checked', true);
+            }
+
+            $(r).on("change", function () {
+
+                var clienteId = clienteJson.Id;
+                var materialId = $(r).attr("data-id");
+
+                if ($(r).is(':checked'))
+                    //Insertar material
+                    alert("Seleccionado");
+                else
+                    //Eliminar material
+                    alert("No seleccionado");
+            });
+        }
     });
 
-    GetAllTipoMaterialUbicacion();
+
+    if (clienteJson.Id != 0)
+        GetAllTipoMaterial();
 
     GetAllCliente();
 
@@ -175,19 +111,40 @@
         $("#txtrazon").val(clienteJson.Razon_Social);
 
         $("#btnmaterial").show();
-        
+
     }
     else {
         $("#btnmaterial").hide();
     }
 });
 
+function AgregarMaterialACliente() {
+
+}
+
+function EliminarMaterialDelCliente() {
+    var parametros = "";
+    PostMVC("/Catalog/GetAllTipoMaterialUbicacion", parametros, function (r) {
+        if (r.IsSuccess) {
+            Swal.fire("Éxito", "El material se elimino exitosamente de este cliente", "success");
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al cargar los materiales: ' + r.ErrorMessage,
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
+}
+
 
 
 // Función para obtener todos los tipos de material
-function GetAllTipoMaterialUbicacion() {
+function GetAllTipoMaterial() {
     GetMVC("/Catalog/GetAllTipoMaterialUbicacion", function (r) {
         if (r.IsSuccess) {
+            tipoMateriaList = r.Response;
             MapingPropertiesDataTable("tableTipodematerial", r.Response);
         } else {
             Swal.fire({
@@ -281,10 +238,10 @@ function EliminarCliente(id, boton) {
             };
             window.location.href = '/Administracion/Clientes';
             PostMVC('/Administracion/SaveOrUpdateCliente', parametro, function (r) {
-                
+
                 if (r.IsSuccess) {
                     Swal.fire("Eliminado", "El cliente ha sido eliminado.", "success").then(() => {
-                        
+
                     });
                 } else {
                     Swal.fire("Error", "Error al eliminar el cliente: " + r.ErrorMessage, "error");
