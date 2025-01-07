@@ -50,5 +50,35 @@ namespace MinaTolWebApi.DAL
 
             return response;
         }
+        public ModelResponse SaveOrUpdateClienteTipoMaterial(ClienteTipoMaterial clienteTipoMaterial)
+        {
+            var response = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("@Id", clienteTipoMaterial.Id));
+            parameters.Add(new SqlParameter("@ClienteId", clienteTipoMaterial.Cliente.Id));
+            parameters.Add(new SqlParameter("@MaterialId", clienteTipoMaterial.TipoMaterial.Id));
+            parameters.Add(new SqlParameter("@Estatus", clienteTipoMaterial.Estatus));
+            parameters.Add(new SqlParameter("@CreatedBy", clienteTipoMaterial.CreatedBy));
+            parameters.Add(new SqlParameter("@CreatedDt", clienteTipoMaterial.CreatedDt));
+
+            var result = ExecuteScalar("SaveOrUpdateClienteTipoMaterial", CommandType.StoredProcedure, parameters);
+            clienteTipoMaterial.Id = Convert.ToInt64(result);
+            response.Response = clienteTipoMaterial;
+
+            return response;
+        }
+        public ModelResponse DeleteClienteTipoMaterial(ClienteTipoMaterial clienteTipoMaterial)
+        {
+            var response = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("@ClienteId", clienteTipoMaterial.Cliente.Id));
+            parameters.Add(new SqlParameter("@MaterialId", clienteTipoMaterial.TipoMaterial.Id));
+
+            var result = ExecuteScalar("DeleteClienteTipoMaterial", CommandType.StoredProcedure, parameters);
+            clienteTipoMaterial.Id = Convert.ToInt64(result);
+            response.Response = clienteTipoMaterial;
+
+            return response;
+        }
     }
 }

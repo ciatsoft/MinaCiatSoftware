@@ -16,10 +16,10 @@ using static MinaToMVC.Controllers.Filters.FiltersHelper;
 
 namespace MinaToMVC.Controllers
 {
+    [Autenticated]
     public class AdministracionController : BaseController
     {
         #region View
-        [Autenticated]
         public ActionResult Index()
         {
             return View();
@@ -29,14 +29,10 @@ namespace MinaToMVC.Controllers
         {
             return View();
         }
-        [Autenticated]
-        #region cliente
-
         public ActionResult PartialCrudMaterial()
         {
             return PartialView();
         }
-
         public async Task<ActionResult> Clientes(long id = 0)
         {
             var Cliente = new Cliente();
@@ -49,7 +45,7 @@ namespace MinaToMVC.Controllers
                 var materialesPorClientesResponse = await httpClientConnection.GetTipoMaterialByCliente(id);
                 materialesPorClientes = JsonConvert.DeserializeObject<List<ClienteTipoMaterial>>(materialesPorClientesResponse.Response.ToString());
 
-                
+
             }
             else
             {
@@ -66,35 +62,23 @@ namespace MinaToMVC.Controllers
             return JsonConvert.SerializeObject(result);
         }
 
-        public async Task<string> GetAllCliente()
-        {
-            var result = await httpClientConnection.GetAllCliente();
 
-            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
-        }
-
-        #endregion
-        [Autenticated]
         public ActionResult Solicitudes()
         {
             return View();
         }
-        [Autenticated]
         public ActionResult Precios()
         {
             return View();
         }
-        [Autenticated]
         public ActionResult Gestion_Img()
         {
             return View();
         }
-        [Autenticated]
         public ActionResult Ingresos()
         {
             return View();
         }
-        [Autenticated]
         public ActionResult General()
         {
             return View();
@@ -140,6 +124,13 @@ namespace MinaToMVC.Controllers
                 Response.Cookies.Add(c);
             }
             return JsonConvert.SerializeObject(mr);
+        }
+
+        public async Task<string> GetAllCliente()
+        {
+            var result = await httpClientConnection.GetAllCliente();
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
         #endregion
     }
