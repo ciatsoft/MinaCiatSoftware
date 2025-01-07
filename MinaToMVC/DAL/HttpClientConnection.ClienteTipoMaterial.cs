@@ -1,4 +1,6 @@
 ﻿using MinaTolEntidades;
+using MinaTolEntidades.DtoClientes;
+using MinaTolEntidades.DtoViajes;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -20,6 +22,31 @@ namespace MinaToMVC.DAL
                    return responseString;
                }));
             return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+        }
+        public async Task<ModelResponse> SaveOrUpdateClienteTipoMaterial(ClienteTipoMaterial t)
+        {
+            var result = await RequestAsync<object>("api/ClienteTipoMaterial/Agregar", HttpMethod.Post, t,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
+
+        public async Task<ModelResponse> DeleteClienteTipoMaterial(ClienteTipoMaterial t)
+        {
+            var result = await RequestAsync<object>("api/ClienteTipoMaterial/Eliminar", HttpMethod.Post, t,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
         }
     }
 }

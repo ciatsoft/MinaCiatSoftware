@@ -50,33 +50,32 @@ namespace MinaTolWebApi.DAL
 
             return response;
         }
-        public ModelResponse SaveOrUpdateClienteTipoMaterial(ClienteTipoMaterial clienteTipoMaterial)
+        public ModelResponse SaveOrUpdateClienteTipoMaterial(ClienteTipoMaterial t)
         {
             var response = new ModelResponse();
             var parameters = new List<SqlParameter>();
-            parameters.Add(new SqlParameter("@Id", clienteTipoMaterial.Id));
-            parameters.Add(new SqlParameter("@ClienteId", clienteTipoMaterial.Cliente.Id));
-            parameters.Add(new SqlParameter("@MaterialId", clienteTipoMaterial.TipoMaterial.Id));
-            parameters.Add(new SqlParameter("@Estatus", clienteTipoMaterial.Estatus));
-            parameters.Add(new SqlParameter("@CreatedBy", clienteTipoMaterial.CreatedBy));
-            parameters.Add(new SqlParameter("@CreatedDt", clienteTipoMaterial.CreatedDt));
+            parameters.Add(new SqlParameter("@ClienteId", t.Cliente.Id));
+            parameters.Add(new SqlParameter("@MaterialId", t.TipoMaterial.Id));
+            parameters.Add(new SqlParameter("@Estatus", t.Estatus));
+            parameters.Add(new SqlParameter("@CreatedBy", t.CreatedBy));
+            parameters.Add(new SqlParameter("@CreatedDt", t.CreatedDt));
 
             var result = ExecuteScalar("SaveOrUpdateClienteTipoMaterial", CommandType.StoredProcedure, parameters);
-            clienteTipoMaterial.Id = Convert.ToInt64(result);
-            response.Response = clienteTipoMaterial;
+            t.Id = Convert.ToInt64(result);
+            response.Response = t;
 
             return response;
         }
-        public ModelResponse DeleteClienteTipoMaterial(ClienteTipoMaterial clienteTipoMaterial)
+        public ModelResponse DeleteClienteTipoMaterial(ClienteTipoMaterial t)
         {
             var response = new ModelResponse();
             var parameters = new List<SqlParameter>();
-            parameters.Add(new SqlParameter("@ClienteId", clienteTipoMaterial.Cliente.Id));
-            parameters.Add(new SqlParameter("@MaterialId", clienteTipoMaterial.TipoMaterial.Id));
+            parameters.Add(new SqlParameter("@ClienteId", t.Cliente.Id));
+            parameters.Add(new SqlParameter("@MaterialId", t.TipoMaterial.Id));
 
             var result = ExecuteScalar("DeleteClienteTipoMaterial", CommandType.StoredProcedure, parameters);
-            clienteTipoMaterial.Id = Convert.ToInt64(result);
-            response.Response = clienteTipoMaterial;
+            t.Id = Convert.ToInt64(result);
+            response.Response = t;
 
             return response;
         }

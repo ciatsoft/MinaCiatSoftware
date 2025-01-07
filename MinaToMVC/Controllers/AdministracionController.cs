@@ -1,6 +1,7 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoClientes;
+using MinaTolEntidades.DtoViajes;
 using MinaTolEntidades.Security;
 using MinaToMVC.Helpers;
 using Newtonsoft.Json;
@@ -55,6 +56,25 @@ namespace MinaToMVC.Controllers
 
             return View(Cliente);
         }
+
+        public async Task<string> SaveOrUpdateClienteTipoMaterial(ClienteTipoMaterial t)
+        {
+
+
+            httpClientConnection.MappingColumSecurity(t);
+            var result = await httpClientConnection.SaveOrUpdateClienteTipoMaterial(t);
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> DeleteClienteTipoMaterial(ClienteTipoMaterial t)
+        {
+
+            httpClientConnection.MappingColumSecurity(t);
+            var result = await httpClientConnection.DeleteClienteTipoMaterial(t);
+            return JsonConvert.SerializeObject(result);
+        }
+
+
         public string SaveOrUpdateCliente(Cliente t)
         {
 

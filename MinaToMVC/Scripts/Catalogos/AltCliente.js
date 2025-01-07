@@ -83,13 +83,14 @@ $(document).ready(function () {
 
                 var clienteId = clienteJson.Id;
                 var materialId = $(r).attr("data-id");
+                console.log(clienteId + " " + materialId);
 
                 if ($(r).is(':checked'))
                     //Insertar material
-                    alert("Seleccionado");
+                    AgregarMaterialACliente(clienteId, materialId);
                 else
                     //Eliminar material
-                    alert("No seleccionado");
+                    EliminarMaterialDelCliente(clienteId, materialId);
             });
         }
     });
@@ -118,13 +119,43 @@ $(document).ready(function () {
     }
 });
 
-function AgregarMaterialACliente() {
+function AgregarMaterialACliente(clienteId, materialId) {
 
+    var parametro = {
+        Cliente: {
+            Id: clienteId
+        },
+        TipoMaterial: {
+            Id: materialId
+        },
+        Estatus: true,
+    };
+    PostMVC('/Administracion/SaveOrUpdateClienteTipoMaterial', parametro, function (r) {
+        console.log(parametro);
+        if (r.IsSuccess) {
+            Swal.fire("Éxito", "El material se agregó exitosamente al cliente", "success");
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al guardar el material: ' + r.ErrorMessage,
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
 }
 
-function EliminarMaterialDelCliente() {
-    var parametros = "";
-    PostMVC("/Catalog/GetAllTipoMaterialUbicacion", parametros, function (r) {
+function EliminarMaterialDelCliente(clienteId, materialId) {
+    var parametros = {
+        Cliente: {
+            Id: clienteId
+        },
+        TipoMaterial: {
+            Id: materialId
+        },
+    };
+        
+    PostMVC("/Administracion/DeleteClienteTipoMaterial", parametros, function (r) {
         if (r.IsSuccess) {
             Swal.fire("Éxito", "El material se elimino exitosamente de este cliente", "success");
         } else {
