@@ -105,6 +105,13 @@ namespace MinaToMVC.Controllers
         }
         #endregion
 
+        #region Partials Views
+        public ActionResult PartialConfiguracionCostosCliente()
+        {
+            return PartialView();
+        }
+        #endregion
+
         #region Data Acces
         [HttpPost]
         public async Task<string> FirstAutentication(string user, string pass)

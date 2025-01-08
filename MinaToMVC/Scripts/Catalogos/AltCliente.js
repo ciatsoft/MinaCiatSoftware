@@ -117,6 +117,13 @@ $(document).ready(function () {
     else {
         $("#btnmaterial").hide();
     }
+
+    $("#btnmaterial").on("click", function () {
+        $("#titleGenerciModal").text("Configuración de costos por cliente");
+        $("#boddyGeericModal").empty().load("/Administracion/PartialConfiguracionCostosCliente", function () {
+            $("#genericModal").modal("show");
+        });
+    });
 });
 
 function AgregarMaterialACliente(clienteId, materialId) {
