@@ -106,10 +106,19 @@ namespace MinaToMVC.Controllers
         #endregion
 
         #region Partials Views
-        public ActionResult PartialConfiguracionCostosCliente()
+        public ActionResult PartialConfiguracionCostosCliente(int clienteId, int materialId)
         {
+
+            //var precios = new ClienteTipoMaterial();
+
+            //    var result = await httpClientConnection.GetClienteTipoMaterialByMaterial(clienteId, materialId);
+            //    precios = JsonConvert.DeserializeObject<ClienteTipoMaterial>(result.Response.ToString());
+            
+            ViewBag.ClienteId = clienteId;
+            ViewBag.MaterialId = materialId;
             return PartialView();
         }
+
         #endregion
 
         #region Data Acces

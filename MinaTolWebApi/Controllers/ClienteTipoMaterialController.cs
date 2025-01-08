@@ -26,6 +26,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetTipoMaterialByCliente(id);
             return result;
         }
+        [Route("{clienteid:long}/{materialid:long}"), HttpGet]
+        public ModelResponse GetClienteTipoMaterialByMaterial(long clienteid, long materialid)
+        {
+            var result = wrapper.GetClienteTipoMaterialByMaterial(clienteid, materialid);
+            return result;
+        }
 
         [HttpPost, Route("Agregar")]
         public ModelResponse SaveOrUpdateClienteTipoMaterial(ClienteTipoMaterial t)
