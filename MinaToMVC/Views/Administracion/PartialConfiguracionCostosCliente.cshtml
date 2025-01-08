@@ -1,28 +1,139 @@
-﻿<div class="row">
-    <div class="col-md-4">
-        <label>P. Mat. M3</label>
-        <input type="number" value="" class="form-control" />
+﻿
+<div class="container">
+    <!-- Input oculto para el clienteId y materialId -->
+    <input type="hidden" id="clienteId" value="@Request["clienteId"]" />
+    <input type="hidden" id="materialId" value="@Request["materialId"]" />
+    <div class="row">
+        <div class="col-4">
+            <label for="p-mat-m3">P. Mat. M3</label>
+            <input type="number" id="p-mat-m3" class="form-control" />
+        </div>
+        <div class="col-4">
+            <label for="p-flete-m3">P. Flete M3</label>
+            <input type="number" id="p-flete-m3" class="form-control" />
+        </div>
     </div>
-    <div class="col-md-4"></div>
-    <div class="col-md-4"></div>
+    <div class="row mt-2">
+        <div class="col-4">
+            <label for="precio-m3">Precio M3</label>
+            <input type="number" id="precio-m3" class="form-control" readonly />
+        </div>
+        <div class="col-4">
+            <label for="km-cargado">KM Cargado</label>
+            <input type="number" id="km-cargado" class="form-control" />
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-4">
+            <label for="km-basio">KM Basio</label>
+            <input type="number" id="km-basio" class="form-control" />
+        </div>
+        <div class="col-4">
+            <label for="total-km-recorridos">Total KM Recorridos</label>
+            <input type="number" id="total-km-recorridos" class="form-control" readonly />
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-4">
+            <label for="carga-diesel">Carga de Diesel (Lt)</label>
+            <input type="number" id="carga-diesel" class="form-control" />
+        </div>
+        <div class="col-4">
+            <label for="total-diesel">Total Diesel ($)</label>
+            <input type="number" id="total-diesel" class="form-control" readonly />
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-4">
+            <label for="casetas">Casetas</label>
+            <input type="number" id="casetas" class="form-control" />
+        </div>
+        <div class="col-4">
+            <label for="mano-obra">Mano de Obra</label>
+            <input type="number" id="mano-obra" class="form-control" />
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-4">
+            <label for="material-viajes">Material Viajes (30 M3)</label>
+            <input type="number" id="material-viajes" class="form-control" readonly />
+        </div>
+        <div class="col-4">
+            <label for="total-gastos">Total Gastos</label>
+            <input type="number" id="total-gastos" class="form-control" readonly />
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-8">
+            <label for="subtotal-ingreso">Subtotal Ingreso (Viajes 30 M3)</label>
+            <input type="number" id="subtotal-ingreso" class="form-control" readonly />
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-8">
+            <input type="button" value="Guardar" onclick="AgregarPreciosMaterialACliente()" class="btn btn-success" />
+        </div>
+    </div>
 </div>
-<div class="row">
-    <div class="col-md-4"></div>
-    <div class="col-md-4"></div>
-    <div class="col-md-4"></div>
-</div>
-<div class="row">
-    <div class="col-md-4"></div>
-    <div class="col-md-4"></div>
-    <div class="col-md-4"></div>
-</div>
-<div class="row">
-    <div class="col-md-4"></div>
-    <div class="col-md-4"></div>
-    <div class="col-md-4"></div>
-</div>
-<div class="row">
-    <div class="col-md-4"></div>
-    <div class="col-md-4"></div>
-    <div class="col-md-4"></div>
-</div>
+
+<script>
+    // Variables de tiempo para evitar cálculos en cada tecla
+    let timeout;
+
+    // Función para calcular los totales generales
+    function calcularTotales() {
+        const pMatM3 = parseFloat(document.getElementById('p-mat-m3').value) || 0;
+        const pFleteM3 = parseFloat(document.getElementById('p-flete-m3').value) || 0;
+        const kmCargado = parseFloat(document.getElementById('km-cargado').value) || 0;
+        const kmBasio = parseFloat(document.getElementById('km-basio').value) || 0;
+        const cargaDiesel = parseFloat(document.getElementById('carga-diesel').value) || 0;
+        const manoObra = parseFloat(document.getElementById('mano-obra').value) || 0;
+
+        // Cálculos intermedios
+        const totalpreciom3 = pMatM3 + pFleteM3;
+        const totalKmRecorridos = kmCargado + kmBasio;
+        const totalpreciokm = cargaDiesel * 25.49;
+        const totalGastos = totalpreciom3 + totalpreciokm + manoObra;
+
+        // Actualizar los campos intermedios
+        document.getElementById('precio-m3').value = totalpreciom3.toFixed(1);
+        document.getElementById('total-diesel').value = totalpreciokm.toFixed(1);
+        document.getElementById('total-km-recorridos').value = totalKmRecorridos.toFixed(1);
+        document.getElementById('total-gastos').value = totalGastos.toFixed(1);
+    }
+
+    // Función para calcular el subtotal después de que el usuario deje de escribir
+    function calcularSubtotal() {
+        const pMatM3 = parseFloat(document.getElementById('p-mat-m3').value) || 0;
+        const pFleteM3 = parseFloat(document.getElementById('p-flete-m3').value) || 0;
+        const totalGastos = parseFloat(document.getElementById('total-gastos').value) || 0;
+
+        // Cálculo de material viajes (30 M3) y subtotal ingreso
+        const materialviajesprecio = pMatM3 * 30; // Material por M3
+        const subtotalIngreso = 30 * (pMatM3 + pFleteM3); // Subtotal con m3 y flete
+
+        const totalgasto = totalGastos + materialviajesprecio;
+
+        // Actualizar los campos de Material Viajes, Subtotal y Total Gastos
+        document.getElementById('material-viajes').value = materialviajesprecio.toFixed(1); // Material Viajes
+        document.getElementById('subtotal-ingreso').value = subtotalIngreso.toFixed(1); // Subtotal Ingreso
+        document.getElementById('total-gastos').value = totalgasto.toFixed(1);
+    }
+
+    // Función que se ejecuta cuando se deja de escribir
+    function debounceCalculations() {
+        clearTimeout(timeout); // Limpiar el tiempo de espera anterior
+        timeout = setTimeout(() => {
+            calcularTotales();
+            calcularSubtotal();
+        }, 500); // 500ms después de que el usuario deje de escribir
+    }
+
+    // Añadir evento a los campos relevantes
+    document.getElementById('p-mat-m3').addEventListener('input', debounceCalculations);
+    document.getElementById('p-flete-m3').addEventListener('input', debounceCalculations);
+    document.getElementById('km-cargado').addEventListener('input', debounceCalculations);
+    document.getElementById('km-basio').addEventListener('input', debounceCalculations);
+    document.getElementById('carga-diesel').addEventListener('input', debounceCalculations);
+    document.getElementById('mano-obra').addEventListener('input', debounceCalculations);
+</script>
