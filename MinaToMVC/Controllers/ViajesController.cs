@@ -40,6 +40,10 @@ namespace MinaToMVC.Controllers
                 ViajeInterno = JsonConvert.DeserializeObject<DtoViajeInterno>(result.Response.ToString());
             }
 
+
+            var responseClientes = await httpClientConnection.GetAllCliente();
+            clientes = JsonConvert.DeserializeObject<List<Cliente>>(responseClientes.Response.ToString());
+
             string Nombre = "ViajesInternos";
             var responsefolio = await httpClientConnection.GetFoliadorByNombre(Nombre);
             folio = JsonConvert.DeserializeObject<DtoFoliador>(responsefolio.Response.ToString());
@@ -50,14 +54,12 @@ namespace MinaToMVC.Controllers
             var responseUbicaciones = await httpClientConnection.GetAllUbicacion();
             ubicaciones = JsonConvert.DeserializeObject<List<DtoUbicacion>>(responseUbicaciones.Response.ToString());
 
-            var responseTipoMaterial = await httpClientConnection.GetTipoMaterialByUnicacion(ubicaciones.FirstOrDefault().Id);
+            var responseTipoMaterial = await httpClientConnection.GetTipoMaterialByCliente(clientes.FirstOrDefault().Id);
             tipoMateriales = JsonConvert.DeserializeObject<List<DtoTipoMaterialUbicacion>>(responseTipoMaterial.Response.ToString());
 
             var responsetrabajadores = await httpClientConnection.GetAllTrabajador();
             trabajadores = JsonConvert.DeserializeObject<List<DtoTrabajador>>(responsetrabajadores.Response.ToString());
 
-            var responseClientes = await httpClientConnection.GetAllCliente();
-            clientes = JsonConvert.DeserializeObject<List<Cliente>>(responseClientes.Response.ToString());
 
 
             ViewBag.Ubicaciones = ubicaciones;
@@ -105,6 +107,10 @@ namespace MinaToMVC.Controllers
                 var result = await httpClientConnection.GetViajeLocalById(id);
                 ViajeLocal = JsonConvert.DeserializeObject<DtoViajeLocal>(result.Response.ToString());
             }
+
+            var responseClientes = await httpClientConnection.GetAllCliente();
+            clientes = JsonConvert.DeserializeObject<List<Cliente>>(responseClientes.Response.ToString());
+
             string Nombre = "ViajeLocal";
             var responsefolio = await httpClientConnection.GetFoliadorByNombre(Nombre);
             folio = JsonConvert.DeserializeObject<DtoFoliador>(responsefolio.Response.ToString());
@@ -112,14 +118,11 @@ namespace MinaToMVC.Controllers
             var responseUbicaciones = await httpClientConnection.GetAllUbicacion();
             ubicaciones = JsonConvert.DeserializeObject<List<DtoUbicacion>>(responseUbicaciones.Response.ToString());
 
-            var responseTipoMaterial = await httpClientConnection.GetTipoMaterialByUnicacion(ubicaciones.FirstOrDefault().Id);
+            var responseTipoMaterial = await httpClientConnection.GetTipoMaterialByCliente(clientes.FirstOrDefault().Id);
             tipoMateriales = JsonConvert.DeserializeObject<List<DtoTipoMaterialUbicacion>>(responseTipoMaterial.Response.ToString());
 
             var responsetrabajadores = await httpClientConnection.GetAllTrabajador();
             trabajadores = JsonConvert.DeserializeObject<List<DtoTrabajador>>(responsetrabajadores.Response.ToString());
-
-            var responseClientes = await httpClientConnection.GetAllCliente();
-            clientes = JsonConvert.DeserializeObject<List<Cliente>>(responseClientes.Response.ToString());
 
             var responseunidadmedida = await httpClientConnection.GetAllUnidadMedida();
             unidadmedida = JsonConvert.DeserializeObject<List<UnidadMedida>>(responseunidadmedida.Response.ToString());
@@ -153,6 +156,11 @@ namespace MinaToMVC.Controllers
         public async Task<string> GetTipoMaterialByCliente(long id)
         {
             var result = await httpClientConnection.GetTipoMaterialByCliente(id);
+            return JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetTipoMaterialByUnicacion(long id)
+        {
+            var result = await httpClientConnection.GetTipoMaterialByUnicacion(id);
             return JsonConvert.SerializeObject(result);
         }
     }

@@ -64,7 +64,16 @@ namespace MinaTolWebApi.DAL
                      {
                          var r = FillEntity<ClienteTipoMaterial>(reader);
 
-                         
+                         r.Cliente = new MinaTolEntidades.DtoClientes.Cliente()
+                         {
+                             Id = MappingProperties<long>(reader["ClienteId"]),
+                             Nombre = MappingProperties<string>(reader["NombreCliente"])
+                         };
+                         r.TipoMaterial = new MinaTolEntidades.DtoCatalogos.DtoTipoMaterialUbicacion()
+                         {
+                             Id = MappingProperties<long>(reader["MaterialId"]),
+                             NombreTipoMaterial = MappingProperties<string>(reader["Material"])
+                         };
 
                          return r;
                      }));

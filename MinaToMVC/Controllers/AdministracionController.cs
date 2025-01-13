@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -106,18 +107,26 @@ namespace MinaToMVC.Controllers
         #endregion
 
         #region Partials Views
-        public ActionResult PartialConfiguracionCostosCliente(int clienteId, int materialId)
+        public async Task<ActionResult> PartialConfiguracionCostosCliente(int clienteId, int materialId)
         {
+            var precios = new List<ClienteTipoMaterial>();
+            if (clienteId != 0 && materialId != 0)
+            {
+                // Llamar al servicio para obtener los datos
+                var result = await httpClientConnection.GetClienteTipoMaterialByMaterial(clienteId, materialId);
+                precios = JsonConvert.DeserializeObject<List<ClienteTipoMaterial>>(result.Response.ToString());
+            }
 
-            //var precios = new ClienteTipoMaterial();
-
-            //    var result = await httpClientConnection.GetClienteTipoMaterialByMaterial(clienteId, materialId);
-            //    precios = JsonConvert.DeserializeObject<ClienteTipoMaterial>(result.Response.ToString());
-            
             ViewBag.ClienteId = clienteId;
             ViewBag.MaterialId = materialId;
-            return PartialView();
+            ViewBag.Precios = precios;
+            ViewBag.ClienteNombre = precios.FirstOrDefault()?.Cliente.Nombre ?? "N/A";
+            ViewBag.MaterialNombre = precios.FirstOrDefault()?.TipoMaterial.NombreTipoMaterial ?? "N/A";
+
+            return PartialView(precios);
         }
+
+
 
         #endregion
 

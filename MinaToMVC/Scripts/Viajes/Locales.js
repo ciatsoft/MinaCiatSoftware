@@ -291,11 +291,11 @@ function GetAllViajeLocal() {
 
 
 function actualizarTiposDeMaterial() {
-    var ubicacionId = $("#ddlUOrigen").val(); // Obtener el ID de la ubicación seleccionada
+    var ubicacionId = $("#ddlCliente").val(); // Obtener el ID de la ubicación seleccionada
 
     // Realizar una llamada AJAX al controlador para obtener los tipos de material
     $.ajax({
-        url: '/Viajes/GetTipoMaterialByUbicacion', // Cambia esto al nombre de tu controlador y acción
+        url: '/Viajes/GetTipoMaterialByCliente', // Cambia esto al nombre de tu controlador y acción
         type: 'GET',
         data: { id: ubicacionId }, // Enviar el ID de la ubicación
         success: function (response) {
@@ -306,7 +306,7 @@ function actualizarTiposDeMaterial() {
 
                 // Llenar el DDL con los nuevos tipos de material
                 $.each(response.Response, function (index, item) {
-                    var templateoption = "<option value='" + item.id +"'>" + item.nombreTipoMaterial +"</option>";
+                    var templateoption = "<option value='" + item.tipoMaterial.id + "'>" + item.tipoMaterial.nombreTipoMaterial + "</option>";
 
                     $("#ddlTipoMaterial").append(templateoption);
                 });

@@ -1,8 +1,24 @@
-﻿
-<div class="container">
+﻿@{
+    var precios = (List<MinaTolEntidades.DtoClientes.ClienteTipoMaterial>)ViewBag.Precios;
+}
+
+<div class="container" onmouseover="debounceCalculations()">
     <!-- Input oculto para el clienteId y materialId -->
     <input type="hidden" id="clienteId" value="@Request["clienteId"]" />
     <input type="hidden" id="materialId" value="@Request["materialId"]" />
+
+    <!-- Etiquetas para mostrar el nombre del cliente y material -->
+    <div class="row mb-3">
+        <div class="col-6">
+            <label class="form-label font-weight-bold">Cliente:</label>
+            <span id="nombreCliente" class="form-label">@ViewBag.ClienteNombre"</span>
+        </div>
+        <div class="col-6">
+            <label class="form-label font-weight-bold">Material:</label>
+            <span id="nombreMaterial" class="form-label">@ViewBag.MaterialNombre</span>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-4">
             <label for="p-mat-m3">P. Mat. M3</label>
@@ -112,7 +128,7 @@
         const materialviajesprecio = pMatM3 * 30; // Material por M3
         const subtotalIngreso = 30 * (pMatM3 + pFleteM3); // Subtotal con m3 y flete
 
-        const totalgasto = totalGastos + materialviajesprecio;
+        const totalgasto = totalGastos + (pMatM3 * 30);
 
         // Actualizar los campos de Material Viajes, Subtotal y Total Gastos
         document.getElementById('material-viajes').value = materialviajesprecio.toFixed(1); // Material Viajes
@@ -136,4 +152,38 @@
     document.getElementById('km-basio').addEventListener('input', debounceCalculations);
     document.getElementById('carga-diesel').addEventListener('input', debounceCalculations);
     document.getElementById('mano-obra').addEventListener('input', debounceCalculations);
+</script>
+
+<script>
+    var preciosJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(precios))');
+
+    // Convertir ViewBag.precios en un objeto JS
+    var precios = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.precios ?? new List<MinaTolEntidades.DtoClientes.ClienteTipoMaterial>()));
+
+    // Si precios contiene datos, asignarlos a los campos del formulario
+    if (precios.length > 0) {
+        var precio = precios[0]; // Tomar el primer registro, ajusta según tu lógica
+
+        document.getElementById('p-mat-m3').value = precio.P_Mta_M3 ?? 0;
+        document.getElementById('p-flete-m3').value = precio.P_Flete_M3 ?? 0;
+        document.getElementById('km-cargado').value = precio.KM_Cargado ?? 0;
+        document.getElementById('km-basio').value = precio.KM_Basico ?? 0;
+        document.getElementById('carga-diesel').value = precio.Carga_Disel ?? 0;
+        document.getElementById('casetas').value = precio.Casetas ?? 0;
+        document.getElementById('mano-obra').value = precio.Mano_De_Obra ?? 0;
+
+        debounceCalculations();
+
+    } else {
+        // Si no hay datos, dejar todo en 0
+        document.getElementById('p-mat-m3').value = 0;
+        document.getElementById('p-flete-m3').value = 0;
+        document.getElementById('km-cargado').value = 0;
+        document.getElementById('km-basio').value = 0;
+        document.getElementById('carga-diesel').value = 0;
+        document.getElementById('casetas').value = 0;
+        document.getElementById('mano-obra').value = 0;
+        debounceCalculations();
+    }
+    debounceCalculations();
 </script>
