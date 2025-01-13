@@ -104,12 +104,13 @@
         const kmBasio = parseFloat(document.getElementById('km-basio').value) || 0;
         const cargaDiesel = parseFloat(document.getElementById('carga-diesel').value) || 0;
         const manoObra = parseFloat(document.getElementById('mano-obra').value) || 0;
+        const casetas = parseFloat(document.getElementById('casetas').value) || 0;
 
         // Cálculos intermedios
         const totalpreciom3 = pMatM3 + pFleteM3;
         const totalKmRecorridos = kmCargado + kmBasio;
         const totalpreciokm = cargaDiesel * 25.49;
-        const totalGastos = totalpreciom3 + totalpreciokm + manoObra;
+        const totalGastos = totalpreciom3 + totalpreciokm + manoObra + casetas;
 
         // Actualizar los campos intermedios
         document.getElementById('precio-m3').value = totalpreciom3.toFixed(1);
