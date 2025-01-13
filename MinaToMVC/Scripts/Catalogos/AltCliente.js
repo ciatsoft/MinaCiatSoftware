@@ -105,13 +105,16 @@ $(document).ready(function () {
 
             // Manejar el evento del botón "Precios"
             $(btnPrecios).on("click", function () {
-                var clienteId = clienteJson.Id;  // Obtener el clienteId
-                var materialId = $(this).data("material-id");  // Obtener el materialId
+                var clienteId = clienteJson.Id; // Obtener el clienteId
+                var materialId = $(this).data("material-id"); // Obtener el materialId
 
                 // Abrir el modal con la vista parcial y pasar los datos
                 $("#titleGenerciModal").text("Configuración de costos por cliente");
                 $("#boddyGeericModal").empty().load("/Administracion/PartialConfiguracionCostosCliente", { clienteId: clienteId, materialId: materialId }, function () {
+
+                    // Mostrar el modal
                     $("#genericModal").modal("show");
+
                 });
             });
         }
