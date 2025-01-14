@@ -37,7 +37,6 @@ $(document).ready(function () {
             { data: "id", "visible": false, title: "Id" },
             { data: "folio", title: "Folio" },
             { data: "ubicacionOrigen.nombreUbicacion", title: "Origen" },
-            { data: "ubicacionDestino.nombreUbicacion", title: "Destino" },  
             { data: "transportista.nombre", title: "Transportista" },  
             { data: "tipoMaterial.nombreTipoMaterial", title: "Material" },  
             { data: "vehiculo.placa", title: "Vehículo" },
@@ -107,12 +106,10 @@ $(document).ready(function () {
         console.log("Datos recibidos: " + JSON.stringify(viajeLocalJson)); 
         $("#txtViajeinterno").val(viajeLocalJson.Id);
         $("#ddlUOrigen").val(viajeLocalJson.UbicacionOrigen.Id);
-        $("#ddlUDestino").val(viajeLocalJson.UbicacionDestino.Id);
         $("#ddlTipoMaterial").val(viajeLocalJson.TipoMaterial.Id);
         $("#ddlTransportistas").val(viajeLocalJson.Transportista.Id);
         $("#ddlVehiculo").val(viajeLocalJson.Vehiculo.Id);
         $("#ddlCliente").val(viajeLocalJson.Cliente.Id);
-        $("#ddlUnidadM").val(viajeLocalJson.UnidadMedida.Id);
         $("#dtpFechaViaje").val(viajeLocalJson.FechaViaje.substring(0, 10));
         $("#txtObservaciones").val(viajeLocalJson.Observaciones);
         // Mostrar botón de eliminar y ocultar el de guardar
@@ -132,7 +129,6 @@ function SaveOrUpdateViajeLocal() {
         var parametro = {
             Id: $("#txtViajeinterno").val(),
             UbicacionOrigen: { Id: $("#ddlUOrigen").val() },
-            UbicacionDestino: { Id: $("#ddlUDestino").val() },
             Transportista: { Id: $("#ddlTransportistas").val() },
             TipoMaterial: { Id: $("#ddlTipoMaterial").val() },
             Vehiculo: { Id: $("#ddlVehiculo").val() },
@@ -152,7 +148,6 @@ function SaveOrUpdateViajeLocal() {
         window.Swal.fire({
             title: 'Datos del viaje',
             html: `<strong>Origen:</strong> ${$("#ddlUOrigen option:selected").text()}<br/>
-                   <strong>Destino:</strong> ${$("#ddlUDestino option:selected").text()}<br/>
                    <strong>Transportista:</strong> ${$("#ddlTransportistas option:selected").text()}<br/>
                    <strong>Material:</strong> ${$("#ddlTipoMaterial option:selected").text()}<br/>
                    <strong>Vehículo:</strong> ${$("#ddlVehiculo option:selected").text()}<br/>
@@ -198,7 +193,6 @@ function EliminarViajeLocal() {
         var parametro = {
             Id: $("#txtViajeinterno").val(),
             UbicacionOrigen: { Id: $("#ddlUOrigen").val() },
-            UbicacionDestino: { Id: $("#ddlUDestino").val() },
             Transportista: { Id: $("#ddlTransportistas").val() },
             TipoMaterial: { Id: $("#ddlTipoMaterial").val() },
             Vehiculo: { Id: $("#ddlVehiculo").val() },
@@ -219,7 +213,6 @@ function EliminarViajeLocal() {
             title: 'Confirmar eliminación',
             html: `<strong>¿Estás seguro de que deseas eliminar este viaje?</strong><br/>
                    <strong>Origen:</strong> ${$("#ddlUOrigen option:selected").text()}<br/>
-                   <strong>Destino:</strong> ${$("#ddlUDestino option:selected").text()}<br/>
                    <strong>Transportista:</strong> ${$("#ddlTransportistas option:selected").text()}<br/>
                    <strong>Material:</strong> ${$("#ddlTipoMaterial option:selected").text()}<br/>
                    <strong>Vehículo:</strong> ${$("#ddlVehiculo option:selected").text()}<br/>
