@@ -103,6 +103,7 @@ namespace MinaToMVC.Controllers
             return JsonConvert.SerializeObject(mr);
         }
 
+        //Comentarios
         [Autenticated]
         public string LogOut()
         {
