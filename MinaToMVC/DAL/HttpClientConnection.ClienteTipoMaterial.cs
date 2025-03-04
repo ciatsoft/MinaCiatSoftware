@@ -23,7 +23,18 @@ namespace MinaToMVC.DAL
                }));
             return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
         }
-        public async Task<ModelResponse> SaveOrUpdateClienteTipoMaterial(ClienteTipoMaterial t)
+        public async Task<ModelResponse> GetClienteTipoMaterialByMaterial(long clienteid, long materialid)
+        {
+            var result = await RequestAsync<object>($"api/ClienteTipoMaterial/{clienteid}/{materialid}", HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+
+                {
+                    return responseString;
+                }));
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+        }
+
+            public async Task<ModelResponse> SaveOrUpdateClienteTipoMaterial(ClienteTipoMaterial t)
         {
             var result = await RequestAsync<object>("api/ClienteTipoMaterial/Agregar", HttpMethod.Post, t,
             new Func<string, string>((responseString) =>

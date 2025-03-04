@@ -69,31 +69,58 @@ $(document).ready(function () {
                 data: "id", title: "", render: function (data) {
                     return '<input type="checkbox" class="material-check" data-id="' + data + '" />';
                 }
+            },
+            {
+                data: "id", title: "Configurar", render: function (data) {
+                    return '<input type="button" value="Precios" class="btn btn-custom-clean btn-precios" style="display:none;" data-material-id="' + data + '" />';
+                }
             }
         ],
         createdRow: function (row, data, index) {
-            var r = $(row).find(".material-check");
-            var rrr = materialesClienteJson.find(x => x.TipoMaterial.Id == data.id);
+            var checkBox = $(row).find(".material-check");
+            var btnPrecios = $(row).find(".btn-precios");
+            var materialExists = materialesClienteJson.find(x => x.TipoMaterial.Id == data.id);
 
-            if (rrr != undefined) {
-                $(r).prop('checked', true);
+            // Si el material ya está asociado, marcar el checkbox y mostrar el botón
+            if (materialExists != undefined) {
+                $(checkBox).prop('checked', true);
+                $(btnPrecios).show();
             }
 
-            $(r).on("change", function () {
-
+            // Manejar el evento de cambio del checkbox
+            $(checkBox).on("change", function () {
                 var clienteId = clienteJson.Id;
-                var materialId = $(r).attr("data-id");
-                console.log(clienteId + " " + materialId);
+                var materialId = $(this).attr("data-id");
 
-                if ($(r).is(':checked'))
-                    //Insertar material
+                if ($(this).is(':checked')) {
+                    // Insertar material y mostrar el botón
                     AgregarMaterialACliente(clienteId, materialId);
-                else
-                    //Eliminar material
+                    $(btnPrecios).show();
+                } else {
+                    // Eliminar material y ocultar el botón
                     EliminarMaterialDelCliente(clienteId, materialId);
+                    $(btnPrecios).hide();
+                }
+            });
+
+            // Manejar el evento del botón "Precios"
+            $(btnPrecios).on("click", function () {
+                var clienteId = clienteJson.Id; // Obtener el clienteId
+                var materialId = $(this).data("material-id"); // Obtener el materialId
+
+                // Abrir el modal con la vista parcial y pasar los datos
+                $("#titleGenerciModal").text("Configuración de costos por cliente");
+                $("#boddyGeericModal").empty().load("/Administracion/PartialConfiguracionCostosCliente", { clienteId: clienteId, materialId: materialId }, function () {
+
+                    // Mostrar el modal
+                    $("#genericModal").modal("show");
+
+                });
             });
         }
     });
+
+
 
 
     if (clienteJson.Id != 0)
@@ -151,6 +178,67 @@ function AgregarMaterialACliente(clienteId, materialId) {
         }
     });
 }
+
+function AgregarPreciosMaterialACliente() {
+    // Recoger los valores de los campos de la vista parcial
+    var clienteId = $("#clienteId").val();
+    var materialId = $("#materialId").val();
+    var pMatM3 = parseFloat($("#p-mat-m3").val()) || 0;
+    var pFleteM3 = parseFloat($("#p-flete-m3").val()) || 0;
+    var precioM3 = parseFloat($("#precio-m3").val()) || 0;
+    var kmCargado = parseFloat($("#km-cargado").val()) || 0;
+    var kmBasio = parseFloat($("#km-basio").val()) || 0;
+    var totalKmRecorridos = parseFloat($("#total-km-recorridos").val()) || 0;
+    var cargaDiesel = parseFloat($("#carga-diesel").val()) || 0;
+    var totalDiesel = parseFloat($("#total-diesel").val()) || 0;
+    var casetas = parseFloat($("#casetas").val()) || 0;
+    var manoObra = parseFloat($("#mano-obra").val()) || 0;
+    var materialViajes = parseFloat($("#material-viajes").val()) || 0;
+    var totalGastos = parseFloat($("#total-gastos").val()) || 0;
+    var subtotalIngreso = parseFloat($("#subtotal-ingreso").val()) || 0;
+
+    // Crear el objeto con los datos
+    var parametro = {
+        Cliente: {
+            Id: clienteId
+        },
+        TipoMaterial: {
+            Id: materialId
+        },
+        Estatus: true,
+        P_Mta_M3: pMatM3,
+        P_Flete_M3: pFleteM3,
+        Precio_M3: precioM3,
+        KM_Cargado: kmCargado,
+        KM_Basico: kmBasio,
+        Total_KM_Recorridos: totalKmRecorridos,
+        Carga_Disel: cargaDiesel,
+        Total_Diesel_Precio_XLT: totalDiesel,
+        Casetas: casetas,
+        Mano_De_Obra: manoObra,
+        Material_Viajes_De_30M3: materialViajes,
+        Total_Gastos: totalGastos,
+        Subtotal_Ingreso_Viajes_M3: subtotalIngreso
+    };
+
+    // Llamar al método SaveOrUpdateClienteTipoMaterial a través de PostMVC
+    PostMVC('/Administracion/SaveOrUpdateClienteTipoMaterial', parametro, function (r) {
+        console.log(parametro);
+        if (r.IsSuccess) {
+            Swal.fire("Éxito", "Los precios se agregaron exitosamente al cliente", "success");
+            /*window.location.replace('/Administracion/Clientes');*/
+            $("#genericModal").modal("hide");
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al guardar los precios: ' + r.ErrorMessage,
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
+}
+
 
 function EliminarMaterialDelCliente(clienteId, materialId) {
     var parametros = {

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -106,10 +107,27 @@ namespace MinaToMVC.Controllers
         #endregion
 
         #region Partials Views
-        public ActionResult PartialConfiguracionCostosCliente()
+        public async Task<ActionResult> PartialConfiguracionCostosCliente(int clienteId, int materialId)
         {
-            return PartialView();
+            var precios = new List<ClienteTipoMaterial>();
+            if (clienteId != 0 && materialId != 0)
+            {
+                // Llamar al servicio para obtener los datos
+                var result = await httpClientConnection.GetClienteTipoMaterialByMaterial(clienteId, materialId);
+                precios = JsonConvert.DeserializeObject<List<ClienteTipoMaterial>>(result.Response.ToString());
+            }
+
+            ViewBag.ClienteId = clienteId;
+            ViewBag.MaterialId = materialId;
+            ViewBag.Precios = precios;
+            ViewBag.ClienteNombre = precios.FirstOrDefault()?.Cliente.Nombre ?? "N/A";
+            ViewBag.MaterialNombre = precios.FirstOrDefault()?.TipoMaterial.NombreTipoMaterial ?? "N/A";
+
+            return PartialView(precios);
         }
+
+
+
         #endregion
 
         #region Data Acces

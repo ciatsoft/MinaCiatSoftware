@@ -75,7 +75,7 @@
         }
 </style>
 
-<form enctype="multipart/form-data" id="frmViajesInternos" method="post" name="frmViajesInternos" onmouseover="actualizarTiposDeMaterial()">
+<form enctype="multipart/form-data" id="frmViajesInternos" method="post" name="frmViajesInternos">
     <div class="content">
         <!-- Campos ocultos para los datos automáticos -->
         <input type="hidden" id="txtCreatedBy" value="@User.Identity.Name" />
@@ -99,7 +99,7 @@
 
                     <div class="col-lg-3">
                         <label>Ubicación Origen:</label>
-                        <select id="ddlUOrigen" name="ddlUOrigen" class="form-control" onchange="actualizarTiposDeMaterial()">
+                        <select id="ddlUOrigen" name="ddlUOrigen" class="form-control" disabled>
                             @foreach (var i in ubicaciones)
                             {
                                 <option value="@i.Id">@i.NombreUbicacion</option>
@@ -107,11 +107,11 @@
                         </select>
                     </div>
                     <div class="col-lg-3">
-                        <label>Ubicación Destino:</label>
-                        <select id="ddlUDestino" name="ddlUDestino" class="form-control">
-                            @foreach (var i in ubicaciones)
+                        <label>Cliente:</label>
+                        <select id="ddlCliente" class="form-control" onchange="actualizarTiposDeMaterial()">
+                            @foreach (var i in clientes)
                             {
-                                <option value="@i.Id">@i.NombreUbicacion</option>
+                                <option value="@i.Id">@i.Nombre</option>
                             }
                         </select>
                     </div>
@@ -145,22 +145,14 @@
                         </select>
                     </div>
                     <div class="col-lg-3">
-                        <label>Cliente:</label>
-                        <select id="ddlCliente" class="form-control">
-                            @foreach (var i in clientes)
-                            {
-                                <option value="@i.Id">@i.Nombre</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="col-lg-3">
                         <label>Unidad De Medida:</label>
-                        <select id="ddlUnidadM" class="form-control">
+                        <select id="ddlUnidadM" class="form-control" disabled>
                             @foreach (var unidad in unidadmedida)
                             {
                                 <option value="@unidad.Id">@unidad.Nombre</option>
                             }
                         </select>
+
                     </div>
                     <div class="col-lg-3">
                         <label>Fecha del viaje:</label>

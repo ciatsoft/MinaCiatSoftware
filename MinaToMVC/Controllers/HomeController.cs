@@ -107,17 +107,26 @@ namespace MinaToMVC.Controllers
         [Autenticated]
         public string LogOut()
         {
+            // Cerrar la sesión
             SessionHelper.CloseSession();
+
+            // Verificar si la cookie "ConfigMenu" existe y eliminarla
             if (Request.Cookies["ConfigMenu"] != null)
             {
                 var c = new HttpCookie("ConfigMenu")
                 {
-                    Expires = DateTime.Now.AddDays(-1)
+                    Expires = DateTime.Now.AddDays(-1) // Expirar inmediatamente
                 };
                 Response.Cookies.Add(c);
             }
+
+            // Redirigir al usuario a otra página
+            Response.Redirect("~/Home/Authentication");
+
+            // Convertir el objeto 'mr' a JSON y devolverlo como respuesta
             return JsonConvert.SerializeObject(mr);
         }
+
         #endregion
     }
 }
