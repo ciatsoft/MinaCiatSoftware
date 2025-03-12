@@ -14,5 +14,11 @@ namespace MinaTolEntidades
         public DateTime CreatedDt { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime? UpdatedDt { get; set; }
+
+        public BaseObject()
+        {
+            this.Estatus = true;
+        }
+
     }
 }
