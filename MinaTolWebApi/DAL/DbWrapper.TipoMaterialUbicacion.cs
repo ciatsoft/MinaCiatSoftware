@@ -13,19 +13,20 @@ namespace MinaTolWebApi.DAL
     public partial class DbWrapper
     {
         public ModelResponse GetAllTipoMaterialUbicacion()
+        
         {
             var modelResponse = new ModelResponse();
             var parameters = new List<SqlParameter>();
 
             try
             {
-                var result = GetObjects($"GetAllTipoMaterialUbicacion", CommandType.Text, parameters,
+                var result = GetObjects($"GetAllTipoMaterialUbicacion", CommandType.StoredProcedure, parameters,
                     new Func<IDataReader, DtoTipoMaterialUbicacion>((reader) =>
                     {
                         var r = FillEntity<DtoTipoMaterialUbicacion>(reader);
                         r.UnidadMedida = new UnidadMedida()
                         {
-                            Id = Convert.ToInt64(reader["UnidadMedidaID"].ToString())
+                            Id = reader["UnidadMedidaID"] != DBNull.Value ? Convert.ToInt64(reader["UnidadMedidaID"]) : 0,
                         };
                         return r;
                     }));

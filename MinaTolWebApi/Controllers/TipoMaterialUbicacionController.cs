@@ -45,5 +45,6 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.SaveOrUpdateTipoMaterialUbicacion(tm);
             return result;
         }
+
     }
 }
