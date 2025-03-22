@@ -282,7 +282,6 @@ function GetAllViajeLocal() {
     });
 }
 
-
 function actualizarTiposDeMaterial() {
     var ubicacionId = $("#ddlCliente").val(); // Obtener el ID de la ubicación seleccionada
 
@@ -314,3 +313,5 @@ function actualizarTiposDeMaterial() {
         }
     });
 }
+
+//Comentarios
