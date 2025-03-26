@@ -91,7 +91,7 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Teléfono:</label>
-                        <input type="text" id="txtTelefono" name="txtTelefono" class="form-control" />
+                        <input type="number" id="txtTelefono" name="txtTelefono" class="form-control" />
                     </div>
                 </div>
                 <div class="row">
@@ -101,7 +101,7 @@
                     </div>
                     <div class="col-lg-3">
                         <label>NSS:</label>
-                        <input type="text" id="txtSeguro" name="txtSeguro" class="form-control" />
+                        <input type="number" id="txtSeguro" name="txtSeguro" class="form-control" />
                     </div>
                     <div class="col-lg-3">
                         <label>Turno:</label>
@@ -149,7 +149,7 @@
                     <div class="col-lg-12 d-flex justify-content-between">
                         <div>
                             <input id="btnGuardar" type="button" onclick="SaveOrupdateTrabajador()" value="Guadar" class="btn btn-success" />
-                            <input type="button" name="btnEliminar" id="btnEliminar" value="Eliminar" class="btn btn-custom-delete"/>
+                            <input type="button" name="btnEliminar" id="btnEliminar" value="Eliminar" class="btn btn-custom-delete" />
                         </div>
                         <a class="btn btn-custom-cancel" href="/Empleado/AltaEdicion">Cancelar</a>
                     </div>
@@ -164,3 +164,72 @@
 <script>
         var trabajadorJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(trabajador))');
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // 1. Permitir solo letras, espacios y acentos en Nombre
+        document.getElementById("txtNombre").addEventListener("input", function () {
+            this.value = this.value.replace(/[^a-zA-ZÁÉÍÓÚáéíóúÑñ\s]/g, '');
+        });
+
+        // 2. Convertir Nombre a Mayúsculas al perder el foco
+        document.getElementById("txtNombre").addEventListener("blur", function () {
+            this.value = this.value.toUpperCase();
+        });
+
+        // 3. Validar Email (sin espacios y con formato correcto)
+        document.getElementById("txtEmail").addEventListener("input", function () {
+            this.value = this.value.replace(/\s/g, '');
+        });
+
+        document.getElementById("txtEmail").addEventListener("blur", function () {
+        let email = this.value.trim();
+        let regex = /^[a-zA-Z0-9._%+-]+[a-zA-Z0-9.-]+\.[a-zA-Z]{2,7}$/;
+
+        if (!regex.test(email)) {
+        alert("Ingrese un correo válido.");
+        this.value = "";
+    } else {
+        this.value = email; // Elimina espacios adicionales
+    }
+});
+
+
+        // 4. Evitar valores negativos en Teléfono y NSS
+        document.getElementById("txtTelefono").addEventListener("input", function () {
+            if (this.value < 0) this.value = "";
+        });
+
+        document.getElementById("txtSeguro").addEventListener("input", function () {
+            if (this.value < 0) this.value = "";
+        });
+
+        // 5. No permitir caracteres especiales en NSS (solo números)
+        document.getElementById("txtSeguro").addEventListener("input", function () {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        // 6. Deshabilitar edición del Salario y permitir ajuste con clic en imagen
+        let txtSalario = document.getElementById("txtSalario");
+        let txtSalarioTexto = document.getElementById("txtSalarioTexto");
+
+        if (txtSalario) {
+            txtSalarioTexto.value = `$${parseFloat(txtSalario.value || 0).toFixed(2)}`;
+        }
+
+        document.getElementById("imgAddSalario").addEventListener("click", function () {
+            let nuevoSalario = prompt("Ingrese el nuevo salario:");
+            if (nuevoSalario && !isNaN(nuevoSalario) && nuevoSalario > 0) {
+                txtSalario.value = nuevoSalario;
+                txtSalarioTexto.value = `$${parseFloat(nuevoSalario).toFixed(2)}`;
+            } else {
+                alert("Ingrese un valor numérico válido.");
+            }
+        });
+
+        // Evento para el botón Guardar
+        document.getElementById("btnGuardar").addEventListener("click", function () {
+            SaveOrupdateTrabajador();
+        });
+    });
+</script>
+
