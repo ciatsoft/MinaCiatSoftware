@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace MinaTolEntidades.DtoCatalogos
 {
+    //Comentario2
     public class DtoAreaTrabajo : BaseObject
     {
         public string Nombre { get; set; }
