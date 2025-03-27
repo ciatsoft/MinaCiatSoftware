@@ -1,26 +1,26 @@
-﻿using MinaTolEntidades;
-using MinaTolEntidades.DtoSucursales;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
+using MinaTolEntidades.DtoSucursales;
+using MinaTolEntidades;
 
 namespace MinaTolWebApi.DAL
 {
     public partial class DbWrapper
     {
-        public ModelResponse SaveOrUpdateUnidadMedida(UnidadMedida u)
+        public ModelResponse SaveOrUpdatePV_Material(PV_Material u)
         {
             var response = new ModelResponse();
             try
             {
                 response.IsSuccess = true;
                 var parameters = GenerateSQLParameters(u);
-                var result = GetObject("SaveOrUpdateUnidadMedida", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, UnidadMedida>((reader) =>
+                var result = GetObject("SaveOrUpdatePV_Material", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, PV_Material>((reader) =>
                     {
-                        var r = FillEntity<UnidadMedida>(reader);
+                        var r = FillEntity<PV_Material>(reader);
                         return r;
                     }));
                 response.Response = result;
@@ -35,7 +35,8 @@ namespace MinaTolWebApi.DAL
 
 
         }
-        public ModelResponse GetAllUnidadMedida()
+
+        public ModelResponse GetAllPV_Material()
         {
             var response = new ModelResponse();
 
@@ -44,10 +45,10 @@ namespace MinaTolWebApi.DAL
                 response.IsSuccess = true;
 
                 var parameters = new List<SqlParameter>();
-                var result = GetObjects("GetAllUnidadMedida", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, UnidadMedida>((reader) =>
+                var result = GetObjects("GetAllPV_Material", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, PV_Material>((reader) =>
                     {
-                        var r = FillEntity<UnidadMedida>(reader);
+                        var r = FillEntity<PV_Material>(reader);
                         return r;
                     }));
 
@@ -62,7 +63,8 @@ namespace MinaTolWebApi.DAL
 
             return response;
         }
-        public ModelResponse GetUnidadMedidaById(long id)
+
+        public ModelResponse GetPV_Material(long id)
         {
             var response = new ModelResponse();
             try
@@ -78,40 +80,14 @@ namespace MinaTolWebApi.DAL
                     SqlDbType = System.Data.SqlDbType.Int
                 });
 
-                var result = GetObject("GetUnidadMedidaById", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, UnidadMedida>((reader) =>
+                var result = GetObject("GetPV_MaterialById", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, PV_Material>((reader) =>
                     {
-                        var r = FillEntity<UnidadMedida>(reader);
+                        var r = FillEntity<PV_Material>(reader);
                         return r;
                     }));
 
                 response.Response = result;
-            }
-            catch (Exception ex)
-            {
-                response.IsSuccess = false;
-                response.Message = ex.Message;
-                response.Enum = Enumeration.ErrorNoControlado;
-            }
-
-            return response;
-        }
-        public ModelResponse DeleteUnidadMedida(long id)
-        {
-            var response = new ModelResponse();
-            try
-            {
-                response.IsSuccess = true;
-
-                var parameters = new List<SqlParameter>();
-                parameters.Add(new SqlParameter()
-                {
-                    Value = id,
-                    IsNullable = true,
-                    ParameterName = "@Id"
-                });
-
-                var result = ExecuteNonQuery("DeleteUnidadMedida", System.Data.CommandType.StoredProcedure, parameters);
             }
             catch (Exception ex)
             {

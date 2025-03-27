@@ -8,7 +8,7 @@
 
 <
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
-<script src="~/Scripts/Catalogos/UnidadMedida.js"></script>
+<script src="@(Url.StaticFile("Scripts/Catalogos/UnidadMedida.js"))"></script>
 <style>
     .btn-success {
         background-color: #28a745; /* Verde para el botón Guardar */
@@ -81,11 +81,6 @@
 
                     </div>
                 </div>
-
-                <input type="hidden" id="txtCreatedBy" value="@User.Identity.Name" />
-                <input type="hidden" id="txtCreatedDt" value="@DateTime.Now" />
-                <input type="hidden" id="txtUpdatedBy" value="@User.Identity.Name" />
-                <input type="hidden" id="txtUpdatedDt" value="@DateTime.Now" />
             </div>
         </div>  <div class="row">
             <div class="col-lg-12">

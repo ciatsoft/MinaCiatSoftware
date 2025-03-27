@@ -24,7 +24,7 @@
         }
 
     .btn-custom-cancel {
-        background-color: red; /*  para el botón Guardar */
+        background-color: red; /*  para el botón Cancelar */
         color: white;
         border: none;
         transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
@@ -70,10 +70,7 @@
                         <label>Descripción:</label>
                         <textarea type="text" id="txtDescripcion" class="form-control"></textarea>
                     </div>
-                    <div class=" col-lg-3">
-                        <label>Estatus:</label>
-                        <input type="checkbox" name="chbEstatus" id="chbEstatus" value="" class="form-control" />
-                    </div>
+                    
                 </div>
                 <div class="row">
                     <div class="col-md-12">
@@ -97,4 +94,15 @@
 </div>
 <script>
     var areatJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(areat))');
+</script>
+
+<script>
+    document.getElementById('txtNombre').addEventListener('keypress', function (e) {
+        const char = String.fromCharCode(e.which);
+        const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
+
+        if (!regex.test(char)) {
+            e.preventDefault(); // Bloquea el caracter si no es válido
+        }
+    });
 </script>

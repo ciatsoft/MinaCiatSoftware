@@ -5,7 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
-
+//Comentario para ver si ya se puede hacer push a mi rama de trabajo
 namespace MinaTolWebApi.DAL
 {
     public abstract class BaseDbWrapper

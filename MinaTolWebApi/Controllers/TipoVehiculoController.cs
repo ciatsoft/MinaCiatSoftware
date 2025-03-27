@@ -31,6 +31,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetTipoDeVehiculoById(id);
             return result;
         }
+        [HttpDelete, Route("{id:long}")]
+        public async Task<ModelResponse> DeleteTipoVehiculo(int id)
+        {
+            var result = wrapper.DeleteTipoVehiculo(id);
+            return result;
+        }
         [HttpPost, Route("")]
         public async Task<ModelResponse> SaveOrUpdateTipoVehiculo(TipoVehiculo t)
         {

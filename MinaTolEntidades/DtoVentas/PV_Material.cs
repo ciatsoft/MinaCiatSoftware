@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinaTolEntidades.DtoCatalogos
+namespace MinaTolEntidades.DtoSucursales
 {
-    //Comentario2
-    public class DtoAreaTrabajo : BaseObject
+    public class PV_Material : BaseObject
     {
         public string Nombre { get; set; }
         public string Descripcion { get; set; }
+
     }
 }

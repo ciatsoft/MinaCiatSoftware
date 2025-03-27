@@ -8,7 +8,7 @@
 <link href="@Url.Content("~/Assets/css/EstilosBtnCambios/EstiloBtn.css")" rel="stylesheet" />
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
-<script src="~/Scripts/Catalogos/AltaTipoVehiculo.js"></script>
+<script src="@(Url.StaticFile("Scripts/Catalogos/AltaTipoVehiculo.js"))"></script>
 <style>
     .btn-success {
         background-color: #28a745; /* Verde para el botón Guardar */
@@ -63,10 +63,7 @@
                         <label>Nombre del Vehículo:</label>
                         <input type="text" id="txtNombre" name="txtNombre" class="form-control" />
                     </div>
-                    <div class="col-lg-3">
-                        <label>Descripción:</label>
-                        <textarea type="text" id="txtDescripcion" name="Descripcion" class="form-control"></textarea>
-                    </div>
+
                     <div class="col-lg-3" id="estatusContainer" style="display: none;">
                         <label>Activo:</label>
                         <input type="checkbox" name="chbEstatus" id="chbEstatus" value="" class="form-control" disabled />
@@ -76,13 +73,29 @@
                             <input href="/Catalog/Roll" type="button" value="Guardar" onclick="SaveOrUpdateTipoVehiculo()" class="btn btn-success" />
                             <a href="/Catalog/TipoVehiculo" class="btn btn-custom-cancel">Cancelar</a>
 
+                        <div class="col-lg-3">
+                            <label>Estatus:</label>
+                            <input type="checkbox" name="chbEstatus" id="chbEstatus" value="" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-8">
+                        <label>Descripción:</label>
+                        <textarea type="text" id="txtDescripcion" name="Descripcion" rows="6" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input href="/Catalog/Roll" type="button" value="Guardar" onclick="SaveOrUpdateTipoVehiculo()" class="btn btn-success" />
+                        <a href="/Catalog/TipoVehiculo" class="btn btn-custom-cancel">Cancelar</a>
+
+
                         </div>
                     </div>
 
-                    <input type="hidden" id="txtCreatedBy" name="CreatedBy" value="@User.Identity.Name" />
+
                     <input type="hidden" id="txtCreatedDt" name="CreatedDt" value="@DateTime.Now" />
-                    <input type="hidden" id="txtUpdatedBy" name="UpdatedBy" value="@User.Identity.Name" />
-                    <input type="hidden" id="txtUpdatedDt" name="UpdatedDt" value="@DateTime.Now" />
                 </div>
             </div>
 
