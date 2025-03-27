@@ -26,7 +26,7 @@
             {
                 data: "id", render: function (data) {
                     return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarUnidad(' + data + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarUnidad(' + data + ', this)" />'; // 'this' se pasa para obtener la fila
+                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarUnidad(' + data + ')" />'; // 'this' se pasa para obtener la fila
                 }
             }
         ]
@@ -104,19 +104,19 @@ function SaveOrUpdateUnidadMedida() {
 }
 
 // Función para eliminar el rol con confirmación y actualización de estatus
-function EliminarUnidad(id, boton) {
+function EliminarUnidad(id) {
     // Obtener la fila correspondiente al botón de eliminación
-    var row = $(boton).closest("tr");
+    //var row = $(boton).closest("tr");
 
     // Obtener los valores de la fila y almacenarlos en variables
-    var nombre = row.find("td:eq(0)").text();  // Nombre
-    var descripcion = row.find("td:eq(1)").text();  // Descripción
+    //var nombre = row.find("td:eq(0)").text();  // Nombre
+    //var descripcion = row.find("td:eq(1)").text();  // Descripción
 
     // Confirmación de eliminación
     // Confirmación de eliminación con SweetAlert
     Swal.fire({
         title: '¿Está seguro?',
-        text: "¿Desea eliminar la siguiente medida?\nNombre: " + nombre + "\nDescripcion: " + descripcion,
+        text: "¿Desea eliminar el registro?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -127,18 +127,11 @@ function EliminarUnidad(id, boton) {
         if (result.isConfirmed) {
             // Actualizamos el estatus a "Inactivo" (0) y preparamos el parámetro
             var parametro = {
-                Id: id,
-                Nombre: nombre,
-                Descripcion: descripcion,
-                Estatus: 0,  // Cambiamos el estatus a inactivo (0)
-                CreatedBy: $("#txtCreatedBy").val(),
-                CreatedDt: $("#txtCreatedDt").val(),
-                UpdatedBy: $("#txtUpdatedBy").val(),
-                UpdatedDt: new Date().toISOString()
+                Id: id
             };
-            window.location.href = '/Catalog/UnidadMedida';
-            PostMVC('/Catalog/SaveOrUpdateUnidadMedida', parametro, function (r) {
-                window.location.href = '/Catalog/UnidadMedida';
+            //window.location.href = '/Catalog/UnidadMedida';
+            PostMVC('/Catalog/DeleteUnidadMedida', parametro, function (r) {
+                //window.location.href = '/Catalog/UnidadMedida';
                 if (r.IsSuccess) {
                     Swal.fire(
                         'Eliminado',

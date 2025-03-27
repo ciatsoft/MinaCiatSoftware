@@ -33,9 +33,8 @@ namespace MinaTolWebApi.DAL
             }
             return response;
 
-            
-        }
 
+        }
         public ModelResponse GetAllUnidadMedida()
         {
             var response = new ModelResponse();
@@ -63,7 +62,6 @@ namespace MinaTolWebApi.DAL
 
             return response;
         }
-
         public ModelResponse GetUnidadMedidaById(long id)
         {
             var response = new ModelResponse();
@@ -88,6 +86,32 @@ namespace MinaTolWebApi.DAL
                     }));
 
                 response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
+        public ModelResponse DeleteUnidadMedida(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id"
+                });
+
+                var result = ExecuteNonQuery("DeleteUnidadMedida", System.Data.CommandType.StoredProcedure, parameters);
             }
             catch (Exception ex)
             {
