@@ -57,99 +57,82 @@
 
 <form id="frmCliente" name="frmCliente" method="post" enctype="multipart/form-data">
     <div class="content">
+        <br>
         <center><h1>Clientes</h1></center>
-        <div class="row">
-            <div class="col-lg-3">
-                <label>ID Cliente:</label>
-                <input type="text" asp-for="Cliente.IdCliente" class="form-control" disabled />
-            </div>
-            <div class="col-lg-3">
-                <label>Nombre/Empresa:</label>
-                <input type="text" asp-for="Cliente.Nombre" class="form-control"
-                       oninput="validarNombre(this)" onblur="convertirMayusculas(this)" />
-                <span asp-validation-for="Cliente.Nombre" class="text-danger"></span>
-            </div>
-            <div class="col-lg-3">
-                <label>Teléfono:</label>
-                <input type="number" asp-for="Cliente.Telefono" class="form-control"
-                       oninput="validarTelefono(this)" />
-                <span asp-validation-for="Cliente.Telefono" class="text-danger"></span>
-            </div>
-            <div class="col-lg-3">
-                <label>Email:</label>
-                <input type="email" asp-for="Cliente.Email" class="form-control"
-                       onchange="validarEmail(this)" />
-                <span asp-validation-for="Cliente.Email" class="text-danger"></span>
+        <div class="tabla-consultas-roll">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>ID Cliente:</label>
+                        <input type="text" id="txtIdCliente" name="IdCliente" class="form-control" disabled />
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Nombre/Empresa:</label>
+                        <input type="text" id="txtNombre" name="txtNombre" class="form-control" />
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Teléfono:</label>
+                        <input type="text" id="txtTelefono" name="txtTelefono" class="form-control" />
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Email:</label>
+                        <input type="email" id="txtEmail" name="txtEmail" class="form-control" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="col-lg-6">
+                            <label>RFC:</label>
+                            <input type="text" id="txtRFC" name="txtRFC" class="form-control" />
+                        </div>
+                        <div class="col-lg-6">
+                            <label>Razon social:</label>
+                            <input type="text" id="txtrazon" name="txtrazon" class="form-control" />
+                        </div>
+                        <div class="col-md-12">
+                            <label>Comentarios:</label>
+                            <textarea name="txtComentarios" id="txtComentarios" class="form-control" rows="6"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-3 table-responsive">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table table-bordered table-striped dataTable no-footer" id="tableTipodematerial">
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-custom-clean" id="btnmaterial" name="btnmaterial">
+                                    <i class="fa fa-plus"></i> Configuración de costos
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <br />
+                        <input type="hidden" id="txtCreatedBy" name="CreatedBy" value="@User.Identity.Name" />
+                        <input type="hidden" id="txtCreatedDt" name="CreatedDt" value="@DateTime.Now" />
+                        <input type="hidden" id="txtUpdatedBy" name="UpdatedBy" value="@User.Identity.Name" />
+                        <input type="hidden" id="txtUpdatedDt" name="UpdatedDt" value="@DateTime.Now" />
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input href="/Administracion/Clientes" type="button" value="Guardar" onclick="SaveOrUpdateCliente()" class="btn btn-success" />
+                            <a href="/Administracion/Clientes" class="btn btn-custom-cancel">Cancelar</a>
+
+                        </div>
+                    </div>
+                </div>
+
+                <br />
+
+                <table id="tbCliente" class="table table-bordered table-striped" style="width: 100%;"></table>
+
             </div>
         </div>
-        <div class="row">
-            <div class="col-lg-6">
-                <label>RFC:</label>
-                <input type="text" asp-for="Cliente.RFC" class="form-control"
-                       oninput="this.value = this.value.replace(/\s/g, '')"
-                       onblur="convertirMayusculas(this)" />
-                <span asp-validation-for="Cliente.RFC" class="text-danger"></span>
-            </div>
-            <div class="col-lg-6">
-                <label>Razón social:</label>
-                <input type="text" asp-for="Cliente.RazonSocial" class="form-control"
-                       oninput="validarTexto(this)" />
-                <span asp-validation-for="Cliente.RazonSocial" class="text-danger"></span>
-            </div>
-            <div class="col-md-12">
-                <label>Comentarios:</label>
-                <textarea asp-for="Cliente.Comentarios" class="form-control" rows="6"
-                          oninput="contarCaracteres(this, 500)"></textarea>
-                <span asp-validation-for="Cliente.Comentarios" class="text-danger"></span>
-                <small id="contadorComentarios" class="text-muted">0/500 caracteres</small>
-            </div>
-        </div>
-        <br />
-        <input type="submit" value="Guardar" class="btn btn-success" />
-        <a href="/Administracion/Clientes" class="btn btn-custom-cancel">Cancelar</a>
-    </div>
 </form>
-<script>
-    function validarNombre(input) {
-        let regex = /^[A-Za-z\s]+$/;
-        if (!regex.test(input.value)) {
-            input.setCustomValidity("Solo se permiten letras y espacios.");
-        } else {
-            input.setCustomValidity("");
-        }
-    }
-
-    function validarTelefono(input) {
-        let regex = /^\d{0,10}$/;
-        if (!regex.test(input.value)) {
-            input.value = input.value.slice(0, -1); // Elimina el último caracter si excede 10 dígitos
-        }
-    }
-
-    function validarEmail(input) {
-        let regex = /^[a-zA-Z0-9._%+-]+[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!regex.test(input.value)) {
-            alert("Ingrese un correo válido.");
-            input.value = "";
-        }
-    }
-
-    function convertirMayusculas(input) {
-        input.value = input.value.toUpperCase();
-    }
-
-    function contarCaracteres(textarea, max) {
-        let contador = document.getElementById("contadorComentarios");
-        let caracteres = textarea.value.length;
-        if (caracteres > max) {
-            textarea.value = textarea.value.substring(0, max);
-            caracteres = max;
-        }
-        contador.innerText = `${caracteres}/${max} caracteres`;
-    }
-</script>
-
-
 <script src="@(Url.StaticFile("Scripts/Catalogos/AltCliente.js"))"></script>
 <script>
     var materialesClienteJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(materialesCliente))');
