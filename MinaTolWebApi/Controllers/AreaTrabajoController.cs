@@ -11,6 +11,7 @@ using System.Web.Http;
 
 namespace MinaTolWebApi.Controllers
 {
+    [Authorize]
     [RoutePrefix("api/AreaTrabajo")]
     public class AreaTrabajoController : ApiController
     {
@@ -34,11 +35,16 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-
         [HttpPost, Route("")]
         public ModelResponse SaveOrUpdateAreaTrabajo(DtoAreaTrabajo at)
         {
             var result = wrapper.SaveOrUpdateAreaTrabajo(at);
+            return result;
+        }
+        [HttpDelete, Route("{id:long}")]
+        public ModelResponse DeleteAreaTrabajo(int id)
+        {
+            var result = wrapper.DeleteAreaTrabajo(id);
             return result;
         }
     }

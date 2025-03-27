@@ -26,7 +26,7 @@ namespace MinaToMVC.Controllers
         public async Task<ActionResult> AltaEdicion(long id = 0)
         {
             var token = Helpers.SessionHelper.GetSessionUser();
-            var result = await httpClientConnection.GetAllAreaTrabajo(token.Token.access_token);
+            var result = await httpClientConnection.GetAllAreaTrabajo();
             var areasDeTrabajo = JsonConvert.DeserializeObject<List<DtoAreaTrabajo>>(result.Response.ToString());
 
             DtoTrabajador trabajador;

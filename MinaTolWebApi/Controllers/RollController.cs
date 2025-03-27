@@ -11,6 +11,7 @@ using System.Web.Http;
 
 namespace MinaTolWebApi.Controllers
 {
+    [Authorize]
     [RoutePrefix("api/Roll")]
     public class RollController : ApiController
     {
@@ -29,6 +30,12 @@ namespace MinaTolWebApi.Controllers
         public async Task<ModelResponse> GetRollById(int id)
         {
             var result = wrapper.GetRollById(id);
+            return result;
+        }
+        [HttpDelete, Route("{id:long}")]
+        public async Task<ModelResponse> DeleteRoll(int id)
+        {
+            var result = wrapper.DeleteRoll(id);
             return result;
         }
         [HttpPost, Route("")]

@@ -41,7 +41,7 @@ namespace MinaToMVC.Controllers
             trabajadores = JsonConvert.DeserializeObject<List<DtoTrabajador>>(responsetrabajadores.Response.ToString());
 
             var token = Helpers.SessionHelper.GetSessionUser();
-            var responseareas = await httpClientConnection.GetAllAreaTrabajo(token.Token.access_token);
+            var responseareas = await httpClientConnection.GetAllAreaTrabajo();
             areas = JsonConvert.DeserializeObject<List<DtoAreaTrabajo>>(responseareas.Response.ToString());
 
             ViewBag.vehiculos = vehiculos;
