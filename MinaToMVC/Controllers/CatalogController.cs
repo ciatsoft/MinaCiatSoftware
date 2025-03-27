@@ -173,16 +173,22 @@ namespace MinaToMVC.Controllers
             }
             return View(roll);
         }
-        public string SaveOrUpdateRoll(DtoRoll rol)
+        public async Task<string> SaveOrUpdateRoll(DtoRoll rol)
         {
 
-            var result = httpClientConnection.SaveOrUpdateRoll(rol);
+            var result = await httpClientConnection.SaveOrUpdateRoll(rol);
             return JsonConvert.SerializeObject(result);
         }
 
         public async Task<string> GetAllRoll()
         {
             var result = await httpClientConnection.GetAllRoll();
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<String> DeleteRoll(long id)
+        {
+            var result = await httpClientConnection.DeleteRoll(id);
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
