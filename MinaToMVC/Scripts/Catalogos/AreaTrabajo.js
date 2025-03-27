@@ -11,7 +11,7 @@
         paging: true,
         searching: true,
         columns: [
-            { data: "id", "visible": false, title: "Id" },
+            { data: "id", "visible": true, title: "Id" },
             { data: "nombre", title: "Nombre" },
             { data: "descripcion", title: "Descripción" },
             {
@@ -59,7 +59,7 @@
         $("#txtidareatrabajo").val(areatJson.Id);
         $("#txtNombre").val(areatJson.Nombre);
         $("#txtDescripcion").val(areatJson.Descripcion);
-        $("#chbEstatus").prop('checked', areatJson.Estatus);
+        
     }
 });
 
@@ -72,7 +72,7 @@ function SaveOrUpdateAreaTrabajo() {
             Id: $("#txtidareatrabajo").val(),
             Nombre: $("#txtNombre").val(),
             Descripcion: $("#txtDescripcion").val(),
-            Estatus: $("#chbEstatus").is(':checked'),  // Booleano directo
+            Estatus: true,  // Booleano directo
             CreatedBy: $("#txtCreatedBy").val(),
             CreatedDt: $("#txtCreatedDt").val(),
             UpdatedBy: $("#txtUpdatedBy").val(),
@@ -109,8 +109,8 @@ function Eliminarareat(id, boton) {
     var row = $(boton).closest("tr");
 
     // Obtener los valores de la fila y almacenarlos en variables
-    var nombre = row.find("td:eq(0)").text();  // Nombre
-    var descripcion = row.find("td:eq(1)").text();  // Descripción
+    var nombre = row.find("td:eq(1)").text();  // Nombre
+    var descripcion = row.find("td:eq(2)").text();  // Descripción
 
     Swal.fire({
         title: '¿Está seguro?',
