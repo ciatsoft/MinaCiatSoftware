@@ -25,7 +25,7 @@
             {
                 data: "id", render: function (data) {
                     return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarTVehiculo(' + data + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarTVehiculo(' + data + ', this)" />';
+                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarTVehiculo(' + data + ')" />';
 
                 }
             }
@@ -74,10 +74,7 @@ function SaveOrUpdateTipoVehiculo() {
             Nombre: $("#txtNombre").val(),
             Descripcion: $("#txtDescripcion").val(),
             Estatus: $("#chbEstatus").is(':checked'),  // Booleano directo
-            CreatedBy: $("#txtCreatedBy").val(),
-            CreatedDt: $("#txtCreatedDt").val(),
-            UpdatedBy: $("#txtUpdatedBy").val(),
-            UpdatedDt: $("#txtUpdatedDt").val()
+            CreatedDt: $("#txtCreatedDt").val()
         };
         Swal.fire({
             title: "Registro guardado!",
@@ -103,18 +100,12 @@ function SaveOrUpdateTipoVehiculo() {
 
 
 // Función para eliminar el rol con confirmación y actualización de estatus
-function EliminarTVehiculo(id, boton) {
-    // Obtener la fila correspondiente al botón de eliminación
-    var row = $(boton).closest("tr");
-
-    // Obtener los valores de la fila y almacenarlos en variables
-    var nombre = row.find("td:eq(0)").text();  // Nombre
-    var descripcion = row.find("td:eq(1)").text();  // Descripción
+function EliminarTVehiculo(id) {
 
     // Confirmación de eliminación
     Swal.fire({
         title: '¿Está seguro?',
-        text: "¿Desea eliminar la siguiente tipo de vehiculo?\nNombre: " + nombre + "\nDescripcion: " + descripcion,
+        text: "¿Desea eliminar la siguiente registro?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -123,22 +114,12 @@ function EliminarTVehiculo(id, boton) {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-        // Actualizamos el estatus a "Inactivo" (0) y preparamos el parámetro
-        var parametro = {
-            Id: id,
-            Nombre: nombre,
-            Descripcion: descripcion,
-            Estatus: 0,  // Cambiamos el estatus a inactivo (0)
-            CreatedBy: $("#txtCreatedBy").val(),
-            CreatedDt: $("#txtCreatedDt").val(),
-            UpdatedBy: $("#txtUpdatedBy").val(),  // Asignamos el valor de quien está actualizando
-            UpdatedDt: new Date().toISOString()  // Asignamos la fecha y hora actual como fecha de actualización
-        };
-
-        window.location.href = '/Catalog/TipoVehiculo';
-        // Llamada para guardar o actualizar el rol
-            PostMVC('/Catalog/SaveOrUpdateTipoVehiculo', parametro, function (r) {
-                window.location.href = '/Catalog/TipoVehiculo';
+            // Actualizamos el estatus a "Inactivo" (0) y preparamos el parámetro
+            var parametro = {
+                Id: id
+            };
+            // Llamada para guardar o actualizar el rol
+            PostMVC('/Catalog/DeleteTipoVehiculo', parametro, function (r) {
                 if (r.IsSuccess) {
                     Swal.fire(
                         'Eliminado',

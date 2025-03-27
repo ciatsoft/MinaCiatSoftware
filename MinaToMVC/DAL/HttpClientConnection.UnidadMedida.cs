@@ -26,6 +26,7 @@ namespace MinaToMVC.DAL
         }
         public async Task<ModelResponse> SaveOrUpdateUnidadMedida(UnidadMedida u)
         {
+            MappingColumSecurity(u);
             var result = await RequestAsync<object>("api/UnidadMedida/", HttpMethod.Post, u,
             new Func<string, string>((responseString) =>
             {

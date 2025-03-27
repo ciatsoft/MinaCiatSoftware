@@ -73,11 +73,7 @@ function SaveOrUpdateUnidadMedida() {
             Id: $("#txtunidadmedida").val(),
             Nombre: $("#txtNombre").val(),
             Descripcion: $("#txtDescripcion").val(),
-            Estatus: $("#chbEstatus").is(':checked'),
-            CreatedBy: $("#txtCreatedBy").val(),
-            CreatedDt: $("#txtCreatedDt").val(),
-            UpdatedBy: $("#txtUpdatedBy").val(),
-            UpdatedDt: $("#txtUpdatedDt").val()
+            Estatus: $("#chbEstatus").is(':checked')
         };
 
         Swal.fire({

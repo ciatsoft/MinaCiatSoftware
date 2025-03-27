@@ -98,17 +98,21 @@ namespace MinaToMVC.Controllers
 
             return View(tVehiculo);
         }
-        public string SaveOrUpdateTipoVehiculo(TipoVehiculo tv)
+        public async Task<string> SaveOrUpdateTipoVehiculo(TipoVehiculo tv)
         {
 
-            var result = httpClientConnection.SaveOrUpdateTipoVehiculo(tv);
+            var result = await httpClientConnection.SaveOrUpdateTipoVehiculo(tv);
             return JsonConvert.SerializeObject(result);
-
-
         }
         public async Task<string> GetAllTipoVehiculo()
         {
             var result = await httpClientConnection.GetAllTipoVehiculo();
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> DeleteTipoVehiculo(long id)
+        {
+            var result = await httpClientConnection.DeleteTipoVehiculo(id);
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }

@@ -11,7 +11,6 @@ namespace MinaTolWebApi.DAL
     public partial class DbWrapper
     {
         public ModelResponse SaveOrUpdateTipoVehiculo(TipoVehiculo tv)
-
         {
             var response = new ModelResponse();
             try
@@ -60,7 +59,6 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
-
         public ModelResponse GetTipoDeVehiculoById (int id)
         {
             var response = new ModelResponse();
@@ -86,6 +84,31 @@ namespace MinaTolWebApi.DAL
 
             }
             catch(Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+        public ModelResponse DeleteTipoVehiculo(int id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id",
+                    SqlDbType = System.Data.SqlDbType.Int
+                });
+
+                var result = ExecuteNonQuery("DeleteTipoVehiculo", System.Data.CommandType.StoredProcedure, parameters);
+            }
+            catch (Exception ex)
             {
                 response.IsSuccess = false;
                 response.Message = ex.Message;

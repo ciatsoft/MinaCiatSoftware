@@ -11,6 +11,7 @@ using System.Web.Http;
 
 namespace MinaTolWebApi.Controllers
 {
+    [Authorize]
     [RoutePrefix("api/Producto")]
     public class ProductoController : ApiController
     {
@@ -19,21 +20,18 @@ namespace MinaTolWebApi.Controllers
         {
             wrapper = new DbWrapper();
         }
-        [AllowAnonymous]
         [Route("List"), HttpGet]
         public async Task<ModelResponse> GetAllProducto()
         {
             var result = wrapper.GetAllProducto();
             return result;
         }
-        [AllowAnonymous]
         [HttpGet, Route("{id:long}")]
         public async Task<ModelResponse> GetPrecioById(int id)
         {
             var result = wrapper.GetPrecioById(id);
             return result;
         }
-        [AllowAnonymous]
         [HttpPost, Route("")]
         public async Task<ModelResponse> SaveOrUpdateProducto(Producto p)
         {
