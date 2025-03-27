@@ -90,7 +90,7 @@ namespace MinaToMVC.Controllers
         public async Task<ActionResult> Locales(long id = 0)
         {
             var ubicaciones = new List<DtoUbicacion>();
-            var tipoMateriales = new List<DtoTipoMaterialUbicacion>();
+            var tipoMateriales = new List<ClienteTipoMaterial>();
             var trabajadores = new List<DtoTrabajador>();
             var vehiculos = new List<Vehiculo>();
             var unidadmedida = new List<UnidadMedida>();
@@ -119,7 +119,7 @@ namespace MinaToMVC.Controllers
             ubicaciones = JsonConvert.DeserializeObject<List<DtoUbicacion>>(responseUbicaciones.Response.ToString());
 
             var responseTipoMaterial = await httpClientConnection.GetTipoMaterialByCliente(clientes.FirstOrDefault().Id);
-            tipoMateriales = JsonConvert.DeserializeObject<List<DtoTipoMaterialUbicacion>>(responseTipoMaterial.Response.ToString());
+            tipoMateriales = JsonConvert.DeserializeObject<List<ClienteTipoMaterial>>(responseTipoMaterial.Response.ToString());
 
             var responsetrabajadores = await httpClientConnection.GetAllTrabajador();
             trabajadores = JsonConvert.DeserializeObject<List<DtoTrabajador>>(responsetrabajadores.Response.ToString());
@@ -138,10 +138,10 @@ namespace MinaToMVC.Controllers
 
             return View(ViajeLocal);
         }
-        public string SaveOrUpdateViajeLocal(DtoViajeLocal t)
+        public async Task<string> SaveOrUpdateViajeLocal(DtoViajeLocal t)
         {
 
-            var result = httpClientConnection.SaveOrUpdateViajeLocal(t);
+            var result = await httpClientConnection.SaveOrUpdateViajeLocal(t);
             return JsonConvert.SerializeObject(result);
         }
 

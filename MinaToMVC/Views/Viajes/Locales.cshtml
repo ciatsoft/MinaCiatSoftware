@@ -5,7 +5,7 @@
     var estatus = new List<string> { "Activo", "Inactivo" };
 
 
-    var tipoMateriales = (List<MinaTolEntidades.DtoCatalogos.DtoTipoMaterialUbicacion>)ViewBag.TipoMaterial;
+    var tipoMateriales = (List<MinaTolEntidades.DtoClientes.ClienteTipoMaterial>)ViewBag.TipoMaterial;
     var trabajadores = (List<MinaTolEntidades.DtoSucursales.DtoTrabajador>)ViewBag.Trabajadores;
     var vehiculos = (List<MinaTolEntidades.DtoClientes.Vehiculo>)ViewBag.Vehiculos;
     var clientes = (List<MinaTolEntidades.DtoClientes.Cliente>)ViewBag.Clientes;
@@ -120,7 +120,7 @@
                         <select id="ddlTipoMaterial" class="form-control">
                             @foreach (var i in tipoMateriales)
                             {
-                                <option value="@i.Id">@i.NombreTipoMaterial</option>
+                                <option value="@i.TipoMaterial.Id">@i.TipoMaterial.NombreTipoMaterial</option>
                             }
                         </select>
                     </div>
