@@ -76,22 +76,20 @@ function SaveOrUpdateUnidadMedida() {
             Estatus: $("#chbEstatus").is(':checked')
         };
 
-        Swal.fire({
-            title: "Registro guardado!",
-            text: "El registro se ha guardado correctamente.",
-            icon: "success",
-            confirmButtonText: 'OK'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '/Catalog/UnidadMedida';
-            }
-        });
-
         // Llamada al servidor para guardar o actualizar los datos
         PostMVC('/Catalog/SaveOrUpdateUnidadMedida', parametro, function (r) {
             if (r.IsSuccess) {
                 LimpiarFormulario();
-                alert("Datos guardados exitosamente.");
+                Swal.fire({
+                    title: "Registro guardado!",
+                    text: "El registro se ha guardado correctamente.",
+                    icon: "success",
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/Catalog/UnidadMedida';
+                    }
+                });
             } else {
                 alert("Error al guardar los datos: " + r.ErrorMessage);
             }

@@ -69,13 +69,18 @@ namespace MinaToMVC.Controllers
         public async Task<string> GetAllAreaTrabajo()
         {
             var token = Helpers.SessionHelper.GetSessionUser();
-            var result = await httpClientConnection.GetAllAreaTrabajo(token.Token.access_token);
+            var result = await httpClientConnection.GetAllAreaTrabajo();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-        public string SaveOrUpdateAreaTrabajo(DtoAreaTrabajo ar)
+        public async Task<string> SaveOrUpdateAreaTrabajo(DtoAreaTrabajo ar)
         {
-            var result = httpClientConnection.SaveOrUpdateAreaTrabajo(ar);
+            var result = await httpClientConnection.SaveOrUpdateAreaTrabajo(ar);
             return JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> DeleteAreaTrabajo(long id)
+        {
+            var result = await httpClientConnection.DeleteAreaTrabajo(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
         #endregion
@@ -123,7 +128,7 @@ namespace MinaToMVC.Controllers
         public async Task<ActionResult> Ubicacion( long id = 0)
         {
             var token = Helpers.SessionHelper.GetSessionUser();
-            var result = await httpClientConnection.GetAllAreaTrabajo(token.Token.access_token);
+            var result = await httpClientConnection.GetAllAreaTrabajo();
             var areaDeUbicacion = JsonConvert.DeserializeObject<List<DtoUbicacion>>(result.Response.ToString());
             DtoUbicacion ubicacion;
             if (id != 0)
