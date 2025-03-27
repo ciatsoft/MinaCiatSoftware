@@ -17,8 +17,7 @@ namespace MinaTolEntidades
 
         public BaseObject()
         {
-            this.Estatus = true;
+            Estatus = true;
         }
-
     }
 }

@@ -3,15 +3,23 @@
         rules: {
             "txtNombre": "required",
             "txtDescripcion": "required",
+        },
+        messages: {
+            "txtNombre": "Por favor, ingresa el nombre del vehículo",
+            "txtDescripcion": "Por favor, ingresa una descripción",
+        },
+        errorPlacement: function (error, element) {
+            error.insertAfter(element); // Coloca el mensaje de error después del campo correspondiente
         }
     });
+
     $("#tblTipoVehiculo").dataTable({
         processing: true,
         destroy: true,
         paging: true,
         searching: true,
         columns: [
-            { data: "id", "visible": false, title: "Id" },
+            { data: "id", "visible": true, title: "Id" },
             { data: "nombre", title: "Nombre" },
             { data: "descripcion", title: "Descripción" },
             {
@@ -23,10 +31,9 @@
                 }
             },
             {
-                data: "id", render: function (data) {
+                data: "id", title: "Acciones", render: function (data) {
                     return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarTVehiculo(' + data + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarTVehiculo(' + data + ')" />';
-
+' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarTVehiculo(' + data + ')" />';
                 }
             }
         ],
@@ -57,13 +64,18 @@
 
     GetAllTipoVehiculo();
 
-    if (typeof tVehiculoJson.Id != 0) {
+    // Verifica si tVehiculoJson tiene un id válido
+    if (tVehiculoJson && tVehiculoJson.Id && tVehiculoJson.Id !== 0) {
         $("#txtidtipovehiculo").val(tVehiculoJson.Id);
         $("#txtNombre").val(tVehiculoJson.Nombre);
         $("#txtDescripcion").val(tVehiculoJson.Descripcion);
         $("#chbEstatus").prop('checked', tVehiculoJson.Estatus);
+        $("#estatusContainer").show(); // Mostrar solo si se está editando
+    } else {
+        $("#estatusContainer").hide(); // No mostrar si no se está editando
     }
 });
+
 
 // Función que se ejecuta al hacer clic en el botón de Guardar
 function SaveOrUpdateTipoVehiculo() {

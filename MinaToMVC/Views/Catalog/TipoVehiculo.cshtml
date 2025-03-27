@@ -57,15 +57,22 @@
         <div class="tabla-consultas-tipovehiculo">
             <div class="rectangulos" style="width: 100%;">
                 <div class="row">
-                    <div class="col-lg-3">
-                        <label>ID Tipo Vehículo:</label>
-                        <input type="text" id="txtidtipovehiculo" name="txtidtipovehiculo" class="form-control" disabled />
-                    </div>
+                    <label hidden>ID Tipo Vehículo:</label>
+                    <input type="text" id="txtidtipovehiculo" name="txtidtipovehiculo" class="form-control" disabled hidden />
                     <div class="col-lg-3">
                         <label>Nombre del Vehículo:</label>
                         <input type="text" id="txtNombre" name="txtNombre" class="form-control" />
                     </div>
-                    <div class="col-lg-3">
+
+                    <div class="col-lg-3" id="estatusContainer" style="display: none;">
+                        <label>Activo:</label>
+                        <input type="checkbox" name="chbEstatus" id="chbEstatus" value="" class="form-control" disabled />
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input href="/Catalog/Roll" type="button" value="Guardar" onclick="SaveOrUpdateTipoVehiculo()" class="btn btn-success" />
+                            <a href="/Catalog/TipoVehiculo" class="btn btn-custom-cancel">Cancelar</a>
+
                         <div class="col-lg-3">
                             <label>Estatus:</label>
                             <input type="checkbox" name="chbEstatus" id="chbEstatus" value="" class="form-control" />
@@ -83,18 +90,22 @@
                         <input href="/Catalog/Roll" type="button" value="Guardar" onclick="SaveOrUpdateTipoVehiculo()" class="btn btn-success" />
                         <a href="/Catalog/TipoVehiculo" class="btn btn-custom-cancel">Cancelar</a>
 
+
+                        </div>
                     </div>
+
+
+                    <input type="hidden" id="txtCreatedDt" name="CreatedDt" value="@DateTime.Now" />
                 </div>
             </div>
+
+
+            <br />
+
+            <table id="tblTipoVehiculo" class="display" style="width:100%;">
+            </table>
+
         </div>
-        <input type="hidden" id="txtCreatedDt" name="CreatedDt" value="@DateTime.Now" />
-
-
-        <br />
-
-        <table id="tblTipoVehiculo" class="display" style="width:100%;">
-        </table>
-
     </div>
 
 </form>
