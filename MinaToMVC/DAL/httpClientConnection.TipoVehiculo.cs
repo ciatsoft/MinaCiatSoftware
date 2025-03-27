@@ -16,11 +16,12 @@ namespace MinaToMVC.DAL
 
         public async Task<ModelResponse> SaveOrUpdateTipoVehiculo(TipoVehiculo u)
         {
+            MappingColumSecurity(u);
             var result = await RequestAsync<object>("api/TipoVehiculo", HttpMethod.Post, u,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
-            }));
+            }), token.Token.access_token);
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
 
             return modelResponse;
@@ -32,7 +33,7 @@ namespace MinaToMVC.DAL
             new Func<string, string>((responseString) =>
             {
                 return responseString;
-            }));
+            }), token.Token.access_token);
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
 
             return modelResponse;
@@ -44,7 +45,19 @@ namespace MinaToMVC.DAL
             new Func<string, string>((responseString) =>
             {
                 return responseString;
-            }));
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
+        public async Task<ModelResponse> DeleteTipoVehiculo(long id)
+        {
+            var result = await RequestAsync<object>($"api/TipoVehiculo/{id}", HttpMethod.Delete, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
 
             return modelResponse;

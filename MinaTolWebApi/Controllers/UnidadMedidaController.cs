@@ -11,6 +11,7 @@ using System.Web.Http;
 
 namespace MinaTolWebApi.Controllers
 {
+    [Authorize]
     [RoutePrefix("api/UnidadMedida")]
     public class UnidadMedidaController : ApiController
     {
@@ -20,14 +21,12 @@ namespace MinaTolWebApi.Controllers
             wrapper = new DbWrapper();
         }
 
-        [AllowAnonymous]
         [Route("List"), HttpGet]
         public ModelResponse GetAllUnidadMedida()
         {
             var result = wrapper.GetAllUnidadMedida();
             return result;
         }
-
        
         [HttpGet , Route("{id:long}")]
         public ModelResponse GetUnidadMedidaById(long id)
@@ -40,6 +39,13 @@ namespace MinaTolWebApi.Controllers
         public ModelResponse SaveOrUpdateUnidadMedida(UnidadMedida unidad)
         {
             var result = wrapper.SaveOrUpdateUnidadMedida(unidad);
+            return result;
+        }
+
+        [HttpDelete, Route("{id:long}")]
+        public ModelResponse DeleteUnidadMedida(long id)
+        {
+            var result = wrapper.DeleteUnidadMedida(id);
             return result;
         }
     }

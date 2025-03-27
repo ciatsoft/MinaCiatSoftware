@@ -21,10 +21,7 @@ namespace MinaToMVC.Controllers
             return View();
         }
 
-
-
         #region Unidad de Medida
-
         public async Task<ActionResult> UnidadMedida(long id = 0)
         {
 
@@ -43,9 +40,14 @@ namespace MinaToMVC.Controllers
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-        public string SaveOrUpdateUnidadMedida(UnidadMedida ar)
+        public async Task<string> SaveOrUpdateUnidadMedida(UnidadMedida ar)
         {
-            var result = httpClientConnection.SaveOrUpdateUnidadMedida(ar);
+            var result = await httpClientConnection.SaveOrUpdateUnidadMedida(ar);
+            return JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> DeleteUnidadMedida(long id)
+        {
+            var result = await httpClientConnection.DeleteUnidadMedida(id);
             return JsonConvert.SerializeObject(result);
         }
 
@@ -96,17 +98,21 @@ namespace MinaToMVC.Controllers
 
             return View(tVehiculo);
         }
-        public string SaveOrUpdateTipoVehiculo(TipoVehiculo tv)
+        public async Task<string> SaveOrUpdateTipoVehiculo(TipoVehiculo tv)
         {
 
-            var result = httpClientConnection.SaveOrUpdateTipoVehiculo(tv);
+            var result = await httpClientConnection.SaveOrUpdateTipoVehiculo(tv);
             return JsonConvert.SerializeObject(result);
-
-
         }
         public async Task<string> GetAllTipoVehiculo()
         {
             var result = await httpClientConnection.GetAllTipoVehiculo();
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> DeleteTipoVehiculo(long id)
+        {
+            var result = await httpClientConnection.DeleteTipoVehiculo(id);
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
