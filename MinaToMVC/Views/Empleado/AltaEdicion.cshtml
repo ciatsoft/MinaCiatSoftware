@@ -175,22 +175,6 @@
         document.getElementById("txtNombre").addEventListener("blur", function () {
             this.value = this.value.toUpperCase();
         });
-
-        // 3. Validar Email (sin espacios y con formato correcto)
-        document.getElementById("txtEmail").addEventListener("input", function () {
-            this.value = this.value.replace(/\s/g, '');
-        });
-
-        document.getElementById("txtEmail").addEventListener("blur", function () {
-        let email = this.value.trim();
-        let regex = /^[a-zA-Z0-9._%+-]+[a-zA-Z0-9.-]+\.[a-zA-Z]{2,7}$/;
-
-        if (!regex.test(email)) {
-        alert("Ingrese un correo válido.");
-        this.value = "";
-    } else {
-        this.value = email; // Elimina espacios adicionales
-    }
 });
 
 

@@ -36,7 +36,7 @@ $(document).ready(function () {
         searching: true,
         columns: [
             { data: "id", "visible": false, title: "Id" },
-            { data: "folio", title: "Folio" },
+            { data: "folio", "visible": false, title: "Folio" },
             { data: "ubicacionOrigen.nombreUbicacion", title: "Origen" },
             { data: "transportista.nombre", title: "Transportista" },  
             { data: "tipoMaterial.nombreTipoMaterial", title: "Material" },  

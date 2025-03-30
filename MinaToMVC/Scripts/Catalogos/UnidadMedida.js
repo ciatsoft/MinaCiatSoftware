@@ -73,7 +73,8 @@ function SaveOrUpdateUnidadMedida() {
             Id: $("#txtunidadmedida").val(),
             Nombre: $("#txtNombre").val(),
             Descripcion: $("#txtDescripcion").val(),
-            Estatus: $("#chbEstatus").is(':checked')
+            Estatus: $("#chbEstatus").is(':checked'),
+            CreatedDt: $("#txtCreatedDt").val()
         };
 
         // Llamada al servidor para guardar o actualizar los datos

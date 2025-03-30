@@ -121,7 +121,7 @@ namespace MinaToMVC.Controllers
             }
 
             // Redirigir al usuario a otra página
-            Response.Redirect("~/Home/Authentication");
+            Response.Redirect("~/Home/Autenticacion");
 
             // Convertir el objeto 'mr' a JSON y devolverlo como respuesta
             return JsonConvert.SerializeObject(mr);

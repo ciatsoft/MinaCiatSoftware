@@ -110,7 +110,7 @@ function SaveOrUpdateTipoMaterialUbicacion() {
             html: `<strong>Nombre:</strong> ${$("#txtNombreTipoMaterial").val()}<br/>
                    <strong>Descripción:</strong> ${$("#txtDescripcionTipoMaterial").val()}<br/>
                    <strong>Unidad de Medida:</strong> ${$("#ddlUnidadDeMedida option:selected").text()}<br/>
-                   <strong>Estatus:</strong> ${$("#chbEstatus").is(':checked') ? 'Activo' : 'Inactivo'}`,
+                   <strong>Estatus:Activo</strong> `,
             icon: 'info',
             showCancelButton: true,
             confirmButtonText: confirmButtonText,
