@@ -333,66 +333,70 @@
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                     <a class="dropdown-item" data-title="Clientes" href="@Url.Action("Clientes", "Administracion")">Clientes</a>
-                                    <a class="dropdown-item" data-title="Solicitudes" href="@Url.Action("Solicitudes", "Administracion")">Solicitudes</a>
-                                        <a class="dropdown-item" data-title="Precios" href="@Url.Action("Precios", "Administracion")">Precios</a>
-                                        <a class="dropdown-item" data-title="Gestion_Img" href="@Url.Action("Gestion_Img", "Administracion")">Imágenes de precios</a>
-                                        <a class="dropdown-item" data-title="Ingresos" href="@Url.Action("Ingresos", "Administracion")">Ingresos y egresos</a>
-                                        <a class="dropdown-item" data-title="General" href="@Url.Action("General", "Administracion")">General</a>
+                                    <!--<a class="dropdown-item" data-title="Solicitudes" href="@Url.Action("Solicitudes", "Administracion")">Solicitudes</a>
+    <!--<a class="dropdown-item" data-title="Precios" href="@Url.Action("Precios", "Administracion")">Precios</a> -->
+                                    <!--<a class="dropdown-item" data-title="Gestion_Img" href="@Url.Action("Gestion_Img", "Administracion")">Imágenes de precios</a>-->
+                                    <!--<a class="dropdown-item" data-title="Ingresos" href="@Url.Action("Ingresos", "Administracion")">Ingresos y egresos</a>
+    <a class="dropdown-item" data-title="General" href="@Url.Action("General", "Administracion")">General</a>-->
                                     <a class="dropdown-item" data-title="General" href="@Url.Action("Internos", "Viajes")">Venta Publico General</a>
                                     <a class="dropdown-item" data-title="Catálogos" href="@Url.Action("locales", "Viajes")">Viajes Locales</a>
                                 </div>
                             </li>
+                            <!--
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Empleados
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" data-title="Empleados" href="@Url.Action("AltaEdicion", "Empleado")">Empleados</a>
+        </div>
+    </li>
 
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Empleados
+                                    Almacén
                                 </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" data-title="Empleados" href="@Url.Action("AltaEdicion", "Empleado")">Empleados</a>
-                                </div>
+                                <!--<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" data-title="Inventario" href="@Url.Action("Inventario", "Almacen")">Inventario</a>
+                <a class="dropdown-item" data-title="SolicitudesProcesadas" href="@Url.Action("SolicitudesProcesadas", "Almacen")">Solicitudes procesadas</a>
+            </div>
                             </li>
 
                             <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Almacén
-                                    </a>
-                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                        <a class="dropdown-item" data-title="Inventario" href="@Url.Action("Inventario", "Almacen")">Inventario</a>
-                                        <a class="dropdown-item" data-title="SolicitudesProcesadas" href="@Url.Action("SolicitudesProcesadas", "Almacen")">Solicitudes procesadas</a>
-                                    </div>
-                                </li>
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    R.H.
+                                </a>
+                                <!--
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" data-title="Agregar" href="@Url.Action("Agregar", "RH")">Agregar</a>
+                <a class="dropdown-item" data-title="Editar" href="@Url.Action("Editar", "RH")">Editar</a>
+            </div>
+
+                            </li>
 
                             <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        R.H.
-                                    </a>
-                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                        <a class="dropdown-item" data-title="Agregar" href="@Url.Action("Agregar", "RH")">Agregar</a>
-                                        <a class="dropdown-item" data-title="Editar" href="@Url.Action("Editar", "RH")">Editar</a>
-                                    </div>
-                                </li>
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Venta
+                                </a>
+                                <!--
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" data-title="Material" href="@Url.Action("Material", "Venta")">Material</a>
+            <a class="dropdown-item" data-title="Salidas" href="@Url.Action("Salidas", "Venta")">Salidas</a>
+        </div>
+
+                            </li> -->
 
                             <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Venta
-                                    </a>
-                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                        <a class="dropdown-item" data-title="Material" href="@Url.Action("Material", "Venta")">Material</a>
-                                        <a class="dropdown-item" data-title="Salidas" href="@Url.Action("Salidas", "Venta")">Salidas</a>
-                                    </div>
-                                </li>
-
-                            <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Taller
-                                    </a>
-                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                        <a class="dropdown-item" data-title="Vehiculos" href="@Url.Action("Index", "Vehiculo")">Vehículos</a>
-                                        <a class="dropdown-item" data-title="InventarioTaller" href="@Url.Action("Inventario_Taller", "Taller")">Inventario del taller</a>
-                                        <a class="dropdown-item" data-title="ReportesStock" href="@Url.Action("ReportesCStock", "Taller")">Reportes con stock</a>
-                                        <a class="dropdown-item" data-title="ReportesSinStock" href="@Url.Action("Reportes_SStock", "Taller")">Reportes sin stock</a>
-                                    </div>
-                                </li>
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Taller
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" data-title="Vehiculos" href="@Url.Action("Index", "Vehiculo")">Vehículos</a>
+                                    <!-- <a class="dropdown-item" data-title="InventarioTaller" href="@Url.Action("Inventario_Taller", "Taller")">Inventario del taller</a>
+             <a class="dropdown-item" data-title="ReportesStock" href="@Url.Action("ReportesCStock", "Taller")">Reportes con stock</a>
+             <a class="dropdown-item" data-title="ReportesSinStock" href="@Url.Action("Reportes_SStock", "Taller")">Reportes sin stock</a> -->
+                                </div>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Catálogos
@@ -431,20 +435,20 @@
                     <div class="modal-dialog modal-lg">
 
                         <!-- Modal content-->
-                        <div class="modal-content" style=" width: 900px;">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                <h4 class="modal-title" id="titleGenerciModal"></h4>
-                            </div>
-                            <div class="modal-body" id="boddyGeericModal">
-                                <p>Some text in the modal.</p>
-                            </div>
-                            @*<div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                </div>*@ 
-                        </div>
+                                <div class="modal-content" style=" width: 900px;">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title" id="titleGenerciModal"></h4>
+                                    </div>
+                                    <div class="modal-body" id="boddyGeericModal">
+                                        <p>Some text in the modal.</p>
+                                    </div>
+                                    @*<div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>*@
+                                </div>
 
-                    </div>
+</div>
                 </div>
             </div>
         </div>
