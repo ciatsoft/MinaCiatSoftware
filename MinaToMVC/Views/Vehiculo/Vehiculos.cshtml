@@ -69,51 +69,60 @@
     @Html.HiddenFor(x => x.UpdatedBy)
     @Html.HiddenFor(x => x.UpdatedDt)
 
-    <div class="content">
-        <!-- Campos ocultos para los datos automáticos -->
+<div class="content">
+    <!-- Campos ocultos para los datos automáticos -->
 
-        <br>
-        <center><h1>Vehiculos</h1></center>
-        <div class="tabla-consultas-empleados">
-            <div class="rectangulos" style="width: 100%;">
-                <div class="row">
-                    <div class="col-lg-3">
-                        <label>ID del Trabajador:</label>
-
-                        @Html.TextBoxFor(x => x.Id, new { @class = "form-control", @disabled = "" })
-                    </div>
-                    <div class="col-lg-3">
-                        <label>Placa:</label>
-                        @Html.TextBoxFor(x => x.Placa, new { @class = "form-control", @id = "txtPlaca" })
-                    </div>
-                    <div class="col-lg-3">
-                        <label>Color:</label>
-                        @Html.TextBoxFor(x => x.Color, new { @class = "form-control", @id = "txtColor" })
-                    </div>
-                    <div class="col-lg-3">
-                        <label>Tipo de vehiculo:</label>
-                        @Html.DropDownListFor(x => x.TipoVehiculo.Id, tiposVehiculos, new { @class = "form-control", @readonly = "readonly" })
-                    </div>
+    <br>
+    <center><h1>Vehiculos</h1></center>
+    <div class="tabla-consultas-empleados">
+        <div class="rectangulos" style="width: 100%;">
+            <div class="row">
+                <div class="col-lg-3">
+                    <label>ID del Trabajador:</label>
+                    @Html.TextBoxFor(x => x.Id, new { @class = "form-control", @disabled = "txtidVehiculo" })
                 </div>
-                <div class="row">
-                    <div class="col-lg-12 d-flex justify-content-between">
-                        <div>
-                            <input type="button" onclick="SaveOrupdateTrabajador()" value="Guadar" class="btn btn-success" />
-                            <input type="button" name="btnEliminar" id="btnEliminar" value="Eliminar" class="btn btn-custom-delete" />
-                        </div>
-                        <a class="btn btn-custom-cancel" href="/Empleado/AltaEdicion">Cancelar</a>
-                    </div>
+                <div class="col-lg-3">
+                    <label>Placa:</label>
+                    @Html.TextBoxFor(x => x.Placa, new { @class = "form-control", @id = "txtPlaca" })
+                </div>
+                <div class="col-lg-3">
+                    <label>Color:</label>
+                    @Html.TextBoxFor(x => x.Color, new { @class = "form-control", @id = "txtColor" })
+                </div>
+                <div class="col-lg-3">
+                    <label>Estado:</label>
+                    @Html.DropDownListFor(x => x.Estado, new List<SelectListItem>
+                    {
+                        new SelectListItem { Value = "En patio", Text = "En patio" },
+                        new SelectListItem { Value = "En taller", Text = "En taller" },
+                        new SelectListItem { Value = "En viaje", Text = "En viaje" }
+                    }, new { @class = "form-control", @id = "txtEstado" })
+                </div>
+
+                <div class="col-lg-3">
+                    <label>Tipo de vehiculo:</label>
+                    @Html.DropDownListFor(x => x.TipoVehiculo.Id, tiposVehiculos, new { @class = "form-control", @readonly = "readonly" })
                 </div>
             </div>
-            <table id="tblvehiculo" class="table" style="width:100%;">
-            </table>
-            <br>
+            <div class="row">
+                <div class="col-lg-12 d-flex justify-content-between">
+                    <div>
+                        <input type="button" onclick="" value="Guadar" class="btn btn-success" />
+                        <input type="button" name="btnEliminar" id="btnEliminar" value="Eliminar" class="btn btn-custom-delete" />
+                    </div>
+                    <a class="btn btn-custom-cancel" href="">Cancelar</a>
+                </div>
+            </div>
         </div>
+        <table id="tblvehiculo" class="table" style="width:100%;">
+        </table>
+        <br>
     </div>
+    <input type="hidden" id="txtCreatedDt" name="CreatedDt" value="@DateTime.Now" />
+</div>
 }
 
 
 <script src="@(Url.StaticFile("Scripts/Vehiculo/Vehiculo.js"))"></script>
-<script>
+
    
-</script>

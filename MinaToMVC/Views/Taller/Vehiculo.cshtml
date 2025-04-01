@@ -1,0 +1,191 @@
+﻿@{
+    ViewBag.Title = "Vehiculos"; // Establece el título de la vista.
+
+    var trabajadores = (List<MinaTolEntidades.DtoSucursales.DtoTrabajador>)ViewBag.trabajadores;
+    var vehiculos = (List<MinaTolEntidades.DtoClientes.TipoVehiculo>)ViewBag.vehiculos;
+    var areas = (List<MinaTolEntidades.DtoCatalogos.DtoAreaTrabajo>)ViewBag.areas;
+
+}
+<div class="content">
+    <br>
+    <center><h1>Vehículos</h1></center>
+    <div class="container">
+        <div class="form-container">
+            <form method="POST" action="">
+                <h2><i class="fas fa-clipboard-list"></i> Registrar Vehículo</h2>
+                <input type="hidden" name="action" value="add">
+                <label>Nombre del Vehículo:</label>
+                <select id="txttvehiculo" name="txttvehiculo" class="form-control">
+                    @foreach (var i in vehiculos)
+                    {
+                        <option value="@i.Id">@i.Nombre</option>
+                    }
+                </select><br>
+                <label>Color:</label>
+                <input type="text" name="color" required><br>
+                <label>Placas:</label>
+                <input type="text" name="placas" required><br>
+                    <label>Area:</label>
+                    <select id="txtarea" name="txtarea" class="form-control">
+                        @foreach (var i in areas)
+                        {
+                            <option value="@i.Id">@i.Nombre</option>
+                        }
+                    </select>
+                <label>Operador:</label>
+                <select id="txtoperador" name="txtoperador" class="form-control">
+                    @foreach (var i in trabajadores)
+                    {
+                        <option value="@i.Id">@i.Nombre</option>
+                    }
+                </select>
+                <center><input class="btn btn-success" type="submit" value="Registrar"></center>
+            </form>
+        </div>
+
+        <div class="table-container">
+            <h2 style="border: 2px; background-color:white; border-radius: 2px;"><i class="fas fa-list-ul"></i> Lista de Vehículos Registrados</h2>
+            <table id="tblvehiculo" class="table" style="width:100%;">
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-success {
+        background-color: #28a745; /* Verde para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-success:hover {
+            background-color: #218838; /* Color verde más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+
+    .btn-custom-cancel {
+        background-color: #FF5733; /*  para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-custom-cancel:hover {
+            background-color: darkred; /* Color  más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+
+    .btn-custom-delete {
+        background-color: #C70039; /*  para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-custom-delete:hover {
+            background-color: darkred; /* Color  más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+
+    .btn-custom-clean {
+        background-color: dodgerblue; /*  para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-custom-clean:hover {
+            background-color: deepskyblue; /* Color  más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+</style>
+
+<style>
+
+
+    body {
+        background-color: #83988e;
+    }
+    /* Estilos para el contenedor principal */
+    .container {
+        display: flex;
+        justify-content: space-around;
+        margin: 20px;
+    }
+
+    /* Estilos generales para el formulario */
+    form {
+        max-width: 500px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Estilos para etiquetas */
+    label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    /* Estilos para los campos de entrada */
+    input[type="text"] {
+        width: calc(100% - 12px);
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    /* Estilos generales para la tabla */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    /* Estilos para las celdas de encabezado */
+    th {
+        background-color: #007BFF;
+        color: white;
+        padding: 10px;
+        text-align: left;
+    }
+
+    /* Estilos para las celdas de datos */
+    td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    /* Estilos para filas impares (alternancia de color) */
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    /* Estilos para el título */
+    h2 {
+        text-align: center;
+        margin-top: 20px;
+        color: #333;
+    }
+
+    /* Estilos para la sección de la tabla */
+    .table-container {
+        max-width: 800px;
+    }
+</style>
+
+<script src="@(Url.StaticFile("Scripts/Vehiculo/Vehiculos.js"))"></script>
+<script>
+
+</script>

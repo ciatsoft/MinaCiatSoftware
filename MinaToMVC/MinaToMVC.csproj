@@ -77,7 +77,6 @@
     <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
     </Reference>
-
     <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
@@ -255,11 +254,11 @@
     <Content Include="Views\Viajes\Locales.cshtml" />
     <Content Include="Views\Catalog\TipoMaterialUbicacion.cshtml" />
     <Content Include="Views\Usuario\AltaEdicion.cshtml" />
-    <Content Include="Views\Vehiculo\Index.cshtml" />
     <Content Include="Views\Administracion\PartialCrudMaterial.cshtml" />
     <Content Include="Views\Administracion\Clientes.cshtml" />
     <Content Include="Views\Administracion\PartialConfiguracionCostosCliente.cshtml" />
     <None Include="packages.config" />
+    <Content Include="Views\Vehiculo\Vehiculos.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -27,7 +27,7 @@ namespace MinaToMVC.Controllers
             var tiposVehiculoResponse = await httpClientConnection.GetAllTipoVehiculo();
             var tiposVehiculo = JsonConvert.DeserializeObject<List<TipoVehiculo>>(tiposVehiculoResponse.Response.ToString());
 
-            var tiposVehiculoList = MappingPropertiToDropDownList(tiposVehiculo, "Id", "Nombre");
+            var tiposVehiculoList = MappingPropertiToDropDownList(tiposVehiculo, "Id", "Nombre","Estado");
 
             ViewBag.TipoVehiculos = tiposVehiculoList; ;
 

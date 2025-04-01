@@ -46,8 +46,7 @@ namespace MinaTolWebApi.DAL
                         var r = FillEntity<Vehiculo>(reader);
 
                         r.TipoVehiculo.Nombre = MappingProperties<string>(reader["TipoVehiculoNombre"]);
-                        r.AreaTrabajo.Nombre = MappingProperties<string>(reader["NombreArea"]);
-                        r.Transportista.Nombre = MappingProperties<string>(reader["Chofer"]);
+                        
 
                         return r;
                     }));

@@ -13,15 +13,14 @@ namespace MinaTolEntidades.DtoClientes
 
         public Vehiculo() {
             TipoVehiculo = new TipoVehiculo();
-            AreaTrabajo = new DtoAreaTrabajo();
-            Transportista = new DtoTrabajador();
+            
         }
 
         public string Placa { get; set; }
         public string Color { get; set; }
+        public String Estado { get; set; }
         public TipoVehiculo TipoVehiculo { get; set; }
-        public DtoAreaTrabajo AreaTrabajo { get; set; }
-        public DtoTrabajador Transportista { get; set; }
+        
 
     }
 }
