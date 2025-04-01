@@ -40,18 +40,6 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
-        public async Task<ModelResponse> GetRollById(long id)
-        {
-            var result = await RequestAsync<object>($"api/Vehiculo/{id}", HttpMethod.Get, null,
-            new Func<string, string>((responseString) =>
-            {
-                return responseString;
-            }), token.Token.access_token);
-            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
-
-            return modelResponse;
-
-        }
 
         public async Task<ModelResponse> DeleteVehiculo(long id)
         {
