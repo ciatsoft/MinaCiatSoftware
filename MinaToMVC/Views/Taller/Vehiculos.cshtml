@@ -1,55 +1,10 @@
-﻿@{
-    ViewBag.Title = "Vehiculos"; // Establece el título de la vista.
-
-    var trabajadores = (List<MinaTolEntidades.DtoSucursales.DtoTrabajador>)ViewBag.trabajadores;
-    var vehiculos = (List<MinaTolEntidades.DtoClientes.TipoVehiculo>)ViewBag.vehiculos;
-    var areas = (List<MinaTolEntidades.DtoCatalogos.DtoAreaTrabajo>)ViewBag.areas;
-
+﻿@model MinaTolEntidades.DtoClientes.Vehiculo
+@{
+    ViewBag.Title = "Alta/Edición Vehiculos";
+    var tiposVehiculos = (IEnumerable<SelectListItem>)ViewBag.TipoVehiculos;
 }
-<div class="content">
-    <br>
-    <center><h1>Vehículos</h1></center>
-    <div class="container">
-        <div class="form-container">
-            <form method="POST" action="">
-                <h2><i class="fas fa-clipboard-list"></i> Registrar Vehículo</h2>
-                <input type="hidden" name="action" value="add">
-                <label>Nombre del Vehículo:</label>
-                <select id="txttvehiculo" name="txttvehiculo" class="form-control">
-                    @foreach (var i in vehiculos)
-                    {
-                        <option value="@i.Id">@i.Nombre</option>
-                    }
-                </select><br>
-                <label>Color:</label>
-                <input type="text" name="color" required><br>
-                <label>Placas:</label>
-                <input type="text" name="placas" required><br>
-                    <label>Area:</label>
-                    <select id="txtarea" name="txtarea" class="form-control">
-                        @foreach (var i in areas)
-                        {
-                            <option value="@i.Id">@i.Nombre</option>
-                        }
-                    </select>
-                <label>Operador:</label>
-                <select id="txtoperador" name="txtoperador" class="form-control">
-                    @foreach (var i in trabajadores)
-                    {
-                        <option value="@i.Id">@i.Nombre</option>
-                    }
-                </select>
-                <center><input class="btn btn-success" type="submit" value="Registrar"></center>
-            </form>
-        </div>
 
-        <div class="table-container">
-            <h2 style="border: 2px; background-color:white; border-radius: 2px;"><i class="fas fa-list-ul"></i> Lista de Vehículos Registrados</h2>
-            <table id="tblvehiculo" class="table" style="width:100%;">
-            </table>
-        </div>
-    </div>
-</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 
 <style>
     .btn-success {
@@ -105,87 +60,69 @@
         }
 </style>
 
-<style>
+@using (Html.BeginForm("SaveOrUpdateVehiculo", "Vehiculo", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmVehiculoCrud", @id = "frmVehiculoCrud" }))
+{
+
+    @Html.HiddenFor(x => x.Estatus)
+    @Html.HiddenFor(x => x.CreatedDt)
+    @Html.HiddenFor(x => x.CreatedBy)
+    @Html.HiddenFor(x => x.UpdatedBy)
+    @Html.HiddenFor(x => x.UpdatedDt)
+
+    <div class="content">
+        <!-- Campos ocultos para los datos automáticos -->
+
+        <br>
+        <center><h1>Vehiculos</h1></center>
+        <div class="tabla-consultas-empleados">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>ID del vehiculo:</label>
+
+                        @Html.TextBoxFor(x => x.Id, new { @class = "form-control", @disabled = "" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Placa:</label>
+                        @Html.TextBoxFor(x => x.Placa, new { @class = "form-control", @id = "txtPlaca" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Color:</label>
+                        @Html.TextBoxFor(x => x.Color, new { @class = "form-control", @id = "txtColor" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Estado:</label>
+                        @Html.DropDownListFor(x => x.Estado, new List<SelectListItem>
+                        {
+                            new SelectListItem { Value = "En patio", Text = "En patio" },
+                            new SelectListItem { Value = "En taller", Text = "En taller" },
+                            new SelectListItem { Value = "En viaje", Text = "En viaje" }
+                        }, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Tipo de vehiculo:</label>
+                        @*@Html.DropDownListFor(x => x.TipoVehiculo.Id, tiposVehiculos, new { @class = "form-control", @readonly = "readonly" })*@
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 d-flex justify-content-between">
+                        <div>
+                            <input type="button" onclick="" value="Guadar" class="btn btn-success" />
+                            <input type="button" name="btnEliminar" id="btnEliminar" value="Eliminar" class="btn btn-custom-delete" />
+                        </div>
+                        <a class="btn btn-custom-cancel" href="">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+            <table id="tblvehiculo" class="table" style="width:100%;">
+            </table>
+            <br>
+        </div>
+    </div>
+}
 
 
-    body {
-        background-color: #83988e;
-    }
-    /* Estilos para el contenedor principal */
-    .container {
-        display: flex;
-        justify-content: space-around;
-        margin: 20px;
-    }
-
-    /* Estilos generales para el formulario */
-    form {
-        max-width: 500px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        background-color: #f9f9f9;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Estilos para etiquetas */
-    label {
-        font-weight: bold;
-        display: block;
-        margin-bottom: 5px;
-    }
-
-    /* Estilos para los campos de entrada */
-    input[type="text"] {
-        width: calc(100% - 12px);
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 14px;
-    }
-    /* Estilos generales para la tabla */
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        font-family: Arial, sans-serif;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-    }
-
-    /* Estilos para las celdas de encabezado */
-    th {
-        background-color: #007BFF;
-        color: white;
-        padding: 10px;
-        text-align: left;
-    }
-
-    /* Estilos para las celdas de datos */
-    td {
-        padding: 10px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-    }
-
-    /* Estilos para filas impares (alternancia de color) */
-    tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
-
-    /* Estilos para el título */
-    h2 {
-        text-align: center;
-        margin-top: 20px;
-        color: #333;
-    }
-
-    /* Estilos para la sección de la tabla */
-    .table-container {
-        max-width: 800px;
-    }
-</style>
-
-<script src="@(Url.StaticFile("Scripts/Vehiculo/Vehiculos.js"))"></script>
+<script src="@(Url.StaticFile("Scripts/Vehiculo/Vehiculo.js"))"></script>
 <script>
-
+   
 </script>
