@@ -258,7 +258,7 @@
     <Content Include="Views\Administracion\Clientes.cshtml" />
     <Content Include="Views\Administracion\PartialConfiguracionCostosCliente.cshtml" />
     <None Include="packages.config" />
-    <Content Include="Views\Vehiculo\Vehiculos.cshtml" />
+    <Content Include="Views\Vehiculo\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

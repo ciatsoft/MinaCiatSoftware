@@ -36,6 +36,7 @@ namespace MinaToMVC.Controllers
 
             var responseVehiculo = await httpClientConnection.GetAllTipoVehiculo();
             vehiculos = JsonConvert.DeserializeObject<List<TipoVehiculo>>(responseVehiculo.Response.ToString());
+            var tipovehiculos = MappingPropertiToDropDownList(vehiculos, "Id", "Nombre");
 
             var responsetrabajadores = await httpClientConnection.GetAllTrabajador();
             trabajadores = JsonConvert.DeserializeObject<List<DtoTrabajador>>(responsetrabajadores.Response.ToString());
@@ -44,7 +45,7 @@ namespace MinaToMVC.Controllers
             var responseareas = await httpClientConnection.GetAllAreaTrabajo();
             areas = JsonConvert.DeserializeObject<List<DtoAreaTrabajo>>(responseareas.Response.ToString());
 
-            ViewBag.vehiculos = vehiculos;
+            ViewBag.vehiculos = tipovehiculos;
             ViewBag.trabajadores = trabajadores;
             ViewBag.areas = areas;
 
