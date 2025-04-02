@@ -40,9 +40,9 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllVehiculo();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-        public string SaveOrUpdateVehiculo(Vehiculo f)
+        public async Task<string> SaveOrUpdateVehiculo(Vehiculo f)
         {
-            var result = httpClientConnection.SaveOrUpdateVehiculo(f);
+            var result = await httpClientConnection.SaveOrUpdateVehiculo(f);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 

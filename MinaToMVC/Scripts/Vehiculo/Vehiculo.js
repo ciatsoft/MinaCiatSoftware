@@ -3,7 +3,9 @@
     $("#frmVehiculoCrud").validate({
         rules: {
             "txtPlaca": "required",
-            "txtColor": "required"
+            "txtColor": "required",
+            "txtEstado": "requerid",
+            
         }
     });
 
@@ -112,7 +114,9 @@ function SaveOrUpdateVehiculo() {
                     text: "El registro se ha guardado correctamente.",
                     icon: "success",
                     confirmButtonText: 'OK'
-                }).then(() => { window.location.href = '/Vehiculo/GetAllVehiculo'; });
+                }).then(() => {
+                    window.location.reload();
+                });
 
             } else {
                 Swal.fire({
