@@ -18,7 +18,7 @@
             { data: "tipoVehiculo.nombre", title: "Vehiculo" },
             { data: "placa", title: "Placas" },
             { data: "color", title: "Color" },
-            {data: "Estado", title: "Estado"}
+            { data: "Estado", title: "Estado" }
             
             {
                 data: "estatus",
