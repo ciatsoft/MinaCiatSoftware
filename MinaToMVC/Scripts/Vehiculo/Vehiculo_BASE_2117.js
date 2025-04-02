@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    // Validación del formulario
+    //Validacion del formuklario
     $("#frmVehiculoCrud").validate({
         rules: {
             "txtPlaca": "required",
@@ -7,34 +7,30 @@
         }
     });
 
-    // Datos en la tabla
+    //Datos en la tabla
     $("#tblvehiculo").dataTable({
         processing: true,
         destroy: true,
         paging: true,
         searching: true,
         columns: [
-            { data: "id", visible: false, title: "Id" },
+            { data: "id", "visible": false, title: "Id" },
             { data: "tipoVehiculo.nombre", title: "Vehiculo" },
             { data: "placa", title: "Placas" },
             { data: "color", title: "Color" },
-<<<<<<< HEAD
-            { data: "Estado", title: "Estado" }
+            {data: "Estado", title: "Estado"}
             
-=======
-            { data: "Estado", title: "Estado" },
->>>>>>> 9f7517128878c36f85ca1e59d9fa43f4f1dbf252
             {
                 data: "estatus",
                 title: "Estatus",
-                render: function (data) {
+                render: function (data, type, row) {
                     return data == 1 ? "Activo" : "Inactivo";
                 }
             },
             {
                 data: "id", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarVehiculo(' + data + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarVehiculo(' + data + ')"/>';
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarRoll(' + data + ')" />' +
+                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarRoll(' + data + ')"/>'; // 'this' se pasa para obtener la fila
                 }
             }
         ],
@@ -64,8 +60,9 @@
     });
 
     GetAllVehiculo();
-});
 
+    
+});
 function EliminarVehiculo(id) {
     Swal.fire({
         title: '¿Está seguro?',
@@ -78,17 +75,27 @@ function EliminarVehiculo(id) {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            var parametro = { Id: id };
+            // Actualizamos el estatus a "Inactivo" (0) y preparamos el par�metro
+            var parametro = {
+                Id: id
+            };
 
-            PostMVC('/Vehiculo/EliminarVehiculo', parametro, function (r) {
+            ///window.location.href = '/Catalog/Roll';
+            PostMVC('/Vehiculo/GetAllVehiculo', parametro, function (r) {
+                //window.location.href = '/Catalog/Roll';
                 if (r.IsSuccess) {
-                    Swal.fire('Eliminado', 'El vehículo ha sido eliminado.', 'success')
-                        .then(() => { window.location.href = '/Vehiculo/GetAllVehiculo'; });
+                    Swal.fire(
+                        'Eliminado',
+                        'El Vehiculo ha sido eliminada.',
+                        'success'
+                    ).then(() => {
+                        window.location.href = '/Vehiculo/GetAllVehiculo';
+                    });
                 } else {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Error al eliminar el vehículo: ' + r.ErrorMessage,
+                        text: 'Error al eliminar el Vehiculo: ' + r.ErrorMessage,
                         confirmButtonText: 'Aceptar'
                     });
                 }
@@ -96,37 +103,39 @@ function EliminarVehiculo(id) {
         }
     });
 }
-
-function SaveOrUpdateVehiculo() {
-    if ($("#frmVehiculoCrud").valid()) {
+function SaveOrUpdateVehiculol() {
+    if ($("#frmroll").valid()) {
         var parametro = {
             Id: $("#txtidVehiculo").val(),
-            Placa: $("#txtPlaca").val(),
-            Color: $("#txtColor").val(),
-            Estado: $("#txtEstado").val()
+            Nombre: $("#txtPlacas").val(),
+            Descripcion: $("#txtColor").val(),
+            Estado: $('#txtEstado').val(),
+            CreatedDt: $("#txtCreatedDt").val()
+
         };
 
-        PostMVC('/Vehiculo/SaveOrUpdateVehiculo', parametro, function (r) {
+
+        // Llamada al servidor para guardar o actualizar los datos
+        PostMVC('/Catalog/SaveOrUpdateRoll', parametro, function (r) {
             if (r.IsSuccess) {
                 LimpiarFormulario();
+
                 Swal.fire({
                     title: "Registro guardado!",
                     text: "El registro se ha guardado correctamente.",
                     icon: "success",
                     confirmButtonText: 'OK'
-                }).then(() => { window.location.href = '/Vehiculo/GetAllVehiculo'; });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error al guardar los datos: ' + r.ErrorMessage,
-                    confirmButtonText: 'Aceptar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/Vehiculo/GetAllVehiculo';
+                    }
                 });
+            } else {
+                alert("Error al guardar los datos: " + r.ErrorMessage);
             }
         });
     }
 }
-
 function GetAllVehiculo() {
     GetMVC("/Vehiculo/GetAllVehiculo", function (r) {
         if (r.IsSuccess) {
@@ -134,18 +143,17 @@ function GetAllVehiculo() {
         } else {
             Swal.fire({
                 title: 'Error',
-                text: 'Error al cargar los vehículos: ' + r.ErrorMessage,
+                text: 'Error al cargar los vehiculos: ' + r.ErrorMessage,
                 icon: 'error',
                 confirmButtonText: 'Aceptar'
             });
         }
     });
 }
-
 function EditarVehiculo(id) {
-    location.href = "/Vehiculo/EditarVehiculo?id=" + id;
+    location.href = "Vehiculo/GetAllVehiculo" + id;
 }
 
 function LimpiarFormulario() {
-    $("#frmVehiculoCrud")[0].reset();
+   
 }
