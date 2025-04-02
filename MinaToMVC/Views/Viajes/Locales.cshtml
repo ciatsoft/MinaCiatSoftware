@@ -135,16 +135,16 @@
                             }
                         </select>
                     </div>
-                    <div class="col-lg-3">
+                    <div class="col-lg-4">
                         <label>Vehículo:</label>
                         <select id="ddlVehiculo" class="form-control">
                             @foreach (var i in vehiculos)
                             {
-                                <option value="@i.Id">@i.Placa</option>
+                                <option value="@i.Id">@($"{i.TipoVehiculo.Nombre}, {i.Color}, {i.Placa}")</option>
                             }
                         </select>
                     </div>
-                    <div class="col-lg-3">
+                    <div class="col-lg-2">
                         <label>Unidad De Medida:</label>
                         <select id="ddlUnidadM" class="form-control" disabled>
                             @foreach (var unidad in unidadmedida)

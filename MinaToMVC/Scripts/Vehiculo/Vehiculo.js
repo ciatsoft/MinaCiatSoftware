@@ -18,7 +18,7 @@
             { data: "tipoVehiculo.nombre", title: "Vehiculo" },
             { data: "placa", title: "Placas" },
             { data: "color", title: "Color" },
-            { data: "Estado", title: "Estado" },
+            { data: "estado", title: "Estado" },
             {
                 data: "estatus",
                 title: "Estatus",
@@ -98,7 +98,10 @@ function SaveOrUpdateVehiculo() {
             Id: $("#txtidVehiculo").val(),
             Placa: $("#txtPlaca").val(),
             Color: $("#txtColor").val(),
-            Estado: $("#txtEstado").val()
+            Estado: $("#txtEstado").val(),
+            TipoVehiculo: {
+                Id: $("#TipoVehiculo_Id").val()
+            }
         };
 
         PostMVC('/Vehiculo/SaveOrUpdateVehiculo', parametro, function (r) {
@@ -110,6 +113,7 @@ function SaveOrUpdateVehiculo() {
                     icon: "success",
                     confirmButtonText: 'OK'
                 }).then(() => { window.location.href = '/Vehiculo/GetAllVehiculo'; });
+
             } else {
                 Swal.fire({
                     icon: 'error',
