@@ -80,7 +80,7 @@ function EliminarVehiculo(id) {
             PostMVC('/Vehiculo/EliminarVehiculo', parametro, function (r) {
                 if (r.IsSuccess) {
                     Swal.fire('Eliminado', 'El vehículo ha sido eliminado.', 'success')
-                        .then(() => { window.location.href = '/Vehiculo/GetAllVehiculo'; });
+                        .then(() => { window.location.href = '/Taller/Vehiculos'; });
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -146,7 +146,7 @@ function GetAllVehiculo() {
 }
 
 function EditarVehiculo(id) {
-    location.href = "/Vehiculo/EditarVehiculo?id=" + id;
+    location.href = "/Taller/Vehiculos/?id=" + id;
 }
 
 function LimpiarFormulario() {
