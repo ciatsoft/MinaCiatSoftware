@@ -3,10 +3,13 @@
         rules: {
             "txtNombre": "required",
             "txtDescripcion": "required",
+            "txtCapacidad": "required"
         },
         messages: {
             "txtNombre": "Por favor, ingresa el nombre del vehículo",
             "txtDescripcion": "Por favor, ingresa una descripción",
+            "txtCapacidad": "Por favor, ingrsar capacidad del vehiculo"
+        }
         },
         errorPlacement: function (error, element) {
             error.insertAfter(element); // Coloca el mensaje de error después del campo correspondiente
@@ -22,6 +25,7 @@
             { data: "id", "visible": true, title: "Id" },
             { data: "nombre", title: "Nombre" },
             { data: "descripcion", title: "Descripción" },
+            { data: "capacidad", title: "Capacidad"},
             {
                 data: "estatus",
                 title: "Estatus",
@@ -33,7 +37,7 @@
             {
                 data: "id", title: "Acciones", render: function (data) {
                     return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarTVehiculo(' + data + ')" />' +
-' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarTVehiculo(' + data + ')" />';
+                    ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarTVehiculo(' + data + ')" />';
                 }
             }
         ],
