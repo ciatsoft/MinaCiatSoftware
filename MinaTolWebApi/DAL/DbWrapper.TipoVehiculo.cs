@@ -59,7 +59,7 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
-        public ModelResponse GetTipoDeVehiculoById (int id)
+        public ModelResponse GetTipoDeVehiculoById (long id)
         {
             var response = new ModelResponse();
             try
@@ -91,7 +91,7 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
-        public ModelResponse DeleteTipoVehiculo(int id)
+        public ModelResponse DeleteTipoVehiculo(long id)
         {
             var response = new ModelResponse();
             try
