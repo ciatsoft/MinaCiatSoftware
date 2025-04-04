@@ -20,7 +20,6 @@ namespace MinaTolEntidades.DtoClientes
         public string NoExterno { get; set; }
         public string NoInterno { get; set; }
         public string Colonia { get; set; }
-
         public int Cp { get; set; }
         public string Delegacion { get; set; }
         public string Municipio { get; set; }

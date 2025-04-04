@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
@@ -39,6 +40,7 @@ namespace MinaToMVC.Controllers
         {
             var Cliente = new Cliente();
             IEnumerable<ClienteTipoMaterial> materialesPorClientes;
+            IEnumerable<DireccionCliente> direccionporClientes;
             if (id != 0)
             {
                 var result = await httpClientConnection.GetClienteById(id);
@@ -52,11 +54,36 @@ namespace MinaToMVC.Controllers
             else
             {
                 materialesPorClientes = Enumerable.Empty<ClienteTipoMaterial>().ToArray();
+                direccionporClientes = Enumerable.Empty<DireccionCliente>().ToArray();
             }
             ViewBag.MaterialesCliente = materialesPorClientes;
 
             return View(Cliente);
         }
+        //------------------------------------------UbicacionCliente----------------------------------------------------
+        public async Task<string> SaveOrUpdateDireccionCliente(DireccionCliente t)
+        {
+            httpClientConnection.MappingColumSecurity(t);
+            var result = await httpClientConnection.SaveOrUpdateDireccionCliente(t);
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<String> DeletDireccionCliente(long id)
+        {
+            var result = await httpClientConnection.DeleteDirreccionCliente(id);
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetAllDireccionCliente()
+        {
+            var result = await httpClientConnection.GetAllDireccionCliente();
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+
+        //------------------------------------------ClienteTipoMaterial----------------------------------------------------
 
         public async Task<string> SaveOrUpdateClienteTipoMaterial(ClienteTipoMaterial t)
         {

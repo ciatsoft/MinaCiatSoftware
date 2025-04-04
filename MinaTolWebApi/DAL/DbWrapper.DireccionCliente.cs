@@ -7,6 +7,7 @@ using System.Data;
 using System.Linq;
 using System.Web;
 using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.DtoClientes;
 
 namespace MinaTolWebApi.DAL
 {
@@ -38,15 +39,15 @@ namespace MinaTolWebApi.DAL
 
             return modelResponse;
         }
-        public ModelResponse SaveOrUpdateAreaTrabajo(DtoAreaTrabajo at)
+        public ModelResponse SaveOrUpdateDireccionCliente(DireccionCliente at)
         {
             var response = new ModelResponse();
             try
             {
                 response.IsSuccess = true;
                 var parameters = GenerateSQLParameters(at);
-                var areatrabajoId = ExecuteScalar($"SaveOrUpdateAreaTrabajo",System.Data.CommandType.StoredProcedure, parameters);
-                at.Id = Convert.ToInt64(areatrabajoId);
+                var DireccionClienteId = ExecuteScalar($"SaveOrUpdateDireccionCliente",System.Data.CommandType.StoredProcedure, parameters);
+                at.Id = Convert.ToInt64(DireccionClienteId);
 
                 response.Response = at;
             }
@@ -58,7 +59,7 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
-        public ModelResponse GetAreaTrabajoById(int id)
+        public ModelResponse GetDireccionClienteById(int id)
         {
             var response = new ModelResponse();
             try
@@ -73,10 +74,10 @@ namespace MinaTolWebApi.DAL
                     SqlDbType = System.Data.SqlDbType.Int
                 });
 
-                var result = GetObject("GetAreaTrabajoById", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, DtoAreaTrabajo>((reader) =>
+                var result = GetObject("GetDireccionClienteById", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, DireccionCliente>((reader) =>
                     {
-                        var r = FillEntity<DtoAreaTrabajo>(reader);
+                        var r = FillEntity<DireccionCliente>(reader);
                         return r;
                     }));
                 response.Response = result;
@@ -90,7 +91,7 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
-        public ModelResponse DeleteAreaTrabajo(int id)
+        public ModelResponse DeleteDireccionCliente(int id)
         {
             var response = new ModelResponse();
             try
@@ -105,7 +106,7 @@ namespace MinaTolWebApi.DAL
                     SqlDbType = System.Data.SqlDbType.Int
                 });
 
-                var result = ExecuteNonQuery("DeleteAreaTrabajo", System.Data.CommandType.StoredProcedure, parameters);
+                var result = ExecuteNonQuery("DeleteDireccionCliente", System.Data.CommandType.StoredProcedure, parameters);
 
             }
             catch (Exception ex)
