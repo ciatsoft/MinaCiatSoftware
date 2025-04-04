@@ -30,9 +30,11 @@ $(document).ready(function () {
                 }
             },
             {
-                data: "id", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarCliente(' + data + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarCliente(' + data + ', this)" />';
+                data: null, // Permite acceder a todo el objeto fila
+                render: function (data, type, row) {
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarCliente(' + row.id + ')" />' +
+                        '<input type="button" value="Direccion" class="btn btn-custom-direccion" onclick="DireccionCliente(' + row.id + ', \'' + row.nombre + '\')" />' +
+                        '<input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarCliente(' + row.id + ', this)" />';
                 }
             }
         ],
@@ -400,4 +402,19 @@ function LimpiarFormulario() {
     $("#txtEmail").val('');
     $("#txtComentarios").val('');
     $("#chbEstatus").prop('checked', false);
+}
+
+//Cerrar Modal
+function closeModal() {
+    $("#FormModal").modal("hide");
+}
+
+//Mostrar modal de Direccion
+function DireccionCliente(id, nombre) {
+    // Asignar ID y Nombre al formulario del modal
+    document.getElementById("idCliente").value = id;
+    document.getElementById("nombreCliente").value = nombre;
+
+    // Mostrar el modal
+    $("#FormModal").modal("show");
 }
