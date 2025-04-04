@@ -110,7 +110,6 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
-
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Http, Version=5.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -134,6 +133,7 @@
   <ItemGroup>
     <Compile Include="App_Start\App_Start.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\DireccionCliente.cs" />
     <Compile Include="Controllers\AreaTrabajoController.cs" />
     <Compile Include="Controllers\ClienteController.cs" />
     <Compile Include="Controllers\ClienteTipoMaterialController.cs" />
@@ -150,6 +150,7 @@
     <Compile Include="Controllers\VehiculoController.cs" />
     <Compile Include="Controllers\ViajesController.cs" />
     <Compile Include="DAL\BaseDbWrapper.cs" />
+    <Compile Include="DAL\DbWrapper.DireccionCliente.cs" />
     <Compile Include="DAL\DbWrapper.AreaTrabajo.cs" />
     <Compile Include="DAL\DbWrapper.Cliente.cs" />
     <Compile Include="DAL\DbWrapper.ClienteTipoMaterial.cs" />
