@@ -31,11 +31,24 @@
         transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
     }
 
-        .btn-custom-cancel:hover {
-            background-color: darkred; /* Color  más oscuro al pasar el ratón */
-            transform: scale(1.3); /* Aumenta el tamaño del botón */
+    .btn-custom-direccion {
+        background-color: #f4f80a; /*  para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-custom-direccion:hover {
+            background-color: #dfe21d; /* Color  más oscuro al pasar el ratón */
+            transform: scale(1.1); /* Aumenta el tamaño del botón */
             color: white; /* Color de texto blanco */
         }
+
+    .btn-custom-cancel:hover {
+        background-color: darkred; /* Color  más oscuro al pasar el ratón */
+        transform: scale(1.3); /* Aumenta el tamaño del botón */
+        color: white; /* Color de texto blanco */
+    }
 
     .btn-custom-clean {
         background-color: dodgerblue; /*  para el botón Guardar */
@@ -133,6 +146,63 @@
             </div>
         </div>
 </form>
+
+@*Modal*@
+<div class="modal fade" id="FormModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-m">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="exampleModalLabel">Direccion</h5>
+            </div>
+            <div class="modal-body">
+                <!-- Obtener Datos del Cliente -->
+                <input hidden id="idCliente" name="idCliente">
+                <label class="form-label">Nombre del Cliente:</label>
+                <input type="text" class="form-control" id="nombreCliente" name="nombreCliente" disabled />
+
+                <form id="contenedor">
+                    <div class="row g-3">
+                        <!-- Placa -->
+                        <div class="col-md-6">
+                            <label class="form-label">Placa</label>
+                            <input type="text" class="form-control" id="txtplaca" name="placa" autocomplete="off" />
+                        </div>
+
+                        <!-- Color -->
+                        <div class="col-md-6">
+                            <label class="form-label">Color</label>
+                            <input type="text" class="form-control" id="txtcolor" name="color" autocomplete="off" />
+                        </div>
+
+                        <!-- Tipo de Vehículo y Estado (alineados en una fila) -->
+                        <div class="col-md-6">
+                            <label class="form-label">Tipo de Vehículo</label>
+                            <select id="cbomarca" class="form-select"></select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Estado</label>
+                            <select id="cboestado" class="form-select">
+                                <option disabled value="">Seleeciona una opcion</option>
+                                <option value="1">En Patio</option>
+                                <option value="2">En Viaje</option>
+                                <option value="3">En Taller</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+                <br />
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="closeModal()">Cerrar</button>
+                    <button type="button" class="btn btn-success" onclick="Guardar()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*Fin Modal*@
+
 <script src="@(Url.StaticFile("Scripts/Catalogos/AltCliente.js"))"></script>
 <script>
     var materialesClienteJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(materialesCliente))');

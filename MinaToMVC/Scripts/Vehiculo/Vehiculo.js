@@ -20,16 +20,21 @@
             { data: "tipoVehiculo.nombre", title: "Vehiculo" },
             { data: "placa", title: "Placas" },
             { data: "color", title: "Color" },
-<<<<<<< HEAD
-            { data: "estado", title: "Estado" },
-=======
-<<<<<<< HEAD
-            { data: "Estado", title: "Estado" }
-            
-=======
-            { data: "Estado", title: "Estado" },
->>>>>>> 9f7517128878c36f85ca1e59d9fa43f4f1dbf252
->>>>>>> RamaTrabajoJuanRZ
+            {
+                data: "estado",
+                title: "Estado",
+                render: function (valor) {
+                    if (valor == 'En patio') {
+                        return "<span style='display: inline-block; width: 10px; height: 10px; background-color: #51b00b; border-radius: 50%; animation: blink 1s infinite alternate;'></span> En Patio";
+                    } else if (valor == 'En viaje') {
+                        return "<span style='display: inline-block; width: 10px; height: 10px; background-color: yellow; border-radius: 50%; animation: blink 1s infinite alternate;'></span> En Viaje";
+                    } else if (valor == 'En taller') {
+                        return "<span style='display: inline-block; width: 10px; height: 10px; background-color: red; border-radius: 50%; animation: blink 1s infinite alternate;'></span> En Taller";
+                    } else {
+                        return "<span style='display: inline-block; width: 10px; height: 10px; background-color: blue; border-radius: 50%; animation: blink 1s infinite alternate;'></span> Sin estado";
+                    }
+                }
+            },
             {
                 data: "estatus",
                 title: "Estatus",
