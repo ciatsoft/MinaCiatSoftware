@@ -1,9 +1,6 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.DtoClientes;
 using MinaTolWebApi.DAL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -14,35 +11,43 @@ namespace MinaTolWebApi.Controllers
     [RoutePrefix("api/TipoVehiculo")]
     public class TipoVehiculoController : ApiController
     {
-        private DbWrapper wrapper { get; set; }
+        private readonly DbWrapper wrapper;
+
         public TipoVehiculoController()
         {
             wrapper = new DbWrapper();
         }
+
+        // GET: api/TipoVehiculo
         [HttpGet, Route("")]
-        public ModelResponse GetAllTipoVehiculo()
+        public IHttpActionResult GetAllTipoVehiculo()
         {
             var result = wrapper.GetAllTipoVehiculo();
-            return result;
+            return Ok(result);
         }
+
+        // GET: api/TipoVehiculo/5
         [HttpGet, Route("{id:long}")]
-        public async Task<ModelResponse> GetTipoDeVehiculoById(int id)
+        public IHttpActionResult GetTipoDeVehiculoById(long id)
         {
             var result = wrapper.GetTipoDeVehiculoById(id);
-            return result;
+            return Ok(result);
         }
+
+        // DELETE: api/TipoVehiculo/5
         [HttpDelete, Route("{id:long}")]
-        public async Task<ModelResponse> DeleteTipoVehiculo(int id)
+        public IHttpActionResult DeleteTipoVehiculo(long id)
         {
             var result = wrapper.DeleteTipoVehiculo(id);
-            return result;
+            return Ok(result);
         }
+
+        // POST: api/TipoVehiculo
         [HttpPost, Route("")]
-        public async Task<ModelResponse> SaveOrUpdateTipoVehiculo(TipoVehiculo t)
+        public IHttpActionResult SaveOrUpdateTipoVehiculo(TipoVehiculo t)
         {
             var result = wrapper.SaveOrUpdateTipoVehiculo(t);
-            return result;
+            return Ok(result);
         }
     }
-
 }
