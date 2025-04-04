@@ -30,7 +30,19 @@ namespace MinaToMVC.DAL
         }
         public async Task<ModelResponse> GetAllVehiculo()
         {
-            var result = await RequestAsync<object>("api/Vehiculo", HttpMethod.Get, null,
+            var result = await RequestAsync<object>("api/Vehiculo/List", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
+        public async Task<ModelResponse> GetVehiculoById(long id)
+        {
+            var result = await RequestAsync<object>($"api/Vehiculo/{id}", HttpMethod.Get, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;

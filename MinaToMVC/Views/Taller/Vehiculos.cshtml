@@ -1,7 +1,7 @@
 ﻿@model MinaTolEntidades.DtoClientes.Vehiculo
 @{
     ViewBag.Title = "Alta/Edición Vehiculos";
-    var tiposVehiculos = (IEnumerable<SelectListItem>)ViewBag.TipoVehiculos;
+    var tiposVehiculos = (IEnumerable<SelectListItem>)ViewBag.vehiculos;
 }
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
@@ -101,7 +101,8 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Tipo de vehiculo:</label>
-                        @*@Html.DropDownListFor(x => x.TipoVehiculo.Id, tiposVehiculos, new { @class = "form-control", @readonly = "readonly" })*@
+                        @Html.DropDownListFor(x => x.TipoVehiculo.Id, tiposVehiculos, new { @class = "form-control", @readonly = "readonly" })
+
                     </div>
                 </div>
                 <div class="row">
