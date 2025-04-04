@@ -3,9 +3,7 @@
     $("#frmVehiculoCrud").validate({
         rules: {
             "txtPlaca": "required",
-            "txtColor": "required",
-            "txtEstado": "requerid",
-            
+            "txtColor": "required"
         }
     });
 
@@ -21,15 +19,11 @@
             { data: "placa", title: "Placas" },
             { data: "color", title: "Color" },
 <<<<<<< HEAD
-            { data: "estado", title: "Estado" },
-=======
-<<<<<<< HEAD
             { data: "Estado", title: "Estado" }
             
 =======
             { data: "Estado", title: "Estado" },
 >>>>>>> 9f7517128878c36f85ca1e59d9fa43f4f1dbf252
->>>>>>> RamaTrabajoJuanRZ
             {
                 data: "estatus",
                 title: "Estatus",
@@ -89,7 +83,7 @@ function EliminarVehiculo(id) {
             PostMVC('/Vehiculo/EliminarVehiculo', parametro, function (r) {
                 if (r.IsSuccess) {
                     Swal.fire('Eliminado', 'El vehículo ha sido eliminado.', 'success')
-                        .then(() => { window.location.href = '/Taller/Vehiculos'; });
+                        .then(() => { window.location.href = '/Vehiculo/GetAllVehiculo'; });
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -109,10 +103,7 @@ function SaveOrUpdateVehiculo() {
             Id: $("#txtidVehiculo").val(),
             Placa: $("#txtPlaca").val(),
             Color: $("#txtColor").val(),
-            Estado: $("#txtEstado").val(),
-            TipoVehiculo: {
-                Id: $("#TipoVehiculo_Id").val()
-            }
+            Estado: $("#txtEstado").val()
         };
 
         PostMVC('/Vehiculo/SaveOrUpdateVehiculo', parametro, function (r) {
@@ -123,10 +114,7 @@ function SaveOrUpdateVehiculo() {
                     text: "El registro se ha guardado correctamente.",
                     icon: "success",
                     confirmButtonText: 'OK'
-                }).then(() => {
-                    window.location.reload();
-                });
-
+                }).then(() => { window.location.href = '/Vehiculo/GetAllVehiculo'; });
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -155,7 +143,7 @@ function GetAllVehiculo() {
 }
 
 function EditarVehiculo(id) {
-    location.href = "/Taller/Vehiculos/?id=" + id;
+    location.href = "/Vehiculo/EditarVehiculo?id=" + id;
 }
 
 function LimpiarFormulario() {

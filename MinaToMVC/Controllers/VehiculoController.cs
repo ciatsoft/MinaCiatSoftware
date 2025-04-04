@@ -1,4 +1,5 @@
 ﻿using MinaTolEntidades.DtoClientes;
+using MinaTolEntidades.DtoViajes;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,11 @@ namespace MinaToMVC.Controllers
         public async Task<string> GetAllVehiculo()
         {
             var result = await httpClientConnection.GetAllVehiculo();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> SaveOrUpdateVehiculo(Vehiculo f)
+        {
+            var result = await httpClientConnection.SaveOrUpdateVehiculo(f);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 

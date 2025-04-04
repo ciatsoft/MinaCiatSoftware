@@ -17,12 +17,7 @@ namespace MinaTolWebApi.DAL
             {
                 response.IsSuccess = true;
                 var parameters = GenerateSQLParameters(v);
-                var result = GetObject("SaveOrUpdateVehiculo", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, Vehiculo>((reader) =>
-                    {
-                        var r = FillEntity<Vehiculo>(reader);
-                        return r;
-                    }));
+                var result = ExecuteNonQuery("SaveOrUpdateVehiculos", System.Data.CommandType.StoredProcedure, parameters);
                 response.Response = result;
             }
             catch(Exception ex )
