@@ -20,16 +20,7 @@
             { data: "tipoVehiculo.nombre", title: "Vehiculo" },
             { data: "placa", title: "Placas" },
             { data: "color", title: "Color" },
-<<<<<<< HEAD
-            { data: "estado", title: "Estado" },
-=======
-<<<<<<< HEAD
-            { data: "Estado", title: "Estado" }
-            
-=======
             { data: "Estado", title: "Estado" },
->>>>>>> 9f7517128878c36f85ca1e59d9fa43f4f1dbf252
->>>>>>> RamaTrabajoJuanRZ
             {
                 data: "estatus",
                 title: "Estatus",
