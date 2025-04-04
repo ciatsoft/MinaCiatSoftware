@@ -56,29 +56,27 @@
         <center><h1>Tipo de vehículo</h1></center>
         <div class="tabla-consultas-tipovehiculo">
             <div class="rectangulos" style="width: 100%;">
-                <div class="row">
-                    <label hidden>ID Tipo Vehículo:</label>
-                    <input type="text" id="txtidtipovehiculo" name="txtidtipovehiculo" class="form-control" disabled hidden />
+                <div class="row align-items-center">
+                    <!-- Campo oculto para ID Tipo Vehículo -->
+                    <input type="hidden" id="txtidtipovehiculo" name="txtidtipovehiculo" />
+
                     <div class="col-lg-3">
-                        <label>Nombre del Vehículo:</label>
+                        <label for="txtNombre" class="form-label">Nombre del Vehículo:</label>
                         <input type="text" id="txtNombre" name="txtNombre" class="form-control" />
                     </div>
-                    <div class="row">
-                        <div class="col-lg-3">
-                            <label>Estatus:</label>
-                            <input type="checkbox" name="chbEstatus" id="chbEstatus" value="" class="form-control" />
-                        </div>
+
+                    <div class="col-lg-3">
+                        <label>Estatus:</label>
+                        <input type="checkbox" name="chbEstatus" id="chbEstatus" value="" class="form-control" />
                     </div>
 
-                </div>
-                <div class="row">
                     <div class="col-lg-3">
-                        <label>Capacidad:</label>
-                        <input type="number" name="txtCapacidad" id="txtCapacidad" value="" class="form-control" />
+                        <label for="txtCapacidad" class="form-label">Capacidad:</label>
+                        <input type="number" id="txtCapacidad" name="txtCapacidad" class="form-control" />
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-8">
+                    <div class="col-lg-9">
                         <label>Descripción:</label>
                         <textarea type="text" id="txtDescripcion" name="Descripcion" rows="6" class="form-control"></textarea>
                     </div>
@@ -101,7 +99,6 @@
         <table id="tblTipoVehiculo" class="display" style="width:100%;">
         </table>
 
-    </div>
     </div>
 
 </form>
