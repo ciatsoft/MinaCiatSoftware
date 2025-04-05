@@ -7,65 +7,75 @@
 }
 
 <link href="@Url.Content("~/Assets/css/EstilosBtnCambios/EstiloBtn.css")" rel="stylesheet" />
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 
 <style>
     .btn-success {
-        background-color: #28a745; /* Verde para el botón Guardar */
+        background-color: #28a745;
         color: white;
         border: none;
-        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+        transition: all 0.3s ease;
     }
 
         .btn-success:hover {
-            background-color: #218838; /* Color verde más oscuro al pasar el ratón */
-            transform: scale(1.3); /* Aumenta el tamaño del botón */
-            color: white; /* Color de texto blanco */
+            background-color: #218838;
+            transform: scale(1.3);
+            color: white;
         }
 
     .btn-custom-cancel {
-        background-color: red; /*  para el botón Guardar */
+        background-color: red;
         color: white;
         border: none;
-        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+        transition: all 0.3s ease;
     }
 
+        .btn-custom-cancel:hover {
+            background-color: darkred;
+            transform: scale(1.3);
+            color: white;
+        }
+
     .btn-custom-direccion {
-        background-color: #f4f80a; /*  para el botón Guardar */
+        background-color: #f4f80a;
         color: white;
         border: none;
-        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+        transition: all 0.3s ease;
     }
 
         .btn-custom-direccion:hover {
-            background-color: #dfe21d; /* Color  más oscuro al pasar el ratón */
-            transform: scale(1.1); /* Aumenta el tamaño del botón */
-            color: white; /* Color de texto blanco */
+            background-color: #dfe21d;
+            transform: scale(1.1);
+            color: white;
         }
 
-    .btn-custom-cancel:hover {
-        background-color: darkred; /* Color  más oscuro al pasar el ratón */
-        transform: scale(1.3); /* Aumenta el tamaño del botón */
-        color: white; /* Color de texto blanco */
-    }
-
     .btn-custom-clean {
-        background-color: dodgerblue; /*  para el botón Guardar */
+        background-color: dodgerblue;
         color: white;
         border: none;
-        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+        transition: all 0.3s ease;
     }
 
         .btn-custom-clean:hover {
-            background-color: deepskyblue; /* Color  más oscuro al pasar el ratón */
-            transform: scale(1.3); /* Aumenta el tamaño del botón */
-            color: white; /* Color de texto blanco */
+            background-color: deepskyblue;
+            transform: scale(1.3);
+            color: white;
         }
+
+    #contenedor {
+        width: 800px;
+        height: 700px;
+        overflow-y: auto;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+    }
 </style>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-<!-- Contenedor donde se cargará la vista parcial -->
 <div id="contenedorMaterial"></div>
 
 <form id="frmCliente" name="frmCliente" method="post" enctype="multipart/form-data">
@@ -110,8 +120,7 @@
                     <div class="col-md-3 table-responsive">
                         <div class="row">
                             <div class="col-md-12">
-                                <table class="table table-bordered table-striped dataTable no-footer" id="tableTipodematerial">
-                                </table>
+                                <table class="table table-bordered table-striped dataTable no-footer" id="tableTipodematerial"></table>
                             </div>
                         </div>
                         <div class="row">
@@ -123,7 +132,6 @@
                         </div>
                     </div>
                     <div class="row">
-
                         <br />
                         <input type="hidden" id="txtCreatedBy" name="CreatedBy" value="@User.Identity.Name" />
                         <input type="hidden" id="txtCreatedDt" name="CreatedDt" value="@DateTime.Now" />
@@ -132,76 +140,69 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <input href="/Administracion/Clientes" type="button" value="Guardar" onclick="SaveOrUpdateCliente()" class="btn btn-success" />
+                            <input type="button" value="Guardar" onclick="SaveOrUpdateCliente()" class="btn btn-success" />
                             <a href="/Administracion/Clientes" class="btn btn-custom-cancel">Cancelar</a>
-
                         </div>
                     </div>
                 </div>
-
                 <br />
-
                 <table id="tbCliente" class="table table-bordered table-striped" style="width: 100%;"></table>
-
             </div>
         </div>
 </form>
 
-@*Modal*@
+<!-- Modal -->
 <div class="modal fade" id="FormModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
-    <div class="modal-dialog modal-m">
         <div class="modal-content">
-            <div class="modal-header bg-dark text-white">
-                <h5 class="modal-title" id="exampleModalLabel">Direccion</h5>
-            </div>
-            <div class="modal-body">
-                <!-- Obtener Datos del Cliente -->
-                <input hidden id="idCliente" name="idCliente">
-                <label class="form-label">Nombre del Cliente:</label>
-                <input type="text" class="form-control" id="nombreCliente" name="nombreCliente" disabled />
+            <form id="contenedor">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="exampleModalLabel">Dirección</h5>
+                </div>
+                <div class="modal-body">
+                    <input hidden id="idCliente" name="idCliente" />
+                    <label class="form-label">Nombre del Cliente:</label>
+                    <input type="text" class="form-control" id="nombreCliente" name="nombreCliente" disabled />
 
-                <form id="contenedor">
-                    <div class="row g-3">
-                        <!-- Placa -->
+                    <div class="row g-3 mt-3">
                         <div class="col-md-6">
-                            <label class="form-label">Placa</label>
-                            <input type="text" class="form-control" id="txtplaca" name="placa" autocomplete="off" />
+                            <label class="form-label">No. Interno</label>
+                            <input type="text" class="form-control" id="txtnointerno" name="no_interno" autocomplete="off" />
                         </div>
-
-                        <!-- Color -->
                         <div class="col-md-6">
-                            <label class="form-label">Color</label>
-                            <input type="text" class="form-control" id="txtcolor" name="color" autocomplete="off" />
+                            <label class="form-label">No. Externo</label>
+                            <input type="text" class="form-control" id="txtnoexterno" name="no_externo" autocomplete="off" />
                         </div>
-
-                        <!-- Tipo de Vehículo y Estado (alineados en una fila) -->
                         <div class="col-md-6">
-                            <label class="form-label">Tipo de Vehículo</label>
-                            <select id="cbomarca" class="form-select"></select>
+                            <label class="form-label">Colonia</label>
+                            <input type="text" class="form-control" id="txtcolonia" name="colonia" autocomplete="off" />
                         </div>
-
                         <div class="col-md-6">
-                            <label class="form-label">Estado</label>
-                            <select id="cboestado" class="form-select">
-                                <option disabled value="">Seleeciona una opcion</option>
-                                <option value="1">En Patio</option>
-                                <option value="2">En Viaje</option>
-                                <option value="3">En Taller</option>
-                            </select>
+                            <label class="form-label">C.P.</label>
+                            <input type="number" class="form-control" id="txtcp" name="cp" autocomplete="off" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Delegación</label>
+                            <input type="text" class="form-control" id="txtdelegacion" name="delegacion" autocomplete="off" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Municipio</label>
+                            <input type="text" class="form-control" id="txtmunicipio" name="municipio" autocomplete="off" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Estado (Ubicación)</label>
+                            <input type="text" class="form-control" id="txtestado" name="estado_ubicacion" autocomplete="off" />
                         </div>
                     </div>
-                </form>
-                <br />
-
-                <div class="modal-footer">
+                </div>
+                <div class="modal-footer mt-3">
                     <button type="button" class="btn btn-danger" onclick="closeModal()">Cerrar</button>
                     <button type="button" class="btn btn-success" onclick="Guardar()">Guardar</button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
-@*Fin Modal*@
+
 
 <script src="@(Url.StaticFile("Scripts/Catalogos/AltCliente.js"))"></script>
 <script>
