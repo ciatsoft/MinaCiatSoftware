@@ -28,9 +28,11 @@ namespace MinaToMVC.DAL
 
         }
 
-        public async Task<ModelResponse> GetAllDireccionCliente()
+        
+
+        public async Task<ModelResponse> GetDireccionClienteById(long id, long clienteid)
         {
-            var result = await RequestAsync<object>("api/DireccionCliente/List", HttpMethod.Get, null,
+            var result = await RequestAsync<object>($"api/DireccionCliente/{id}/{clienteid}", HttpMethod.Get, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
@@ -41,18 +43,7 @@ namespace MinaToMVC.DAL
 
         }
 
-        public async Task<ModelResponse> GetDirreccionClienteById(long id)
-        {
-            var result = await RequestAsync<object>($"api/DireccionCliente/{id}", HttpMethod.Get, null,
-            new Func<string, string>((responseString) =>
-            {
-                return responseString;
-            }));
-            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
-
-            return modelResponse;
-
-        }
+        
 
         public async Task<ModelResponse> DeleteDirreccionCliente(long id)
         {

@@ -13,32 +13,8 @@ namespace MinaTolWebApi.DAL
 {
     public partial class DbWrapper
     {
-        public ModelResponse GetAllDireccionCliente()
-        {
-            var modelResponse = new ModelResponse();
-            var parameters = new List<SqlParameter>();
-
-            try
-            {
-                var result = GetObjects($"GetAll", CommandType.Text,parameters,
-                    new Func<IDataReader, DtoAreaTrabajo>((reader) =>
-                    {
-                        var r = FillEntity<DtoAreaTrabajo>(reader);
-
-                        return r;
-                    }));
-
-                modelResponse.Response = result;
-            }
-            catch (Exception ex)
-            {
-                modelResponse.IsSuccess = false;
-                modelResponse.Enum = Enumeration.ErrorNoControlado;
-                modelResponse.Message = ex.Message;
-            }
-
-            return modelResponse;
-        }
+        
+        
         public ModelResponse SaveOrUpdateDireccionCliente(DireccionCliente at)
         {
             var response = new ModelResponse();

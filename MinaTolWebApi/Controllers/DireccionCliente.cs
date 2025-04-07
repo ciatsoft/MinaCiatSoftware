@@ -12,7 +12,7 @@ using System.Web.Http;
 
 namespace MinaTolWebApi.Controllers
 {
-    [Authorize]
+    [Authorize]//Autorizacion de los permisos de token 
     [RoutePrefix("api/DireccionCliente")]
     public class DireccionClienteController : ApiController
     {
@@ -22,13 +22,7 @@ namespace MinaTolWebApi.Controllers
             wrapper = new DbWrapper();
         }
         
-        [Route("List"), HttpGet]
-        public ModelResponse GetAllDireccionCliente()
-        {
-            var result = wrapper.GetAllDireccionCliente();
-            return result;
-        }
-
+        
         [HttpGet, Route("{id:long}")]
         public ModelResponse GetDireccionClienteById(int id)
         {

@@ -16,15 +16,15 @@ namespace MinaTolEntidades.DtoClientes
 
         public Cliente Cliente { get; set; }
         public DtoTipoMaterialUbicacion TipoMaterial { get; set; }
-        public string calle { get; set; }
+        public string Calle { get; set; }
         public string NoExterno { get; set; }
         public string NoInterno { get; set; }
         public string Colonia { get; set; }
-        public int Cp { get; set; }
+        public int CP { get; set; }
         public string Delegacion { get; set; }
         public string Municipio { get; set; }
         public string Estado{ get; set;}
-        public string ClienteID { get; set; }
+        
 
 
     }

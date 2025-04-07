@@ -1,6 +1,7 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoClientes;
+using MinaTolEntidades.DtoSucursales;
 using MinaTolEntidades.DtoViajes;
 using MinaTolEntidades.Security;
 using MinaToMVC.Helpers;
@@ -75,11 +76,14 @@ namespace MinaToMVC.Controllers
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
-        public async Task<string> GetAllDireccionCliente()
+        public async Task<String> GetDireccionClienteById(long id) 
+        
         {
-            var result = await httpClientConnection.GetAllDireccionCliente();
+            var resuslt = await httpClientConnection.GetDireccionClienteById(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(resuslt);
 
-            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+
+
         }
 
 
@@ -151,6 +155,25 @@ namespace MinaToMVC.Controllers
             ViewBag.MaterialNombre = precios.FirstOrDefault()?.TipoMaterial.NombreTipoMaterial ?? "N/A";
 
             return PartialView(precios);
+        }
+        //Pntalla parcial para el modal de vista clientes, para ingresar la ubicacion del cliente 
+        public async Task<ActionResult> PartialConfiguracionUbicacionCliente(int clienteId, int direccionClientebyiD)
+        {
+            var ubicacionCliente = new List<DireccionCliente>();
+            if (clienteId != 0 && direccionClientebyiD != 0)
+            {
+                var result = await httpClientConnection.GetDireccionClienteById(clienteId, direccionClientebyiD);
+                ubicacionCliente = JsonConvert.DeserializeObject<List<DireccionCliente>>(result.Response.ToString());
+            }
+            ViewBag.ClienteId = clienteId;
+            ViewBag.ubicacionCliente = direccionClientebyiD;
+            ViewBag.ubicacionCliente = ubicacionCliente;
+            ViewBag.ClienteNombre = ubicacionCliente.FirstOrDefault()?.Cliente.Nombre ?? "N/A";
+            ViewBag.ubicacionCliente = ubicacionCliente.FirstOrDefault()?.Colonia ?? "N/A";
+
+            return PartialView(ubicacionCliente);
+
+
         }
 
 

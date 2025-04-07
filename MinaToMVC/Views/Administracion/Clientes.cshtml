@@ -4,6 +4,7 @@
 
     var Cliente = (MinaTolEntidades.DtoClientes.Cliente)Model;
     var materialesCliente = (IEnumerable<MinaTolEntidades.DtoClientes.ClienteTipoMaterial>)ViewBag.MaterialesCliente;
+    var ubicacionCliente = (IEnumerable<MinaTolEntidades.DtoClientes.DireccionCliente>)ViewBag.UbicacionCliente;
 }
 
 <link href="@Url.Content("~/Assets/css/EstilosBtnCambios/EstiloBtn.css")" rel="stylesheet" />
@@ -193,10 +194,31 @@
                             <input type="text" class="form-control" id="txtestado" name="estado_ubicacion" autocomplete="off" />
                         </div>
                     </div>
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <h5>Direcciones registradas</h5>
+                            <table id="tbDirecciones" class="table table-bordered table-striped" style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th>Calle</th>
+                                        <th>No. Int/Ext</th>
+                                        <th>Colonia</th>
+                                        <th>CP</th>
+                                        <th>Delegación</th>
+                                        <th>Municipio</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
                 </div>
                 <div class="modal-footer mt-3">
                     <button type="button" class="btn btn-danger" onclick="closeModal()">Cerrar</button>
-                    <button type="button" class="btn btn-success" onclick="Guardar()">Guardar</button>
+                    <button type="button" class="btn btn-success" onclick="SaveOrUpdateDireccionCliente()">Guardar</button>
                 </div>
             </form>
         </div>
@@ -208,4 +230,5 @@
 <script>
     var materialesClienteJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(materialesCliente))');
     var clienteJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Cliente))');
+    var ubicacionClienteJson= JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ubicacionCliente))');
 </script>
