@@ -30,14 +30,15 @@ $(document).ready(function () {
                 }
             },
             {
-                data: null, // Permite acceder a todo el objeto fila
+                data: null,
                 render: function (data, type, row) {
-                    return
-                    '<input type="button" value="Direccion" class="btn btn-custom-direccion" onclick="DireccionCliente(' + row.id + ', \'' + row.idDireccion + '\')" />' +
-                    '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarCliente(' + row.id + ')" />' +
-                    '<input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarCliente(' + row.id + ', this)" />';
+                    return '<input type="button" value="Dirección" class="btn btn-custom-direccion btn-direccion" ' +
+                        'data-cliente-id="' + row.id + '" data-direccion-id="' + row.idDireccion + '" />' +
+                        '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarCliente(' + row.id + ')" />' +
+                        '<input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarCliente(' + row.id + ', this)" />';
                 }
             }
+
         ],
         language: {
             "decimal": ",",
@@ -419,6 +420,7 @@ $(document).on("click", ".btn-direccion", function () {
         $("#genericModal").modal("show");
     });
 });
+
 
 //Cerrar Modal
 function closeModal() {

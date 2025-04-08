@@ -76,13 +76,11 @@ namespace MinaToMVC.Controllers
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
-        public async Task<String> GetDireccionClienteById(long id) 
+        public async Task<String> GetDireccionClienteById(long id, long clienteid)
         
         {
-            var resuslt = await httpClientConnection.GetDireccionClienteById(id);
+            var resuslt = await httpClientConnection.GetDireccionClienteById(id, clienteid);
             return Newtonsoft.Json.JsonConvert.SerializeObject(resuslt);
-
-
 
         }
 
@@ -170,10 +168,7 @@ namespace MinaToMVC.Controllers
             ViewBag.ubicacionCliente = ubicacionCliente;
             ViewBag.ClienteNombre = ubicacionCliente.FirstOrDefault()?.Cliente.Nombre ?? "N/A";
             ViewBag.ubicacionCliente = ubicacionCliente.FirstOrDefault()?.Colonia ?? "N/A";
-
             return PartialView(ubicacionCliente);
-
-
         }
 
 
