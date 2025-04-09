@@ -12,7 +12,7 @@ using System.Web.Http;
 
 namespace MinaTolWebApi.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [RoutePrefix("api/Usuario")]
     public class UsuarioController : ApiController
     {

@@ -30,6 +30,14 @@ namespace MinaToMVC.Controllers
         }
         public async Task<ActionResult> Vehiculos(long id = 0)
         {
+            Vehiculo v = null;
+
+            if (id != 0)
+            {
+                var modelResponse = await httpClientConnection.GetVehiculoById(id);
+                v = JsonConvert.DeserializeObject<Vehiculo>(modelResponse.Response.ToString());
+            }
+
             var trabajadores = new List<DtoTrabajador>();
             var vehiculos = new List<TipoVehiculo>();
             var areas = new List<DtoAreaTrabajo>();
@@ -49,7 +57,7 @@ namespace MinaToMVC.Controllers
             ViewBag.trabajadores = trabajadores;
             ViewBag.areas = areas;
 
-            return View();
+            return View(v);
         }
         public ActionResult Inventario_Taller()
         {

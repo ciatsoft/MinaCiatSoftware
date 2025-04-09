@@ -63,6 +63,7 @@
 @using (Html.BeginForm("SaveOrUpdateVehiculo", "Vehiculo", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmVehiculoCrud", @id = "frmVehiculoCrud" }))
 {
 
+    @Html.HiddenFor(x => x.Id)
     @Html.HiddenFor(x => x.Estatus)
     @Html.HiddenFor(x => x.CreatedDt)
     @Html.HiddenFor(x => x.CreatedBy)
@@ -108,7 +109,8 @@
                 <div class="row">
                     <div class="col-lg-12 d-flex justify-content-between">
                         <div>
-                            <input type="button" onclick="SaveOrUpdateVehiculo()" value="Guadar" class="btn btn-success" />
+                            @*<input type="button" onclick="SaveOrUpdateVehiculo()" value="Guadar" class="btn btn-success" />*@
+                            <input type="submit" value="Guadar" class="btn btn-success" />
                             <input type="button" name="btnEliminar" id="btnEliminar" value="Eliminar" class="btn btn-custom-delete" />
                         </div>
                         <a class="btn btn-custom-cancel" href="">Cancelar</a>
@@ -125,5 +127,5 @@
 
 <script src="@(Url.StaticFile("Scripts/Vehiculo/Vehiculo.js"))"></script>
 <script>
-   
+
 </script>
