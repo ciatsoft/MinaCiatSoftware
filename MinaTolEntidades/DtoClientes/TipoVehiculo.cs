@@ -13,3 +13,4 @@ namespace MinaTolEntidades.DtoClientes
         public int Capacidad { get; set; }
     }
 }
+
