@@ -10,7 +10,6 @@
             "txtNombre": "Por favor, ingresa el nombre del vehículo",
             "txtDescripcion": "Por favor, ingresa una descripción",
             "txtCapacidad": "Por favor, ingrsar capacidad del vehiculo"
-        }
         },
         errorPlacement: function (error, element) {
             error.insertAfter(element);
@@ -24,10 +23,10 @@
         paging: true,
         searching: true,
         columns: [
-            { data: "id", visible: true, title: "Id" },
+            { data: "id", visible: false, title: "Id" },
             { data: "nombre", title: "Nombre" },
             { data: "descripcion", title: "Descripción" },
-            { data: "capacidad", title: "Capacidad"},
+            { data: "capacidad", title: "Capacidad" },
             {
                 data: "estatus",
                 title: "Estatus",
@@ -40,7 +39,12 @@
                 title: "Acciones",
                 render: function (data) {
                     return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarTVehiculo(' + data + ')" />' +
+<<<<<<< HEAD
                      ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarTVehiculo(' + data + ')" />';
+=======
+                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarTVehiculo(' + data + ')" />';
+                    ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarTVehiculo(' + data + ')" />';
+>>>>>>> a6a18eb96ad9518e29752a837846b7844b47c19f
                 }
             }
         ],
@@ -90,7 +94,8 @@ function SaveOrUpdateTipoVehiculo() {
             Descripcion: $("#txtDescripcion").val(),
             Capacidad:$("#txtCapacidad").val(),
             Estatus: $("#chbEstatus").is(':checked'),
-            CreatedDt: $("#txtCreatedDt").val()
+            CreatedDt: $("#txtCreatedDt").val(),
+            Capacidad: $("#txtCapacidad").val()
         };
 
         Swal.fire({

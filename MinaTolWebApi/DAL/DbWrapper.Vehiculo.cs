@@ -67,7 +67,7 @@ namespace MinaTolWebApi.DAL
                     Value = id,
                     IsNullable = true,
                     ParameterName = "@Id",
-                    SqlDbType = System.Data.SqlDbType.Int
+                    SqlDbType = System.Data.SqlDbType.BigInt
                 });
 
                 var result = GetObject("GetVehiculoById", System.Data.CommandType.StoredProcedure,

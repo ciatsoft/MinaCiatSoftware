@@ -111,7 +111,7 @@ function EliminarVehiculo(id) {
 function SaveOrUpdateVehiculo() {
     if ($("#frmVehiculoCrud").valid()) {
         var parametro = {
-            Id: $("#txtidVehiculo").val(),
+            Id: $("#Id").val(),
             Placa: $("#txtPlaca").val(),
             Color: $("#txtColor").val(),
             Estado: $("#txtEstado").val(),
@@ -160,7 +160,7 @@ function GetAllVehiculo() {
 }
 
 function EditarVehiculo(id) {
-    location.href = "/Taller/Vehiculos/?id=" + id;
+    location.href = "/Taller/Vehiculos/" + id;
 }
 
 function LimpiarFormulario() {

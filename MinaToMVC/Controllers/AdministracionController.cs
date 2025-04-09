@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
@@ -205,8 +206,10 @@ namespace MinaToMVC.Controllers
             ViewBag.ubicacionCliente = ubicacionCliente.FirstOrDefault()?.Colonia ?? "N/A";
             return PartialView(ubicacionCliente);
         }
-
-
+        public ActionResult PartialdireccionesClientes()
+        {
+            return PartialView();
+        }
 
         #endregion
 

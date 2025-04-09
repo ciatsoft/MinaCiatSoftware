@@ -143,6 +143,7 @@
                         <div class="col-md-12">
                             <input type="button" value="Guardar" onclick="SaveOrUpdateCliente()" class="btn btn-success" />
                             <a href="/Administracion/Clientes" class="btn btn-custom-cancel">Cancelar</a>
+                            <input type="button" id="btndirecciones" value="Direcciones" onclick="AbrirModalDirecciones()" style="display:none;" />
                         </div>
                     </div>
                 </div>
@@ -152,83 +153,19 @@
         </div>
 </form>
 
-<!-- Modal -->
-<div class="modal fade" id="FormModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
-        <div class="modal-content">
-            <form id="contenedor">
-                <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title" id="exampleModalLabel">Dirección</h5>
-                </div>
-                <div class="modal-body">
-                    <input hidden id="idCliente" name="idCliente" />
-                    <label class="form-label">Nombre del Cliente:</label>
-                    <input type="text" class="form-control" id="nombreCliente" name="nombreCliente" disabled />
-
-                    <div class="row g-3 mt-3">
-                        <div class="col-md-6">
-                            <label class="form-label">No. Interno</label>
-                            <input type="text" class="form-control" id="txtnointerno" name="no_interno" autocomplete="off" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">No. Externo</label>
-                            <input type="text" class="form-control" id="txtnoexterno" name="no_externo" autocomplete="off" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Colonia</label>
-                            <input type="text" class="form-control" id="txtcolonia" name="colonia" autocomplete="off" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">C.P.</label>
-                            <input type="number" class="form-control" id="txtcp" name="cp" autocomplete="off" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Delegación</label>
-                            <input type="text" class="form-control" id="txtdelegacion" name="delegacion" autocomplete="off" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Municipio</label>
-                            <input type="text" class="form-control" id="txtmunicipio" name="municipio" autocomplete="off" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Estado (Ubicación)</label>
-                            <input type="text" class="form-control" id="txtestado" name="estado_ubicacion" autocomplete="off" />
-                        </div>
-                    </div>
-                    <div class="row mt-4">
-                        <div class="col-md-12">
-                            <h5>Direcciones registradas</h5>
-                            <table id="tbDirecciones" class="table table-bordered table-striped" style="width: 100%;">
-                                <thead>
-                                    <tr>
-                                        <th>Calle</th>
-                                        <th>No. Int/Ext</th>
-                                        <th>Colonia</th>
-                                        <th>CP</th>
-                                        <th>Delegación</th>
-                                        <th>Municipio</th>
-                                        <th>Estado</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                </div>
-                <div class="modal-footer mt-3">
-                    <button type="button" class="btn btn-danger" onclick="closeModal()">Cerrar</button>
-                    <button type="button" class="btn btn-success" onclick="SaveOrUpdateDireccionCliente()">Guardar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 
 <script src="@(Url.StaticFile("Scripts/Catalogos/AltCliente.js"))"></script>
+
 <script>
     var materialesClienteJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(materialesCliente))');
     var clienteJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Cliente))');
-    var ubicacionClienteJson= JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ubicacionCliente))');
+    var ubicacionClienteJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ubicacionCliente))');
+
+    $(document).ready(function () {
+        // Si clienteJson tiene un ID, significa que estamos editando
+        if (clienteJson && clienteJson.Id > 0) {
+            $("#btndirecciones").show();
+        }
+    });
 </script>
