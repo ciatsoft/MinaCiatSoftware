@@ -32,7 +32,7 @@ $(document).ready(function () {
             {
                 data: null,
                 render: function (data, type, row) {
-                    return '<input type="button" value="Dirección" class="btn btn-custom-direccion btn-direccion" ' +
+                    return '<input type="button" value="Dirección" style="visible: false" class="btn btn-custom-direccion btn-direccion" ' +
                         'data-cliente-id="' + row.id + '" data-direccion-id="' + row.idDireccion + '" />' +
                         '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarCliente(' + row.id + ')" />' +
                         '<input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarCliente(' + row.id + ', this)" />';
@@ -408,18 +408,6 @@ function LimpiarFormulario() {
 // EN este punto inicia en apartado del modal
 
 
-$(document).on("click", ".btn-direccion", function () {
-    var clienteId = $(this).data("cliente-id");
-    var direccionId = $(this).data("direccion-id");
-
-    $("#titleGenerciModal").text("Configuración de dirección del cliente");
-    $("#boddyGeericModal").empty().load("/Administracion/PartialConfiguracionUbicacionCliente", {
-        clienteId: clienteId,
-        direccionClientebyiD: direccionId
-    }, function () {
-        $("#genericModal").modal("show");
-    });
-});
 
 
 //Cerrar Modal
@@ -595,6 +583,27 @@ function EliminarDireccion(id) {
         }
     });
 }
+
+function AbrirModalDirecciones() {
+    $("#titleGenerciModal").text("Configuración de dirección del cliente");
+    $("#boddyGeericModal").empty().load("/Administracion/PartialdireccionesClientes", function () {
+        $("#genericModal").modal("show");
+    });
+}
+
+//esto no va aquí, le esta poniendo un método con clic al todo el docmiedocumento
+//$(document).on("click", ".btn-direccion", function () {
+//    var clienteId = $(this).data("cliente-id");
+//    var direccionId = $(this).data("direccion-id");
+
+//    $("#titleGenerciModal").text("Configuración de dirección del cliente");
+//    $("#boddyGeericModal").empty().load("/Administracion/PartialConfiguracionUbicacionCliente", {
+//        clienteId: clienteId,
+//        direccionClientebyiD: direccionId
+//    }, function () {
+//        $("#genericModal").modal("show");
+//    });
+//});
 
 function LimpiarFormularioDireccion() {
     $("#idDireccion").val('');
