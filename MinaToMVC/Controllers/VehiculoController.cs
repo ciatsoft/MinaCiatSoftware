@@ -28,7 +28,7 @@ namespace MinaToMVC.Controllers
             var tiposVehiculoResponse = await httpClientConnection.GetAllTipoVehiculo();
             var tiposVehiculo = JsonConvert.DeserializeObject<List<TipoVehiculo>>(tiposVehiculoResponse.Response.ToString());
 
-            var tiposVehiculoList = MappingPropertiToDropDownList(tiposVehiculo, "Id", "Nombre","Estado");
+            var tiposVehiculoList = MappingPropertiToDropDownList(tiposVehiculo, "Id", "Nombre");
 
             ViewBag.TipoVehiculos = tiposVehiculoList; ;
 
@@ -40,10 +40,10 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllVehiculo();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-        public async Task<string> SaveOrUpdateVehiculo(Vehiculo f)
+        public async Task<ActionResult> SaveOrUpdateVehiculo(Vehiculo f)
         {
             var result = await httpClientConnection.SaveOrUpdateVehiculo(f);
-            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+            return Redirect("~/Taller/Vehiculos");
         }
 
     }
