@@ -41,7 +41,12 @@ namespace MinaToMVC.Controllers
         {
             var Cliente = new Cliente();
             IEnumerable<ClienteTipoMaterial> materialesPorClientes;
+<<<<<<< HEAD
             IEnumerable<DireccionCliente> direccionporClientes;
+=======
+            IEnumerable<DireccionCliente> direccionCliente;
+
+>>>>>>> 69a7529b35102bd76930eadd32191d2a13df5152
             if (id != 0)
             {
                 var result = await httpClientConnection.GetClienteById(id);
@@ -50,17 +55,23 @@ namespace MinaToMVC.Controllers
                 var materialesPorClientesResponse = await httpClientConnection.GetTipoMaterialByCliente(id);
                 materialesPorClientes = JsonConvert.DeserializeObject<List<ClienteTipoMaterial>>(materialesPorClientesResponse.Response.ToString());
 
+                
 
             }
             else
             {
                 materialesPorClientes = Enumerable.Empty<ClienteTipoMaterial>().ToArray();
+<<<<<<< HEAD
                 direccionporClientes = Enumerable.Empty<DireccionCliente>().ToArray();
+=======
+                direccionCliente = Enumerable.Empty<DireccionCliente>().ToArray();
+>>>>>>> 69a7529b35102bd76930eadd32191d2a13df5152
             }
             ViewBag.MaterialesCliente = materialesPorClientes;
 
             return View(Cliente);
         }
+<<<<<<< HEAD
         //------------------------------------------UbicacionCliente----------------------------------------------------
         public async Task<string> SaveOrUpdateDireccionCliente(DireccionCliente t)
         {
@@ -86,7 +97,31 @@ namespace MinaToMVC.Controllers
 
 
         //------------------------------------------ClienteTipoMaterial----------------------------------------------------
+=======
+        //---------------------------------Ubicacion Cliente 
+        public async Task<string> SaveOrUpdateDireccionCliente(DireccionCliente t)
+        {
+>>>>>>> 69a7529b35102bd76930eadd32191d2a13df5152
 
+
+            httpClientConnection.MappingColumSecurity(t);
+            var result = await httpClientConnection.SaveOrUpdateDireccionCliente(t);
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> DeleteDireccionCliente(DireccionCliente t)
+        {
+
+            httpClientConnection.MappingColumSecurity(t);
+            var result = await httpClientConnection.DeleteDireccionCliente(t);
+            return JsonConvert.SerializeObject(result);
+        }
+
+
+        
+
+
+        //--------------------------------- Cliente
         public async Task<string> SaveOrUpdateClienteTipoMaterial(ClienteTipoMaterial t)
         {
 
