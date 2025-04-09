@@ -141,6 +141,7 @@ $(document).ready(function () {
         $("#txtrazon").val(clienteJson.Razon_Social);
 
         $("#btnmaterial").show();
+        $("#btndirecciones").show();
 
     }
     else {
@@ -410,7 +411,7 @@ function LimpiarFormulario() {
 
 //Cerrar Modal
 function closeModal() {
-    $("#FormModal").modal("hide");
+    $("#genericModal").modal("hide");
 }
 
 //Mostrar modal de Direccion
@@ -494,16 +495,17 @@ $("#contenedor").on("submit", function (e) {
 
 function GuardarDireccion() {
     const direccion = {
-        Id: $("#idDireccion").val() || 0,
-        Cliente: { Id: $("#idCliente").val() },
-        calle: $("#txtCalle").val(),
-        NoInterno: $("#txtNoInterno").val(),
-        NoExterno: $("#txtNoExterno").val(),
-        Colonia: $("#txtColonia").val(),
-        Cp: $("#txtCP").val(),
-        Delegacion: $("#txtDelegacion").val(),
-        Municipio: $("#txtMunicipio").val(),
-        Estado: $("#txtEstado").val(),
+
+        Id: $("#idDireccionCliente").val() || 0,
+        Cliente: $("#idCliente").val(),
+        Calle: $("#txtcalle").val(),
+        NoInterno: $("#txtnointerno").val(),
+        NoExterno: $("#txtnoexterno").val(),
+        Colonia: $("#txtcolonia").val(),
+        CP: $("#txtcp").val(),
+        Delegacion: $("#txtdelegacion").val(),
+        Municipio: $("#txtmunicipio").val(),
+        Estado: $("#txtestado").val(),
         Estatus: 1
     };
 
@@ -582,9 +584,13 @@ function EliminarDireccion(id) {
     });
 }
 
-function AbrirModalDirecciones() {
+function AbrirModalDirecciones(idCliente, nombreCliente) {
     $("#titleGenerciModal").text("Configuración de dirección del cliente");
     $("#boddyGeericModal").empty().load("/Administracion/PartialdireccionesClientes", function () {
+        // Una vez que el contenido del modal se ha cargado, asignamos los valores
+        $("#idCliente").val(idCliente);
+        $("#nombreCliente").val(nombreCliente);
+
         $("#genericModal").modal("show");
     });
 }

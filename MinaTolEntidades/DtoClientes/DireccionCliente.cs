@@ -15,7 +15,6 @@ namespace MinaTolEntidades.DtoClientes
         }
 
         public Cliente Cliente { get; set; }
-        public DtoTipoMaterialUbicacion TipoMaterial { get; set; }
         public string Calle { get; set; }
         public string NoExterno { get; set; }
         public string NoInterno { get; set; }

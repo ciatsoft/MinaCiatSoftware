@@ -13,10 +13,6 @@ namespace MinaTolWebApi.DAL
 {
     public partial class DbWrapper
     {
-<<<<<<< HEAD
-        
-        
-=======
         public ModelResponse GetAllDireccionCliente()
         {
             var modelResponse = new ModelResponse();
@@ -43,7 +39,7 @@ namespace MinaTolWebApi.DAL
 
             return modelResponse;
         }
->>>>>>> 69a7529b35102bd76930eadd32191d2a13df5152
+
         public ModelResponse SaveOrUpdateDireccionCliente(DireccionCliente at)
         {
             var response = new ModelResponse();
@@ -51,13 +47,9 @@ namespace MinaTolWebApi.DAL
             {
                 response.IsSuccess = true;
                 var parameters = GenerateSQLParameters(at);
-<<<<<<< HEAD
+
                 var DireccionClienteId = ExecuteScalar($"SaveOrUpdateDireccionCliente",System.Data.CommandType.StoredProcedure, parameters);
                 at.Id = Convert.ToInt64(DireccionClienteId);
-=======
-                var direccionClienteId = ExecuteScalar($"SaveOrUpdateDireccionCliente",System.Data.CommandType.StoredProcedure, parameters);
-                at.Id = Convert.ToInt64(direccionClienteId);
->>>>>>> 69a7529b35102bd76930eadd32191d2a13df5152
 
                 response.Response = at;
             }
