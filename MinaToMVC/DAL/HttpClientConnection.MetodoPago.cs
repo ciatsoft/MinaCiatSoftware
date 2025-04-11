@@ -1,5 +1,5 @@
-﻿using MinaTolEntidades.DtoCatalogos;
-using MinaTolEntidades;
+﻿using MinaTolEntidades;
+using MinaTolEntidades.DtoCatalogos;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -13,11 +13,9 @@ namespace MinaToMVC.DAL
 {
     public partial class HttpClientConnection
     {
-
-        public async Task<ModelResponse> SaveOrUpdateRoll(DtoRoll u)
+        public async Task<ModelResponse> GetAllMetodoPago()
         {
-            MappingColumSecurity(u);
-            var result = await RequestAsync<object>("api/Roll", HttpMethod.Post, u,
+            var result = await RequestAsync<object>("api/MetodoPago/List", HttpMethod.Get, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
@@ -27,21 +25,9 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
-        public async Task<ModelResponse> GetAllRoll()
+        public async Task<ModelResponse> GetMetodoPagoById(int id)
         {
-            var result = await RequestAsync<object>("api/Roll", HttpMethod.Get, null,
-            new Func<string, string>((responseString) =>
-            {
-                return responseString; 
-            }), token.Token.access_token);
-            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
-
-            return modelResponse;
-
-        }
-        public async Task<ModelResponse> GetRollById(long id)
-        {
-            var result = await RequestAsync<object>($"api/Roll/{id}", HttpMethod.Get, null,
+            var result = await RequestAsync<object>($"api/MetodoPago/{id}", HttpMethod.Get, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
@@ -51,9 +37,9 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
-        public async Task<ModelResponse> DeleteRoll(long id)
+        public async Task<ModelResponse> DeleteMetodoPago(int id)
         {
-            var result = await RequestAsync<object>($"api/Roll/{id}", HttpMethod.Delete, null,
+            var result = await RequestAsync<object>($"api/MetodoPago/{id}", HttpMethod.Delete, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
@@ -63,6 +49,18 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
+        public async Task<ModelResponse> SaveOrUpdateMetodoPago(MetodoPago mp)
+        {
+            MappingColumSecurity(mp);
+            var result = await RequestAsync<object>("api/MetodoPago", HttpMethod.Post, mp,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
 
+            return modelResponse;
+
+        }
     }
 }

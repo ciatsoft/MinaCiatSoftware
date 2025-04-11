@@ -242,6 +242,19 @@ namespace MinaToMVC.Controllers
 
 
         #endregion
-        
+
+        #region Metodo de pago
+        public async Task<ActionResult> MetodoPago(int id = 0)
+        {
+            var metodoPago = new MetodoPago();
+            if (id != 0)
+            {
+                var metodoPagoRequest = await httpClientConnection.GetMetodoPagoById(id);
+                metodoPago = JsonConvert.DeserializeObject<MetodoPago>(metodoPagoRequest.Response.ToString());
+            }
+
+            return View(metodoPago);
+        }
+        #endregion
     }
 }
