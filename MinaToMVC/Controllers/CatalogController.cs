@@ -235,8 +235,7 @@ namespace MinaToMVC.Controllers
 
         public async Task<string> GetAllTipoMaterialUbicacion()
         {
-            var token = Helpers.SessionHelper.GetSessionUser();
-            var result = await httpClientConnection.GetAllTipoMaterialUbicacion(token.Token.access_token);
+            var result = await httpClientConnection.GetAllTipoMaterialUbicacion();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
