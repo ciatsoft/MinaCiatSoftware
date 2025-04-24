@@ -1,0 +1,94 @@
+﻿@model MinaTolEntidades.DtoVentas.PV_Ventas
+@{
+    ViewBag.Title = "Venta Publico en General";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    var ubicaciones = (List<MinaTolEntidades.DtoCatalogos.DtoUbicacion>)ViewBag.Ubicaciones;
+    var materiales = (List<MinaTolEntidades.DtoCatalogos.DtoTipoMaterialUbicacion>)ViewBag.Materailes;
+    var formasPago = (List<string>)ViewBag.FormasPago;
+    var unidadesMedida = (List<MinaTolEntidades.DtoSucursales.UnidadMedida>)ViewBag.UnidadMedida;
+}
+
+@using (Html.BeginForm("SaveOrUpdateVehiculo", "Vehiculo", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmVehiculoCrud", @id = "frmVehiculoCrud" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    @Html.HiddenFor(x => x.Estatus)
+    @Html.HiddenFor(x => x.CreatedDt)
+    @Html.HiddenFor(x => x.CreatedBy)
+    @Html.HiddenFor(x => x.UpdatedBy)
+    @Html.HiddenFor(x => x.UpdatedDt)
+
+    <div class="content">
+        <br />
+        <center><h1>Venta publico en general</h1></center>
+        <div class="tabla-consultas-empleados">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Folio:</label>
+                        @Html.TextBoxFor(x => x.Folio, new { @class = "form-control", @disabled = "disabled" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Ubicación:</label>
+                        <select class="form-control">
+                            @foreach(var ubicacion in ubicaciones)
+                            { 
+                                <option value="@ubicacion.Id">@ubicacion.NombreUbicacion</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Material:</label>
+                        <select class="form-control">
+                            @foreach (var material in materiales)
+                            {
+                                <option value="@material.Id">@material.NombreTipoMaterial</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Forma de pago:</label>
+                        <select class="form-control">
+                            @foreach (var formaPago in formasPago)
+                            {
+                                var splitFormaPago = formaPago.Split(':');
+                                <option value="@splitFormaPago[0]">@splitFormaPago[1]</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Transporte:</label>
+                        @Html.TextBoxFor(x => x.Transporte, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Placa:</label>
+                        @Html.TextBoxFor(x => x.Placa, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Cantidad:</label>
+                        @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Unidad de Medida:</label>
+                        <select class="form-control">
+                            @foreach (var unidadMedida in unidadesMedida)
+                            {
+                                <option value="@unidadMedida.Id">@unidadMedida.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Usuario:</label>
+                    </div>
+                    <div class="col-lg-3"></div>
+                    <div class="col-lg-3"></div>
+                    <div class="col-lg-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -47,6 +47,7 @@
     <Compile Include="DtoCatalogos\DtoRoll.cs" />
     <Compile Include="DtoCatalogos\DtoTipoMaterialUbicacion.cs" />
     <Compile Include="DtoCatalogos\DtoUbicacion.cs" />
+    <Compile Include="DtoCatalogos\MetodoPago.cs" />
     <Compile Include="DtoClientes\DireccionCliente.cs" />
     <Compile Include="DtoClientes\Cliente.cs" />
     <Compile Include="DtoClientes\ClienteTipoMaterial.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="DtoSucursales\UnidadMedida.cs" />
     <Compile Include="DtoVentas\PV_Material.cs" />
     <Compile Include="DtoVentas\PV_Planta.cs" />
+    <Compile Include="DtoVentas\PV_Ventas.cs" />
     <Compile Include="DtoViajes\DtoViajeInterno.cs" />
     <Compile Include="DtoViajes\DtoViajeLocal.cs" />
     <Compile Include="DtoViajes\DtoFoliador.cs" />

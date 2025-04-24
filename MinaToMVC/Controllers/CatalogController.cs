@@ -235,13 +235,25 @@ namespace MinaToMVC.Controllers
 
         public async Task<string> GetAllTipoMaterialUbicacion()
         {
-            var token = Helpers.SessionHelper.GetSessionUser();
-            var result = await httpClientConnection.GetAllTipoMaterialUbicacion(token.Token.access_token);
+            var result = await httpClientConnection.GetAllTipoMaterialUbicacion();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
 
         #endregion
-        
+
+        #region Metodo de pago
+        public async Task<ActionResult> MetodoPago(int id = 0)
+        {
+            var metodoPago = new MetodoPago();
+            if (id != 0)
+            {
+                var metodoPagoRequest = await httpClientConnection.GetMetodoPagoById(id);
+                metodoPago = JsonConvert.DeserializeObject<MetodoPago>(metodoPagoRequest.Response.ToString());
+            }
+
+            return View(metodoPago);
+        }
+        #endregion
     }
 }
