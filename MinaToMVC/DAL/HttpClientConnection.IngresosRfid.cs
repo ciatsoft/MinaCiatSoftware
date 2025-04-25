@@ -1,4 +1,4 @@
-﻿using MinaTolEntidades.DtoCatalogos;
+﻿using MinaTolEntidades.DtoIngresosRfid;
 using MinaTolEntidades;
 using Newtonsoft.Json;
 using System;
@@ -8,16 +8,17 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using MinaTolEntidades.DtoCatalogos;
 
 namespace MinaToMVC.DAL
 {
     public partial class HttpClientConnection
-    {
 
-        public async Task<ModelResponse> SaveOrUpdateRoll(DtoRoll u)
+    {
+        public async Task<ModelResponse> SaveOrUpdateIngresosRfid(IngresosRfid u)
         {
             MappingColumSecurity(u);
-            var result = await RequestAsync<object>("api/Roll", HttpMethod.Post, u,
+            var result = await RequestAsync<object>("api/IngresosRfid", HttpMethod.Post, u,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
@@ -27,21 +28,9 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
-        public async Task<ModelResponse> GetAllRoll()
+        public async Task<ModelResponse> GetAllIngresosRfid()
         {
-            var result = await RequestAsync<object>("api/Roll", HttpMethod.Get, null,
-            new Func<string, string>((responseString) =>
-            {
-                return responseString; 
-            }), token.Token.access_token);
-            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
-
-            return modelResponse;
-
-        }
-        public async Task<ModelResponse> GetRollById(long id)
-        {
-            var result = await RequestAsync<object>($"api/Roll/{id}", HttpMethod.Get, null,
+            var result = await RequestAsync<object>("api/IngresosRfid", HttpMethod.Get, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
@@ -51,9 +40,21 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
-        public async Task<ModelResponse> DeleteRoll(long id)
+        public async Task<ModelResponse> GetIngresosRfidById(int id)
         {
-            var result = await RequestAsync<object>($"api/Roll/{id}", HttpMethod.Delete, null,
+            var result = await RequestAsync<object>($"api/IngresosRfid/{id}", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
+        public async Task<ModelResponse> DeleteIngresosRfid(long id)
+        {
+            var result = await RequestAsync<object>($"api/IngresosRfid/{id}", HttpMethod.Delete, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;

@@ -184,6 +184,7 @@
     <Compile Include="Controllers\EmpleadoController.cs" />
     <Compile Include="Controllers\Filters\FiltersHelper.cs" />
     <Compile Include="Controllers\AdministracionController.cs" />
+    <Compile Include="Controllers\VentaPublicoGeneralController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Controllers\VehiculoController.cs" />
     <Compile Include="Controllers\VentaController.cs" />
@@ -194,6 +195,7 @@
     <Compile Include="Controllers\ViajesController.cs" />
     <Compile Include="DAL\HttpClientConnection.DireccionCliente.cs" />
     <Compile Include="DAL\HttpClientConnection.ClienteTipoMaterial.cs" />
+    <Compile Include="DAL\HttpClientConnection.MetodoPago.cs" />
     <Compile Include="DAL\httpClientConnection.Roll.cs" />
     <Compile Include="DAL\HttpClientConnection.TipoMaterialUbicacion.cs" />
     <Compile Include="DAL\HttpClientConnection.UbicacionCliente.cs" />
@@ -261,6 +263,8 @@
     <None Include="packages.config" />
     <Content Include="Views\Vehiculo\Index.cshtml" />
     <Content Include="Views\Administracion\PartialdireccionesClientes.cshtml" />
+    <Content Include="Views\Catalog\MetodoPago.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -272,7 +276,6 @@
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
     <Folder Include="Views\Default\" />
-    <Folder Include="Views\HttpClientConnection21\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MinaTolEntidades\MinaTolEntidades.csproj">
