@@ -1,0 +1,55 @@
+﻿@model MinaTolEntidades.Dto_Rfid.Rfid
+@{
+    ViewBag.Title = "RFID";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content">
+
+    <form id="frmRFID" name="frmRFID" method="post" enctype="multipart/form-data">
+        <br>
+        <center><h1>Asignacion de RFID Personal</h1></center>
+        <div class="tabla-consultas-tableRFID">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>RFID Camputado:</label>
+                        <input type="text" id="txtRFID" class="form-control" />
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Usuario:</label>
+                        <select id="txtNombreUsuario" class="form-control">
+                            <option value="usuario1">Usuario 1</option>
+                            <option value="usuario2">Usuario 2</option>
+                        </select>
+                    </div>
+
+                    <div class="col-lg-3">
+                        <label>Área:</label>
+                        <select id="txtArea" class="form-control">
+                            <option value="area1">Área 1</option>
+                            <option value="area2">Área 2</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <input href="/Usuario/AltaEdicion" type="button" value="Guardar" onclick="SaveOrUpdateRFID()" class="btn btn-success" />
+                        <a href="/Usuario/AltaEdicion" class="btn btn-custom-cancel">Cancelar</a>
+
+                    </div>
+                </div>
+
+                <input type="hidden" id="txtCreatedBy" value="@User.Identity.Name" />
+                <input type="hidden" id="txtCreatedDt" value="@DateTime.Now" />
+                <input type="hidden" id="txtUpdatedBy" value="@User.Identity.Name" />
+                <input type="hidden" id="txtUpdatedDt" value="@DateTime.Now" />
+            </div>
+        </div>  <div class="row">
+            <div class="col-lg-12">
+                <table class="table table-bordered table-striped" id="tableRFID" style="width: 100%;"></table>
+            </div>
+        </div>
+    </form>
+</div>
