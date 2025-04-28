@@ -163,6 +163,7 @@
     <Compile Include="DAL\DbWrapper.Producto.cs" />
     <Compile Include="DAL\DbWrapper.PV_Planta.cs" />
     <Compile Include="DAL\DbWrapper.PV_Material.cs" />
+    <Compile Include="DAL\DbWrapper.Rfid.cs" />
     <Compile Include="DAL\DbWrapper.Salario.cs" />
     <Compile Include="DAL\DbWrapper.Roll.cs" />
     <Compile Include="DAL\DbWrapper.TipoMaterialUbicacion.cs" />
