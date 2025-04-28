@@ -43,6 +43,7 @@ namespace MinaToMVC.Controllers
             var Cliente = new Cliente();
             IEnumerable<ClienteTipoMaterial> materialesPorClientes;
             IEnumerable<DireccionCliente> direccionporClientes;
+            IEnumerable<DireccionCliente> direccionCliente;
             if (id != 0)
             {
                 var result = await httpClientConnection.GetClienteById(id);
@@ -51,12 +52,14 @@ namespace MinaToMVC.Controllers
                 var materialesPorClientesResponse = await httpClientConnection.GetTipoMaterialByCliente(id);
                 materialesPorClientes = JsonConvert.DeserializeObject<List<ClienteTipoMaterial>>(materialesPorClientesResponse.Response.ToString());
 
+                
 
             }
             else
             {
                 materialesPorClientes = Enumerable.Empty<ClienteTipoMaterial>().ToArray();
                 direccionporClientes = Enumerable.Empty<DireccionCliente>().ToArray();
+                direccionCliente = Enumerable.Empty<DireccionCliente>().ToArray();
             }
             ViewBag.MaterialesCliente = materialesPorClientes;
 
@@ -88,6 +91,20 @@ namespace MinaToMVC.Controllers
 
         //------------------------------------------ClienteTipoMaterial----------------------------------------------------
 
+
+        //public async Task<string> DeleteDireccionCliente(DireccionCliente t)
+        //{
+
+        //    httpClientConnection.MappingColumSecurity(t);
+        //    var result = await httpClientConnection.DeleteDireccionCliente(t);
+        //    return JsonConvert.SerializeObject(result);
+        //}
+
+
+        
+
+
+        //--------------------------------- Cliente
         public async Task<string> SaveOrUpdateClienteTipoMaterial(ClienteTipoMaterial t)
         {
 

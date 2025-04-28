@@ -198,6 +198,7 @@
     <Compile Include="DAL\HttpClientConnection.MetodoPago.cs" />
     <Compile Include="DAL\httpClientConnection.Roll.cs" />
     <Compile Include="DAL\HttpClientConnection.TipoMaterialUbicacion.cs" />
+    <Compile Include="DAL\HttpClientConnection.UbicacionCliente.cs" />
     <Compile Include="DAL\httpClientConnection.Vehiculo.cs" />
     <Compile Include="DAL\httpClientConnection.TipoVehiculo.cs" />
     <Compile Include="DAL\HttpClientConnection.AreaTrabajo.cs" />

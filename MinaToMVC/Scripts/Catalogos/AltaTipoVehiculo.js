@@ -39,8 +39,12 @@
                 title: "Acciones",
                 render: function (data) {
                     return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarTVehiculo(' + data + ')" />' +
+<<<<<<< HEAD
+                     ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarTVehiculo(' + data + ')" />';
+=======
                         ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarTVehiculo(' + data + ')" />';
                     ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarTVehiculo(' + data + ')" />';
+>>>>>>> a6a18eb96ad9518e29752a837846b7844b47c19f
                 }
             }
         ],
@@ -88,6 +92,7 @@ function SaveOrUpdateTipoVehiculo() {
             Id: $("#txtidtipovehiculo").val(),
             Nombre: $("#txtNombre").val(),
             Descripcion: $("#txtDescripcion").val(),
+            Capacidad:$("#txtCapacidad").val(),
             Estatus: $("#chbEstatus").is(':checked'),
             CreatedDt: $("#txtCreatedDt").val(),
             Capacidad: $("#txtCapacidad").val()
@@ -153,7 +158,7 @@ function EliminarTVehiculo(id) {
 }
 
 // Redirección al editar
-function EditarTVehiculo(id) {
+function EditarTipoVehiculo(id) {
     location.href = "/Catalog/TipoVehiculo/" + id;
 }
 
@@ -162,6 +167,7 @@ function LimpiarFormulario() {
     $("#txtidtipovehiculo").val('');
     $("#txtNombre").val('');
     $("#txtDescripcion").val('');
+    $("#txtCapacidad").val('');
     $("#chbEstatus").prop('checked', false);
 }
 
