@@ -1,4 +1,5 @@
 ﻿using MinaTolEntidades;
+using MinaTolEntidades.Dto_Rfid;
 using MinaTolEntidades.DtoCatalogos;
 using MinaTolWebApi.DAL;
 using System;
@@ -20,6 +21,31 @@ namespace MinaTolWebApi.Controllers
         public RfidController()
         {
             wrapper = new DbWrapper();
+        }
+        
+        [HttpGet, Route("")]
+        public ModelResponse GetAllRfid()
+        {
+            var result = wrapper.GetAllRfid();
+            return result;
+        }
+        [HttpGet, Route("{id:long}")]
+        public async Task<ModelResponse> GetRfidById(int id)
+        {
+            var result = wrapper.GetRfidById(id);
+            return result;
+        }
+        [HttpDelete, Route("{id:long}")]
+        public async Task<ModelResponse> DeleteRfid(int id)
+        {
+            var result = wrapper.DeleteRfid(id);
+            return result;
+        }
+        [HttpPost, Route("")]
+        public async Task<ModelResponse> SaveOrUpdateRfid(Rfid t)
+        {
+            var result = wrapper.SaveOrUpdateRfid(t);
+            return result;
         }
 
         [HttpGet, Route("{id}")]
