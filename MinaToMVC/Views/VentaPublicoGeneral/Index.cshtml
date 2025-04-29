@@ -3,15 +3,16 @@
     ViewBag.Title = "Venta Publico en General";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    var materiales = (List<MinaTolEntidades.DtoCatalogos.DtoTipoMaterialUbicacion>)ViewBag.Materailes;
     var formasPago = (List<string>)ViewBag.FormasPago;
     var unidadesMedida = (List<MinaTolEntidades.DtoSucursales.UnidadMedida>)ViewBag.UnidadMedida;
     var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
 }
 
 <link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 
-@using (Html.BeginForm("SaveOrUpdateVehiculo", "Vehiculo", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmVehiculoCrud", @id = "frmVehiculoCrud" }))
+@using (Html.BeginForm("SaveOrUpdateVenta", "VentaPublicoGeneral", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmVentaCrud", @id = "frmVentaCrud" }))
 {
     @Html.HiddenFor(x => x.Id)
     @Html.HiddenFor(x => x.Estatus)
@@ -32,16 +33,11 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Ubicación:</label>
-                        @Html.DropDownListFor(x => x.Ubicacion.Id, (IEnumerable<SelectListItem>)ViewBag.Ubicaciones, new { @class = "form-control" } )
+                        @Html.DropDownListFor(x => x.Ubicacion.Id, (IEnumerable<SelectListItem>)ViewBag.Ubicaciones, new { @class = "form-control", @onchange = "ChangeCompany()" })
                     </div>
                     <div class="col-lg-3">
                         <label>Material:</label>
-                        <select class="form-control">
-                            @foreach (var material in materiales)
-                            {
-                                <option value="@material.Id">@material.NombreTipoMaterial</option>
-                            }
-                        </select>
+                        @Html.DropDownListFor(x => x.TipoMaterial.Id, (IEnumerable<SelectListItem>)ViewBag.Materiales, new { @class = "form-control" })
                     </div>
                     <div class="col-lg-3">
                         <label>Forma de pago:</label>
@@ -55,8 +51,8 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-3">
-                        <label>Transporte:</label>
+                    <div class="col-lg-6">
+                        <label>Descripción del transporte:</label>
                         @Html.TextBoxFor(x => x.Transporte, new { @class = "form-control" })
                     </div>
                     <div class="col-lg-3">
@@ -67,6 +63,8 @@
                         <label>Cantidad:</label>
                         @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control" })
                     </div>
+                </div>
+                <div class="row">
                     <div class="col-lg-3">
                         <label>Unidad de Medida:</label>
                         <select class="form-control">
@@ -107,3 +105,4 @@
         </div>
     </div>
 }
+<script src="@(Url.StaticFile("Scripts/VentaPublicoGeneral/Index.js"))"></script>
