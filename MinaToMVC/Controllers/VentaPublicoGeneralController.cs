@@ -28,8 +28,15 @@ namespace MinaToMVC.Controllers
             var ubicacion = JsonConvert.DeserializeObject<List<DtoUbicacion>>(ubicacionResponse.Response.ToString()).Where(x => x.EsInterna);
             var ubicacionDdl = MappingPropertiToDropDownList<DtoUbicacion>(ubicacion, "Id", "NombreUbicacion");
 
-            var materialesResponse = await httpClientConnection.GetAllTipoMaterialUbicacion();
-            var materiales = JsonConvert.DeserializeObject<List<DtoTipoMaterialUbicacion>>(materialesResponse.Response.ToString());
+            var materialUbicacionResponse = await httpClientConnection.GetMaterialUbicacionByUbicacion(ubicacion.FirstOrDefault().Id);
+            var materialUbicacion = JsonConvert.DeserializeObject<List<MaterialUbicacion>>(materialUbicacionResponse.Response.ToString());
+            var listadoMaterial = new List<DtoTipoMaterialUbicacion>();
+            foreach (var i in materialUbicacion)
+            {
+                listadoMaterial.Add(i.Material);
+            }
+            var materiales = MappingPropertiToDropDownList<DtoTipoMaterialUbicacion>(listadoMaterial, "Id", "NombreTipoMaterial");
+
 
             var formasPago = System.Configuration.ConfigurationManager.AppSettings["FormaPago"].ToString().Split('|').ToList();
 
@@ -40,7 +47,7 @@ namespace MinaToMVC.Controllers
             
 
             ViewBag.Ubicaciones = ubicacionDdl;
-            ViewBag.Materailes = materiales;
+            ViewBag.Materiales = materiales;
             ViewBag.FormasPago = formasPago;
             ViewBag.UnidadMedida = unidadMedida;
             ViewBag.UserToken = usuarioAutenticado;
@@ -50,9 +57,15 @@ namespace MinaToMVC.Controllers
         #endregion
 
         #region Data Acces
-        public async Task<ActionResult> SaveOrUpdateVenta()
+        public ActionResult SaveOrUpdateVenta()
         {
             return Redirect("VentaPublicoGeneral/Index");
+        }
+
+        public async Task<string> GetMaterialUbicacionByUbicacion(long id)
+        {
+            var result = await httpClientConnection.GetMaterialUbicacionByUbicacion(id);
+            return JsonConvert.SerializeObject(result);
         }
         #endregion
     }
