@@ -33,7 +33,7 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Ubicación:</label>
-                        @Html.DropDownListFor(x => x.Ubicacion.Id, (IEnumerable<SelectListItem>)ViewBag.Ubicaciones, new { @class = "form-control", @onchange = "ChangeCompany()" })
+                        @Html.DropDownListFor(x => x.Ubicacion.Id, (IEnumerable<SelectListItem>)ViewBag.Ubicaciones, new { @class = "form-control", @onchange = "CambioUbicacion()" })
                     </div>
                     <div class="col-lg-3">
                         <label>Material:</label>
@@ -51,7 +51,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-6">
+                    <div class="col-lg-9">
                         <label>Descripción del transporte:</label>
                         @Html.TextBoxFor(x => x.Transporte, new { @class = "form-control" })
                     </div>
@@ -59,12 +59,12 @@
                         <label>Placa:</label>
                         @Html.TextBoxFor(x => x.Placa, new { @class = "form-control" })
                     </div>
+                </div>
+                <div class="row">
                     <div class="col-lg-3">
                         <label>Cantidad:</label>
                         @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control" })
                     </div>
-                </div>
-                <div class="row">
                     <div class="col-lg-3">
                         <label>Unidad de Medida:</label>
                         <select class="form-control">
@@ -74,10 +74,8 @@
                             }
                         </select>
                     </div>
-                </div>
-                <div class="row">
                     <div class="col-lg-3">
-                        <label>Usuario:</label>
+                        <label>Vendedor:</label>
                         <select id="ddlUsuario" class="form-control">
                             <option value="@usuarioToken.UserID">@usuarioToken.UserName</option>
                         </select>
@@ -87,17 +85,17 @@
 
                         @Html.TextBoxFor(x => x.Fecha, new { @class = "form-control", @disabled = "", @Value = DateTime.Today.ToString("yyyy-MM-dd") })
                     </div>
+                </div>
+                <div class="row">
+
                     <div class="col-lg-3"></div>
                     <div class="col-lg-3"></div>
                 </div>
                 <div class="row">
                     <div class="col-lg-12 d-flex justify-content-between">
-                        <!-- Contenedor para los botones de la izquierda -->
                         <div>
                             <input id="btnGuardar" type="submit" value="Guardar" class="btn btn-success" />
-                            @*<input id="btnEliminar" href="/Viajes/Locales" type="button" value="Eliminar" class="btn btn-custom-delete" onclick="EliminarViajeLocal()" />*@
                         </div>
-                        <!-- Botón cancelar a la derecha -->
                         <a href="/VentaPublicoGeneral/Index" class="btn btn-custom-cancel">Cancelar</a>
                     </div>
                 </div>
