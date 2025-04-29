@@ -53,6 +53,11 @@
 
     <form id="frmubicacion" name="frmubicacion" method="post" enctype="multipart/form-data">
         @Html.HiddenFor(x => x.Id)
+        @Html.HiddenFor(x => x.Estatus)
+        @Html.HiddenFor(x => x.CreatedBy)
+        @Html.HiddenFor(x => x.UpdatedBy)
+        @Html.HiddenFor(x => x.CreatedDt)
+        @Html.HiddenFor(x => x.UpdatedDt)
         <br>
         <center><h1> Ubicación </h1></center>
         <div class="tabla-consultas-ubicacion">
@@ -71,20 +76,16 @@
                         <input type="text" id="txtDescripcionUbicacion" class="form-control" />
                     </div>
                     <div class=" col-lg-3">
-                        <label>Estatus:</label>
-                        <input type="checkbox" name="chbEstatus" id="chbEstatus" value="" class="form-control" />
+                        <label>Ubicación Interna:</label>
+                        <input type="checkbox" name="EsInterna" id="EsInterna" value="" class="form-control" />
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="col-md-12">
-                        <input href="/Catalog/Ubicacion"  type="button" id="btnGuardarUbicacion" value="Guardar" onclick="SaveOrUpdateUbicacion()" class="btn btn-success" />
+                        <input href="/Catalog/Ubicacion" type="button" id="btnGuardarUbicacion" value="Guardar" onclick="SaveOrUpdateUbicacion()" class="btn btn-success" />
                         <a href="/Catalog/Ubicacion" class="btn btn-custom-cancel">Cancelar</a>
                     </div>
                 </div>
-                <input type="hidden" id="txtCreatedBy" value="@User.Identity.Name" />
-                <input type="hidden" id="txtCreatedDt" value="@DateTime.Now" />
-                <input type="hidden" id="txtUpdatedBy" value="@User.Identity.Name" />
-                <input type="hidden" id="txtUpdatedDt" value="@DateTime.Now" />
             </div>
         </div>
         <div class="row">
@@ -128,4 +129,4 @@
      var UbicacionJson = JSON.parse('@Html.Raw((Newtonsoft.Json.JsonConvert.SerializeObject(ubicacion)))');
 
 </script>
-<script src="~/Scripts/Catalogos/Ubicacion.js"></script>
+<script src="@(Url.StaticFile("Scripts/Catalogos/Ubicacion.js"))"></script>
