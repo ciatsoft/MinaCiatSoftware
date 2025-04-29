@@ -64,7 +64,7 @@
     }
 });
 
-// Funci�n que se ejecuta al hacer clic en el bot�n de Guardar
+// Función que se ejecuta al hacer clic en el bot�n de Guardar
 function SaveOrUpdateUbicacion() {
     if ($("#frmubicacion").valid()) {
         var parametro = {
