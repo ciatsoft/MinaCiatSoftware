@@ -2,12 +2,14 @@
 @{
     ViewBag.Title = "Venta Publico en General";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    
-    var ubicaciones = (List<MinaTolEntidades.DtoCatalogos.DtoUbicacion>)ViewBag.Ubicaciones;
+
     var materiales = (List<MinaTolEntidades.DtoCatalogos.DtoTipoMaterialUbicacion>)ViewBag.Materailes;
     var formasPago = (List<string>)ViewBag.FormasPago;
     var unidadesMedida = (List<MinaTolEntidades.DtoSucursales.UnidadMedida>)ViewBag.UnidadMedida;
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
 }
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
 
 @using (Html.BeginForm("SaveOrUpdateVehiculo", "Vehiculo", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmVehiculoCrud", @id = "frmVehiculoCrud" }))
 {
@@ -30,12 +32,7 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Ubicación:</label>
-                        <select class="form-control">
-                            @foreach(var ubicacion in ubicaciones)
-                            { 
-                                <option value="@ubicacion.Id">@ubicacion.NombreUbicacion</option>
-                            }
-                        </select>
+                        @Html.DropDownListFor(x => x.Ubicacion.Id, (IEnumerable<SelectListItem>)ViewBag.Ubicaciones, new { @class = "form-control" } )
                     </div>
                     <div class="col-lg-3">
                         <label>Material:</label>
@@ -83,10 +80,28 @@
                 <div class="row">
                     <div class="col-lg-3">
                         <label>Usuario:</label>
+                        <select id="ddlUsuario" class="form-control">
+                            <option value="@usuarioToken.UserID">@usuarioToken.UserName</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Fecha:</label>
+
+                        @Html.TextBoxFor(x => x.Fecha, new { @class = "form-control", @disabled = "", @Value = DateTime.Today.ToString("yyyy-MM-dd") })
                     </div>
                     <div class="col-lg-3"></div>
                     <div class="col-lg-3"></div>
-                    <div class="col-lg-3"></div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 d-flex justify-content-between">
+                        <!-- Contenedor para los botones de la izquierda -->
+                        <div>
+                            <input id="btnGuardar" type="submit" value="Guardar" class="btn btn-success" />
+                            @*<input id="btnEliminar" href="/Viajes/Locales" type="button" value="Eliminar" class="btn btn-custom-delete" onclick="EliminarViajeLocal()" />*@
+                        </div>
+                        <!-- Botón cancelar a la derecha -->
+                        <a href="/VentaPublicoGeneral/Index" class="btn btn-custom-cancel">Cancelar</a>
+                    </div>
                 </div>
             </div>
         </div>

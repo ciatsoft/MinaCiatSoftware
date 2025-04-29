@@ -25,7 +25,8 @@ namespace MinaToMVC.Controllers
             var venta = new PV_Ventas();
 
             var ubicacionResponse = await httpClientConnection.GetAllUbicacion();
-            var ubicacion = JsonConvert.DeserializeObject<List<DtoUbicacion>>(ubicacionResponse.Response.ToString());
+            var ubicacion = JsonConvert.DeserializeObject<List<DtoUbicacion>>(ubicacionResponse.Response.ToString()).Where(x => x.EsInterna);
+            var ubicacionDdl = MappingPropertiToDropDownList<DtoUbicacion>(ubicacion, "Id", "NombreUbicacion");
 
             var materialesResponse = await httpClientConnection.GetAllTipoMaterialUbicacion();
             var materiales = JsonConvert.DeserializeObject<List<DtoTipoMaterialUbicacion>>(materialesResponse.Response.ToString());
@@ -35,16 +36,24 @@ namespace MinaToMVC.Controllers
             var unidadMedidaResponse = await httpClientConnection.GetAllUnidadMedida();
             var unidadMedida = JsonConvert.DeserializeObject<List<UnidadMedida>>(unidadMedidaResponse.Response.ToString());
 
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
             
 
-            ViewBag.Ubicaciones = ubicacion;
+            ViewBag.Ubicaciones = ubicacionDdl;
             ViewBag.Materailes = materiales;
             ViewBag.FormasPago = formasPago;
             ViewBag.UnidadMedida = unidadMedida;
+            ViewBag.UserToken = usuarioAutenticado;
 
             return View(venta);
         }
         #endregion
 
+        #region Data Acces
+        public async Task<ActionResult> SaveOrUpdateVenta()
+        {
+            return Redirect("VentaPublicoGeneral/Index");
+        }
+        #endregion
     }
 }
