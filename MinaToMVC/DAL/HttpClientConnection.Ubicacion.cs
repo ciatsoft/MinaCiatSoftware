@@ -28,6 +28,7 @@ namespace MinaToMVC.DAL
 
         public async Task<ModelResponse> SaveOrUpdateUbicacion(DtoUbicacion u)
         {
+            MappingColumSecurity(u);
             var result = await RequestAsync<object>("api/Ubicacion", HttpMethod.Post, u,
            new Func<string, string>((responseString) =>
            {
