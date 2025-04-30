@@ -11,7 +11,6 @@ namespace MinaTolWebApi.DAL
     public partial class DbWrapper
     {
         public ModelResponse SaveOrUpdateRoll(DtoRoll tv)
-
         {
             var response = new ModelResponse();
             try
