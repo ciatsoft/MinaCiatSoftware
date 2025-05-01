@@ -1,4 +1,5 @@
 ﻿using MinaTolEntidades;
+using MinaTolEntidades.Dto_Rfid;
 using MinaTolEntidades.DtoCatalogos;
 using MinaTolWebApi.DAL;
 using System;
@@ -22,6 +23,7 @@ namespace MinaTolWebApi.Controllers
             wrapper = new DbWrapper();
         }
 
+        // Validar RFID en la base de datos
         [HttpGet, Route("{id}")]
         public IHttpActionResult ValidarRfid(string id)
         {
@@ -44,6 +46,38 @@ namespace MinaTolWebApi.Controllers
             {
                 return InternalServerError(new Exception(result.Message));
             }
+        }
+
+        // Guardar RFID en la base de datos
+        [HttpPost, Route("")]
+        public async Task<ModelResponse> SaveOrUpdateRFID(Rfid r)
+        {
+            var result = wrapper.SaveOrUpdateRFID(r);
+            return result;
+        }
+
+        // Obtener Lista
+        [HttpGet, Route("")]
+        public ModelResponse GetAllRFID()
+        {
+            var result = wrapper.GetAllRfid();
+            return result;
+        }
+
+        // Obtener por ID
+        [HttpGet, Route("{id:long}")]
+        public async Task<ModelResponse> GetRFIDById(int id)
+        {
+            var result = wrapper.GetRFIDById(id);
+            return result;
+        }
+
+        // Eliminar RFID
+        [HttpDelete, Route("{id:long}")]
+        public async Task<ModelResponse> DeleteRFID(int id)
+        {
+            var result = wrapper.DeleteRFID(id);
+            return result;
         }
     }
 }

@@ -199,6 +199,7 @@
     <Compile Include="DAL\HttpClientConnection.DireccionCliente.cs" />
     <Compile Include="DAL\HttpClientConnection.ClienteTipoMaterial.cs" />
     <Compile Include="DAL\HttpClientConnection.MetodoPago.cs" />
+    <Compile Include="DAL\HttpClientConnection.RFID.cs" />
     <Compile Include="DAL\httpClientConnection.Roll.cs" />
     <Compile Include="DAL\HttpClientConnection.TipoMaterialUbicacion.cs" />
     <Compile Include="DAL\HttpClientConnection.UbicacionCliente.cs" />

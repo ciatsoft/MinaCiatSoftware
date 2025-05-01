@@ -32,14 +32,19 @@ namespace MinaToMVC.Controllers
         public async Task<string> GetAllRFID()
         {
             var token = Helpers.SessionHelper.GetSessionUser();
-            var result = await httpClientConnection.GetAllRFID(token.Token.access_token);
+            var result = await httpClientConnection.GetAllRFID();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
-        public string SaveOrUpdateRFID(Rfid r)
+        public async Task<string> SaveOrUpdateRFID(Rfid r)
         {
-            var result = httpClientConnection.SaveOrUpdateRFID(r);
+            var result = await httpClientConnection.SaveOrUpdateRFID(r);
             return JsonConvert.SerializeObject(result);
+        }
+
+        public async Task <String> DeleteRFID(long id){
+            var result = await httpClientConnection.DeleteRFID(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
         #endregion
     }

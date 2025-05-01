@@ -1,5 +1,6 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.Dto_Rfid;
+using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoSucursales;
 using System;
 using System.Collections.Generic;
@@ -56,6 +57,119 @@ namespace MinaTolWebApi.DAL
                     return command.ExecuteScalar();
                 }
             }
+        }
+
+
+        // Guardar RFID
+        public ModelResponse SaveOrUpdateRFID(Rfid rf)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = GenerateSQLParameters(rf);
+                var result = GetObject("SaveOrUpdateRfid", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, Rfid>((reader) =>
+                    {
+                        var r = FillEntity<Rfid>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+            }
+            catch(Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+
+        // Obtener TODOS
+        public ModelResponse GetGetAllRfid()
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                var result = GetObjects("GetGetAllRfid", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, Rfid>((reader) =>
+                    {
+                        var r = FillEntity<Rfid>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+
+        // Obtener por ID
+        public ModelResponse GetRfidById(int id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id",
+                    SqlDbType = System.Data.SqlDbType.Int
+                });
+
+                var result = GetObject("GetRfidById", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, Rfid>((reader) =>
+                    {
+                        var r = FillEntity<Rfid>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+
+        // Eliminar RFID
+        public ModelResponse DeleteRfid(int id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id",
+                    SqlDbType = System.Data.SqlDbType.Int
+                });
+
+                var result = ExecuteNonQuery("DeleteRfid", System.Data.CommandType.StoredProcedure, parameters);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
         }
     }
 }
