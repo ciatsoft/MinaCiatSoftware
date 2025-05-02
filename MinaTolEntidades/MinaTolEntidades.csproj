@@ -62,6 +62,7 @@
     <Compile Include="DtoSucursales\Precio.cs" />
     <Compile Include="DtoSucursales\Producto.cs" />
     <Compile Include="DtoSucursales\UnidadMedida.cs" />
+    <Compile Include="DtoVentas\MaterialUbicacion.cs" />
     <Compile Include="DtoVentas\PV_Material.cs" />
     <Compile Include="DtoVentas\PV_Planta.cs" />
     <Compile Include="DtoVentas\PV_Ventas.cs" />

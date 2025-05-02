@@ -1,10 +1,10 @@
 ﻿$(document).ready(function () {
-    $("#frmubicacion").validate({
-        rules: {
-            "txtNombreUbicacion": "required",
-            "txtDescripcionUbicacion": "required",
-        }
-    });
+    //$("#frmubicacion").validate({
+    //    rules: {
+    //        "txtNombreUbicacion": "required",
+    //        "txtDescripcionUbicacion": "required",
+    //    }
+    //});
     $("#tableUbicacion").dataTable({
         processing: true,
         destroy: true,
@@ -15,10 +15,10 @@
             { data: "nombreUbicacion", title: "Nombre" },
             { data: "descripcionUbicacion", title: "Descripción" },
             {
-                data: "estatus",
-                title: "Estatus",
+                data: "esInterna",
+                title: "Tipo de mina",
                 render: function (data, type, row) {
-                    return data == 1 ? "Activo" : "Inactivo";
+                    return data == 1 ? "Interna" : "Externa";
                 }
             },
             {
@@ -27,8 +27,7 @@
                         ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarUbicacion(' + data + ', this)" />'; // 'this' se pasa para obtener la fila
                 }
             }
-        ]
-        ,
+        ],
         language: {
             "decimal": ",",
             "thousands": ".",
@@ -56,47 +55,52 @@
 
     GetAllUbicacion();
 
-    if (typeof UbicacionJson.Id != 0) {
+    if (UbicacionJson.Id != 0) {
         $("#txtIdUbicacion").val(UbicacionJson.Id);
         $("#txtNombreUbicacion").val(UbicacionJson.NombreUbicacion);
         $("#txtDescripcionUbicacion").val(UbicacionJson.DescripcionUbicacion);
-        $("#chbEstatus").prop('checked', UbicacionJson.Estatus);
+        $("#Estatus").val(UbicacionJson.Estatus);
+        $("#EsInterna").prop('checked', UbicacionJson.EsInterna);
     }
 });
 
-// Funci�n que se ejecuta al hacer clic en el bot�n de Guardar
+// Función que se ejecuta al hacer clic en el bot�n de Guardar
 function SaveOrUpdateUbicacion() {
     if ($("#frmubicacion").valid()) {
         var parametro = {
             Id: $("#txtIdUbicacion").val(),
             NombreUbicacion: $("#txtNombreUbicacion").val(),
             DescripcionUbicacion: $("#txtDescripcionUbicacion").val(),
-            Estatus: $("#chbEstatus").is(':checked'),
-            CreatedBy: $("#txtCreatedBy").val(),
-            CreatedDt: $("#txtCreatedDt").val(),
-            UpdatedBy: $("#txtUpdatedBy").val(),
-            UpdatedDt: $("#txtUpdatedDt").val()
+            Estatus: $("#Estatus").val(),
+            CreatedBy: $("#CreatedBy").val(),
+            CreatedDt: $("#CreatedDt").val(),
+            UpdatedBy: $("#UpdatedBy").val(),
+            UpdatedDt: $("#UpdatedDt").val(),
+            EsInterna: $("#EsInterna").is(':checked')
         };
-
-        Swal.fire({
-            title: "Registro guardado!",
-            text: "El registro se ha guardado correctamente.",
-            icon: "success",
-            confirmButtonText: 'OK'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '/Catalog/Ubicacion';
-            }
-        });
 
         console.log(parametro);
         // Llamada al servidor para guardar o actualizar los datos
         PostMVC('/Catalog/SaveOrUpdateUbicacion', parametro, function (r) {
             if (r.IsSuccess) {
                 LimpiarFormulario();
-                alert("Datos guardados exitosamente.");
+                Swal.fire({
+                    title: "Registro guardado!",
+                    text: "El registro se ha guardado correctamente.",
+                    icon: "success",
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/Catalog/Ubicacion';
+                    }
+                });
             } else {
-                alert("Error al guardar los datos: " + r.ErrorMessage);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al guardar los datos: ' + r.ErrorMessage,
+                    confirmButtonText: 'Aceptar'
+                });
             }
         });
     }
@@ -129,15 +133,15 @@ function EliminarUbicacion(id, boton) {
                 NombreUbicacion: nombre,
                 DescripcionUbicacion: descripcion,
                 Estatus: 0,  // Cambiamos el estatus a inactivo (0)
-                CreatedBy: $("#txtCreatedBy").val(),
-                CreatedDt: $("#txtCreatedDt").val(),
-                UpdatedBy: $("#txtUpdatedBy").val(),
-                UpdatedDt: new Date().toISOString()
+                CreatedBy: $("#CreatedBy").val(),
+                CreatedDt: $("#CreatedDt").val(),
+                UpdatedBy: $("#UpdatedBy").val(),
+                UpdatedDt: $("#UpdatedDt").val(),
+                EsInterna: $("#EsInterna").is(':checked')
             };
-            console.log(parametro);
-            window.location.href = '/Catalog/Ubicacion';
+            
+            
             PostMVC('/Catalog/SaveOrUpdateUbicacion', parametro, function (r) {
-                window.location.href = '/Catalog/Ubicacion';
                 if (r.IsSuccess) {
                     Swal.fire(
                         'Eliminado',
@@ -180,5 +184,5 @@ function LimpiarFormulario() {
     $("#txtIdUbicacion").val('');
     $("#txtNombreUbicacion").val('');
     $("#txtDescripcionUbicacion").val('');
-    $("#chbEstatus").prop('checked', false);
+    $("#Estatus").prop('checked', false);
 }

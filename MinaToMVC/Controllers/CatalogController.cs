@@ -145,9 +145,9 @@ namespace MinaToMVC.Controllers
 
         }
 
-        public string SaveOrUpdateUbicacion(DtoUbicacion ub)
+        public async Task<string> SaveOrUpdateUbicacion(DtoUbicacion ub)
         {
-            var result = httpClientConnection.SaveOrUpdateUbicacion(ub);
+            var result = await httpClientConnection.SaveOrUpdateUbicacion(ub);
             return JsonConvert.SerializeObject(result);
         }
 

@@ -12,7 +12,7 @@ using System.Web.Http;
 namespace MinaTolWebApi.Controllers
 {
     [Authorize]
-    [RoutePrefix("api/Roll")]
+    [RoutePrefix("api/VentaPublicoGeneral")]
     public class VentaPublicoGeneralController : ApiController
     {
         private DbWrapper wrapper { get; set; }
@@ -20,30 +20,15 @@ namespace MinaTolWebApi.Controllers
         {
             wrapper = new DbWrapper();
         }
-        [HttpGet, Route("")]
-        public ModelResponse GetAllRoll()
+
+        #region MaterialUbicacion
+        [HttpGet, Route("{id:long}/")]
+        public ModelResponse GetMaterialUbicacionByUbicacion(int id)
         {
-            var result = wrapper.GetAllRoll();
+            var result =  wrapper.GetMaterialUbicacionByUbicacion(id);
             return result;
         }
-        [HttpGet, Route("{id:long}")]
-        public async Task<ModelResponse> GetRollById(int id)
-        {
-            var result = wrapper.GetRollById(id);
-            return result;
-        }
-        [HttpDelete, Route("{id:long}")]
-        public async Task<ModelResponse> DeleteRoll(int id)
-        {
-            var result = wrapper.DeleteRoll(id);
-            return result;
-        }
-        [HttpPost, Route("")]
-        public async Task<ModelResponse> SaveOrUpdateRoll(DtoRoll t)
-        {
-            var result = wrapper.SaveOrUpdateRoll(t);
-            return result;
-        }
+        #endregion
     }
 
 }
