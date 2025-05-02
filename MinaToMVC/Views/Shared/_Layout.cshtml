@@ -334,13 +334,13 @@
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                     <a class="dropdown-item" data-title="Clientes" href="@Url.Action("Clientes", "Administracion")">Clientes</a>
                                     <!--<a class="dropdown-item" data-title="Solicitudes" href="@Url.Action("Solicitudes", "Administracion")">Solicitudes</a>
-    <!--<a class="dropdown-item" data-title="Precios" href="@Url.Action("Precios", "Administracion")">Precios</a> -->
+            <!--<a class="dropdown-item" data-title="Precios" href="@Url.Action("Precios", "Administracion")">Precios</a> -->
                                     <!--<a class="dropdown-item" data-title="Gestion_Img" href="@Url.Action("Gestion_Img", "Administracion")">Imágenes de precios</a>-->
                                     <!--<a class="dropdown-item" data-title="Ingresos" href="@Url.Action("Ingresos", "Administracion")">Ingresos y egresos</a>
-    <a class="dropdown-item" data-title="General" href="@Url.Action("General", "Administracion")">General</a>-->
+            <a class="dropdown-item" data-title="General" href="@Url.Action("General", "Administracion")">General</a>-->
                                     <a class="dropdown-item" data-title="General" href="@Url.Action("Internos", "Viajes")">Viajes Internos</a>
                                     <a class="dropdown-item" data-title="Catálogos" href="@Url.Action("locales", "Viajes")">Viajes Locales</a>
-                                    <a class="dropdown-item" data-title="General" href="@Url.Action("Index", "VentaPublicoGeneral")">Venta Publico General</a>
+                                    
                                 </div>
                             </li>
                             <!--
@@ -394,8 +394,8 @@
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                     <a class="dropdown-item" data-title="Vehiculos" href="@Url.Action("Vehiculos", "Taller")">Vehículos</a>
                                     <!-- <a class="dropdown-item" data-title="InventarioTaller" href="@Url.Action("Inventario_Taller", "Taller")">Inventario del taller</a>
-             <a class="dropdown-item" data-title="ReportesStock" href="@Url.Action("ReportesCStock", "Taller")">Reportes con stock</a>
-             <a class="dropdown-item" data-title="ReportesSinStock" href="@Url.Action("Reportes_SStock", "Taller")">Reportes sin stock</a> -->
+            <a class="dropdown-item" data-title="ReportesStock" href="@Url.Action("ReportesCStock", "Taller")">Reportes con stock</a>
+            <a class="dropdown-item" data-title="ReportesSinStock" href="@Url.Action("Reportes_SStock", "Taller")">Reportes sin stock</a> -->
                                 </div>
                             </li>
                             <li class="nav-item dropdown">
@@ -412,6 +412,17 @@
                                     @*aquí copias y pegas el de arriba, solo le cambias el nombre u el método*@
                                 </div>
                             </li>
+                            
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    VentaPublicoGeneral
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" data-title="General" href="@Url.Action("PV_Precios", "VentaPublicoGeneral")">Precios</a>
+                                    <a class="dropdown-item" data-title="General" href="@Url.Action("Index", "VentaPublicoGeneral")">Venta</a>
+                                </div>
+                            </li>
+
                         </ul>
                     </div>
                 </div>

@@ -2,6 +2,8 @@
 using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoSucursales;
 using MinaTolEntidades.DtoVentas;
+using MinaTolEntidades.DtoViajes;
+using MinaTolEntidades.DtoVentaPublicoGeneral;      
 using MinaTolEntidades.Security;
 using MinaToMVC.Helpers;
 using Newtonsoft.Json;
@@ -54,6 +56,12 @@ namespace MinaToMVC.Controllers
 
             return View(venta);
         }
+
+        public ActionResult PV_Precios()
+        {
+            return View();
+        }
+
         #endregion
 
         #region Data Acces
@@ -68,5 +76,39 @@ namespace MinaToMVC.Controllers
             return JsonConvert.SerializeObject(result);
         }
         #endregion
+        #region Precio
+        public async Task<ActionResult> Precio(long id = 0)
+        {
+
+            var unidad = new PV_Precio();
+            if (id != 0)
+            {
+                var result = await httpClientConnection.GetPV_PrecioById(id);
+                unidad = JsonConvert.DeserializeObject<PV_Precio>(result.Response.ToString());
+            }
+
+            return View(unidad);
+        }
+        public async Task<string> GetAllPV_Precio()
+        {
+            var result = await httpClientConnection.GetAllPV_Precio();
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> SaveOrUpdatePV_Precio(PV_Precio ar)
+        {
+            var result = await httpClientConnection.SaveOrUpdatePV_Precio(ar);
+            return JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> DeletePV_Precio(long id)
+        {
+            var result = await httpClientConnection.DeletePV_Precio(id);
+            return JsonConvert.SerializeObject(result);
+        }
+
+
+
+        #endregion
+
     }
 }

@@ -12,6 +12,8 @@ namespace MinaTolEntidades.DtoSucursales
         public string Comentario { get; set; }
         public Boolean EsPrecioActivo { get; set; }
         public Producto Producto { get; set; }
+        
+
 
     }
 }
