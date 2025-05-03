@@ -1,6 +1,5 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.Dto_Rfid;
-using MinaTolEntidades.DtoCatalogos;
 using MinaTolWebApi.DAL;
 using System;
 using System.Collections.Generic;
@@ -57,8 +56,8 @@ namespace MinaTolWebApi.Controllers
         }
 
         // Obtener Lista
-        [HttpGet, Route("")]
-        public ModelResponse GetAllRFID()
+        [HttpGet, Route("list")]
+        public ModelResponse GetAllRfid()
         {
             var result = wrapper.GetAllRfid();
             return result;
@@ -68,7 +67,7 @@ namespace MinaTolWebApi.Controllers
         [HttpGet, Route("{id:long}")]
         public async Task<ModelResponse> GetRFIDById(int id)
         {
-            var result = wrapper.GetRFIDById(id);
+            var result = wrapper.GetRfidById(id);
             return result;
         }
 
@@ -76,7 +75,7 @@ namespace MinaTolWebApi.Controllers
         [HttpDelete, Route("{id:long}")]
         public async Task<ModelResponse> DeleteRFID(int id)
         {
-            var result = wrapper.DeleteRFID(id);
+            var result = wrapper.DeleteRfid(id);
             return result;
         }
     }

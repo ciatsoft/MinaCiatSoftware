@@ -28,9 +28,9 @@ namespace MinaToMVC.DAL
             return modelResponse;
         }
 
-        public async Task<ModelResponse> GetAllRFID()
+        public async Task<ModelResponse> GetAllRfid()
         {
-            var result = await RequestAsync<object>("api/Rfid", HttpMethod.Get, null,
+            var result = await RequestAsync<object>("api/Rfid/list", HttpMethod.Get, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;

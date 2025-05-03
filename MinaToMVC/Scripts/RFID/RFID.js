@@ -56,7 +56,7 @@ $(document).ready(function () {
         }
     });
 
-    GetAllRFID();
+    GetAllRfid();
 
     if (typeof rfidJson.Id != 0) {
         $("#txtRFID").val(rfidJson.Id);
@@ -70,7 +70,7 @@ function SaveOrUpdateRFID() {
             Id: $("#txtRFID").val(),
             IdUsuario: $("#txtNombreUsuario").val()
         };
-        windows.location.href = '/RFID/RFID';
+        //windows.location.href = '/RFID/RFID';
         // Llamada al servidor para guardar o actualiza los datos
         PostMVC('/RFID/SaveOrUpdateRFID', parametro, function (r) {
             if (r.IsSuccess) {
@@ -121,8 +121,8 @@ function EditarRFID(id) {
     location.href = '/RFID/RFID';
 }
 
-function GetAllRFID() {
-    GetMVC("/RFID/GetAllRFID", function (r) {
+function GetAllRfid() {
+    GetMVC("/RFID/GetAllRfid", function (r) {
         if (r.IsSuccess) {
             MapingPropertiesDataTable("tableRFID", r.Response);
         } else {

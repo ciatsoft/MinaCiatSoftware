@@ -1,4 +1,5 @@
-﻿using MinaTolEntidades.Dto_Rfid;
+﻿using MinaTolEntidades;
+using MinaTolEntidades.Dto_Rfid;
 using MinaToMVC.DAL;
 using MinaToMVC.Helpers;
 using Newtonsoft.Json;
@@ -29,11 +30,25 @@ namespace MinaToMVC.Controllers
             return View(rfid);
         }
 
-        public async Task<string> GetAllRFID()
+        public async Task<string> GetAllRfid()
         {
-            var token = Helpers.SessionHelper.GetSessionUser();
-            var result = await httpClientConnection.GetAllRFID();
-            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+            try
+            {
+                var token = Helpers.SessionHelper.GetSessionUser();
+
+                if (token == null || token.Token == null || string.IsNullOrEmpty(token.Token.access_token))
+                {
+                    return JsonConvert.SerializeObject(new { error = "User not authenticated or token invalid" });
+                }
+
+                var result = await httpClientConnection.GetAllRfid(token.Token.access_token);
+                return JsonConvert.SerializeObject(result ?? new ModelResponse { Message = "No data received" });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (considera implementar un logger)
+                return JsonConvert.SerializeObject(new { error = ex.Message });
+            }
         }
 
         public async Task<string> SaveOrUpdateRFID(Rfid r)

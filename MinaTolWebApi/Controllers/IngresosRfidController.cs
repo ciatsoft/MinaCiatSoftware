@@ -1,5 +1,4 @@
 ﻿using MinaTolEntidades;
-using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoIngresosRfid;
 using MinaTolWebApi.DAL;
 using System;
@@ -14,7 +13,7 @@ namespace MinaTolWebApi.Controllers
 {
     [AllowAnonymous]
     [RoutePrefix("api/IngresosRfid")]
-    public class RfidController : ApiController
+    public class IngresosRfidController : ApiController
     {
         private DbWrapper wrapper { get; set; }
         

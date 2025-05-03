@@ -1,7 +1,5 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.Dto_Rfid;
-using MinaTolEntidades.DtoCatalogos;
-using MinaTolEntidades.DtoSucursales;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -85,22 +83,18 @@ namespace MinaTolWebApi.DAL
             return response;
         }
 
-        // Obtener TODOS
-        public ModelResponse GetGetAllRfid()
+        // Obtener todos
+        public ModelResponse GetAllRfid()
         {
             var response = new ModelResponse();
             try
             {
-                response.IsSuccess = true;
                 var parameters = new List<SqlParameter>();
-                var result = GetObjects("GetGetAllRfid", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, Rfid>((reader) =>
-                    {
-                        var r = FillEntity<Rfid>(reader);
-                        return r;
-                    }));
-                response.Response = result;
+                var result = GetObjects("GetAllRfid", CommandType.StoredProcedure,
+                    parameters, reader => FillEntity<Rfid>(reader));
 
+                response.IsSuccess = true;
+                response.Response = result ?? new List<Rfid>(); // Manejar null
             }
             catch (Exception ex)
             {
