@@ -23,7 +23,7 @@ namespace MinaTolWebApi.Controllers
         }
 
         // Validar RFID en la base de datos
-        [HttpGet, Route("{id}")]
+        [HttpGet, Route("search/{id}")]
         public IHttpActionResult ValidarRfid(string id)
         {
             var result = wrapper.SearchRfid(id);
@@ -64,8 +64,8 @@ namespace MinaTolWebApi.Controllers
         }
 
         // Obtener por ID
-        [HttpGet, Route("{id:long}")]
-        public async Task<ModelResponse> GetRFIDById(int id)
+        [HttpGet, Route("by/{id}")]
+        public async Task<ModelResponse> GetRfidById(int id)
         {
             var result = wrapper.GetRfidById(id);
             return result;

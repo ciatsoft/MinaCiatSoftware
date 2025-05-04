@@ -1,4 +1,4 @@
-﻿using MinaTolEntidades.DtoRfid;
+﻿using MinaTolEntidades.Dto_Rfid;
 using MinaTolEntidades;
 using Newtonsoft.Json;
 using System;
@@ -8,7 +8,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using MinaTolEntidades.Dto_Rfid;
 
 namespace MinaToMVC.DAL
 {
@@ -39,9 +38,9 @@ namespace MinaToMVC.DAL
             return modelResponse;
         }
 
-        public async Task<ModelResponse> GetRFIDById(long id)
+        public async Task<ModelResponse> GetRfidById(long id)
         {
-            var result = await RequestAsync<object>($"api/Rfid/{id}", HttpMethod.Get, null,
+            var result = await RequestAsync<object>($"api/Rfid/by/{id}", HttpMethod.Get, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;

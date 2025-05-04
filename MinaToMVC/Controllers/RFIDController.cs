@@ -21,10 +21,30 @@ namespace MinaToMVC.Controllers
 
         public async Task<ActionResult> RFID(long id = 0)
         {
-            var rfid = new Rfid();
-            if(id != 0)
+            // Si es una petición AJAX, retorna JSON
+            if (Request.IsAjaxRequest())
             {
-                var result = await httpClientConnection.GetRFIDById(id);
+                if (id != 0)
+                {
+                    var result = await httpClientConnection.GetRfidById(id);
+                    if (result.IsSuccess)
+                    {
+                        return Json(new
+                        {
+                            IsSuccess = true,
+                            Response = JsonConvert.DeserializeObject<Rfid>(result.Response.ToString())
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                    return Json(new { IsSuccess = false, ErrorMessage = result.Message });
+                }
+                return Json(new { IsSuccess = false, ErrorMessage = "ID no proporcionado" });
+            }
+
+            // Para peticiones normales, retorna la vista
+            var rfid = new Rfid();
+            if (id != 0)
+            {
+                var result = await httpClientConnection.GetRfidById(id);
                 rfid = JsonConvert.DeserializeObject<Rfid>(result.Response.ToString());
             }
             return View(rfid);
@@ -32,23 +52,8 @@ namespace MinaToMVC.Controllers
 
         public async Task<string> GetAllRfid()
         {
-            try
-            {
-                var token = Helpers.SessionHelper.GetSessionUser();
-
-                if (token == null || token.Token == null || string.IsNullOrEmpty(token.Token.access_token))
-                {
-                    return JsonConvert.SerializeObject(new { error = "User not authenticated or token invalid" });
-                }
-
-                var result = await httpClientConnection.GetAllRfid(token.Token.access_token);
-                return JsonConvert.SerializeObject(result ?? new ModelResponse { Message = "No data received" });
-            }
-            catch (Exception ex)
-            {
-                // Log the exception (considera implementar un logger)
-                return JsonConvert.SerializeObject(new { error = ex.Message });
-            }
+            var result = await httpClientConnection.GetAllRfid();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
         public async Task<string> SaveOrUpdateRFID(Rfid r)
@@ -59,6 +64,12 @@ namespace MinaToMVC.Controllers
 
         public async Task <String> DeleteRFID(long id){
             var result = await httpClientConnection.DeleteRFID(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetAllTrabajadores()
+        {
+            var result = await httpClientConnection.GetAllTrabajador();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
         #endregion
