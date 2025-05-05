@@ -78,5 +78,6 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.DeleteRfid(id);
             return result;
         }
+
     }
 }
