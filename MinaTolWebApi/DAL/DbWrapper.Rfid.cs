@@ -1,7 +1,5 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.Dto_Rfid;
-using MinaTolEntidades.DtoCatalogos;
-using MinaTolEntidades.DtoSucursales;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -58,14 +56,16 @@ namespace MinaTolWebApi.DAL
                 }
             }
         }
-        public ModelResponse SaveOrUpdateRfid(Rfid tv)
+        
+        // Guardar RFID
+        public ModelResponse SaveOrUpdateRFID(Rfid rf)
 
         {
             var response = new ModelResponse();
             try
             {
                 response.IsSuccess = true;
-                var parameters = GenerateSQLParameters(tv);
+                var parameters = GenerateSQLParameters(rf);
                 var result = GetObject("SaveOrUpdateRfid", System.Data.CommandType.StoredProcedure,
                     parameters, new Func<System.Data.IDataReader, Rfid>((reader) =>
                     {
@@ -73,32 +73,28 @@ namespace MinaTolWebApi.DAL
                         return r;
                     }));
                 response.Response = result;
-
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 response.IsSuccess = false;
                 response.Message = ex.Message;
                 response.Enum = Enumeration.ErrorNoControlado;
-
             }
             return response;
         }
+
+        // Obtener todos
         public ModelResponse GetAllRfid()
         {
             var response = new ModelResponse();
             try
             {
-                response.IsSuccess = true;
                 var parameters = new List<SqlParameter>();
-                var result = GetObjects("GetAllRfid", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, Rfid>((reader) =>
-                    {
-                        var r = FillEntity<Rfid>(reader);
-                        return r;
-                    }));
-                response.Response = result;
+                var result = GetObjects("GetAllRfid", CommandType.StoredProcedure,
+                    parameters, reader => FillEntity<Rfid>(reader));
 
+                response.IsSuccess = true;
+                response.Response = result ?? new List<Rfid>(); // Manejar null
             }
             catch (Exception ex)
             {
@@ -109,6 +105,7 @@ namespace MinaTolWebApi.DAL
             return response;
         }
 
+        // Obtener por ID
         public ModelResponse GetRfidById(int id)
         {
             var response = new ModelResponse();
@@ -141,6 +138,8 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
+
+        // Eliminar RFID
         public ModelResponse DeleteRfid(int id)
         {
             var response = new ModelResponse();
