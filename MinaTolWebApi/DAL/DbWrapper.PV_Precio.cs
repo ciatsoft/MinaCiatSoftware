@@ -99,7 +99,7 @@ namespace MinaTolWebApi.DAL
         }
 
 
-        public ModelResponse GetPV_PrecioByMaterial(long id)
+        public ModelResponse GetPV_PrecioByPV_Material(long id)
         {
             var response = new ModelResponse();
             try
@@ -110,17 +110,17 @@ namespace MinaTolWebApi.DAL
                 {
                     Value = id,
                     IsNullable = true,
-                    ParameterName = "@MaterialId",
+                    ParameterName = "@Material",
                     SqlDbType = System.Data.SqlDbType.BigInt
                 });
 
-                var result = GetObjects("GetPV_PrecioByMaterial", System.Data.CommandType.StoredProcedure,
+                var result = GetObjects("GetPV_PrecioByPV_Material", System.Data.CommandType.StoredProcedure,
                     parameters, new Func<System.Data.IDataReader, PV_Precio>((reader) =>
                     {
                         var r = FillEntity<PV_Precio>(reader);
                         r.Material = new PV_Material()
                         {
-                            Id = MappingProperties<long>(reader["IdMaterial"])
+                            Id = MappingProperties<long>(reader["Material"])
                         };
                         
                         return r;
@@ -128,7 +128,7 @@ namespace MinaTolWebApi.DAL
 
                 foreach (var i in result)
                 {
-                    i.Material = (PV_Material)GetPV_PrecioByMaterial(i.Id).Response;
+                    i.Material = (PV_Material)GetPV_PrecioByPV_Material(i.Id).Response;
                     
                 }
 

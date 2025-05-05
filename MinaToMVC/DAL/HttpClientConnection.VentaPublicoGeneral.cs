@@ -12,7 +12,7 @@ namespace MinaToMVC.DAL
 {
     public partial class HttpClientConnection
     {
-        public async Task<ModelResponse> GetMaterialUbicacionByUbicacion(long id)
+        public async Task<ModelResponse> GetMaterialUbicacionByUbicacion(int id)
         {
             var result = await RequestAsync<object>($"api/VentaPublicoGeneral/{id}", HttpMethod.Get, null,
             new Func<string, string>((responseString) =>

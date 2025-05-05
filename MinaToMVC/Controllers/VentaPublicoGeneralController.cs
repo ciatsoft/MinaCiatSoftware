@@ -33,12 +33,13 @@ namespace MinaToMVC.Controllers
             var materialUbicacionResponse = await httpClientConnection.GetMaterialUbicacionByUbicacion(ubicacion.FirstOrDefault().Id);
             var materialUbicacion = JsonConvert.DeserializeObject<List<MaterialUbicacion>>(materialUbicacionResponse.Response.ToString());
             var listadoMaterial = new List<DtoTipoMaterialUbicacion>();
+            var listaPV_Material = new List<PV_Material>();
             foreach (var i in materialUbicacion)
             {
                 listadoMaterial.Add(i.Material);
             }
             var materiales = MappingPropertiToDropDownList<DtoTipoMaterialUbicacion>(listadoMaterial, "Id", "NombreTipoMaterial");
-
+            var PV_Material = MappingPropertiToDropDownList<PV_Material>(listaPV_Material, "Id", "NombreTipoMaterial");
 
             var formasPago = System.Configuration.ConfigurationManager.AppSettings["FormaPago"].ToString().Split('|').ToList();
 
@@ -105,8 +106,12 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.DeletePV_Precio(id);
             return JsonConvert.SerializeObject(result);
         }
-
-
+        
+        public async Task<string> GetPV_PrecioByPV_Material(int id)
+        {
+            var result = await httpClientConnection.GetPV_PrecioByPV_Material(id);
+            return JsonConvert.SerializeObject(result);
+        }
 
         #endregion
 
