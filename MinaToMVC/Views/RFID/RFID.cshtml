@@ -2,8 +2,6 @@
 @{
     ViewBag.Title = "RFID";
     Layout = "~/Views/Shared/_Layout.cshtml";
-
-    var rfid = (MinaTolEntidades.Dto_Rfid.Rfid)Model;
 }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 <script src="~/Scripts/RFID/RFID.js"></script>
@@ -51,29 +49,29 @@
 
     <form id="frmRFID" name="frmRFID" method="post" enctype="multipart/form-data">
         <br>
-        <center><h1>Asignacion de RFID para el Personal</h1></center>
+        <center><h1>Asignacion de RFID Personal</h1></center>
         <div class="tabla-consultas-tableRFID">
             <div class="rectangulos" style="width: 100%;">
-                <!-- Mueve el campo oculto junto a los otros campos ocultos -->
-                <input type="hidden" id="txtIdRfid" value="" />
-
                 <div class="row">
                     <div class="col-lg-3">
-                        <label>RFID Capturado:</label>
-                        <input type="text" id="txtRFID" class="form-control" required placeholder="1234567" />
+                        <label>RFID Camputado:</label>
+                        <input type="text" id="txtRFID" class="form-control" />
                     </div>
                     <div class="col-lg-3">
-                        <label>Trabajador:</label>
-                        <select id="txtNombreUsuario" class="form-control" required>
+                        <label>Usuario:</label>
+                        <select id="txtNombreUsuario" class="form-control">
+                            <option value="usuario1">Usuario 1</option>
+                            <option value="usuario2">Usuario 2</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-12">
-                        <input type="button" value="Guardar" onclick="SaveOrUpdateRFID()" class="btn btn-success" />
+                        <input href="/Usuario/AltaEdicion" type="button" value="Guardar" onclick="SaveOrUpdateRFID()" class="btn btn-success" />
                         <a href="/RFID/RFID" class="btn btn-custom-cancel">Cancelar</a>
                         <button type="button" class="btn btn-custom-cancel" onclick="LimpiarFormulario()">Limpiar Formulario</button>
+
                     </div>
                 </div>
 
@@ -82,14 +80,10 @@
                 <input type="hidden" id="txtUpdatedBy" value="@User.Identity.Name" />
                 <input type="hidden" id="txtUpdatedDt" value="@DateTime.Now" />
             </div>
-        </div>
-        <div class="row">
+        </div>  <div class="row">
             <div class="col-lg-12">
                 <table class="table table-bordered table-striped" id="tableRFID" style="width: 100%;"></table>
             </div>
         </div>
     </form>
-    <script>
-        var rfidJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(rfid))');
-    </script>
 </div>

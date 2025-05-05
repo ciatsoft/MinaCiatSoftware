@@ -67,6 +67,7 @@
     <Compile Include="DtoVentas\PV_Material.cs" />
     <Compile Include="DtoVentas\PV_Planta.cs" />
     <Compile Include="DtoVentas\PV_Ventas.cs" />
+    <Compile Include="DtoVentaPublicoGeneral\PV_Precio.cs" />
     <Compile Include="DtoViajes\DtoViajeInterno.cs" />
     <Compile Include="DtoViajes\DtoViajeLocal.cs" />
     <Compile Include="DtoViajes\DtoFoliador.cs" />

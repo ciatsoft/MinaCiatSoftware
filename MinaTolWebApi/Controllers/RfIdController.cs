@@ -1,5 +1,6 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.Dto_Rfid;
+using MinaTolEntidades.DtoCatalogos;
 using MinaTolWebApi.DAL;
 using System;
 using System.Collections.Generic;
@@ -21,9 +22,33 @@ namespace MinaTolWebApi.Controllers
         {
             wrapper = new DbWrapper();
         }
+        
+        [HttpGet, Route("")]
+        public ModelResponse GetAllRfid()
+        {
+            var result = wrapper.GetAllRfid();
+            return result;
+        }
+        [HttpGet, Route("{id:long}")]
+        public async Task<ModelResponse> GetRfidById(int id)
+        {
+            var result = wrapper.GetRfidById(id);
+            return result;
+        }
+        [HttpDelete, Route("{id:long}")]
+        public async Task<ModelResponse> DeleteRfid(int id)
+        {
+            var result = wrapper.DeleteRfid(id);
+            return result;
+        }
+        [HttpPost, Route("")]
+        public async Task<ModelResponse> SaveOrUpdateRfid(Rfid t)
+        {
+            var result = wrapper.SaveOrUpdateRfid(t);
+            return result;
+        }
 
-        // Validar RFID en la base de datos
-        [HttpGet, Route("search/{id}")]
+        [HttpGet, Route("{id}")]
         public IHttpActionResult ValidarRfid(string id)
         {
             var result = wrapper.SearchRfid(id);
@@ -47,29 +72,15 @@ namespace MinaTolWebApi.Controllers
             }
         }
 
+
         // Guardar RFID en la base de datos
         [HttpPost, Route("")]
         public async Task<ModelResponse> SaveOrUpdateRFID(Rfid r)
         {
-            var result = wrapper.SaveOrUpdateRFID(r);
+            var result = wrapper.SaveOrUpdateRfid(r);
             return result;
         }
-
-        // Obtener Lista
-        [HttpGet, Route("list")]
-        public ModelResponse GetAllRfid()
-        {
-            var result = wrapper.GetAllRfid();
-            return result;
-        }
-
-        // Obtener por ID
-        [HttpGet, Route("by/{id}")]
-        public async Task<ModelResponse> GetRfidById(int id)
-        {
-            var result = wrapper.GetRfidById(id);
-            return result;
-        }
+        
 
         // Eliminar RFID
         [HttpDelete, Route("{id:long}")]

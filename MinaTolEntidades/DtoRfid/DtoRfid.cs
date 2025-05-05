@@ -11,7 +11,6 @@ namespace MinaTolEntidades.Dto_Rfid
 
         public string rfid { get; set; }
         public long idUsuario { get; set; }
-        public string NombreUsuario { get; set; }
 
     }
 }

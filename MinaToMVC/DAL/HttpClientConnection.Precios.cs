@@ -8,17 +8,16 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using MinaTolEntidades.Dto_Rfid;
+using MinaTolEntidades.DtoSucursales;
 
 namespace MinaToMVC.DAL
 {
     public partial class HttpClientConnection
     {
-
-        public async Task<ModelResponse> SaveOrUpdateRfid(Rfid u)
+        public async Task<ModelResponse> SaveOrUpdatePrecio(Precio u)
         {
             MappingColumSecurity(u);
-            var result = await RequestAsync<object>("api/Rfid", HttpMethod.Post, u,
+            var result = await RequestAsync<object>("api/Precio", HttpMethod.Post, u,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
@@ -28,9 +27,9 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
-        public async Task<ModelResponse> GetAllRfid()
+        public async Task<ModelResponse> GetAllPrecio()
         {
-            var result = await RequestAsync<object>("api/Rfid", HttpMethod.Get, null,
+            var result = await RequestAsync<object>("api/Precio", HttpMethod.Get, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
@@ -40,9 +39,9 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
-        public async Task<ModelResponse> GetRfidById(long id)
+        public async Task<ModelResponse> GetPrecioById(long id)
         {
-            var result = await RequestAsync<object>($"api/Rfid/{id}", HttpMethod.Get, null,
+            var result = await RequestAsync<object>($"api/Precio/{id}", HttpMethod.Get, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
@@ -52,9 +51,9 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
-        public async Task<ModelResponse> DeleteRfid(long id)
+        public async Task<ModelResponse> DeletePrecio(long id)
         {
-            var result = await RequestAsync<object>($"api/Rfid/{id}", HttpMethod.Delete, null,
+            var result = await RequestAsync<object>($"api/Precio/{id}", HttpMethod.Delete, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
@@ -64,5 +63,7 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
+
+
     }
 }
