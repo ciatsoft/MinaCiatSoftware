@@ -138,7 +138,6 @@
     <Compile Include="Controllers\ClienteController.cs" />
     <Compile Include="Controllers\ClienteTipoMaterialController.cs" />
     <Compile Include="Controllers\FoliadorController.cs" />
-    <Compile Include="Controllers\IngresosRfidController.cs" />
     <Compile Include="Controllers\PrecioController.cs" />
     <Compile Include="Controllers\ProductoController.cs" />
     <Compile Include="Controllers\MetodoPagoController.cs" />
@@ -161,7 +160,6 @@
     <Compile Include="DAL\DbWrapper.ClienteTipoMaterial.cs" />
     <Compile Include="DAL\DbWrapper.cs" />
     <Compile Include="DAL\DbWrapper.Foliador.cs" />
-    <Compile Include="DAL\DbWrapper.IngresosRfid.cs" />
     <Compile Include="DAL\DbWrapper.MaterialUbicacion.cs" />
     <Compile Include="DAL\DbWrapper.MetodoPago.cs" />
     <Compile Include="DAL\DbWrapper.PV_Precio.cs" />
