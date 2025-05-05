@@ -23,22 +23,22 @@ namespace MinaToMVC.Controllers
             var rfid = new Rfid();
             if(id != 0)
             {
-                var result = await httpClientConnection.GetRFIDById(id);
+                var result = await httpClientConnection.GetRfidById(id);
                 rfid = JsonConvert.DeserializeObject<Rfid>(result.Response.ToString());
             }
             return View(rfid);
         }
 
-        public async Task<string> GetAllRFID()
+        public async Task<string> GetAllRfid()
         {
             var token = Helpers.SessionHelper.GetSessionUser();
-            var result = await httpClientConnection.GetAllRFID(token.Token.access_token);
+            var result = await httpClientConnection.GetAllRfid();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
-        public string SaveOrUpdateRFID(Rfid r)
+        public string SaveOrUpdateRfid(Rfid r)
         {
-            var result = httpClientConnection.SaveOrUpdateRFID(r);
+            var result = httpClientConnection.SaveOrUpdateRfid(r);
             return JsonConvert.SerializeObject(result);
         }
         #endregion

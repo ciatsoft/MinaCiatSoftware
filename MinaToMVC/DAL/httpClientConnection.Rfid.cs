@@ -40,7 +40,7 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
-        public async Task<ModelResponse> GetRfidById(int id)
+        public async Task<ModelResponse> GetRfidById(long id)
         {
             var result = await RequestAsync<object>($"api/Rfid/{id}", HttpMethod.Get, null,
             new Func<string, string>((responseString) =>

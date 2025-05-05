@@ -170,6 +170,7 @@
     <Content Include="Scripts\Catalogos\UnidadMedida.js" />
     <Content Include="Scripts\Comun\Comun.js" />
     <Content Include="Scripts\Home\Autenticacion.js" />
+    <Content Include="Scripts\RFID\RFID.js" />
     <Content Include="Scripts\Seguridad\Usuario.js" />
     <Content Include="Scripts\Trabajador\AltaEdicion.js" />
     <Content Include="Scripts\Vehiculo\Vehiculo.js" />
@@ -186,6 +187,8 @@
     <Compile Include="Controllers\EmpleadoController.cs" />
     <Compile Include="Controllers\Filters\FiltersHelper.cs" />
     <Compile Include="Controllers\AdministracionController.cs" />
+    <Compile Include="Controllers\IngresosRfidController.cs" />
+    <Compile Include="Controllers\RFIDController.cs" />
     <Compile Include="Controllers\VentaPublicoGeneralController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Controllers\VehiculoController.cs" />
@@ -197,9 +200,11 @@
     <Compile Include="Controllers\ViajesController.cs" />
     <Compile Include="DAL\HttpClientConnection.DireccionCliente.cs" />
     <Compile Include="DAL\HttpClientConnection.ClienteTipoMaterial.cs" />
+    <Compile Include="DAL\HttpClientConnection.IngresosRfid.cs" />
     <Compile Include="DAL\HttpClientConnection.MetodoPago.cs" />
     <Compile Include="DAL\HttpClientConnection.PV_Precios.cs" />
     <Compile Include="DAL\HttpClientConnection.Precios.cs" />
+    <Compile Include="DAL\httpClientConnection.Rfid.cs" />
     <Compile Include="DAL\httpClientConnection.Roll.cs" />
     <Compile Include="DAL\HttpClientConnection.TipoMaterialUbicacion.cs" />
     <Compile Include="DAL\HttpClientConnection.UbicacionCliente.cs" />
@@ -271,6 +276,7 @@
     <Content Include="Views\Catalog\MetodoPago.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\Index.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\PV_Precios.cshtml" />
+    <Content Include="Views\RFID\RFID.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
