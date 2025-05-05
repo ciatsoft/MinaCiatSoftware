@@ -38,26 +38,6 @@ namespace MinaTolWebApi.DAL
 
             return response;
         }
-
-        // Método auxiliar ExecuteScalar (deberías tenerlo en tu DbWrapper)
-        private object ExecuteScalar(string commandText, CommandType commandType, IEnumerable<SqlParameter> parameters = null)
-        {
-            using (var connection = new SqlConnection(SQLConnectionString))
-            {
-                using (var command = new SqlCommand(commandText, connection))
-                {
-                    command.CommandType = commandType;
-
-                    if (parameters != null)
-                    {
-                        command.Parameters.AddRange(parameters.ToArray());
-                    }
-
-                    connection.Open();
-                    return command.ExecuteScalar();
-                }
-            }
-        }
         public ModelResponse SaveOrUpdateRfid(Rfid tv)
 
         {

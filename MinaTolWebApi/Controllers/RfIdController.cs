@@ -71,5 +71,24 @@ namespace MinaTolWebApi.Controllers
                 return InternalServerError(new Exception(result.Message));
             }
         }
+
+
+        // Guardar RFID en la base de datos
+        [HttpPost, Route("")]
+        public async Task<ModelResponse> SaveOrUpdateRFID(Rfid r)
+        {
+            var result = wrapper.SaveOrUpdateRfid(r);
+            return result;
+        }
+        
+
+        // Eliminar RFID
+        [HttpDelete, Route("{id:long}")]
+        public async Task<ModelResponse> DeleteRFID(int id)
+        {
+            var result = wrapper.DeleteRfid(id);
+            return result;
+        }
+
     }
 }
