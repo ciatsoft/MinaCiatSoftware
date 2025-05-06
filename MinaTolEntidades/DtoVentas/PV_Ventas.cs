@@ -15,6 +15,7 @@ namespace MinaTolEntidades.DtoVentas
         public DtoUbicacion Ubicacion { get; set; }
         public DtoTipoMaterialUbicacion TipoMaterial { get; set; }
         public string FormaDePago { get; set; }
+        public int CantidadRecibida { get; set; }
         public string Transporte { get; set; }
         public string Placa { get; set; }
         public string Cantidad { get; set; }
