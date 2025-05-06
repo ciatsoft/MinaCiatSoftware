@@ -17,15 +17,12 @@ namespace MinaTolWebApi.DAL
             {
                 response.IsSuccess = true;
                 var parameters = GenerateSQLParameters(p);
-                var result = GetObject("SaveOrUpdatePrecio", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, Precio>((reader) =>
-                    {
-                        var r = FillEntity<Precio>(reader);
-                        return r;
-                    }));
-                response.Response = result;
+                var result = ExecuteScalar("SaveOrUpdatePV_Precio", System.Data.CommandType.StoredProcedure, parameters);
+                p.Id = Convert.ToInt64(result);
+
+                response.Response = p;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 response.IsSuccess = false;
                 response.Message = ex.Message;
@@ -51,7 +48,7 @@ namespace MinaTolWebApi.DAL
                 response.Response = result;
 
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
                 response.IsSuccess = false;
                 response.Message = ex.Message;
@@ -84,14 +81,14 @@ namespace MinaTolWebApi.DAL
                     }));
                 response.Response = result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 response.IsSuccess = false;
                 response.Message = ex.Message;
                 response.Enum = Enumeration.ErrorNoControlado;
             }
             return response;
-            
+
         }
     }
 }

@@ -1,0 +1,66 @@
+﻿@model MinaTolEntidades.DtoVentaPublicoGeneral.PV_Precio
+@{
+    ViewBag.Title = "PV_Precios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var formasPago = (List<string>)ViewBag.FormasPago;
+
+}
+<link href="@Url.Content("~/Assets/css/EstilosBtnCambios/EstiloBtn.css")" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+@using (Html.BeginForm("SaveOrUpdatePrecioMaterial", "VentaPublicoGeneral", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmPrecioMaterial", @id = "frmPrecioMaterial" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    @Html.HiddenFor(x => x.Estatus)
+    @Html.HiddenFor(x => x.CreatedDt)
+    @Html.HiddenFor(x => x.CreatedBy)
+    @Html.HiddenFor(x => x.UpdatedBy)
+    @Html.HiddenFor(x => x.UpdatedDt)
+
+    <div class="content">
+        <br>
+        <center><h1>Precios</h1></center>
+        <div class="tabla-consultas-roll">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>ID Precio:</label>
+                        <input type="text" id="txtidprecio" name="idprecio" class="form-control" disabled />
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Ubicación:</label>
+                        @Html.DropDownList("ddlUbicacion", (IEnumerable<SelectListItem>)ViewBag.Ubicaciones, new { @class = "form-control", @onchange = "CambioUbicacion()" })
+                    </div>
+                    <div class="col-lg-3" id="divMaterial">
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="txtPrecioActivo">Precio:</label>
+                        @Html.TextBoxFor(x => x.PrecioActual, new { @class = "form-control", @type = "numer", @min = "0" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="txtPrecioActivo">Es precio Activo:</label>
+                        @Html.EditorFor(x => x.EsPrecioActivo, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Minimo para mayoreo:</label>
+                        @Html.TextBoxFor(x => x.MayoreoMenudeo, new { @class = "form-control", @type = "number", @min = "0" })
+                    </div>
+                    <div class="col-lg-6">
+                        <label>Comentarios:</label>
+                        @Html.TextBoxFor(x => x.Comentario, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="submit" value="Guardar" onclick="SaveOrUpdatePV_Precio()" class="btn btn-success" />
+                        <a href="/VentaPublicoGeneral/Precios" class="btn btn-custom-cancel">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <table id="tblPrecios" class="table table-bordered table-striped" style="width: 100%;"></table>
+    </div>
+}
+
+<script src="@(Url.StaticFile("Scripts/VentaPublicoGeneral/Precios.js"))"></script>

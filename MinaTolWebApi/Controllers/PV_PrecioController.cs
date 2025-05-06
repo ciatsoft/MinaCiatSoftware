@@ -7,6 +7,7 @@ using System.Web.Http;
 using MinaTolEntidades.DtoSucursales;
 using MinaTolEntidades;
 using MinaTolWebApi.DAL;
+using MinaTolEntidades.DtoVentaPublicoGeneral;
 
 namespace MinaTolWebApi.Controllers
 {
@@ -19,24 +20,24 @@ namespace MinaTolWebApi.Controllers
             wrapper = new DbWrapper();
         }
 
-        [Route("List"), HttpGet]
-        public async Task<ModelResponse> GetAllPV_Precio()
+        [Route("List/{id:long}"), HttpGet]
+        public ModelResponse GetPrecioByMaterialId(long id)
         {
-            var result = wrapper.GetAllPV_Precio();
+            var result = wrapper.GetPV_PrecioByMaterial(id);
             return result;
         }
 
         [HttpGet, Route("{id:long}")]
         public async Task<ModelResponse> GetPV_PrecioById(int id)
         {
-            var result = wrapper.GetPrecioById(id);
+            var result = wrapper.GetPV_PrecioById(id);
             return result;
         }
 
         [HttpPost, Route("")]
-        public async Task<ModelResponse> SaveOrUpdatePV_Precio(Precio p)
+        public async Task<ModelResponse> SaveOrUpdatePV_Precio(PV_Precio p)
         {
-            var result = wrapper.SaveOrUpdatePrecio(p);
+            var result = wrapper.SaveOrUpdatePV_Precio(p);
             return result;
         }
     }
