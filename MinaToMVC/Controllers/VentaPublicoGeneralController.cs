@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using static MinaToMVC.Controllers.Filters.FiltersHelper;
+using System.Security.Cryptography;
 
 namespace MinaToMVC.Controllers
 {
@@ -57,11 +58,42 @@ namespace MinaToMVC.Controllers
             return View(venta);
         }
 
-        public ActionResult PV_Precios()
+        public async Task<ActionResult> Precios(long id = 0)
         {
-            return View();
+            var precios = new PV_Precio();
+
+            if (id != 0)
+            {
+                var precioResponse = await httpClientConnection.GetPV_PrecioById(id);
+                precios = JsonConvert.DeserializeObject<PV_Precio>(precioResponse.Response.ToString());
+            }
+
+            var ubicacionResponse = await httpClientConnection.GetAllUbicacion();
+            var ubicacion = JsonConvert.DeserializeObject<List<DtoUbicacion>>(ubicacionResponse.Response.ToString()).Where(x => x.EsInterna);
+            var ubicacionDdl = MappingPropertiToDropDownList<DtoUbicacion>(ubicacion, "Id", "NombreUbicacion");
+
+            ViewBag.Ubicaciones = ubicacionDdl;
+
+            return View(precios);
         }
 
+        #endregion
+
+        #region Partial View
+        public async Task<ActionResult> PartialMaterialCargaPrecio(long id = 0)
+        {
+            var materialUbicacionResponse = await httpClientConnection.GetMaterialUbicacionByUbicacion(id);
+            var materialUbicacion = JsonConvert.DeserializeObject<List<MaterialUbicacion>>(materialUbicacionResponse.Response.ToString());
+            var listadoMaterial = new List<DtoTipoMaterialUbicacion>();
+            foreach (var i in materialUbicacion)
+            {
+                listadoMaterial.Add(i.Material);
+            }
+            var materiales = MappingPropertiToDropDownList<DtoTipoMaterialUbicacion>(listadoMaterial, "Id", "NombreTipoMaterial");
+            ViewBag.Materiales = materiales;
+
+            return PartialView();
+        }
         #endregion
 
         #region Data Acces
@@ -76,29 +108,17 @@ namespace MinaToMVC.Controllers
             return JsonConvert.SerializeObject(result);
         }
         #endregion
+
         #region Precio
-        public async Task<ActionResult> Precio(long id = 0)
+        public async Task<string> GetPreciosBymaterialId(long id)
         {
-
-            var unidad = new PV_Precio();
-            if (id != 0)
-            {
-                var result = await httpClientConnection.GetPV_PrecioById(id);
-                unidad = JsonConvert.DeserializeObject<PV_Precio>(result.Response.ToString());
-            }
-
-            return View(unidad);
-        }
-        public async Task<string> GetAllPV_Precio()
-        {
-            var result = await httpClientConnection.GetAllPV_Precio();
-
-            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
-        }
-        public async Task<string> SaveOrUpdatePV_Precio(PV_Precio ar)
-        {
-            var result = await httpClientConnection.SaveOrUpdatePV_Precio(ar);
+            var result = await httpClientConnection.GetPrecioByMaterialId(id);
             return JsonConvert.SerializeObject(result);
+        }
+        public async Task<ActionResult> SaveOrUpdatePrecioMaterial(PV_Precio precio)
+        {
+            var r = await httpClientConnection.SaveOrUpdatePV_Precio(precio);
+            return Redirect("Precios");
         }
         public async Task<string> DeletePV_Precio(long id)
         {
