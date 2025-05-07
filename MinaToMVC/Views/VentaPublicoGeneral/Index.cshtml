@@ -32,12 +32,27 @@
                         @Html.TextBoxFor(x => x.Folio, new { @class = "form-control", @disabled = "disabled" })
                     </div>
                     <div class="col-lg-3">
-                        <label>Ubicación:</label>
+                        <label>Planta:</label>
                         @Html.DropDownListFor(x => x.Ubicacion.Id, (IEnumerable<SelectListItem>)ViewBag.Ubicaciones, new { @class = "form-control", @onchange = "CambioUbicacion()" })
                     </div>
                     <div class="col-lg-3">
                         <label>Material:</label>
                         @Html.DropDownListFor(x => x.TipoMaterial.Id, (IEnumerable<SelectListItem>)ViewBag.Materiales, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Cantidad:</label>
+                        @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Unidad de Medida:</label>
+                        <select class="form-control">
+                            @foreach (var unidadMedida in unidadesMedida)
+                            {
+                                <option value="@unidadMedida.Id">@unidadMedida.Nombre</option>
+                            }
+                        </select>
                     </div>
                     <div class="col-lg-3">
                         <label>Forma de pago:</label>
@@ -49,30 +64,9 @@
                             }
                         </select>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-9">
-                        <label>Descripción del transporte:</label>
-                        @Html.TextBoxFor(x => x.Transporte, new { @class = "form-control" })
-                    </div>
                     <div class="col-lg-3">
-                        <label>Placa:</label>
-                        @Html.TextBoxFor(x => x.Placa, new { @class = "form-control" })
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-3">
-                        <label>Cantidad:</label>
-                        @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control" })
-                    </div>
-                    <div class="col-lg-3">
-                        <label>Unidad de Medida:</label>
-                        <select class="form-control">
-                            @foreach (var unidadMedida in unidadesMedida)
-                            {
-                                <option value="@unidadMedida.Id">@unidadMedida.Nombre</option>
-                            }
-                        </select>
+                        <label>Cantidad Recibida:</label>
+                        @Html.TextBoxFor(x => x.CantidadRecibida, new { @class = "form-control" })
                     </div>
                     <div class="col-lg-3">
                         <label>Vendedor:</label>
@@ -80,16 +74,36 @@
                             <option value="@usuarioToken.UserID">@usuarioToken.UserName</option>
                         </select>
                     </div>
+                    <div class="col-lg-6">
+                        <label>Descripción del transporte:</label>
+                        @Html.TextBoxFor(x => x.Transporte, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Placa:</label>
+                        @Html.TextBoxFor(x => x.Placa, new { @class = "form-control" })
+                    </div>
                     <div class="col-lg-3">
                         <label>Fecha:</label>
-
                         @Html.TextBoxFor(x => x.Fecha, new { @class = "form-control", @disabled = "", @Value = DateTime.Today.ToString("yyyy-MM-dd") })
                     </div>
                 </div>
                 <div class="row">
-
-                    <div class="col-lg-3"></div>
-                    <div class="col-lg-3"></div>
+                    <div class="col-lg-12">
+                        <div class="ms-3 d-flex flex-row align-items-start justify-content-between flex-wrap">
+                            <div class="me-4">
+                                <label id="totalPagar" class="form-label fw-bold">Total a Pagar: $0.00</label><br>
+                                <label id="totalRecibido" class="form-label fw-bold">Dinero Recibido: $0.00</label><br>
+                                <label id="cambio" class="form-label fw-bold">Cambio: $0.00</label>
+                            </div>
+                            <div class="col-md-4" style="margin-top: 5px;">
+                                <label for="Cliente" class="form-label fw-bold">
+                                    Precio por Unidad:
+                                    $<input id="precioMaterial" name="precioMaterial" value="0" disabled
+                                            style="background-color: white; color: black; border: none; outline: none; width: 60px;">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-12 d-flex justify-content-between">

@@ -21,12 +21,9 @@ namespace MinaTolWebApi.DAL
             {
                 response.IsSuccess = true;
                 var parameters = GenerateSQLParameters(p);
-                var result = GetObject("SaveOrUpdatePV_Precio", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, PV_Precio>((reader) =>
-                    {
-                        var r = FillEntity<PV_Precio>(reader);
-                        return r;
-                    }));
+                var result = ExecuteScalar("SaveOrUpdatePV_Precio", System.Data.CommandType.StoredProcedure, parameters);
+                p.Id = Convert.ToInt64(result);
+
                 response.Response = result;
             }
             catch(Exception ex)
@@ -38,7 +35,6 @@ namespace MinaTolWebApi.DAL
 
             return response;
         }
-
         public ModelResponse GetAllPV_Precio()
         {
             var response = new ModelResponse();
@@ -64,7 +60,6 @@ namespace MinaTolWebApi.DAL
             return response;
 
         }
-
         public ModelResponse GetPV_PrecioById(int id)
         {
             var response = new ModelResponse();
@@ -97,9 +92,13 @@ namespace MinaTolWebApi.DAL
             return response;
             
         }
+<<<<<<< HEAD
 
 
         public ModelResponse GetPV_PrecioByPV_Material(long id)
+=======
+        public ModelResponse GetPV_PrecioByMaterial(long id)
+>>>>>>> DEV
         {
             var response = new ModelResponse();
             try
@@ -110,27 +109,45 @@ namespace MinaTolWebApi.DAL
                 {
                     Value = id,
                     IsNullable = true,
+<<<<<<< HEAD
                     ParameterName = "@Material",
                     SqlDbType = System.Data.SqlDbType.BigInt
                 });
 
                 var result = GetObjects("GetPV_PrecioByPV_Material", System.Data.CommandType.StoredProcedure,
+=======
+                    ParameterName = "@Id",
+                    SqlDbType = System.Data.SqlDbType.BigInt
+                });
+
+                var result = GetObjects("GetPV_PrecioByMaterialId", System.Data.CommandType.StoredProcedure,
+>>>>>>> DEV
                     parameters, new Func<System.Data.IDataReader, PV_Precio>((reader) =>
                     {
                         var r = FillEntity<PV_Precio>(reader);
                         r.Material = new PV_Material()
                         {
+<<<<<<< HEAD
                             Id = MappingProperties<long>(reader["Material"])
+=======
+                            Id = MappingProperties<long>(reader["MaterialId"])
+>>>>>>> DEV
                         };
                         
                         return r;
                     }));
 
+<<<<<<< HEAD
                 foreach (var i in result)
                 {
                     i.Material = (PV_Material)GetPV_PrecioByPV_Material(i.Id).Response;
+=======
+                //foreach (var i in result)
+                //{
+                //    i.Material = (PV_Material)GetPV_PrecioByMaterial(i.Id).Response;
+>>>>>>> DEV
                     
-                }
+                //}
 
                 response.Response = result;
 

@@ -1,0 +1,32 @@
+﻿@model MinaTolEntidades.DtoVentaPublicoGeneral.PV_Precio
+
+<label>Material:</label>
+@Html.DropDownListFor(x => x.Material.Id, (IEnumerable<SelectListItem>)ViewBag.Materiales, new { @class = "form-control" })
+
+
+<script>
+    //$(function () {
+    //    $("#frmPrecioMaterial").validate({
+    //        rules: {
+    //            "Folio": {
+    //                required: true
+    //            },
+    //            "Ubicacion_Id": {
+    //                required: true
+    //            }
+    //            ,
+    //            "Material_Id": {
+    //                required: true
+    //            }
+    //            ,
+    //            "Transporte": {
+    //                required: true
+    //            }
+    //            ,
+    //            "Placa": {
+    //                required: true
+    //            }
+    //        }
+    //    });
+    //});
+</script>

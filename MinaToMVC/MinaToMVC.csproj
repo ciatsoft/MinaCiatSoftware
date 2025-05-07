@@ -275,8 +275,9 @@
     <Content Include="Views\Administracion\PartialdireccionesClientes.cshtml" />
     <Content Include="Views\Catalog\MetodoPago.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\Index.cshtml" />
-    <Content Include="Views\VentaPublicoGeneral\PV_Precios.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\Precios.cshtml" />
     <Content Include="Views\RFID\RFID.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\PartialMaterialCargaPrecio.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

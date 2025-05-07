@@ -16,10 +16,10 @@ namespace MinaToMVC.DAL
 {
     public partial class HttpClientConnection
     {
-        public async Task<ModelResponse> SaveOrUpdatePV_Precio(PV_Precio u)
+        public async Task<ModelResponse> SaveOrUpdatePV_Precio(PV_Precio precio)
         {
-            MappingColumSecurity(u);
-            var result = await RequestAsync<object>("api/PV_Precio", HttpMethod.Post, u,
+            MappingColumSecurity(precio);
+            var result = await RequestAsync<object>("api/PV_Precio", HttpMethod.Post, precio,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
@@ -29,9 +29,9 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
-        public async Task<ModelResponse> GetAllPV_Precio()
+        public async Task<ModelResponse> GetPrecioByMaterialId(long id)
         {
-            var result = await RequestAsync<object>("api/PV_Precio", HttpMethod.Get, null,
+            var result = await RequestAsync<object>($"api/PV_Precio/List/{id}", HttpMethod.Get, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
