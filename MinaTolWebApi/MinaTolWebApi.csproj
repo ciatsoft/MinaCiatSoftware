@@ -142,6 +142,7 @@
     <Compile Include="Controllers\ProductoController.cs" />
     <Compile Include="Controllers\MetodoPagoController.cs" />
     <Compile Include="Controllers\PV_PrecioController.cs" />
+    <Compile Include="Controllers\PV_VentaController.cs" />
     <Compile Include="Controllers\RfIdController.cs" />
     <Compile Include="Controllers\RollController.cs" />
     <Compile Include="Controllers\TipoMaterialUbicacionController.cs" />
@@ -167,6 +168,7 @@
     <Compile Include="DAL\DbWrapper.Producto.cs" />
     <Compile Include="DAL\DbWrapper.PV_Planta.cs" />
     <Compile Include="DAL\DbWrapper.PV_Material.cs" />
+    <Compile Include="DAL\DbWrapper.PV_Venta.cs" />
     <Compile Include="DAL\DbWrapper.Rfid.cs" />
     <Compile Include="DAL\DbWrapper.Salario.cs" />
     <Compile Include="DAL\DbWrapper.Roll.cs" />
