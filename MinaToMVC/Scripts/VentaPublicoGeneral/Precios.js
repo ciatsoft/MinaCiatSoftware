@@ -1,25 +1,3 @@
-<<<<<<< HEAD
-$(document).ready(function () {
-
-});
-
-function CambioPV_Precio() {
-    var ubicacionSeleccionada = $("#Material_Id").val();
-
-    GetMVC("/VentaPublicoGeneral/GetPV_PrecioByPV_Material/" + ubicacionSeleccionada, function (r) {
-        if (r.IsSuccess) {
-            $("#PVPrecio_Id").empty();
-            $.each(r.Response, function (index, item) {
-                var templateoption = "<option value='" + item.material.id + "'>" + item.material.nombreTipoMaterial + "</option>";
-
-                $("#PVPrecio_Id").append(templateoption);
-            });
-        } else {
-            console.log(r.response.ErrorMessage);
-            window.Swal.fire('Error', 'No es posible obtener los materiales : ', 'error');
-        }
-    });
-=======
 
 $(function () {
     jQuery.validator.addMethod("lettersonly", function (value, element) {
@@ -127,5 +105,32 @@ function GetPreciosMyBaterial() {
 
 function EditarPrecio(id) {
     location.href = "/VentaPublicoGeneral/Precios/" + id;
->>>>>>> DEV
+}
+function confirmarGuardar() {
+    const ubicacion = $('#ddlUbicacion option:selected').text();
+    const precio = $('#PrecioActual').val();
+    const esActivo = $('#EsPrecioActivo').is(':checked') ? 'Sí' : 'No';
+    const minimoMayoreo = $('#MayoreoMenudeo').val();
+    const comentario = $('#Comentario').val();
+
+    Swal.fire({
+        title: 'Confirmar guardado',
+        html: `
+            <strong>Ubicacion:</strong> ${ubicacion}<br>
+            <strong>Precio:</strong> $${precio}<br>
+            <strong>Activo:</strong> ${esActivo}<br>
+            <strong>Minimo Mayoreo:</strong> ${minimoMayoreo}<br>
+            <strong>Comentario:</strong> ${comentario}
+        `,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, guardar',
+        cancelButtonText: 'No, revisar',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            SaveOrUpdatePV_Precio();
+        } else {
+            Swal.fire 
+        }
+    });
 }

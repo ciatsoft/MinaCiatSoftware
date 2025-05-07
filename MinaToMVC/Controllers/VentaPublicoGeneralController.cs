@@ -134,6 +134,41 @@ namespace MinaToMVC.Controllers
         }
 
         #endregion
+        #region  CajaChica
+        public async Task<ActionResult> PV_CajaChica(long id = 0)
+        {
+            var roll = new PV_CajaChica();
+            if (id != 0)
+            {
+                var result = await httpClientConnection.GetPV_CajaChicaById(id);
+                roll = JsonConvert.DeserializeObject<PV_CajaChica>(result.Response.ToString());
+            }
+            return View(roll);
+        }
+        public async Task<string> SaveOrUpdatePV_CajaChica(PV_CajaChica r)
+        {
+
+            var result = await httpClientConnection.SaveOrUpdatePV_CajaChica(r);
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetAllPV_CajaChica()
+        {
+            var result = await httpClientConnection.GetAllPV_CajaChica();
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<String> DeletePV_CajaChica(long id)
+        {
+            var result = await httpClientConnection.DeletePV_CajaChica(id);
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public ActionResult CajaChica()
+        {
+            return View();
+        }
+        #endregion
 
     }
 }

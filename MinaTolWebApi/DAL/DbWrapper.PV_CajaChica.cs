@@ -1,51 +1,53 @@
-﻿using MinaTolEntidades;
-using MinaTolEntidades.DtoSucursales;
-using MinaTolEntidades.DtoViajes;
-using MinaTolEntidades.DtoVentaPublicoGeneral;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
-using MinaTolEntidades.DtoCatalogos;
-using MinaTolEntidades.DtoVentas;
+using MinaTolEntidades.DtoVentaPublicoGeneral;
+using MinaTolEntidades;
+using MinaTolEntidades.DtoSucursales;
+using MinaTolWebApi.Controllers;
 
 namespace MinaTolWebApi.DAL
 {
     public partial class DbWrapper
     {
-        public ModelResponse SaveOrUpdatePV_Precio(PV_Precio p)
+        public ModelResponse SaveOrUpdatePV_CajaChica(PV_CajaChica tv)
         {
             var response = new ModelResponse();
             try
             {
                 response.IsSuccess = true;
-                var parameters = GenerateSQLParameters(p);
-                var result = ExecuteScalar("SaveOrUpdatePV_Precio", System.Data.CommandType.StoredProcedure, parameters);
-                p.Id = Convert.ToInt64(result);
-
+                var parameters = GenerateSQLParameters(tv);
+                var result = GetObject("SaveOrUpdatePV_CajaChica", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, PV_CajaChica>((reader) =>
+                    {
+                        var r = FillEntity<PV_CajaChica>(reader);
+                        return r;
+                    }));
                 response.Response = result;
+
             }
             catch (Exception ex)
             {
                 response.IsSuccess = false;
                 response.Message = ex.Message;
                 response.Enum = Enumeration.ErrorNoControlado;
-            }
 
+            }
             return response;
         }
-        public ModelResponse GetAllPV_Precio()
+        public ModelResponse GetAllPV_CajaChica()
         {
             var response = new ModelResponse();
             try
             {
                 response.IsSuccess = true;
                 var parameters = new List<SqlParameter>();
-                var result = GetObjects("GetAllPV_Precio", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, PV_Precio>((reader) =>
+                var result = GetObjects("GetAllPV_CajaChica", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, PV_CajaChica>((reader) =>
                     {
-                        var r = FillEntity<PV_Precio>(reader);
+                        var r = FillEntity<PV_CajaChica>(reader);
                         return r;
                     }));
                 response.Response = result;
@@ -58,9 +60,9 @@ namespace MinaTolWebApi.DAL
                 response.Enum = Enumeration.ErrorNoControlado;
             }
             return response;
-
         }
-        public ModelResponse GetPV_PrecioById(int id)
+
+        public ModelResponse GetPV_CajaChicaById(int id)
         {
             var response = new ModelResponse();
             try
@@ -75,13 +77,14 @@ namespace MinaTolWebApi.DAL
                     SqlDbType = System.Data.SqlDbType.Int
                 });
 
-                var result = GetObject("GetPV_PrecioById", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, PV_Precio>((reader) =>
+                var result = GetObject("GetPV_CajaChicaById", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, PV_CajaChica>((reader) =>
                     {
-                        var r = FillEntity<PV_Precio>(reader);
+                        var r = FillEntity<PV_CajaChica>(reader);
                         return r;
                     }));
                 response.Response = result;
+
             }
             catch (Exception ex)
             {
@@ -90,9 +93,8 @@ namespace MinaTolWebApi.DAL
                 response.Enum = Enumeration.ErrorNoControlado;
             }
             return response;
-
         }
-        public ModelResponse GetPV_PrecioByMaterial(long id)
+        public ModelResponse DeletePV_CajaChica(int id)
         {
             var response = new ModelResponse();
             try
@@ -104,29 +106,10 @@ namespace MinaTolWebApi.DAL
                     Value = id,
                     IsNullable = true,
                     ParameterName = "@Id",
-                    SqlDbType = System.Data.SqlDbType.BigInt
+                    SqlDbType = System.Data.SqlDbType.Int
                 });
 
-                var result = GetObjects("GetPV_PrecioByMaterialId", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, PV_Precio>((reader) =>
-                    {
-                        var r = FillEntity<PV_Precio>(reader);
-                        r.Material = new PV_Material()
-                        {
-                            Id = MappingProperties<long>(reader["MaterialId"])
-                        };
-
-                        return r;
-                    }));
-
-                //foreach (var i in result)
-                //{
-                //    i.Material = (PV_Material)GetPV_PrecioByMaterial(i.Id).Response;
-
-                //}
-
-                response.Response = result;
-
+                var result = ExecuteNonQuery("DeletePV_CajaChica", System.Data.CommandType.StoredProcedure, parameters);
             }
             catch (Exception ex)
             {
@@ -136,6 +119,5 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
-
     }
 }
