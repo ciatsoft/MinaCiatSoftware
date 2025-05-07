@@ -21,6 +21,7 @@ namespace MinaToMVC.Controllers
     public class VentaPublicoGeneralController : BaseController
     {
         #region View
+        #region View
 
         public async Task<ActionResult> Index()
         {
@@ -33,21 +34,17 @@ namespace MinaToMVC.Controllers
             var materialUbicacionResponse = await httpClientConnection.GetMaterialUbicacionByUbicacion(ubicacion.FirstOrDefault().Id);
             var materialUbicacion = JsonConvert.DeserializeObject<List<MaterialUbicacion>>(materialUbicacionResponse.Response.ToString());
             var listadoMaterial = new List<DtoTipoMaterialUbicacion>();
-<<<<<<< HEAD
 
             //Obtener precio del material
             var mayoreomenudeoResponse = await httpClientConnection.GetPrecioByMaterialId(materialUbicacion.FirstOrDefault().Id);
             var mayoreomenudeo = JsonConvert.DeserializeObject<List<PV_Precio>>(mayoreomenudeoResponse.Response.ToString());
 
-=======
-            var listaPV_Material = new List<PV_Material>();
->>>>>>> RamaTrabajoFrancisco2
             foreach (var i in materialUbicacion)
             {
                 listadoMaterial.Add(i.Material);
             }
             var materiales = MappingPropertiToDropDownList<DtoTipoMaterialUbicacion>(listadoMaterial, "Id", "NombreTipoMaterial");
-            var PV_Material = MappingPropertiToDropDownList<PV_Material>(listaPV_Material, "Id", "NombreTipoMaterial");
+
 
             var formasPago = System.Configuration.ConfigurationManager.AppSettings["FormaPago"].ToString().Split('|').ToList();
 
@@ -98,6 +95,9 @@ namespace MinaToMVC.Controllers
 
             return View(precios);
         }
+
+        #endregion
+
 
         #endregion
 
