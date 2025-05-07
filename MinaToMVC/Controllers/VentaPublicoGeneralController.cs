@@ -33,17 +33,21 @@ namespace MinaToMVC.Controllers
             var materialUbicacionResponse = await httpClientConnection.GetMaterialUbicacionByUbicacion(ubicacion.FirstOrDefault().Id);
             var materialUbicacion = JsonConvert.DeserializeObject<List<MaterialUbicacion>>(materialUbicacionResponse.Response.ToString());
             var listadoMaterial = new List<DtoTipoMaterialUbicacion>();
+<<<<<<< HEAD
 
             //Obtener precio del material
             var mayoreomenudeoResponse = await httpClientConnection.GetPrecioByMaterialId(materialUbicacion.FirstOrDefault().Id);
             var mayoreomenudeo = JsonConvert.DeserializeObject<List<PV_Precio>>(mayoreomenudeoResponse.Response.ToString());
 
+=======
+            var listaPV_Material = new List<PV_Material>();
+>>>>>>> RamaTrabajoFrancisco2
             foreach (var i in materialUbicacion)
             {
                 listadoMaterial.Add(i.Material);
             }
             var materiales = MappingPropertiToDropDownList<DtoTipoMaterialUbicacion>(listadoMaterial, "Id", "NombreTipoMaterial");
-
+            var PV_Material = MappingPropertiToDropDownList<PV_Material>(listaPV_Material, "Id", "NombreTipoMaterial");
 
             var formasPago = System.Configuration.ConfigurationManager.AppSettings["FormaPago"].ToString().Split('|').ToList();
 
@@ -144,9 +148,48 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.DeletePV_Precio(id);
             return JsonConvert.SerializeObject(result);
         }
+        
+        public async Task<string> GetPV_PrecioByPV_Material(int id)
+        {
+            var result = await httpClientConnection.GetPV_PrecioByPV_Material(id);
+            return JsonConvert.SerializeObject(result);
+        }
 
+        #endregion
+        #region  CajaChica
+        public async Task<ActionResult> PV_CajaChica(long id = 0)
+        {
+            var roll = new PV_CajaChica();
+            if (id != 0)
+            {
+                var result = await httpClientConnection.GetPV_CajaChicaById(id);
+                roll = JsonConvert.DeserializeObject<PV_CajaChica>(result.Response.ToString());
+            }
+            return View(roll);
+        }
+        public async Task<string> SaveOrUpdatePV_CajaChica(PV_CajaChica r)
+        {
 
+            var result = await httpClientConnection.SaveOrUpdatePV_CajaChica(r);
+            return JsonConvert.SerializeObject(result);
+        }
 
+        public async Task<string> GetAllPV_CajaChica()
+        {
+            var result = await httpClientConnection.GetAllPV_CajaChica();
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<String> DeletePV_CajaChica(long id)
+        {
+            var result = await httpClientConnection.DeletePV_CajaChica(id);
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public ActionResult CajaChica()
+        {
+            return View();
+        }
         #endregion
 
     }

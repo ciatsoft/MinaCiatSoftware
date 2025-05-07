@@ -106,3 +106,31 @@ function GetPreciosMyBaterial() {
 function EditarPrecio(id) {
     location.href = "/VentaPublicoGeneral/Precios/" + id;
 }
+function confirmarGuardar() {
+    const ubicacion = $('#ddlUbicacion option:selected').text();
+    const precio = $('#PrecioActual').val();
+    const esActivo = $('#EsPrecioActivo').is(':checked') ? 'Sí' : 'No';
+    const minimoMayoreo = $('#MayoreoMenudeo').val();
+    const comentario = $('#Comentario').val();
+
+    Swal.fire({
+        title: 'Confirmar guardado',
+        html: `
+            <strong>Ubicacion:</strong> ${ubicacion}<br>
+            <strong>Precio:</strong> $${precio}<br>
+            <strong>Activo:</strong> ${esActivo}<br>
+            <strong>Minimo Mayoreo:</strong> ${minimoMayoreo}<br>
+            <strong>Comentario:</strong> ${comentario}
+        `,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, guardar',
+        cancelButtonText: 'No, revisar',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            SaveOrUpdatePV_Precio();
+        } else {
+            Swal.fire 
+        }
+    });
+}

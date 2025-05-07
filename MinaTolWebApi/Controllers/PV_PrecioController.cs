@@ -26,6 +26,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetPV_PrecioByMaterial(id);
             return result;
         }
+        [Route("Ubicacion/{id:long}"), HttpGet]
+        public ModelResponse GetPV_PrecioByPV_Material(long id)
+        {
+            var result = wrapper.GetTipoMaterialByUnicacion(id);
+            return result;
+        }
 
         [HttpGet, Route("{id:long}")]
         public async Task<ModelResponse> GetPV_PrecioById(int id)

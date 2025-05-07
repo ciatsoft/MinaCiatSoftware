@@ -1,0 +1,68 @@
+﻿@model MinaTolEntidades.DtoVentaPublicoGeneral.PV_Precio
+@{
+    ViewBag.Title = "PV_Precios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var PV_Material = (List<MinaTolEntidades.DtoSucursales.PV_Material>)ViewBag.PV_Material;
+
+}
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<link href="@Url.Content("~/Assets/css/EstilosBtnCambios/EstiloBtn.css")" rel="stylesheet" />
+<script src="~/Scripts/VentaPublicoGeneral/Precios.js"></script>
+@using (Html.BeginForm("SaveOrUpdatePV_Precio", "VentaPublicoGeneral", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmPV_PrecioCrud", @id = "frmPV_PrecioCrud" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    @Html.HiddenFor(x => x.Estatus)
+    @Html.HiddenFor(x => x.CreatedDt)
+    @Html.HiddenFor(x => x.CreatedBy)
+    @Html.HiddenFor(x => x.UpdatedBy)
+    @Html.HiddenFor(x => x.UpdatedDt)
+<div class="content">
+    <br>
+    <center><h1>Precios</h1></center>
+    <div class="tabla-consultas-PV_Precio">
+        <div class="rectangulos" style="width: 100%;">
+            <div class="row">
+                <div class="col-lg-3">
+                    <label>ID Precio:</label>
+                    <input type="text" id="txtidprecio" name="idprecio" class="form-control" disabled />
+                </div>
+                <div class="col-lg-3">
+                    <label>Material:</label>
+                    @Html.DropDownListFor(x => x.Material.Id, (IEnumerable<SelectListItem>)ViewBag.PV_Material, new { @class = "form-control", @onchange = "CambioPV_Precio()"})
+
+                </div>
+                <div class="col-lg-3">
+                    <label>Precio Actual:</label>
+                    <input type="number" id="txtPrecioActual" name="txtPrecioActual" class="form-control" />
+                </div>
+                <div class="col-lg-3">
+                    <label for="txtPrecioActivo">¿Es Precio Activo?</label>
+                    <select id="txtPrecioActivo" name="txtPrecioActivo" class="form-control">
+                        <option value="true">Sí</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+                <div class="col-lg-3">
+                    <label>MayoreoMenudeo:</label>
+                    <input type="number" id="txtMayoreoMenudeo" name="txtMayoreoMenudeo" class="form-control" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <input href="/VentaPublicoGeneral/Precios" type="button" value="Guardar" onclick="SaveOrUpdatePV_Precio()" class="btn btn-success" />
+                    <a href="/VentaPublicoGeneral/Precios" class="btn btn-custom-cancel">Cancelar</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br />
+    <input type="hidden" id="txtCreatedDt" name="CreatedDt" value="@DateTime.Now" />
+    <table id="tblPV_Precio" class="table table-bordered table-striped" style="width: 100%;"></table>
+
+</div>
+}
+<script src="@(Url.StaticFile("Scripts/VentaPublicoGeneral/Precio.js"))"></script>
