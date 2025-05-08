@@ -13,14 +13,24 @@ namespace MinaTolEntidades.DtoVentas
     {
         public string Folio { get; set; }
         public DtoUbicacion Ubicacion { get; set; }
+        public long PV_PlantaId { get; set; }
+        public string NombreUbicacion { get; set; }
         public DtoTipoMaterialUbicacion TipoMaterial { get; set; }
+        public long PV_MaterialId { get; set; }
+        public string NombreTipoMaterial { get; set; }
         public string FormaDePago { get; set; }
-        public int CantidadRecibida { get; set; }
+        public string CantidadRecibida { get; set; }
         public string Transporte { get; set; }
         public string Placa { get; set; }
         public string Cantidad { get; set; }
         public UnidadMedida UnidadMedida { get; set; }
+        public long UnidadMedidaId { get; set; }
+        public string NombreUnidadMedida { get; set; }
         public Usuario Usuario { get; set; }
+        public long UsuarioId { get; set; }
+        public string UserName { get; set; }
+        public string EstatusVenta { get; set; }
+        public int TotalPago { get; set; }
         public DateTime Fecha { get; set; }
     }
 }

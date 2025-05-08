@@ -125,6 +125,19 @@ namespace MinaToMVC.Controllers
             return Redirect("Index");
         }
 
+        public async Task<ActionResult> ActualizarEstatusVenta(int id, string valor)
+        {
+            var r = await httpClientConnection.ActualizarEstatusVenta(id, valor);
+            return Redirect("Index");
+        }
+
+        public async Task<string> GetAllPV_Ventas()
+        {
+            var token = Helpers.SessionHelper.GetSessionUser();
+            var result = await httpClientConnection.GetAllPV_Ventas();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
         public async Task<string> GetMaterialUbicacionByUbicacion(long id)
         {
             var result = await httpClientConnection.GetMaterialUbicacionByUbicacion(id);
@@ -156,6 +169,7 @@ namespace MinaToMVC.Controllers
         }
 
         #endregion
+
         #region  CajaChica
         public async Task<ActionResult> PV_CajaChica(long id = 0)
         {

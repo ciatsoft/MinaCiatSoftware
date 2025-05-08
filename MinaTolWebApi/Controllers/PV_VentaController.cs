@@ -39,5 +39,13 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetAllPV_Venta();
             return result;
         }
+
+        [HttpPost, Route("EstatusVenta/{id:long}/{valor}")]
+        public async Task<ModelResponse> ActualizarEstatusVenta(long id, string valor)
+        {
+            var result = wrapper.ActualizarEstatusVenta((int)id, valor);
+            return result;
+        }
+
     }
 }

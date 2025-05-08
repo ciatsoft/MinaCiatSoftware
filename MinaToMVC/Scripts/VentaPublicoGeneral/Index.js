@@ -1,3 +1,98 @@
+$(document).ready(function () {
+    $("#tablePuntoVenta").dataTable({
+        processing: true,
+        destroy: true,
+        paging: true,
+        searching: true,
+        columns: [
+            { data: "id", "visible": false, title: "id" },
+            { data: "folio", title: "Folio" },
+            { data: "nombreUbicacion",title: "Planta"},
+            { data: "nombreTipoMaterial", title: "Material" },
+            {
+                data: "formaDePago",
+                title: "Forma de Pago",
+                render: function (data, type, row) {
+                    if (data === "E") {
+                        return "Efectivo";
+                    }
+                    else if (data == "T") {
+                        return "Transferencia";
+                    } else {
+                        return "Vale";
+                    }
+                    return data;
+                }
+            },
+            { data: "cantidadRecibida", title: "Cantidad Recibida" },
+            { data: "totalPago", title: "Total Pago" },
+            { data: "transporte", title: "Transporte" },
+            { data: "placa", title: "Placa" },
+            { data: "cantidad", title: "Cantidad" },
+            { data: "nombreUnidadMedida", title: "Unidad Medida" },
+            { data: "userName", title: "Usuario" },
+            { data: "fecha", title: "Fecha" },
+            {
+                data: "estatus",
+                title: "Estatus",
+                render: function (data, type, row) {
+                    return data == 1 ? "Activo" : "Inactivo";
+                }
+            },
+            {
+                data: "estatusVenta",
+                title: "Pago",
+                render: function (data, type, row) {
+                    if (data === "E") {
+                        return "Efectivo";
+                    }
+                    else if (data == "C") {
+                        return "Cancelada";
+                    } else {
+                        return "Rechazada";
+                    }
+                    return data;
+                }
+            },
+            {
+                data: "id", render: function (data) {
+                    return '<input type="button" value="Cancelar Venta" class="btn btn-custom-cancel" onclick="ActualizarVenta(' + data + ', \'C\')" />' +
+                        '<br /><br />' +
+                        '<input type="button" value="Rechazar Venta" class="btn btn-custom-clean" onclick="ActualizarVenta(' + data + ', \'R\')" />';
+                }
+            }
+        ]
+        ,
+        language: {
+            "decimal": ",",
+            "thousands": ".",
+            "processing": "Procesando...",
+            "lengthMenu": "Mostrar _MENU_ entradas",
+            "zeroRecords": "No se encontraron resultados",
+            "emptyTable": "Ningún dato disponible en esta tabla",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+            "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+            "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+            "search": "Buscar:",
+            "loadingRecords": "Cargando...",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                "sortDescending": ": activar para ordenar la columna de manera descendente"
+            }
+        }
+    });
+
+    GetAllPV_Ventas();
+
+
+})
+
 $(function () {
     jQuery.validator.addMethod("lettersonly", function (value, element) {
         return this.optional(element) || /^[a-z\s]+$/i.test(value);
@@ -128,6 +223,7 @@ function actualizarTotal() {
 
     // Mostrar el total con formato de moneda
     $("#totalPagar").text("Total a Pagar: $" + total.toFixed(2));
+    $("#TotalPagoInput").val(total);
 
     // Actualizar el cambio automáticamente
     actualizarCambio();
@@ -153,4 +249,24 @@ function actualizarCambio() {
     } else {
         $("#cambio").text("Cambio: $" + cambio.toFixed(2)).css("color", "green");
     }
+}
+
+function GetAllPV_Ventas() {
+    GetMVC("/VentaPublicoGeneral/GetAllPV_Ventas", function (r) {
+        if (r.IsSuccess) {
+            MapingPropertiesDataTable("tablePuntoVenta", r.Response);
+        } else {
+            alert("Error al cargar las Ventas: " + r.ErrorMessage);
+        }
+    });
+}
+
+function ActualizarVenta(idVenta, tipoAccion) {
+    PostMVC('VentaPublicoGeneral/ActualizarEstatusVenta', { id: idVenta, valor: tipoAccion }, function (r) {
+        if (r.IsSuccess) {
+            location.reload();
+        } else {
+            location.reload();
+        }
+    });
 }

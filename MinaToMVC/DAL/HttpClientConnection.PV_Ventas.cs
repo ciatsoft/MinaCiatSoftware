@@ -32,6 +32,30 @@ namespace MinaToMVC.DAL
 
         }
 
+        public async Task<ModelResponse> GetAllPV_Ventas()
+        {
+            var result = await RequestAsync<object>("api/PV_Venta/List", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+
+        public async Task<ModelResponse> ActualizarEstatusVenta(int id, string valor)
+        {
+            var url = $"api/PV_Venta/EstatusVenta/{id}/{valor}";
+            var result = await RequestAsync<object>(url,HttpMethod.Post,null,new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }),token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+
 
     }
 }
