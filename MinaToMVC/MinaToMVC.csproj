@@ -174,6 +174,7 @@
     <Content Include="Scripts\Seguridad\Usuario.js" />
     <Content Include="Scripts\Trabajador\AltaEdicion.js" />
     <Content Include="Scripts\Vehiculo\Vehiculo.js" />
+    <Content Include="Scripts\VentaPublicoGeneral\CorteCaja.js" />
     <Content Include="Scripts\VentaPublicoGeneral\Index.js" />
     <Content Include="Scripts\VentaPublicoGeneral\Precios.js" />
     <Content Include="Scripts\Viajes\Internos.js" />
@@ -203,6 +204,7 @@
     <Compile Include="DAL\HttpClientConnection.IngresosRfid.cs" />
     <Compile Include="DAL\HttpClientConnection.MetodoPago.cs" />
     <Compile Include="DAL\HttpClientConnection.PV_CajaChica.cs" />
+    <Compile Include="DAL\HttpClientConnection.PV_CorteCaja.cs" />
     <Compile Include="DAL\HttpClientConnection.PV_Precios.cs" />
     <Compile Include="DAL\HttpClientConnection.Precios.cs" />
     <Compile Include="DAL\HttpClientConnection.PV_Ventas.cs" />
@@ -281,6 +283,7 @@
     <Content Include="Views\RFID\RFID.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\PartialMaterialCargaPrecio.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\CajaChica.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\CorteCaja.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

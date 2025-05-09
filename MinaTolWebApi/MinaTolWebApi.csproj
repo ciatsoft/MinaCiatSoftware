@@ -133,6 +133,7 @@
   <ItemGroup>
     <Compile Include="App_Start\App_Start.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\PV_CorteCajaController.cs" />
     <Compile Include="Controllers\DireccionCliente.cs" />
     <Compile Include="Controllers\AreaTrabajoController.cs" />
     <Compile Include="Controllers\ClienteController.cs" />
@@ -165,6 +166,7 @@
     <Compile Include="DAL\DbWrapper.MaterialUbicacion.cs" />
     <Compile Include="DAL\DbWrapper.MetodoPago.cs" />
     <Compile Include="DAL\DbWrapper.PV_CajaChica.cs" />
+    <Compile Include="DAL\DbWrapper.PV_CorteCaja.cs" />
     <Compile Include="DAL\DbWrapper.PV_Precio.cs" />
     <Compile Include="DAL\DbWrapper.Precio.cs" />
     <Compile Include="DAL\DbWrapper.Producto.cs" />

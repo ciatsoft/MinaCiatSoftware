@@ -171,39 +171,71 @@ namespace MinaToMVC.Controllers
         #endregion
 
         #region  CajaChica
-        public async Task<ActionResult> PV_CajaChica(long id = 0)
+                public async Task<ActionResult> PV_CajaChica(long id = 0)
+                {
+                    var roll = new PV_CajaChica();
+                    if (id != 0)
+                    {
+                        var result = await httpClientConnection.GetPV_CajaChicaById(id);
+                        roll = JsonConvert.DeserializeObject<PV_CajaChica>(result.Response.ToString());
+                    }
+                    return View(roll);
+                }
+                public async Task<string> SaveOrUpdatePV_CajaChica(PV_CajaChica r)
+                {
+
+                    var result = await httpClientConnection.SaveOrUpdatePV_CajaChica(r);
+                    return JsonConvert.SerializeObject(result);
+                }
+
+                public async Task<string> GetAllPV_CajaChica()
+                {
+                    var result = await httpClientConnection.GetAllPV_CajaChica();
+
+                    return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+                }
+                public async Task<String> DeletePV_CajaChica(long id)
+                {
+                    var result = await httpClientConnection.DeletePV_CajaChica(id);
+
+                    return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+                }
+                public ActionResult CajaChica()
+                {
+                    return View();
+                }
+        #endregion
+        #region CoteCaja
+        public async Task<ActionResult> CorteCaja(long id = 0)
         {
-            var roll = new PV_CajaChica();
+            var roll = new PV_CorteCaja();
             if (id != 0)
             {
-                var result = await httpClientConnection.GetPV_CajaChicaById(id);
-                roll = JsonConvert.DeserializeObject<PV_CajaChica>(result.Response.ToString());
+                var result = await httpClientConnection.GetPV_CorteCajaById(id);
+                roll = JsonConvert.DeserializeObject<PV_CorteCaja>(result.Response.ToString());
             }
             return View(roll);
         }
-        public async Task<string> SaveOrUpdatePV_CajaChica(PV_CajaChica r)
+        public async Task<string> SaveOrUpdatePV_CorteCaja(PV_CorteCaja r)
         {
 
-            var result = await httpClientConnection.SaveOrUpdatePV_CajaChica(r);
+            var result = await httpClientConnection.SaveOrUpdatePV_CorteCaja(r);
             return JsonConvert.SerializeObject(result);
         }
 
-        public async Task<string> GetAllPV_CajaChica()
+        public async Task<string> GetAllPV_CorteCaja()
         {
-            var result = await httpClientConnection.GetAllPV_CajaChica();
+            var result = await httpClientConnection.GetAllPV_CorteCaja();
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-        public async Task<String> DeletePV_CajaChica(long id)
+        public async Task<String> DeletePV_CorteCaja(long id)
         {
-            var result = await httpClientConnection.DeletePV_CajaChica(id);
+            var result = await httpClientConnection.DeletePV_CorteCaja(id);
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-        public ActionResult CajaChica()
-        {
-            return View();
-        }
+        
         #endregion
 
     }
