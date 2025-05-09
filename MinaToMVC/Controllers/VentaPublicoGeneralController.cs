@@ -199,10 +199,7 @@ namespace MinaToMVC.Controllers
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-        public ActionResult CorteCaja()
-        {
-            return View();
-        }
+        
         #endregion
 
     }
