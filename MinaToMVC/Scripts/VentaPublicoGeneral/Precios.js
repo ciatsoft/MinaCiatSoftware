@@ -104,6 +104,7 @@ function GetPreciosMyBaterial() {
 }
 
 function EditarPrecio(id) {
+    HabilitarBotonEliminar(id);
     location.href = "/VentaPublicoGeneral/Precios/" + id;
 }
 function confirmarGuardar() {
@@ -134,3 +135,24 @@ function confirmarGuardar() {
         }
     });
 }
+var precioSeleccionadoId = null
+$(document).ready(function () {
+    CambioUbicacion();
+    Createtable();
+
+    // Verificar si estamos en modo edición (si hay un ID en el modelo)
+    if ($("#Id").val() && $("#Id").val() !== "0") {
+        HabilitarBotonEliminar($("#Id").val());
+    }
+});
+
+function HabilitarBotonEliminar(id) {
+    precioSeleccionadoId = id;
+    $("#btnEliminar").prop("disabled", false);
+}
+
+function DeshabilitarBotonEliminar() {
+    precioSeleccionadoId = null;
+    $("#btnEliminar").prop("disabled", true);
+}
+function EliminarPrecio() { }
