@@ -128,7 +128,7 @@ namespace MinaToMVC.Controllers
         public async Task<ActionResult> ActualizarEstatusVenta(int id, string valor)
         {
             var r = await httpClientConnection.ActualizarEstatusVenta(id, valor);
-            return Redirect("Index");
+            return Json(r, JsonRequestBehavior.AllowGet);
         }
 
         public async Task<string> GetAllPV_Ventas()
@@ -205,6 +205,7 @@ namespace MinaToMVC.Controllers
                     return View();
                 }
         #endregion
+
         #region CoteCaja
         public async Task<ActionResult> CorteCaja(long id = 0)
         {
