@@ -89,8 +89,6 @@ $(document).ready(function () {
     });
 
     GetAllPV_Ventas();
-
-
 })
 
 $(function () {
@@ -262,11 +260,11 @@ function GetAllPV_Ventas() {
 }
 
 function ActualizarVenta(idVenta, tipoAccion) {
-    PostMVC('VentaPublicoGeneral/ActualizarEstatusVenta', { id: idVenta, valor: tipoAccion }, function (r) {
+    PostMVC('/VentaPublicoGeneral/ActualizarEstatusVenta', { id: idVenta, valor: tipoAccion }, function (r) {
         if (r.IsSuccess) {
-            location.reload();
+            location.href = '/VentaPublicoGeneral/Index';
         } else {
-            location.reload();
+            alert("Error al actualizar la venta. Ver consola para más detalles.");
         }
     });
 }
