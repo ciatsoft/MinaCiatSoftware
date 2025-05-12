@@ -12,11 +12,12 @@ namespace MinaTolEntidades.DtoVentaPublicoGeneral
 {
     public class PV_Precio : BaseObject
     {
-        public decimal PrecioActual { get; set; }
+        public decimal PrecioMenudeo { get; set; }
+        public decimal PrecioMayoreo { get; set; }
         public string Comentario { get; set; }
         public Boolean EsPrecioActivo { get; set; }
-        public int MayoreoMenudeo { get; set; }
+        public int Cantidad { get; set; }
         public PV_Material Material { get; set; }
-        
+
     }
 }

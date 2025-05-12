@@ -137,5 +137,38 @@ namespace MinaTolWebApi.DAL
             return response;
         }
 
+        public ModelResponse DeletePV_Precio(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id",
+                    SqlDbType = System.Data.SqlDbType.Int
+                });
+
+                var result = GetObject("DeletePV_Precio", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, PV_Precio>((reader) =>
+                    {
+                        var r = FillEntity<PV_Precio>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+
+        }
+
     }
 }

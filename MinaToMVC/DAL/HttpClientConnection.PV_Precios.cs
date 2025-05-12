@@ -55,15 +55,13 @@ namespace MinaToMVC.DAL
         }
         public async Task<ModelResponse> DeletePV_Precio(long id)
         {
-            var result = await RequestAsync<object>($"api/PV_Precio/{id}", HttpMethod.Delete, null,
-            new Func<string, string>((responseString) =>
+            var result = await RequestAsync<ModelResponse>($"api/PV_Precio/Delete/{id}", HttpMethod.Delete, null,
+            (responseString) =>
             {
-                return responseString;
-            }), token.Token.access_token);
-            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+                return JsonConvert.DeserializeObject<ModelResponse>(responseString);
+            }, token.Token.access_token);
 
-            return modelResponse;
-
+            return result;
         }
         public async Task<ModelResponse> GetMaterialUbicacionByUbicacion(long id)
         {

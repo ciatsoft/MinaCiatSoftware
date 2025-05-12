@@ -46,5 +46,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.SaveOrUpdatePV_Precio(p);
             return result;
         }
+
+        [HttpDelete, Route("Delete/{id:long}")]
+        public async Task<ModelResponse> DeletePV_Precio(int id)
+        {
+            var result = wrapper.DeletePV_Precio(id);
+            return result;
+        }
     }
 }
