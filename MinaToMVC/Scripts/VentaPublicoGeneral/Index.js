@@ -1,4 +1,15 @@
 $(document).ready(function () {
+
+    // Actualiza el precio y total cuando cambia la cantidad
+    $("#cantidadRecibida").on("input", function () {
+        ObtenerPrecioMaterial();
+    });
+
+    // También cuando cambia el tipo de material
+    $("#TipoMaterial_Id").on("change", function () {
+        ObtenerPrecioMaterial();
+    });
+
     $("#tablePuntoVenta").dataTable({
         processing: true,
         destroy: true,
@@ -181,8 +192,13 @@ function CambioUbicacion() {
     });
 }
 
+// Declarar precioMaterial como variable global
+var precioMaterial = 0;
+
+// Función para obtener y asignar el precio dependiendo de la cantidad
 function ObtenerPrecioMaterial() {
     var materialSeleccionado = $("#TipoMaterial_Id").val();
+    var cantidadFormulario = parseFloat($("#cantidadRecibida").val()) || 0;
 
     if (!materialSeleccionado) {
         console.warn("No hay material seleccionado aún.");
@@ -192,39 +208,47 @@ function ObtenerPrecioMaterial() {
         return;
     }
 
+    // Obtener los precios desde el backend
     GetMVC("/VentaPublicoGeneral/GetPreciosBymaterialId/" + materialSeleccionado, function (r) {
         if (r.IsSuccess && Array.isArray(r.Response) && r.Response.length > 0) {
-            var datos = r.Response[0];
-            precioMaterial = parseFloat(datos.precioActual) || 0;
 
-            // Asignar el precio al input
-            $("#precioMaterial").val(precioMaterial);
+            // Filtrar solo los objetos con esPrecioActivo = true
+            const preciosActivos = r.Response.filter(item => item.esPrecioActivo === true);
 
-            // Al obtener el precio, actualizamos el total
+            if (preciosActivos.length > 0) {
+                var datos = preciosActivos[0]; // Usamos el primero activo
+                var cantidadMenudeo = parseFloat(datos.cantidad) || 0;
+
+                precioMaterial = (cantidadFormulario > cantidadMenudeo)
+                    ? parseFloat(datos.precioMayoreo) || 0
+                    : parseFloat(datos.precioMenudeo) || 0;
+
+                $("#precioMaterial").val(precioMaterial);
+            } else {
+                console.warn("No se encontraron precios con esPrecioActivo = true");
+                precioMaterial = 0;
+                $("#precioMaterial").val(0);
+            }
+
             actualizarTotal();
-
         } else {
             console.error("Error en la respuesta:", r);
-            $("#precioMaterial").val(0);
             precioMaterial = 0;
+            $("#precioMaterial").val(0);
             actualizarTotal();
         }
     });
 }
 
+// Función para calcular y actualizar el total a pagar
 function actualizarTotal() {
-    // Obtener el valor de la cantidad ingresada en el campo
     var cantidad = parseFloat($("#cantidadRecibida").val()) || 0;
-
-    // Calcular el total
     var total = cantidad * precioMaterial;
 
-    // Mostrar el total con formato de moneda
     $("#totalPagar").text("Total a Pagar: $" + total.toFixed(2));
     $("#TotalPagoInput").val(total);
 
-    // Actualizar el cambio automáticamente
-    actualizarCambio();
+    actualizarCambio(); // Asegúrate de tener esta función definida
 }
 
 function actualizarCambio() {
