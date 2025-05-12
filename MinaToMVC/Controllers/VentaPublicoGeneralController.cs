@@ -156,12 +156,12 @@ namespace MinaToMVC.Controllers
             var r = await httpClientConnection.SaveOrUpdatePV_Precio(precio);
             return Redirect("Precios");
         }
-        public async Task<string> DeletePV_Precio(long id)
+        public async Task<ActionResult> DeletePV_Precio(long id)
         {
             var result = await httpClientConnection.DeletePV_Precio(id);
-            return JsonConvert.SerializeObject(result);
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
-        
+
         public async Task<string> GetPV_PrecioByPV_Material(int id)
         {
             var result = await httpClientConnection.GetPV_PrecioByPV_Material(id);
