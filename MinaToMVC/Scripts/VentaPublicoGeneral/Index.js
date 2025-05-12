@@ -40,6 +40,7 @@ $(document).ready(function () {
             { data: "transporte", title: "Transporte" },
             { data: "placa", title: "Placa" },
             { data: "cantidad", title: "Cantidad" },
+            { data: "precioUnidad", title: "Precio por Unidad" },
             { data: "nombreUnidadMedida", title: "Unidad Medida" },
             { data: "userName", title: "Usuario" },
             { data: "fecha", title: "Fecha" },
@@ -224,10 +225,12 @@ function ObtenerPrecioMaterial() {
                     : parseFloat(datos.precioMenudeo) || 0;
 
                 $("#precioMaterial").val(precioMaterial);
+                $("#PrecioUnidad").val(precioMaterial);
             } else {
                 console.warn("No se encontraron precios con esPrecioActivo = true");
                 precioMaterial = 0;
                 $("#precioMaterial").val(0);
+                $("#PrecioUnidad").val(0);
             }
 
             actualizarTotal();

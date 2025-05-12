@@ -31,6 +31,7 @@ namespace MinaTolEntidades.DtoVentas
         public string UserName { get; set; }
         public string EstatusVenta { get; set; }
         public int TotalPago { get; set; }
+        public decimal PrecioUnidad { get; set; }
         public DateTime Fecha { get; set; }
     }
 }
