@@ -27,6 +27,7 @@ namespace MinaTolWebApi.DAL
                     new SqlParameter("@TipoMaterial", v.TipoMaterial.Id),
                     new SqlParameter("@FormaDePago", v.FormaDePago),
                     new SqlParameter("@CantidadRecibida", v.CantidadRecibida),
+                    new SqlParameter("@PrecioUnidad", v.PrecioUnidad),
                     new SqlParameter("@Transporte", v.Transporte),
                     new SqlParameter("@Placa", v.Placa),
                     new SqlParameter("@Cantidad", v.Cantidad),
