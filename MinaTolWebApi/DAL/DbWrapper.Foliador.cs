@@ -33,10 +33,10 @@ namespace MinaTolWebApi.DAL
                     var r = FillEntity<DtoFoliador>(reader);
 
                     // Formatear el campo Consecutivo como cadena con ceros a la izquierda
-                    if (long.TryParse(r.Consecutivo.ToString(), out long parsedConsecutivo))
-                    {
-                        r.ConsecutivoString = parsedConsecutivo.ToString("D7"); // Guardar como cadena
-                    }
+                    //if (long.TryParse(r.Consecutivo.ToString(), out long parsedConsecutivo))
+                    //{
+                    //    r.ConsecutivoString = parsedConsecutivo.ToString("D7"); // Guardar como cadena
+                    //}
 
                     return r;
                 }));

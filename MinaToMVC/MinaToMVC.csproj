@@ -201,6 +201,7 @@
     <Compile Include="Controllers\ViajesController.cs" />
     <Compile Include="DAL\HttpClientConnection.DireccionCliente.cs" />
     <Compile Include="DAL\HttpClientConnection.ClienteTipoMaterial.cs" />
+    <Compile Include="DAL\HttpClientConnection.Foliador.cs" />
     <Compile Include="DAL\HttpClientConnection.IngresosRfid.cs" />
     <Compile Include="DAL\HttpClientConnection.MetodoPago.cs" />
     <Compile Include="DAL\HttpClientConnection.PV_CajaChica.cs" />
