@@ -1,3 +1,6 @@
+// Declarar precioMaterial como variable global
+var precioMaterial = 0;
+
 $(document).ready(function () {
 
     // Actualiza el precio y total cuando cambia la cantidad
@@ -168,10 +171,6 @@ function CambioUbicacion() {
     GetMVC("/VentaPublicoGeneral/GetMaterialUbicacionByUbicacion/" + ubicacionSeleccionada, function (r) {
         if (r.IsSuccess) {
             $("#TipoMaterial_Id").empty();
-
-            // Agregar opción por defecto
-            $("#TipoMaterial_Id").append('<option value="">Selecciona un material</option>');
-
             $.each(r.Response, function (index, item) {
                 var templateoption = "<option value='" + item.material.id + "'>" + item.material.nombreTipoMaterial + "</option>";
                 $("#TipoMaterial_Id").append(templateoption);
@@ -192,9 +191,6 @@ function CambioUbicacion() {
         }
     });
 }
-
-// Declarar precioMaterial como variable global
-var precioMaterial = 0;
 
 // Función para obtener y asignar el precio dependiendo de la cantidad
 function ObtenerPrecioMaterial() {
@@ -248,7 +244,7 @@ function actualizarTotal() {
     var cantidad = parseFloat($("#cantidadRecibida").val()) || 0;
     var total = cantidad * precioMaterial;
 
-    $("#totalPagar").text("Total a Pagar: $" + total.toFixed(2));
+    $("#totalPagar").text("Total a Pagar: " + formatMoney(total));
     $("#TotalPagoInput").val(total);
 
     actualizarCambio(); // Asegúrate de tener esta función definida
@@ -266,13 +262,13 @@ function actualizarCambio() {
     var cambio = dineroRecibido - totalPagar;
 
     // Mostrar el total recibido con formato de moneda
-    $("#totalRecibido").text("Dinero Recibido: $" + dineroRecibido.toFixed(2));
+    $("#totalRecibido").text("Dinero Recibido: " + formatMoney(dineroRecibido));
 
     // Condicional para mostrar el cambio
     if (cambio < 0) {
         $("#cambio").text("Cambio: Fondos insuficientes").css("color", "red");
     } else {
-        $("#cambio").text("Cambio: $" + cambio.toFixed(2)).css("color", "green");
+        $("#cambio").text("Cambio: " + formatMoney(cambio)).css("color", "green");
     }
 }
 

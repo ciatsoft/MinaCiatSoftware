@@ -2,12 +2,12 @@ $(document).ready(function () {
 
     // Verificar si estamos en modo edición (si hay un ID en el modelo)
     var id = $("#id").val();
-    if (id && id !== "0") {
-        // Habilitar el botón de eliminar
-        $("#btnEliminar").prop('disabled', false);
+    $("#btnEliminar").hide();
 
-        // Opcional: Cambiar estilo para feedback visual
-        $("#btnEliminar").removeClass('disabled').addClass('enabled-delete');
+    if (id !== "0") {
+        // Habilitar el botón de eliminar
+        $("#btnEliminar").show();
+
     }
 
     // Inicialización de componentes
