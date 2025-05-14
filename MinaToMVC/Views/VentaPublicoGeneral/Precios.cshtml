@@ -41,7 +41,7 @@
                                 <label>$</label>
                             </div>
                             <div class="col-lg-10">
-                                @Html.TextBoxFor(x => x.PrecioMenudeo, new { @class = "form-control", @type = "numer", @min = "0" })
+                                @Html.TextBoxFor(x => x.PrecioMenudeo, new { @class = "form-control", @type = "number", @min = "0", @step = "any", oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
                             </div>
                         </div>
                     </div>
@@ -56,7 +56,7 @@
                                 <label>$</label>
                             </div>
                             <div class="col-lg-10">
-                                @Html.TextBoxFor(x => x.PrecioMayoreo, new { @class = "form-control", @type = "numer", @min = "0" })
+                                @Html.TextBoxFor(x => x.PrecioMayoreo, new { @class = "form-control", @type = "number", @min = "0", @step = "any", oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
                             </div>
                         </div>
                     </div>

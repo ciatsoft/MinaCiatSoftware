@@ -34,7 +34,6 @@ namespace MinaTolWebApi.DAL
                     new SqlParameter("@Cantidad", Convert.ToInt32(v.Cantidad)),
                     new SqlParameter("@UnidadMedida", v.UnidadMedida.Id),
                     new SqlParameter("@Usuario", v.Usuario.Id),
-                    new SqlParameter("@Fecha", v.Fecha),
                     new SqlParameter("@Estatus", v.Estatus),
                     new SqlParameter("@TotalPago", v.TotalPago),
                     new SqlParameter("@CreatedBy", v.CreatedBy),
