@@ -38,15 +38,59 @@ $(document).ready(function () {
                     return data;
                 }
             },
-            { data: "cantidadRecibida", title: "Cantidad Recibida" },
-            { data: "totalPago", title: "Total Pago" },
+            {
+                data: "cantidadRecibida",
+                title: "Cantidad Recibida",
+                render: function (data, type, row) {
+                    if (data == null || data === "") return "$0.00";
+                    return parseFloat(data).toLocaleString('es-MX', {
+                        style: 'currency',
+                        currency: 'MXN',
+                        minimumFractionDigits: 2
+                    });
+                }
+            },
+            {
+                data: "totalPago",
+                title: "Total Pago",
+                render: function (data, type, row) {
+                    if (data == null || data === "") return "$0.00";
+                    return parseFloat(data).toLocaleString('es-MX', {
+                        style: 'currency',
+                        currency: 'MXN',
+                        minimumFractionDigits: 2
+                    });
+                }
+            },
             { data: "transporte", title: "Transporte" },
             { data: "placa", title: "Placa" },
             { data: "cantidad", title: "Cantidad" },
-            { data: "precioUnidad", title: "Precio por Unidad" },
+            {
+                data: "precioUnidad",
+                title: "Precio por Unidad",
+                render: function (data, type, row) {
+                    if (data == null || data === "") return "$0.00";
+                    return parseFloat(data).toLocaleString('es-MX', {
+                        style: 'currency',
+                        currency: 'MXN',
+                        minimumFractionDigits: 2
+                    });
+                }
+            },
             { data: "nombreUnidadMedida", title: "Unidad Medida" },
             { data: "userName", title: "Usuario" },
-            { data: "fecha", title: "Fecha" },
+            {
+                data: "fecha",
+                title: "Fecha",
+                render: function (data, type, row) {
+                    if (!data) return "";
+                    let date = new Date(data);
+                    let day = String(date.getDate()).padStart(2, '0');
+                    let month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses empiezan en 0
+                    let year = date.getFullYear();
+                    return `${day}/${month}/${year}`;
+                }
+            },
             {
                 data: "estatus",
                 title: "Estatus",
@@ -251,12 +295,10 @@ function actualizarTotal() {
 }
 
 function actualizarCambio() {
-    // Obtener el valor de la cantidad recibida
     var dineroRecibido = parseFloat($("#dineroRecibido").val()) || 0;
 
-    // Obtener el valor total a pagar (quitando el texto y el símbolo $)
-    var totalPagarText = $("#totalPagar").text().replace("Total a Pagar: $", "");
-    var totalPagar = parseFloat(totalPagarText) || 0;
+    // Obtener el total desde el input oculto, no desde el texto formateado
+    var totalPagar = parseFloat($("#TotalPagoInput").val()) || 0;
 
     // Calcular el cambio
     var cambio = dineroRecibido - totalPagar;
@@ -264,7 +306,7 @@ function actualizarCambio() {
     // Mostrar el total recibido con formato de moneda
     $("#totalRecibido").text("Dinero Recibido: " + formatMoney(dineroRecibido));
 
-    // Condicional para mostrar el cambio
+    // Mostrar el cambio o advertencia por fondos insuficientes
     if (cambio < 0) {
         $("#cambio").text("Cambio: Fondos insuficientes").css("color", "red");
     } else {
