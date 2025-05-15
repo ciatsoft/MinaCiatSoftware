@@ -2,10 +2,11 @@
 @{
     ViewBag.Title = "PV_CorteCaja";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var formasPago = (List<string>)ViewBag.FormasPago;
+
     var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
 }
-<link href="@Url.Content("~/Assets/css/EstilosBtnCambios/EstiloBtn.css")" rel="stylesheet" />
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 
 @using (Html.BeginForm("SaveOrUpdatePV_CorteCaja", "VentaPublicoGeneral", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmPrecioMaterial", @id = "frmPrecioMaterial" }))
@@ -16,6 +17,8 @@
     @Html.HiddenFor(x => x.CreatedBy)
     @Html.HiddenFor(x => x.UpdatedBy)
     @Html.HiddenFor(x => x.UpdatedDt)
+    @Html.HiddenFor(x => x.Folio)
+
 
     <div class="content">
         <br>
@@ -24,70 +27,109 @@
             <div class="rectangulos" style="width: 100%;">
                 <div class="row">
                     <div class="col-lg-3">
-                        <label>ID CorteCaja:</label>
-                        <input type="text" id="txtidcortecaja" name="idcortecaja" class="form-control" disabled />
+                        <label>Vendedor:</label>
+                        @Html.DropDownListFor(x => x.Usuario.Id, (IEnumerable<SelectListItem>)ViewBag.Usuarios, new { @class = "form-control" })
                     </div>
                     <div class="col-lg-3">
-                        <label>Ingreso:</label>
-                        @Html.TextBoxFor(x => x.Ingreso, new { @class = "form-control" })
+                        <label>Fecha:</label>
+                        <input class="form-control" type="text" id="fecha" readonly />
+                        @Html.HiddenFor(x => x.Fecha, new { @class = "form-control", @Value = DateTime.Now })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <table class="table table-bordered table-striped" id="tableDatosVenta" style="width: 100%;"></table>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-lg-3">
+                        <label> Total de ventas por vales :</label>
+                        @Html.TextBoxFor(x => x.V_Vale, new { @class = "form-control" })
                     </div>
                     <div class="col-lg-3">
-                        <label>Egreso:</label>
-                        @Html.TextBoxFor(x => x.Egreso, new { @class = "form-control" })
+                        <label> Total de ventas por transferencia:</label>
+                        @Html.TextBoxFor(x => x.V_Transferencia, new { @class = "form-control" })
                     </div>
                     <div class="col-lg-3">
-                        <label>Comentario:</label>
-                        @Html.TextBoxFor(x => x.Comentario, new { @class = "form-control" })
+                        <label> Total de ventas por efectivo:</label>
+                        @Html.TextBoxFor(x => x.V_Efectivo, new { @class = "form-control" })
                     </div>
+
+                </div>
+                <div class="row">
                     <div class="col-lg-3">
-                        <label>MontoTotal:</label>
-                        @Html.TextBoxFor(x => x.MontoTotal, new { @class = "form-control" })
+                        <label>BILLETES DE 1000:</label>
+                        @Html.TextBoxFor(x => x.B1000, new { @class = "form-control", @type = "number", @id = "b1000" })
                     </div>
+
                     <div class="col-lg-3">
                         <label>BILLETES DE 500:</label>
-                        @Html.TextBoxFor(x => x.B500, new { @class = "form-control" })
+                        @Html.TextBoxFor(x => x.B500, new { @class = "form-control", @type = "number", @id = "b500" })
                     </div>
                     <div class="col-lg-3">
                         <label>BILLETES DE 200:</label>
-                        @Html.TextBoxFor(x => x.B200, new { @class = "form-control" })
+                        @Html.TextBoxFor(x => x.B200, new { @class = "form-control", @type = "number", @id = "b200" })
                     </div>
                     <div class="col-lg-3">
                         <label>BILLETES DE 100:</label>
-                        @Html.TextBoxFor(x => x.B100, new { @class = "form-control" })
+                        @Html.TextBoxFor(x => x.B100, new { @class = "form-control", @type = "number", @id = "b100" })
                     </div>
                     <div class="col-lg-3">
                         <label>BILLETES DE 50:</label>
-                        @Html.TextBoxFor(x => x.B50, new { @class = "form-control" })
+                        @Html.TextBoxFor(x => x.B50, new { @class = "form-control", @type = "number", @id = "b50" })
                     </div>
                     <div class="col-lg-3">
                         <label>BILLETES DE 20:</label>
-                        @Html.TextBoxFor(x => x.B20, new { @class = "form-control" })
+                        @Html.TextBoxFor(x => x.B20, new { @class = "form-control", @type = "number", @id = "b20" })
                     </div>
                     <div class="col-lg-3">
                         <label>MONEDAS DE 10:</label>
-                        @Html.TextBoxFor(x => x.M10, new { @class = "form-control" })
+                        @Html.TextBoxFor(x => x.M10, new { @class = "form-control", @type = "number", @id = "M10" })
                     </div>
                     <div class="col-lg-3">
                         <label>MONEDAS DE 5:</label>
-                        @Html.TextBoxFor(x => x.M5, new { @class = "form-control" })
+                        @Html.TextBoxFor(x => x.M5, new { @class = "form-control", @type = "number", @id = "M5" })
                     </div>
                     <div class="col-lg-3">
                         <label>MONEDAS DE 2:</label>
-                        @Html.TextBoxFor(x => x.M2, new { @class = "form-control" })
+                        @Html.TextBoxFor(x => x.M2, new { @class = "form-control", @type = "number", @id = "M2" })
                     </div>
                     <div class="col-lg-3">
                         <label>MONEDAS DE 1:</label>
-                        @Html.TextBoxFor(x => x.M1, new { @class = "form-control" })
+                        @Html.TextBoxFor(x => x.M1, new { @class = "form-control", @type = "number", @id = "M1" })
                     </div>
                     <div class="col-lg-3">
                         <label>MONEDAS DE 50C:</label>
-                        @Html.TextBoxFor(x => x.M050, new { @class = "form-control" })
+                        @Html.TextBoxFor(x => x.M050, new { @class = "form-control", @type = "number", @id = "M050" })
                     </div>
-                    
+
 
                 </div>
-                
-               
+                <div class="row">
+                    <div class="col-lg-12">
+                        <table class="table table-bordered table-striped" id="tableCajaChica" style="width: 100%;"></table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <label> Cantidad del dia:</label>
+                    </div>
+                    <div class="col-lg-3">
+                        <label> Ingreso:</label>
+                        @Html.TextBoxFor(x => x.Ingreso, new { @class = "form-control", @type = "number", @id = "ingreso", @readonly = "readonly" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label> Caja:</label>
+                        @Html.TextBoxFor(x => x.Caja, new { @class = "form-control", @type = "number", @id = "caja" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label> Total:</label>
+                        @Html.TextBoxFor(x => x.MontoTotal, new { @class = "form-control", @type = "number", @id = "total", @readonly = "readonly" })
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="col-md-12">
                         <input type="submit" value="Guardar" onclick="" class="btn btn-success" />
@@ -95,9 +137,6 @@
                         <input type="button" value="Eliminar" id="btnEliminar" class="btn btn-danger" disabled onclick="" />
                     </div>
                 </div>
-
-
-
             </div>
         </div>
         <br />
@@ -106,3 +145,61 @@
 }
 
 <script src="@(Url.StaticFile("Scripts/VentaPublicoGeneral/CorteCaja.js"))"></script>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const now = new Date();
+        const fechaInput = document.getElementById('fecha');
+
+        // Formatea la fecha a YYYY-MM-DD
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // Mes empieza en 0
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+
+        const formattedDate = `${year}-${month}-${day}-${hours}:${minutes}`;
+        fechaInput.value = formattedDate;
+
+    });
+     
+    function calcularIngreso() {
+            let total = 0;
+
+            total += (parseInt($('#b1000').val()) || 0) * 1000;
+            total += (parseInt($('#b500').val()) || 0) * 500;
+            total += (parseInt($('#b200').val()) || 0) * 200;
+            total += (parseInt($('#b100').val()) || 0) * 100;
+            total += (parseInt($('#b50').val()) || 0) * 50;
+            total += (parseInt($('#b20').val()) || 0) * 20;
+
+            total += (parseInt($('#M10').val()) || 0) * 10;
+            total += (parseInt($('#M5').val()) || 0) * 5;
+            total += (parseInt($('#M2').val()) || 0) * 2;
+            total += (parseInt($('#M1').val()) || 0) * 1;
+            total += (parseInt($('#M050').val()) || 0) * 0.5;
+
+        $('#ingreso').val(total.toFixed(2)); // Mostrar con 2 decimales
+        
+    }
+    function calcularTotal() {
+        let ingreso = parseFloat($('#ingreso').val()) || 0;
+        let caja = parseFloat($('#caja').val()) || 0;
+        let total = ingreso - caja;
+        $('#total').val(total.toFixed(2));
+    }
+
+
+        // Detectar cambios en todos los campos
+     $(document).ready(function () {
+            $('input').on('input', function () {
+                calcularIngreso();
+                calcularTotal();
+                
+            });
+      });
+    
+
+    
+
+</script>
+

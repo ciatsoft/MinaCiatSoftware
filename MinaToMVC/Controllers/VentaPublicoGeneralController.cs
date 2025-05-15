@@ -21,6 +21,30 @@ namespace MinaToMVC.Controllers
     [Autenticated]
     public class VentaPublicoGeneralController : BaseController
     {
+        #region View CorteCaja
+        public async Task<ActionResult> CorteCaja() 
+        {
+            var Cortecaja = new PV_CorteCaja();
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            return View(Cortecaja);
+
+        }
+
+        #endregion
         #region View
         public async Task<ActionResult> Index()
         {
@@ -101,16 +125,7 @@ namespace MinaToMVC.Controllers
         {
             return View();
         }
-        public async Task<ActionResult> CorteCaja(long id = 0)
-        {
-            var roll = new PV_CorteCaja();
-            if (id != 0)
-            {
-                var result = await httpClientConnection.GetPV_CorteCajaById(id);
-                roll = JsonConvert.DeserializeObject<PV_CorteCaja>(result.Response.ToString());
-            }
-            return View(roll);
-        }
+       
         #endregion
 
         #region Partial View
