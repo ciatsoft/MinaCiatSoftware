@@ -99,6 +99,22 @@ namespace MinaToMVC.Controllers
         }
         public ActionResult CajaChica()
         {
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
             return View();
         }
         public async Task<ActionResult> CorteCaja(long id = 0)
@@ -190,11 +206,10 @@ namespace MinaToMVC.Controllers
             }
             return View(roll);
         }
-        public async Task<string> SaveOrUpdatePV_CajaChica(PV_CajaChica r)
+        public async Task<ActionResult> SaveOrUpdatePV_CajaChica(PV_CajaChica r)
         {
-
             var result = await httpClientConnection.SaveOrUpdatePV_CajaChica(r);
-            return JsonConvert.SerializeObject(result);
+            return Redirect("CajaChica");
         }
         public async Task<string> GetAllPV_CajaChica()
         {
@@ -208,6 +223,14 @@ namespace MinaToMVC.Controllers
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+
+        //Buscar filtrado
+        public async Task<string> SearchPV_VajaChicaByDateAndUser(string userName, DateTime fecha)
+        {
+            var result = await httpClientConnection.SearchPV_VajaChicaByDateAndUser(userName, fecha);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
         #endregion
 
         #region CoteCaja        
