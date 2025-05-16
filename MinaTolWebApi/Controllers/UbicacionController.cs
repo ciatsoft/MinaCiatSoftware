@@ -38,5 +38,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.SaveOrUpdateUbicacion(u);
             return result;
         }
+
+        [HttpDelete, Route("{id:long}")]
+        public ModelResponse DeleteUbicacion(long id)
+        {
+            var result = wrapper.DeleteUbicacion(id);
+            return result;
+        }
     }
 }

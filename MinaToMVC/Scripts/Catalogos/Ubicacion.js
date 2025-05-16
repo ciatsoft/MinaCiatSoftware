@@ -1,10 +1,7 @@
 ﻿$(document).ready(function () {
-    //$("#frmubicacion").validate({
-    //    rules: {
-    //        "txtNombreUbicacion": "required",
-    //        "txtDescripcionUbicacion": "required",
-    //    }
-    //});
+
+
+
     $("#tableUbicacion").dataTable({
         processing: true,
         destroy: true,
@@ -22,9 +19,9 @@
                 }
             },
             {
-                data: "id", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarUbicacion(' + data + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarUbicacion(' + data + ', this)" />'; // 'this' se pasa para obtener la fila
+                data: "id",
+                render: function (data) {
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarUbicacion(' + data + ')" />';
                 }
             }
         ],
@@ -34,7 +31,7 @@
             "processing": "Procesando...",
             "lengthMenu": "Mostrar _MENU_ entradas",
             "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ning�n dato disponible en esta tabla",
+            "emptyTable": "Ningún dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -42,7 +39,7 @@
             "loadingRecords": "Cargando...",
             "paginate": {
                 "first": "Primero",
-                "last": "�ltimo",
+                "last": "Último",
                 "next": "Siguiente",
                 "previous": "Anterior"
             },
@@ -55,14 +52,78 @@
 
     GetAllUbicacion();
 
+    // Al cargar la página, si ya hay un ID (estamos editando)
     if (UbicacionJson.Id != 0) {
         $("#txtIdUbicacion").val(UbicacionJson.Id);
         $("#txtNombreUbicacion").val(UbicacionJson.NombreUbicacion);
         $("#txtDescripcionUbicacion").val(UbicacionJson.DescripcionUbicacion);
         $("#Estatus").val(UbicacionJson.Estatus);
         $("#EsInterna").prop('checked', UbicacionJson.EsInterna);
+
+        // Habilitar el botón de eliminar
+        $("#btnEliminarUbicacion").prop('disabled', false);
+        // Guardar el ID en el botón de eliminar
+        $("#btnEliminarUbicacion").data('id', UbicacionJson.Id);
     }
 });
+
+// Función para editar ubicación
+function EditarUbicacion(id) {
+    // Guardar el ID en el botón de eliminar
+    $("#btnEliminarUbicacion").data('id', id);
+    // Habilitar el botón de eliminar
+    $("#btnEliminarUbicacion").prop('disabled', false);
+    // Redirigir a la página de edición
+    location.href = "/Catalog/Ubicacion/" + id;
+}
+
+// Función para eliminar ubicación
+function EliminarUbicacion() {
+    // Obtener el ID guardado en el botón
+    var id = $("#btnEliminarUbicacion").data('id');
+
+    if (!id || id == 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se ha seleccionado una ubicación para eliminar',
+            confirmButtonText: 'Aceptar'
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esta acción!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar!',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            PostMVC('/Catalog/DeleteUbicacion', { id: id }, function (r) {
+                if (r.IsSuccess) {
+                    Swal.fire(
+                        'Eliminado!',
+                        'La ubicación ha sido eliminada.',
+                        'success'
+                    ).then(() => {
+                        window.location.href = '/Catalog/Ubicacion';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al eliminar la Ubicacion: ' + r.ErrorMessage,
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            });
+        }
+    });
+}
 
 // Función que se ejecuta al hacer clic en el bot�n de Guardar
 function SaveOrUpdateUbicacion() {
@@ -105,64 +166,6 @@ function SaveOrUpdateUbicacion() {
         });
     }
 }
-
-// Funci�n para eliminar el rol con confirmaci�n y actualizaci�n de estatus
-function EliminarUbicacion(id, boton) {
-    // Obtener la fila correspondiente al bot�n de eliminaci�n
-    var row = $(boton).closest("tr");
-
-    // Obtener los valores de la fila y almacenarlos en variables
-    var nombre = row.find("td:eq(0)").text();  // Nombre
-    var descripcion = row.find("td:eq(1)").text();  // Descripci�n
-
-    // Confirmaci�n de eliminaci�n
-    Swal.fire({
-        title: '¿Está seguro?',
-        text: "¿Desea eliminar la siguiente Ubicación? \nNombre: " + nombre,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Actualizamos el estatus a "Inactivo" (0) y preparamos el par�metro
-            var parametro = {
-                Id: id,
-                NombreUbicacion: nombre,
-                DescripcionUbicacion: descripcion,
-                Estatus: 0,  // Cambiamos el estatus a inactivo (0)
-                CreatedBy: $("#CreatedBy").val(),
-                CreatedDt: $("#CreatedDt").val(),
-                UpdatedBy: $("#UpdatedBy").val(),
-                UpdatedDt: $("#UpdatedDt").val(),
-                EsInterna: $("#EsInterna").is(':checked')
-            };
-            
-            
-            PostMVC('/Catalog/SaveOrUpdateUbicacion', parametro, function (r) {
-                if (r.IsSuccess) {
-                    Swal.fire(
-                        'Eliminado',
-                        'La Ubicación ha sido eliminada.',
-                        'success'
-                    ).then(() => {
-                        window.location.href = '/Catalog/Ubicacion';
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Error al eliminar la Ubicacion: ' + r.ErrorMessage,
-                        confirmButtonText: 'Aceptar'
-                    });
-                }
-            });
-        }
-    });
-}
-
 
 function EditarUbicacion(id) {
     location.href = "/Catalog/Ubicacion/" + id;

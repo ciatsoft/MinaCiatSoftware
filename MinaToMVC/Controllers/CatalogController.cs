@@ -159,6 +159,12 @@ namespace MinaToMVC.Controllers
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
+        public async Task<string> DeleteUbicacion(long id)
+        {
+            var result = await httpClientConnection.DeleteUbicacion(id);
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
 
         #endregion
 
@@ -192,6 +198,7 @@ namespace MinaToMVC.Controllers
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+
         #endregion
 
         #region TipoMaterialUbicacion
