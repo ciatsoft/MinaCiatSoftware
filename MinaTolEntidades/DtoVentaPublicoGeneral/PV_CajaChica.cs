@@ -14,5 +14,6 @@ namespace MinaTolEntidades.DtoVentaPublicoGeneral
         public string Comentarios { get; set; }
         public string UsuarioName { get; set; }
         public Usuario Usuario { get; set; }
+        public int Corte_Id { get; set; }
     }
 }

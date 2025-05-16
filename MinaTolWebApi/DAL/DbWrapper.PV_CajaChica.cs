@@ -25,7 +25,6 @@ namespace MinaTolWebApi.DAL
                 {
             new SqlParameter("@Id", tv.Id),
             new SqlParameter("@Monto", tv.Monto),
-            new SqlParameter("@Fecha", tv.Fecha),
             new SqlParameter("@Comentario", tv.Comentarios ?? (object)DBNull.Value),
             new SqlParameter("@Estatus", tv.Estatus),
             new SqlParameter("@CreatedBy", tv.CreatedBy ?? (object)DBNull.Value),
@@ -142,20 +141,23 @@ namespace MinaTolWebApi.DAL
             try
             {
                 response.IsSuccess = true;
-                var parameters = new List<SqlParameter>
-                {
-                    new SqlParameter("@UserName", SqlDbType.NVarChar, 100) { Value = userName },
-                    new SqlParameter("@Fecha",    SqlDbType.DateTime)      { Value = fecha }
-                };
+                var fechaSolo = fecha.Date;
 
-                var result = GetObject(
+                var parameters = new List<SqlParameter>
+        {
+            new SqlParameter("@UserName", SqlDbType.NVarChar, 100) { Value = userName },
+            new SqlParameter("@Fecha",    SqlDbType.Date)          { Value = fechaSolo }
+        };
+
+                // CORREGIDO: usar GetList para obtener varios registros
+                var result = GetList(
                     "SearchPV_VajaChicaByDateAndUser",
                     CommandType.StoredProcedure,
                     parameters,
                     reader => FillEntity<PV_CajaChica>(reader)
                 );
 
-                response.Response = result;
+                response.Response = result; // ahora será una lista de PV_CajaChica
             }
             catch (Exception ex)
             {

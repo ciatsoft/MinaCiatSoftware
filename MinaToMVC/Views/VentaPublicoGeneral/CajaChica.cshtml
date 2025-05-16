@@ -43,13 +43,13 @@
                                 <label>$</label>
                             </div>
                             <div class="col-lg-10">
-                                @Html.TextBoxFor(x => x.Monto, new { @class = "form-control", @type = "number", @min = "0", @step = "any", oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
+                                @Html.TextBoxFor(x => x.Monto, new { @class = "form-control", @type = "number", @min = "0", @step = "any", @required = "required", oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <label>Comentario:</label>
-                        @Html.TextBoxFor(x => x.Comentarios, new { @class = "form-control" })
+                        @Html.TextBoxFor(x => x.Comentarios, new { @class = "form-control", @required = "required" })
                     </div>
                 </div>
                 <div class="row">
@@ -70,7 +70,7 @@
                         @* Este campo será llenado automáticamente desde el dropdown *@
                         <input type="text" id="userName" name="userName" class="form-control" readonly hidden />
 
-                        <input id="btnFiltrar" type="button" value="Filtrar" class="btn btn-info" />
+                        <input id="btnFiltrar" type="button" value="Filtrar" class="btn-custom-clean" />
                     </div>
                 </div>
             </div>

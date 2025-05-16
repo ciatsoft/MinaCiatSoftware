@@ -1,3 +1,35 @@
+$(document).ready(function () {
+    // Inicializa la tabla vacía al cargar la página
+    $('#tblPV_CajaChica').DataTable({
+        data: [],
+        columns: [
+            { data: 'id', title: 'ID' },
+            { data: 'usuarioName', title: 'Usuario' },
+            {
+                data: 'monto',
+                title: 'Monto',
+                render: function (data) {
+                    if (data === null || data === undefined) return '';
+                    return `$${parseFloat(data).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }).replace('$', '')}`;
+                }
+            },
+            {
+                data: 'fecha',
+                title: 'Fecha',
+                render: function (data) {
+                    if (!data) return '';
+                    return new Date(data).toLocaleString('es-MX');
+                }
+            },
+            { data: 'comentarios', title: 'Comentarios' },
+            { data: 'corte_Id', title: 'Corte Id' },
+        ],
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json'
+        }
+    });
+});
+
 document.addEventListener("DOMContentLoaded", function () {
     const drop = document.getElementById("usuarioDrop");
     const createdBy = document.getElementById("createdBy");
@@ -33,13 +65,46 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-
 function SearchPV_VajaChicaByDateAndUser(userName, fecha) {
-    PostMVC('/VentaPublicoGeneral/SearchPV_VajaChicaByDateAndUser', { userName, fecha }, function (r) {
+    PostMVC('/VentaPublicoGeneral/SearchPV_VajaChicaByDateAndUser', { userName, fecha }, function (r, textStatus, jqXHR) {
+        console.log("Respuesta objeto r:", r);
         if (r.IsSuccess) {
-            alert("Éxito!");
+            const data = r.Response;
+
+            // Destruye DataTable si ya existe (evita duplicados al hacer múltiples filtros)
+            if ($.fn.DataTable.isDataTable('#tblPV_CajaChica')) {
+                $('#tblPV_CajaChica').DataTable().clear().destroy();
+            }
+
+            // Mapea los datos al DataTable
+            $('#tblPV_CajaChica').DataTable({
+                data: data,
+                columns: [
+                    { data: 'id', title: 'ID' },
+                    { data: 'usuarioName', title: 'Usuario' },
+                    {
+                        data: 'monto',
+                        title: 'Monto',
+                        render: function (data) {
+                            return `$${parseFloat(data).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }).replace('$', '')}`;
+                        }
+                    },
+                    {
+                        data: 'fecha',
+                        title: 'Fecha',
+                        render: function (data) {
+                            return new Date(data).toLocaleString('es-MX'); // muestra fecha + hora
+                        }
+                    },
+                    { data: 'comentarios', title: 'Comentarios' },
+                    { data: 'corte_Id', title: 'Corte Id' },
+                ],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json'
+                }
+            });
         } else {
-            alert("Error al actualizar la venta. Ver consola para más detalles.");
+            alert("Error al obtener registros. Ver consola para más detalles.");
         }
     });
 }
