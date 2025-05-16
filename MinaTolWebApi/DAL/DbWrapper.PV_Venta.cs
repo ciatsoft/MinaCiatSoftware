@@ -1,6 +1,7 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.DtoVentaPublicoGeneral;
 using MinaTolEntidades.DtoVentas;
+using MinaTolEntidades.DtoViajes;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -27,12 +28,12 @@ namespace MinaTolWebApi.DAL
                     new SqlParameter("@TipoMaterial", v.TipoMaterial.Id),
                     new SqlParameter("@FormaDePago", v.FormaDePago),
                     new SqlParameter("@CantidadRecibida", v.CantidadRecibida),
+                    new SqlParameter("@PrecioUnidad", v.PrecioUnidad),
                     new SqlParameter("@Transporte", v.Transporte),
                     new SqlParameter("@Placa", v.Placa),
-                    new SqlParameter("@Cantidad", v.Cantidad),
+                    new SqlParameter("@Cantidad", Convert.ToInt32(v.Cantidad)),
                     new SqlParameter("@UnidadMedida", v.UnidadMedida.Id),
                     new SqlParameter("@Usuario", v.Usuario.Id),
-                    new SqlParameter("@Fecha", v.Fecha),
                     new SqlParameter("@Estatus", v.Estatus),
                     new SqlParameter("@TotalPago", v.TotalPago),
                     new SqlParameter("@CreatedBy", v.CreatedBy),

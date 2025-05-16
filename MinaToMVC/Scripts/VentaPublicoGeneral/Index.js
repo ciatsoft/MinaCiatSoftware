@@ -1,4 +1,18 @@
+// Declarar precioMaterial como variable global
+var precioMaterial = 0;
+
 $(document).ready(function () {
+
+    // Actualiza el precio y total cuando cambia la cantidad
+    $("#cantidadRecibida").on("input", function () {
+        ObtenerPrecioMaterial();
+    });
+
+    // También cuando cambia el tipo de material
+    $("#TipoMaterial_Id").on("change", function () {
+        ObtenerPrecioMaterial();
+    });
+
     $("#tablePuntoVenta").dataTable({
         processing: true,
         destroy: true,
@@ -24,14 +38,59 @@ $(document).ready(function () {
                     return data;
                 }
             },
-            { data: "cantidadRecibida", title: "Cantidad Recibida" },
-            { data: "totalPago", title: "Total Pago" },
+            {
+                data: "cantidadRecibida",
+                title: "Cantidad Recibida",
+                render: function (data, type, row) {
+                    if (data == null || data === "") return "$0.00";
+                    return parseFloat(data).toLocaleString('es-MX', {
+                        style: 'currency',
+                        currency: 'MXN',
+                        minimumFractionDigits: 2
+                    });
+                }
+            },
+            {
+                data: "totalPago",
+                title: "Total Pago",
+                render: function (data, type, row) {
+                    if (data == null || data === "") return "$0.00";
+                    return parseFloat(data).toLocaleString('es-MX', {
+                        style: 'currency',
+                        currency: 'MXN',
+                        minimumFractionDigits: 2
+                    });
+                }
+            },
             { data: "transporte", title: "Transporte" },
             { data: "placa", title: "Placa" },
             { data: "cantidad", title: "Cantidad" },
+            {
+                data: "precioUnidad",
+                title: "Precio por Unidad",
+                render: function (data, type, row) {
+                    if (data == null || data === "") return "$0.00";
+                    return parseFloat(data).toLocaleString('es-MX', {
+                        style: 'currency',
+                        currency: 'MXN',
+                        minimumFractionDigits: 2
+                    });
+                }
+            },
             { data: "nombreUnidadMedida", title: "Unidad Medida" },
             { data: "userName", title: "Usuario" },
-            { data: "fecha", title: "Fecha" },
+            {
+                data: "fecha",
+                title: "Fecha",
+                render: function (data, type, row) {
+                    if (!data) return "";
+                    let date = new Date(data);
+                    let day = String(date.getDate()).padStart(2, '0');
+                    let month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses empiezan en 0
+                    let year = date.getFullYear();
+                    return `${day}/${month}/${year}`;
+                }
+            },
             {
                 data: "estatus",
                 title: "Estatus",
@@ -156,10 +215,6 @@ function CambioUbicacion() {
     GetMVC("/VentaPublicoGeneral/GetMaterialUbicacionByUbicacion/" + ubicacionSeleccionada, function (r) {
         if (r.IsSuccess) {
             $("#TipoMaterial_Id").empty();
-
-            // Agregar opción por defecto
-            $("#TipoMaterial_Id").append('<option value="">Selecciona un material</option>');
-
             $.each(r.Response, function (index, item) {
                 var templateoption = "<option value='" + item.material.id + "'>" + item.material.nombreTipoMaterial + "</option>";
                 $("#TipoMaterial_Id").append(templateoption);
@@ -181,8 +236,10 @@ function CambioUbicacion() {
     });
 }
 
+// Función para obtener y asignar el precio dependiendo de la cantidad
 function ObtenerPrecioMaterial() {
     var materialSeleccionado = $("#TipoMaterial_Id").val();
+    var cantidadFormulario = parseFloat($("#cantidadRecibida").val()) || 0;
 
     if (!materialSeleccionado) {
         console.warn("No hay material seleccionado aún.");
@@ -192,60 +249,68 @@ function ObtenerPrecioMaterial() {
         return;
     }
 
+    // Obtener los precios desde el backend
     GetMVC("/VentaPublicoGeneral/GetPreciosBymaterialId/" + materialSeleccionado, function (r) {
         if (r.IsSuccess && Array.isArray(r.Response) && r.Response.length > 0) {
-            var datos = r.Response[0];
-            precioMaterial = parseFloat(datos.precioActual) || 0;
 
-            // Asignar el precio al input
-            $("#precioMaterial").val(precioMaterial);
+            // Filtrar solo los objetos con esPrecioActivo = true
+            const preciosActivos = r.Response.filter(item => item.esPrecioActivo === true);
 
-            // Al obtener el precio, actualizamos el total
+            if (preciosActivos.length > 0) {
+                var datos = preciosActivos[0]; // Usamos el primero activo
+                var cantidadMenudeo = parseFloat(datos.cantidad) || 0;
+
+                precioMaterial = (cantidadFormulario > cantidadMenudeo)
+                    ? parseFloat(datos.precioMayoreo) || 0
+                    : parseFloat(datos.precioMenudeo) || 0;
+
+                $("#precioMaterial").val(precioMaterial);
+                $("#PrecioUnidad").val(precioMaterial);
+            } else {
+                console.warn("No se encontraron precios con esPrecioActivo = true");
+                precioMaterial = 0;
+                $("#precioMaterial").val(0);
+                $("#PrecioUnidad").val(0);
+            }
+
             actualizarTotal();
-
         } else {
             console.error("Error en la respuesta:", r);
-            $("#precioMaterial").val(0);
             precioMaterial = 0;
+            $("#precioMaterial").val(0);
             actualizarTotal();
         }
     });
 }
 
+// Función para calcular y actualizar el total a pagar
 function actualizarTotal() {
-    // Obtener el valor de la cantidad ingresada en el campo
     var cantidad = parseFloat($("#cantidadRecibida").val()) || 0;
-
-    // Calcular el total
     var total = cantidad * precioMaterial;
 
-    // Mostrar el total con formato de moneda
-    $("#totalPagar").text("Total a Pagar: $" + total.toFixed(2));
+    $("#totalPagar").text("Total a Pagar: " + formatMoney(total));
     $("#TotalPagoInput").val(total);
 
-    // Actualizar el cambio automáticamente
-    actualizarCambio();
+    actualizarCambio(); // Asegúrate de tener esta función definida
 }
 
 function actualizarCambio() {
-    // Obtener el valor de la cantidad recibida
     var dineroRecibido = parseFloat($("#dineroRecibido").val()) || 0;
 
-    // Obtener el valor total a pagar (quitando el texto y el símbolo $)
-    var totalPagarText = $("#totalPagar").text().replace("Total a Pagar: $", "");
-    var totalPagar = parseFloat(totalPagarText) || 0;
+    // Obtener el total desde el input oculto, no desde el texto formateado
+    var totalPagar = parseFloat($("#TotalPagoInput").val()) || 0;
 
     // Calcular el cambio
     var cambio = dineroRecibido - totalPagar;
 
     // Mostrar el total recibido con formato de moneda
-    $("#totalRecibido").text("Dinero Recibido: $" + dineroRecibido.toFixed(2));
+    $("#totalRecibido").text("Dinero Recibido: " + formatMoney(dineroRecibido));
 
-    // Condicional para mostrar el cambio
+    // Mostrar el cambio o advertencia por fondos insuficientes
     if (cambio < 0) {
         $("#cambio").text("Cambio: Fondos insuficientes").css("color", "red");
     } else {
-        $("#cambio").text("Cambio: $" + cambio.toFixed(2)).css("color", "green");
+        $("#cambio").text("Cambio: " + formatMoney(cambio)).css("color", "green");
     }
 }
 

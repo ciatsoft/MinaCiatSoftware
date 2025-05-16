@@ -36,7 +36,14 @@
                 <div class="row">
                     <div class="col-lg-4">
                         <label for="txtPrecioActivo">Precio Menudeo:</label>
-                        @Html.TextBoxFor(x => x.PrecioMenudeo, new { @class = "form-control", @type = "numer", @min = "0" })
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <label>$</label>
+                            </div>
+                            <div class="col-lg-10">
+                                @Html.TextBoxFor(x => x.PrecioMenudeo, new { @class = "form-control", @type = "number", @min = "0", @step = "any", oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
+                            </div>
+                        </div>
                     </div>
                     <div class="col-lg-4">
                         <label>Cantidad Minima para Precio Menudeo:</label>
@@ -44,7 +51,14 @@
                     </div>
                     <div class="col-lg-4">
                         <label for="txtPrecioActivo">Precio Mayoreo:</label>
-                        @Html.TextBoxFor(x => x.PrecioMayoreo, new { @class = "form-control", @type = "numer", @min = "0" })
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <label>$</label>
+                            </div>
+                            <div class="col-lg-10">
+                                @Html.TextBoxFor(x => x.PrecioMayoreo, new { @class = "form-control", @type = "number", @min = "0", @step = "any", oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -61,7 +75,7 @@
                     <div class="col-md-12">
                         <input id="btnGuardar" type="submit" value="Guardar" class="btn btn-success" />
                         <a href="/VentaPublicoGeneral/Precios" class="btn btn-custom-cancel">Cancelar</a>
-                        <input type="button" value="Eliminar" id="btnEliminar" class="btn btn-custom-cancel" data-id="@(Model?.Id ?? 0)" disabled onclick="EliminarPrecio(this)" />
+                        <input type="button" value="Eliminar" id="btnEliminar" class="btn btn-custom-cancel" data-id="@(Model?.Id ?? 0)" onclick="EliminarPrecio(this)" />
                     </div>
                 </div>
             </div>

@@ -19,7 +19,7 @@ namespace MinaTolWebApi.Controllers
         {
             wrapper = new DbWrapper();
         }
-        [HttpGet, Route("")]
+        [HttpGet, Route("List")]
         public ModelResponse GetAllPV_CajaChica()
         {
             var result = wrapper.GetAllPV_CajaChica();
@@ -43,6 +43,14 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.SaveOrUpdatePV_CajaChica(t);
             return result;
         }
+
+        [HttpGet, Route("search")]
+        public async Task<ModelResponse> SearchPV_VajaChicaByDateAndUser([FromUri] string userName,[FromUri] DateTime fecha)
+        {
+            var result = wrapper.SearchPV_VajaChicaByDateAndUser(userName, fecha);
+            return result;
+        }
+
 
 
     }

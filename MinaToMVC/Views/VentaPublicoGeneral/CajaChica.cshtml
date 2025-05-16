@@ -3,19 +3,24 @@
     ViewBag.Title = "PV_CajaChica";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var formasPago = (List<string>)ViewBag.FormasPago;
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
 
 }
-<link href="@Url.Content("~/Assets/css/EstilosBtnCambios/EstiloBtn.css")" rel="stylesheet" />
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 
 @using (Html.BeginForm("SaveOrUpdatePV_CajaChica", "VentaPublicoGeneral", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmPrecioMaterial", @id = "frmPV_CajaChica" }))
 {
     @Html.HiddenFor(x => x.Id)
     @Html.HiddenFor(x => x.Estatus)
-    @Html.HiddenFor(x => x.CreatedDt)
-    @Html.HiddenFor(x => x.CreatedBy)
-    @Html.HiddenFor(x => x.UpdatedBy)
-    @Html.HiddenFor(x => x.UpdatedDt)
+    @Html.TextBox("CreatedDt", DateTime.Now.ToString("yyyy-MM-ddTHH:mm"), new { @class = "form-control", type = "datetime-local", style = "display:none;" })
+    @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy" })
+    @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy" })
+    @Html.TextBox("UpdatedDt", DateTime.Now.ToString("yyyy-MM-ddTHH:mm"), new { @class = "form-control", type = "datetime-local", style = "display:none;" })
+    //Usuario Autenticado
+    @Html.DropDownListFor(x => x.Usuario.Id, (IEnumerable<SelectListItem>)ViewBag.Usuarios, new { @class = "form-control", id = "usuarioDrop", style = "display:none;" })
+    @Html.HiddenFor(x => x.UsuarioName, new { id = "usuarioName" })
 
     <div class="content">
         <br>
@@ -23,16 +28,49 @@
         <div class="tabla-consultas-roll">
             <div class="rectangulos" style="width: 100%;">
                 <div class="row">
+                    @*<div class="col-lg-3">
+                <label>ID Precio:</label>
+                <input type="text" id="txtidprecio" name="idprecio" class="form-control" disabled />
+            </div>*@
                     <div class="col-lg-3">
-                        <label>ID Precio:</label>
-                        <input type="text" id="txtidprecio" name="idprecio" class="form-control" disabled />
+                        <label>Fecha:</label>
+                        @Html.TextBoxFor(x => x.Fecha, new { @class = "form-control", type = "text", @Value = DateTime.Now.ToString("dd-MM-yyyy  :  HH:mm"), disabled = "true" })
                     </div>
-                    
+                    <div class="col-lg-3">
+                        <label>Monto:</label>
+                        <div style="margin-top: 12px" class="row">
+                            <div class="col-lg-2">
+                                <label>$</label>
+                            </div>
+                            <div class="col-lg-10">
+                                @Html.TextBoxFor(x => x.Monto, new { @class = "form-control", @type = "number", @min = "0", @step = "any", @required = "required", oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <label>Comentario:</label>
+                        @Html.TextBoxFor(x => x.Comentarios, new { @class = "form-control", @required = "required" })
+                    </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12">
-                        <input type="submit" value="Guardar" onclick="confirmarGuardar()()" class="btn btn-success" />
-                        <a href="/VentaPublicoGeneral/PV_CajaChica" class="btn btn-custom-cancel">Cancelar</a>
+                    <div class="col-lg-12 d-flex">
+                        <div>
+                            <input id="btnGuardar" type="submit" value="Guardar" class="btn btn-success" style="margin-right: 10px" />
+                        </div>
+                        <a href="/VentaPublicoGeneral/CajaChica" class="btn btn-custom-cancel">Cancelar</a>
+                    </div>
+                </div>
+                <br />
+                @* FILTRADO POR FECHA *@
+                <div class="col-lg-2 d-flex align-items-end">
+                    <div class="me-2">
+                        <label for="fechaFiltro" class="form-label">Fecha:</label>
+                        <input type="date" id="fechaFiltro" name="fechaFiltro" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+
+                        @* Este campo será llenado automáticamente desde el dropdown *@
+                        <input type="text" id="userName" name="userName" class="form-control" readonly hidden />
+
+                        <input id="btnFiltrar" type="button" value="Filtrar" class="btn-custom-clean" />
                     </div>
                 </div>
             </div>
@@ -42,5 +80,4 @@
     </div>
 }
 
-<script src="@(Url.StaticFile("Scripts/VentaPublicoGeneral/Precios.js"))"></script>
-
+<script src="@(Url.StaticFile("Scripts/VentaPublicoGeneral/CajaChica.js"))"></script>

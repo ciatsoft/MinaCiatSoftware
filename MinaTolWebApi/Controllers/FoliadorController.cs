@@ -19,7 +19,7 @@ namespace MinaTolWebApi.Controllers
             wrapper = new DbWrapper();
         }
         [HttpGet, Route("{Nombre}")]
-        public async Task<ModelResponse> GetFoliadorByNombre(string Nombre)
+        public ModelResponse GetFoliadorByNombre(string Nombre)
         {
             var result = wrapper.GetFoliadorByNombre(Nombre);
             return result;

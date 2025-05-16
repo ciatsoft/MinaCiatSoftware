@@ -15,108 +15,110 @@
 {
     @Html.HiddenFor(x => x.Id)
     @Html.HiddenFor(x => x.Estatus)
-    @Html.HiddenFor(x => x.CreatedDt, DateTime.Now)
-    @Html.HiddenFor(x => x.CreatedBy, usuarioToken.UserName)
-    @Html.HiddenFor(x => x.UpdatedBy, usuarioToken.UserName)
-    @Html.HiddenFor(x => x.UpdatedDt, DateTime.Now)
+    @Html.HiddenFor(x => x.CreatedDt)
+    @Html.HiddenFor(x => x.CreatedBy)
+    @Html.HiddenFor(x => x.UpdatedBy)
+    @Html.HiddenFor(x => x.UpdatedDt)
+    @Html.HiddenFor(x => x.Folio)
 
-<div class="content">
-    <br />
-    <center><h1>Venta publico en general</h1></center>
-    <div class="tabla-consultas-empleados">
-        <div class="rectangulos" style="width: 100%;">
-            <div class="row">
-                <div class="col-lg-3">
-                    <label>Folio:</label>
-                    @Html.TextBoxFor(x => x.Folio, new { @class = "form-control" })
+    <div class="content">
+        <br />
+        <center><h1>Venta publico en general</h1></center>
+        <div class="tabla-consultas-empleados">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Folio:</label>
+                        @Html.TextBoxFor(x => x.Folio, new { @class = "form-control", @disabled = "disabled" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Planta:</label>
+                        @Html.DropDownListFor(x => x.Ubicacion.Id, (IEnumerable<SelectListItem>)ViewBag.Ubicaciones, new { @class = "form-control", @onchange = "CambioUbicacion()" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Material:</label>
+                        @Html.DropDownListFor(x => x.TipoMaterial.Id, (IEnumerable<SelectListItem>)ViewBag.Materiales, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Cantidad:</label>
+                        @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control", @type = "number", id = "cantidadRecibida" })
+                    </div>
                 </div>
-                <div class="col-lg-3">
-                    <label>Planta:</label>
-                    @Html.DropDownListFor(x => x.Ubicacion.Id, (IEnumerable<SelectListItem>)ViewBag.Ubicaciones, new { @class = "form-control", @onchange = "CambioUbicacion()" })
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Unidad de Medida:</label>
+                        @Html.DropDownListFor(x => x.UnidadMedida.Id, (IEnumerable<SelectListItem>)ViewBag.UnidadMedida, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Forma de pago:</label>
+                        <select id="formaPago" name="FormaDePago" class="form-control">
+                            @foreach (var formaPago in formasPago)
+                            {
+                                var splitFormaPago = formaPago.Split(':');
+                                <option value="@splitFormaPago[0]">@splitFormaPago[1]</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Cantidad Recibida:</label>
+                        @Html.TextBoxFor(x => x.CantidadRecibida, new { @class = "form-control", @type = "number", id = "dineroRecibido" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Vendedor:</label>
+                        @Html.DropDownListFor(x => x.Usuario.Id, (IEnumerable<SelectListItem>)ViewBag.Usuarios, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-6">
+                        <label>Descripción del transporte:</label>
+                        @Html.TextBoxFor(x => x.Transporte, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Placa:</label>
+                        @Html.TextBoxFor(x => x.Placa, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Fecha:</label>
+                        <input class="form-control" type="text" id="fecha" readonly />
+                        @Html.HiddenFor(x => x.Fecha, new { @class = "form-control", @Value = DateTime.Now })
+                    </div>
                 </div>
-                <div class="col-lg-3">
-                    <label>Material:</label>
-                    @Html.DropDownListFor(x => x.TipoMaterial.Id, (IEnumerable<SelectListItem>)ViewBag.Materiales, new { @class = "form-control" })
-                </div>
-                <div class="col-lg-3">
-                    <label>Cantidad:</label>
-                    @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control", id = "cantidadRecibida" })
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-3">
-                    <label>Unidad de Medida:</label>
-                    @Html.DropDownListFor(x => x.UnidadMedida.Id, (IEnumerable<SelectListItem>)ViewBag.UnidadMedida, new { @class = "form-control" })
-                </div>
-                <div class="col-lg-3">
-                    <label>Forma de pago:</label>
-                    <select id="formaPago" name="FormaDePago" class="form-control">
-                        @foreach (var formaPago in formasPago)
-                        {
-                            var splitFormaPago = formaPago.Split(':');
-                            <option value="@splitFormaPago[0]">@splitFormaPago[1]</option>
-                        }
-                    </select>
-                </div>
-                <div class="col-lg-3">
-                    <label>Cantidad Recibida:</label>
-                    @Html.TextBoxFor(x => x.CantidadRecibida, new { @class = "form-control", id = "dineroRecibido" })
-                </div>
-                <div class="col-lg-3">
-                    <label>Vendedor:</label>
-                    @Html.DropDownListFor(x => x.Usuario.Id, (IEnumerable<SelectListItem>)ViewBag.Usuarios, new { @class = "form-control" })
-                </div>
-                <div class="col-lg-6">
-                    <label>Descripción del transporte:</label>
-                    @Html.TextBoxFor(x => x.Transporte, new { @class = "form-control" })
-                </div>
-                <div class="col-lg-3">
-                    <label>Placa:</label>
-                    @Html.TextBoxFor(x => x.Placa, new { @class = "form-control" })
-                </div>
-                <div class="col-lg-3">
-                    <label>Fecha:</label>
-                    <input class="form-control" type="text" id="fecha" readonly/>
-                    @Html.HiddenFor(x => x.Fecha, new { @class = "form-control", @readonly = "readonly", @Value = DateTime.Now })
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="ms-3 d-flex flex-row align-items-start justify-content-between flex-wrap">
-                        <div class="me-4">
-                            <h4>
-                                <label id="totalPagar" class="form-label fw-bold">Total a Pagar: $0.00</label><br>
-                                @Html.HiddenFor(x => x.TotalPago, new { @class = "form-control", id= "TotalPagoInput" })
-                                <label id="totalRecibido" class="form-label fw-bold">Dinero Recibido: $0.00</label><br>
-                                <label id="cambio" class="form-label fw-bold">Cambio: $0.00</label>
-                            </h4>
-                        </div>
-                        <div class="col-md-4" style="margin-top: 5px;">
-                            <label for="precioMaterial" class="form-label fw-bold">
-                                Precio por Unidad:
-                                $<input id="precioMaterial" name="PrecioUnitario" value="0" readonly
-                                        style="background-color: white; color: black; border: none; outline: none; width: 60px;" />
-                            </label>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="ms-3 d-flex flex-row align-items-start justify-content-between flex-wrap">
+                            <div class="me-4">
+                                <h4>
+                                    <label id="totalPagar" class="form-label fw-bold">Total a Pagar: $0.00</label><br>
+                                    @Html.HiddenFor(x => x.TotalPago, new { @class = "form-control", id = "TotalPagoInput" })
+                                    <label id="totalRecibido" class="form-label fw-bold">Dinero Recibido: $0.00</label><br>
+                                    <label id="cambio" class="form-label fw-bold">Cambio: $0.00</label>
+                                </h4>
+                            </div>
+                            <div class="col-md-4" style="margin-top: 5px;">
+                                <label for="precioMaterial" class="form-label fw-bold">
+                                    Precio por Unidad:
+                                    $<input id="precioMaterial" name="PrecioUnitario" value="0" readonly
+                                            style="background-color: white; color: black; border: none; outline: none; width: 60px;" />
+                                    @Html.HiddenFor(x => x.PrecioUnidad, new { @class = "form-control", id = "PrecioUnidad" })
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12 d-flex justify-content-between">
-                    <div>
-                        <input id="btnGuardar" type="submit" value="Guardar" class="btn btn-success" />
+                <div class="row">
+                    <div class="col-lg-12 d-flex justify-content-between">
+                        <div>
+                            <input id="btnGuardar" type="submit" value="Guardar" class="btn btn-success" />
+                        </div>
+                        <a href="/VentaPublicoGeneral/Index" class="btn btn-custom-cancel">Cancelar</a>
                     </div>
-                    <a href="/VentaPublicoGeneral/Index" class="btn btn-custom-cancel">Cancelar</a>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <table class="table table-bordered table-striped" id="tablePuntoVenta" style="width: 100%;"></table>
+        <div class="row">
+            <div class="col-lg-12">
+                <table class="table table-bordered table-striped" id="tablePuntoVenta" style="width: 100%;"></table>
+            </div>
         </div>
     </div>
-</div>
 }
 <script src="@(Url.StaticFile("Scripts/VentaPublicoGeneral/Index.js"))"></script>
 <script>

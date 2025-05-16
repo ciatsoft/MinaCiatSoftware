@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using MinaTolEntidades.DtoSucursales;
 using MinaTolEntidades.DtoViajes;
 using System.Web.Mvc;
+using System.Web;
 
 namespace MinaToMVC.DAL
 {
@@ -66,10 +67,22 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
-        
 
+        //Obtener Filtrado por Usuario Logueado y Fecha
+        public async Task<ModelResponse> SearchPV_VajaChicaByDateAndUser(string userName, DateTime fecha)
+        {
+            // Armar la URL con parámetros de consulta correctamente
+            string url = $"api/PV_CajaChica/search?userName={HttpUtility.UrlEncode(userName)}&fecha={fecha.ToString("yyyy-MM-dd")}";
 
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
 
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
 
     }
 }

@@ -14,6 +14,7 @@ using System.Web;
 using System.Web.Mvc;
 using static MinaToMVC.Controllers.Filters.FiltersHelper;
 using System.Security.Cryptography;
+using MinaTolEntidades.DtoViajes;
 
 namespace MinaToMVC.Controllers
 {
@@ -21,8 +22,6 @@ namespace MinaToMVC.Controllers
     public class VentaPublicoGeneralController : BaseController
     {
         #region View
-        #region View
-
         public async Task<ActionResult> Index()
         {
             var venta = new PV_Ventas();
@@ -63,8 +62,12 @@ namespace MinaToMVC.Controllers
             };
             var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
 
-
             var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            var foliadorResponse = await httpClientConnection.GetFoliadorByNombre("VentaPublicoGeneral");
+            var foliador = JsonConvert.DeserializeObject<DtoFoliador>(foliadorResponse.Response.ToString());
+            foliador.CalcualrConsecutivoString();
+            venta.Folio = foliador.ConsecutivoString;
 
 
             ViewBag.Ubicaciones = ubicacionDdl;
@@ -76,7 +79,6 @@ namespace MinaToMVC.Controllers
 
             return View(venta);
         }
-
         public async Task<ActionResult> Precios(long id = 0)
         {
             var precios = new PV_Precio();
@@ -95,10 +97,36 @@ namespace MinaToMVC.Controllers
 
             return View(precios);
         }
+        public ActionResult CajaChica()
+        {
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
 
-        #endregion
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
 
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
 
+            return View();
+        }
+        public async Task<ActionResult> CorteCaja(long id = 0)
+        {
+            var roll = new PV_CorteCaja();
+            if (id != 0)
+            {
+                var result = await httpClientConnection.GetPV_CorteCajaById(id);
+                roll = JsonConvert.DeserializeObject<PV_CorteCaja>(result.Response.ToString());
+            }
+            return View(roll);
+        }
         #endregion
 
         #region Partial View
@@ -119,25 +147,24 @@ namespace MinaToMVC.Controllers
         #endregion
 
         #region Data Acces
+
+        #region Venta publico en General
         public async Task<ActionResult> SaveOrUpdateVenta(PV_Ventas venta)
         {
             var r = await httpClientConnection.SaveOrUpdatePV_Venta(venta);
             return Redirect("Index");
         }
-
         public async Task<ActionResult> ActualizarEstatusVenta(int id, string valor)
         {
             var r = await httpClientConnection.ActualizarEstatusVenta(id, valor);
             return Json(r, JsonRequestBehavior.AllowGet);
         }
-
         public async Task<string> GetAllPV_Ventas()
         {
             var token = Helpers.SessionHelper.GetSessionUser();
             var result = await httpClientConnection.GetAllPV_Ventas();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-
         public async Task<string> GetMaterialUbicacionByUbicacion(long id)
         {
             var result = await httpClientConnection.GetMaterialUbicacionByUbicacion(id);
@@ -145,7 +172,7 @@ namespace MinaToMVC.Controllers
         }
         #endregion
 
-        #region Precio
+        #region Precios
         public async Task<string> GetPreciosBymaterialId(long id)
         {
             var result = await httpClientConnection.GetPrecioByMaterialId(id);
@@ -161,69 +188,58 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.DeletePV_Precio(id);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
-
         public async Task<string> GetPV_PrecioByPV_Material(int id)
         {
             var result = await httpClientConnection.GetPV_PrecioByPV_Material(id);
             return JsonConvert.SerializeObject(result);
         }
-
         #endregion
 
         #region  CajaChica
-                public async Task<ActionResult> PV_CajaChica(long id = 0)
-                {
-                    var roll = new PV_CajaChica();
-                    if (id != 0)
-                    {
-                        var result = await httpClientConnection.GetPV_CajaChicaById(id);
-                        roll = JsonConvert.DeserializeObject<PV_CajaChica>(result.Response.ToString());
-                    }
-                    return View(roll);
-                }
-                public async Task<string> SaveOrUpdatePV_CajaChica(PV_CajaChica r)
-                {
-
-                    var result = await httpClientConnection.SaveOrUpdatePV_CajaChica(r);
-                    return JsonConvert.SerializeObject(result);
-                }
-
-                public async Task<string> GetAllPV_CajaChica()
-                {
-                    var result = await httpClientConnection.GetAllPV_CajaChica();
-
-                    return Newtonsoft.Json.JsonConvert.SerializeObject(result);
-                }
-                public async Task<String> DeletePV_CajaChica(long id)
-                {
-                    var result = await httpClientConnection.DeletePV_CajaChica(id);
-
-                    return Newtonsoft.Json.JsonConvert.SerializeObject(result);
-                }
-                public ActionResult CajaChica()
-                {
-                    return View();
-                }
-        #endregion
-
-        #region CoteCaja
-        public async Task<ActionResult> CorteCaja(long id = 0)
+        public async Task<ActionResult> PV_CajaChica(long id = 0)
         {
-            var roll = new PV_CorteCaja();
+            var roll = new PV_CajaChica();
             if (id != 0)
             {
-                var result = await httpClientConnection.GetPV_CorteCajaById(id);
-                roll = JsonConvert.DeserializeObject<PV_CorteCaja>(result.Response.ToString());
+                var result = await httpClientConnection.GetPV_CajaChicaById(id);
+                roll = JsonConvert.DeserializeObject<PV_CajaChica>(result.Response.ToString());
             }
             return View(roll);
         }
+        public async Task<ActionResult> SaveOrUpdatePV_CajaChica(PV_CajaChica r)
+        {
+            var result = await httpClientConnection.SaveOrUpdatePV_CajaChica(r);
+            return Redirect("CajaChica");
+        }
+        public async Task<string> GetAllPV_CajaChica()
+        {
+            var result = await httpClientConnection.GetAllPV_CajaChica();
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<String> DeletePV_CajaChica(long id)
+        {
+            var result = await httpClientConnection.DeletePV_CajaChica(id);
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        //Buscar filtrado
+        public async Task<string> SearchPV_VajaChicaByDateAndUser(string userName, DateTime fecha)
+        {
+            var result = await httpClientConnection.SearchPV_VajaChicaByDateAndUser(userName, fecha);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        #endregion
+
+        #region CoteCaja        
         public async Task<string> SaveOrUpdatePV_CorteCaja(PV_CorteCaja r)
         {
 
             var result = await httpClientConnection.SaveOrUpdatePV_CorteCaja(r);
             return JsonConvert.SerializeObject(result);
         }
-
         public async Task<string> GetAllPV_CorteCaja()
         {
             var result = await httpClientConnection.GetAllPV_CorteCaja();
@@ -236,8 +252,8 @@ namespace MinaToMVC.Controllers
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-        
         #endregion
 
+        #endregion
     }
 }
