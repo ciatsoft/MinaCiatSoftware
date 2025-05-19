@@ -1,6 +1,7 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoSucursales;
+using MinaTolEntidades.DtoVentaPublicoGeneral;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -127,5 +128,32 @@ namespace MinaTolWebApi.DAL
 
             return response;
         }
+
+        public ModelResponse GetGetMaterialUbicacionByUbicacion(long id)
+        {
+            var response = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("@UbicacionId", id));
+            try
+            {
+                var result = GetList(
+                    "GetMaterialUbicacionByUbicacion",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader => FillEntity<DtoTipoMaterialUbicacion>(reader)
+                );
+
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+            }
+
+
     }
 }

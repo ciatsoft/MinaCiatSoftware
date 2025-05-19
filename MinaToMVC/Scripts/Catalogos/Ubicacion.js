@@ -1,7 +1,5 @@
 ﻿$(document).ready(function () {
 
-
-
     $("#tableUbicacion").dataTable({
         processing: true,
         destroy: true,
@@ -19,9 +17,9 @@
                 }
             },
             {
-                data: "id",
+                data: null,
                 render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarUbicacion(' + data + ')" />';
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarUbicacion(' + data.id + ', \'' + data.nombreUbicacion.replace(/'/g, "\\'") + '\')" />';
                 }
             }
         ],
@@ -64,15 +62,26 @@
         $("#btnEliminarUbicacion").prop('disabled', false);
         // Guardar el ID en el botón de eliminar
         $("#btnEliminarUbicacion").data('id', UbicacionJson.Id);
+
+        // Habilitar el botón de Asignacion de Material
+        $("#btnAsociar").prop('disabled', false);
+        // Guardar el ID en el botón de Asignacion de Material
+        $("#btnAsociar").data('id', UbicacionJson.Id);
+
     }
 });
 
 // Función para editar ubicación
-function EditarUbicacion(id) {
+function EditarUbicacion(id, nombreUbicacion) {
+    // Guardar el ID y el nombre en el botón de asociar materiales
+    $("#btnAsociar").data('id', id);
+    $("#btnAsociar").data('nombre', nombreUbicacion);
+    $("#btnAsociar").prop('disabled', false);
+
     // Guardar el ID en el botón de eliminar
     $("#btnEliminarUbicacion").data('id', id);
-    // Habilitar el botón de eliminar
     $("#btnEliminarUbicacion").prop('disabled', false);
+
     // Redirigir a la página de edición
     location.href = "/Catalog/Ubicacion/" + id;
 }
@@ -189,3 +198,12 @@ function LimpiarFormulario() {
     $("#txtDescripcionUbicacion").val('');
     $("#Estatus").prop('checked', false);
 }
+
+function AbrirModalMateriales(idUbicacion, NombreUbicacion) {
+    $("#titleGenerciModal").text("Configuración de Planta con Materiales: " + NombreUbicacion);
+
+    $("#boddyGeericModal").empty().load("/Catalog/PartialConfigurationUbicacionMaterial?idUbicacion=" + idUbicacion + "&nombreUbicacion=" + encodeURIComponent(NombreUbicacion), function () {
+        $("#genericModal").modal("show");
+    });
+}
+

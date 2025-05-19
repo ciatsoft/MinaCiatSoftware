@@ -1,0 +1,119 @@
+﻿@model int
+
+<h3>Asociar materiales a la ubicación: <span id="lblNombreUbicacion">@ViewBag.NombreUbicacion</span></h3>
+<input type="hidden" id="txtNombreUbicacion" value="@ViewBag.NombreUbicacion" />
+<input type="hidden" id="txtIdUbicacion" value="@Model" />
+
+<div class="row">
+    <div class="col-md-6">
+        <h5>TABLA DE MATERIALES</h5>
+        <div class="row">
+            <div class="col-lg-12">
+                <table class="table table-bordered table-striped" id="tableTipodematerial" style="width: 100%;"></table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <h5>MATERIALES ASOCIADOS </h5>
+        <div class="row">
+            <div class="col-lg-12">
+                <table class="table table-bordered table-striped" id="tableUbicacionTipodematerial" style="width: 100%;"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let materialesAsociadosIds = [];
+
+    $(document).ready(function () {
+        const idUbicacion = $("#txtIdUbicacion").val();
+
+        // Inicialización de la tabla de tipo de material con formato
+        $("#tableTipodematerial").dataTable({
+            processing: true,
+            destroy: true,
+            paging: true,
+            searching: true,
+            columns: [
+                { data: "id", "visible": false, title: "Id" },
+                { data: "nombreTipoMaterial", title: "Nombre" },
+                {
+                    data: "id", title: "Agregar", render: function (data) {
+                        return '<input type="button" value="Añadir Material" class="btn btn-custom-clean" onclick="AgregarMaterial(' + data + ')" />'
+                    }
+                }
+            ],
+            language: {
+                // [omitido por brevedad, igual al original]
+            }
+        });
+
+        // Inicialización de la tabla de materiales asociados
+        $("#tableUbicacionTipodematerial").dataTable({
+            processing: true,
+            destroy: true,
+            paging: true,
+            searching: true,
+            columns: [
+                { data: "materialId", "visible": false, title: "Id" },
+                { data: "nombreTipoMaterial", title: "Nombre" },
+                {
+                    data: "materialId", title: "Quitar", render: function (data) {
+                        return '<input type="button" value="Quitar Material" class="btn btn-custom-cancel" onclick="QuitarMaterial(' + data + ')" />'
+                    }
+                }
+            ],
+            language: {
+                // [omitido por brevedad, igual al original]
+            }
+        });
+
+        // Primero obtenemos materiales asociados
+        GetGetMaterialUbicacionByUbicacion(idUbicacion, function () {
+            // Luego cargamos todos los materiales y filtramos
+            GetAllTipoMaterialUbicacion();
+        });
+    });
+
+    // Obtener materiales asociados
+    function GetGetMaterialUbicacionByUbicacion(idUbicacion, callback) {
+        GetMVC("/Catalog/GetGetMaterialUbicacionByUbicacion?id=" + idUbicacion, function (r) {
+            if (r.IsSuccess) {
+                // Guardamos los IDs de materiales asociados
+                materialesAsociadosIds = r.Response.map(item => item.materialId);
+                MapingPropertiesDataTable("tableUbicacionTipodematerial", r.Response);
+                if (callback) callback();
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar los materiales: ' + r.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+
+    // Obtener todos los materiales disponibles y filtrar
+    function GetAllTipoMaterialUbicacion() {
+        GetMVC("/Catalog/GetAllTipoMaterialUbicacion", function (r) {
+            if (r.IsSuccess) {
+                // Filtramos materiales que NO están ya asociados
+                const materialesFiltrados = r.Response.filter(item =>
+                    !materialesAsociadosIds.includes(item.id)
+                );
+                MapingPropertiesDataTable("tableTipodematerial", materialesFiltrados);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar los materiales: ' + r.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+
+    // Puedes definir AgregarMaterial y QuitarMaterial según tu lógica
+</script>

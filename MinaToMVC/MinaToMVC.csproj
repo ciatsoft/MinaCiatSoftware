@@ -165,6 +165,7 @@
     <Content Include="Scripts\Catalogos\AltaTipoVehiculo.js" />
     <Content Include="Scripts\Catalogos\AltCliente.js" />
     <Content Include="Scripts\Catalogos\AreaTrabajo.js" />
+    <Content Include="Scripts\Catalogos\AsociarMaterial.js" />
     <Content Include="Scripts\Catalogos\TipoMaterialUbicacion.js" />
     <Content Include="Scripts\Catalogos\Ubicacion.js" />
     <Content Include="Scripts\Catalogos\UnidadMedida.js" />
@@ -204,6 +205,7 @@
     <Compile Include="DAL\HttpClientConnection.ClienteTipoMaterial.cs" />
     <Compile Include="DAL\HttpClientConnection.Foliador.cs" />
     <Compile Include="DAL\HttpClientConnection.IngresosRfid.cs" />
+    <Compile Include="DAL\HttpClientConnection.MaterialesUbicacion.cs" />
     <Compile Include="DAL\HttpClientConnection.MetodoPago.cs" />
     <Compile Include="DAL\HttpClientConnection.PV_CajaChica.cs" />
     <Compile Include="DAL\HttpClientConnection.PV_CorteCaja.cs" />
@@ -286,6 +288,7 @@
     <Content Include="Views\VentaPublicoGeneral\PartialMaterialCargaPrecio.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\CajaChica.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\CorteCaja.cshtml" />
+    <Content Include="Views\Catalog\PartialConfigurationUbicacionMaterial.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
