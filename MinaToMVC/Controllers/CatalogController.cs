@@ -159,6 +159,12 @@ namespace MinaToMVC.Controllers
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
+        public async Task<string> DeleteUbicacion(long id)
+        {
+            var result = await httpClientConnection.DeleteUbicacion(id);
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
 
         #endregion
 
@@ -192,6 +198,23 @@ namespace MinaToMVC.Controllers
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+
+        #region PartialViewUbicacion
+
+        //Pantalla parcial para el modal de vista ubicacion, para ingresar Material Asociado
+        public async Task<ActionResult> PartialConfigurationUbicacionMaterial(int idUbicacion, string nombreUbicacion)
+        {
+            ViewBag.NombreUbicacion = nombreUbicacion;
+            return PartialView(model: idUbicacion);
+        }
+
+        public ActionResult PartialUbicacionMaterial()
+        {
+            return PartialView();
+        }
+
+        #endregion
+
         #endregion
 
         #region TipoMaterialUbicacion
@@ -236,6 +259,12 @@ namespace MinaToMVC.Controllers
         public async Task<string> GetAllTipoMaterialUbicacion()
         {
             var result = await httpClientConnection.GetAllTipoMaterialUbicacion();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetGetMaterialUbicacionByUbicacion(long Id)
+        {
+            var result = await httpClientConnection.GetGetMaterialUbicacionByUbicacion(Id);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 

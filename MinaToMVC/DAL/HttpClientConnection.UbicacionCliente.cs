@@ -39,7 +39,7 @@ namespace MinaToMVC.DAL
 
         public async Task<ModelResponse> GetDireccionClienteById(long Id)
         {
-            var result = await RequestAsync<object>($"api/DireccionCliente/{Id}", HttpMethod.Get, null,
+            var result = await RequestAsync<object>($"\"api/TipoMaterialUbicacion/MaterialesUbicacion/{Id}", HttpMethod.Get, null,
                new Func<string, string>((responseString) =>
                {
                    return responseString;

@@ -15,7 +15,7 @@ namespace MinaTolWebApi.DAL
         {
             var modelResponse = new ModelResponse();
             var parameters = new List<SqlParameter>();
-            
+
             try
             {
                 var result = GetObjects($"GetAllUbicacion", CommandType.Text, parameters,
@@ -34,7 +34,7 @@ namespace MinaTolWebApi.DAL
                 modelResponse.Message = ex.Message;
             }
             return modelResponse;
-          
+
         }
 
         public ModelResponse SaveOrUpdateUbicacion(DtoUbicacion u)
@@ -84,6 +84,34 @@ namespace MinaTolWebApi.DAL
 
             return modelResponse;
         }
+
+        public ModelResponse DeleteUbicacion(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id"
+                });
+
+                var result = ExecuteNonQuery("DeleteUbicacion", System.Data.CommandType.StoredProcedure, parameters);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
+
 
 
     }
