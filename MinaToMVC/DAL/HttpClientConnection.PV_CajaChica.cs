@@ -66,10 +66,22 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
-        
 
-
-
+        public async Task<ModelResponse> GetCajaChicaByUsuarioName(string i)
+        {
+            var Objeto = new
+            {
+                UsuarioName = i
+            };
+            var result = await RequestAsync<object>(
+                $"api/PV_CajaChica/GetByUsuarioName", HttpMethod.Post, Objeto,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }),token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
 
     }
 }

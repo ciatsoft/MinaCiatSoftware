@@ -33,5 +33,6 @@ namespace MinaTolEntidades.DtoVentaPublicoGeneral
         public int V_Efectivo { get; set; }
         public int V_Transferencia { get; set; }    
         public double Caja { get; set; }
+
     }
 }

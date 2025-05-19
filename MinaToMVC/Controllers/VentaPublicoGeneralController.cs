@@ -223,6 +223,12 @@ namespace MinaToMVC.Controllers
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+        public async Task<string> GetCajaChicaByUsuarioName (string i  )
+        {
+            var result = await httpClientConnection.GetCajaChicaByUsuarioName(i);
+            return JsonConvert.SerializeObject(result);
+        }
+       
         #endregion
 
         #region CoteCaja        

@@ -43,7 +43,13 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.SaveOrUpdatePV_CajaChica(t);
             return result;
         }
+        public async Task<ModelResponse> GetCajaChicaByUsuarioName(string i)
+        {
+            var result = wrapper.GetCajaChicaByUsuarioName(i);
+            return result;
+        }
 
+        
 
     }
 }

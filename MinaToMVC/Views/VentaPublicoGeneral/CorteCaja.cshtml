@@ -28,7 +28,7 @@
                 <div class="row">
                     <div class="col-lg-3">
                         <label>Vendedor:</label>
-                        @Html.DropDownListFor(x => x.Usuario.Id, (IEnumerable<SelectListItem>)ViewBag.Usuarios, new { @class = "form-control" })
+                        @Html.DropDownListFor(x => x.Usuario.Id, (IEnumerable<SelectListItem>)ViewBag.Usuarios, new { @class = "form-control", @id = "usuario" })
                     </div>
                     <div class="col-lg-3">
                         <label>Fecha:</label>
@@ -107,11 +107,16 @@
 
 
                 </div>
+
                 <div class="row">
                     <div class="col-lg-12">
-                        <table class="table table-bordered table-striped" id="tableCajaChica" style="width: 100%;"></table>
+                        
+                        <table id="tblCajaChica" class="table table-bordered table-striped" style="width: 100%;"></table>
                     </div>
                 </div>
+                
+
+
                 <div class="row">
                     <div class="col-lg-12">
                         <label> Cantidad del dia:</label>
@@ -161,7 +166,7 @@
         fechaInput.value = formattedDate;
 
     });
-     
+
     function calcularIngreso() {
             let total = 0;
 
@@ -179,7 +184,7 @@
             total += (parseInt($('#M050').val()) || 0) * 0.5;
 
         $('#ingreso').val(total.toFixed(2)); // Mostrar con 2 decimales
-        
+
     }
     function calcularTotal() {
         let ingreso = parseFloat($('#ingreso').val()) || 0;
@@ -194,12 +199,9 @@
             $('input').on('input', function () {
                 calcularIngreso();
                 calcularTotal();
-                
+
             });
-      });
+     });
     
-
-    
-
 </script>
 

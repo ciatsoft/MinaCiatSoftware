@@ -119,5 +119,37 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
+        public ModelResponse GetCajaChicaByUsuarioName(string i)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = i,
+                    IsNullable = true,
+                    ParameterName = "@UsuarioName",
+                    SqlDbType = System.Data.SqlDbType.NVarChar
+                });
+
+                var result = GetObject("GetCajaChicaByUsuarioName", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, PV_CajaChica>((reader) =>
+                    {
+                        var r = FillEntity<PV_CajaChica>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
     }
 }
