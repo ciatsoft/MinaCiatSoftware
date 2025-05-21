@@ -200,10 +200,23 @@ function LimpiarFormulario() {
 }
 
 function AbrirModalMateriales(idUbicacion, NombreUbicacion) {
+    var createdBy = $('#CreatedBy').val();
+    var updatedBy = $('#UpdatedBy').val();
+    var createdDt = $('#CreatedDt').val();
+    var updatedDt = $('#UpdatedDt').val();
+
     $("#titleGenerciModal").text("Configuración de Planta con Materiales: " + NombreUbicacion);
 
-    $("#boddyGeericModal").empty().load("/Catalog/PartialConfigurationUbicacionMaterial?idUbicacion=" + idUbicacion + "&nombreUbicacion=" + encodeURIComponent(NombreUbicacion), function () {
-        $("#genericModal").modal("show");
-    });
+    $("#boddyGeericModal").empty().load("/Catalog/PartialConfigurationUbicacionMaterial" +
+        "?idUbicacion=" + idUbicacion +
+        "&nombreUbicacion=" + encodeURIComponent(NombreUbicacion) +
+        "&createdBy=" + encodeURIComponent(createdBy) +
+        "&updatedBy=" + encodeURIComponent(updatedBy) +
+        "&createdDt=" + encodeURIComponent(createdDt) +
+        "&updatedDt=" + encodeURIComponent(updatedDt),
+        function () {
+            $("#genericModal").modal("show");
+        }
+    );
 }
 
