@@ -3,6 +3,10 @@
 <h3>Asociar materiales a la ubicación: <span id="lblNombreUbicacion">@ViewBag.NombreUbicacion</span></h3>
 <input type="hidden" id="txtNombreUbicacion" value="@ViewBag.NombreUbicacion" />
 <input type="hidden" id="txtIdUbicacion" value="@Model" />
+<input type="text" id="CreatedBy" value="@ViewBag.CreatedBy" />
+<input type="text" id="UpdatedBy" value="@ViewBag.UpdatedBy" />
+<input type="text" id="CreatedDt" value="@ViewBag.CreatedDt" />
+<input type="text" id="UpdatedDt" value="@ViewBag.UpdatedDt" />
 
 <div class="row">
     <div class="col-md-6">
@@ -114,6 +118,7 @@
             }
         });
     }
+
 
     // Puedes definir AgregarMaterial y QuitarMaterial según tu lógica
 </script>

@@ -202,9 +202,14 @@ namespace MinaToMVC.Controllers
         #region PartialViewUbicacion
 
         //Pantalla parcial para el modal de vista ubicacion, para ingresar Material Asociado
-        public async Task<ActionResult> PartialConfigurationUbicacionMaterial(int idUbicacion, string nombreUbicacion)
+        public async Task<ActionResult> PartialConfigurationUbicacionMaterial(int idUbicacion, string nombreUbicacion, string createdBy, string updatedBy, string createdDt, string updatedDt)
         {
             ViewBag.NombreUbicacion = nombreUbicacion;
+            ViewBag.CreatedBy = createdBy;
+            ViewBag.UpdatedBy = updatedBy;
+            ViewBag.CreatedDt = createdDt;
+            ViewBag.UpdatedDt = updatedDt;
+
             return PartialView(model: idUbicacion);
         }
 

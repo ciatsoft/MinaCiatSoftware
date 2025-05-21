@@ -155,5 +155,26 @@ namespace MinaTolWebApi.DAL
             }
 
 
+        // Guardar relacion 
+        public ModelResponse SaveOrUpdateMaterialUbicacion(DtoTipoMaterialUbicacion t)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = GenerateSQLParameters(t);
+                var tipoMaterialU = ExecuteScalar($"SaveOrUpdateMaterialUbicacion", System.Data.CommandType.StoredProcedure, parameters);
+                t.Id = Convert.ToInt64(tipoMaterialU);
+
+                response.Response = t;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
     }
 }
