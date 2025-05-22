@@ -152,9 +152,8 @@ namespace MinaTolWebApi.DAL
                 response.Enum = Enumeration.ErrorNoControlado;
             }
             return response;
-            }
-
-
+        }
+        
         // Guardar relacion 
         public ModelResponse SaveOrUpdateMaterialUbicacion(DtoTipoMaterialUbicacion t)
         {
@@ -162,10 +161,46 @@ namespace MinaTolWebApi.DAL
             try
             {
                 response.IsSuccess = true;
-                var parameters = GenerateSQLParameters(t);
-                var tipoMaterialU = ExecuteScalar($"SaveOrUpdateMaterialUbicacion", System.Data.CommandType.StoredProcedure, parameters);
+
+                var parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@Id", t.Id),
+                    new SqlParameter("@UbicacionId", t.UbicacionId),
+                    new SqlParameter("@MaterialId", t.MaterialId),
+                    new SqlParameter("@CreatedBy", (object)t.CreatedBy ?? DBNull.Value),
+                    new SqlParameter("@CreatedDt", (object)t.CreatedDt ?? DBNull.Value),
+                    new SqlParameter("@UpdatedBy", (object)t.UpdatedBy ?? DBNull.Value),
+                    new SqlParameter("@UpdatedDt", (object)t.UpdatedDt ?? DBNull.Value),
+                };
+
+                var tipoMaterialU = ExecuteScalar("SaveOrUpdateMaterialUbicacion", CommandType.StoredProcedure, parameters);
                 t.Id = Convert.ToInt64(tipoMaterialU);
 
+                response.Response = t;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+
+        // Quitar relacion
+        public ModelResponse QuitMaterialUbicacion(DtoTipoMaterialUbicacion t)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+
+                var parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@Id", t.Id),
+                };
+
+                var tipoMaterialU = ExecuteScalar("QuitMaterialUbicacion", CommandType.StoredProcedure, parameters);
                 response.Response = t;
             }
             catch (Exception ex)

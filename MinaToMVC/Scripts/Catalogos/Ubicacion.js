@@ -205,9 +205,13 @@ function AbrirModalMateriales(idUbicacion, NombreUbicacion) {
     var createdDt = $('#CreatedDt').val();
     var updatedDt = $('#UpdatedDt').val();
 
+    // Limpiar completamente el modal antes de cargar nuevo contenido
+    $("#genericModal").removeData('bs.modal');
+    $("#boddyGeericModal").empty();
+
     $("#titleGenerciModal").text("Configuración de Planta con Materiales: " + NombreUbicacion);
 
-    $("#boddyGeericModal").empty().load("/Catalog/PartialConfigurationUbicacionMaterial" +
+    $("#boddyGeericModal").load("/Catalog/PartialConfigurationUbicacionMaterial" +
         "?idUbicacion=" + idUbicacion +
         "&nombreUbicacion=" + encodeURIComponent(NombreUbicacion) +
         "&createdBy=" + encodeURIComponent(createdBy) +
@@ -215,8 +219,8 @@ function AbrirModalMateriales(idUbicacion, NombreUbicacion) {
         "&createdDt=" + encodeURIComponent(createdDt) +
         "&updatedDt=" + encodeURIComponent(updatedDt),
         function () {
+            // Asegurarse de que el modal se muestra después de cargar el contenido
             $("#genericModal").modal("show");
         }
     );
 }
-

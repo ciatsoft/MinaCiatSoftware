@@ -59,5 +59,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.SaveOrUpdateMaterialUbicacion(t);
             return result;
         }
+
+        [HttpPost, Route("Quitar")]
+        public ModelResponse QuitMaterialUbicacion(DtoTipoMaterialUbicacion t)
+        {
+            var result = wrapper.QuitMaterialUbicacion(t);
+            return result;
+        }
     }
 }
