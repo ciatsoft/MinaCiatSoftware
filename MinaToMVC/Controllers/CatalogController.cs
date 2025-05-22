@@ -213,9 +213,18 @@ namespace MinaToMVC.Controllers
             return PartialView(model: idUbicacion);
         }
 
-        public ActionResult PartialUbicacionMaterial()
+        // Agregar 
+        public string SaveOrUpdateMaterialUbicacion(DtoTipoMaterialUbicacion t)
         {
-            return PartialView();
+            var result = httpClientConnection.SaveOrUpdateMaterialUbicacion(t);
+            return JsonConvert.SerializeObject(result);
+        }
+
+        // Quitar
+        public string QuitMaterialUbicacion(DtoTipoMaterialUbicacion t)
+        {
+            var result = httpClientConnection.QuitMaterialUbicacion(t);
+            return JsonConvert.SerializeObject(result);
         }
 
         #endregion

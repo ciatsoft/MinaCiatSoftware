@@ -168,7 +168,6 @@ function AgregarMaterialACliente(clienteId, materialId) {
         Estatus: true,
     };
     PostMVC('/Administracion/SaveOrUpdateClienteTipoMaterial', parametro, function (r) {
-        console.log(parametro);
         if (r.IsSuccess) {
             Swal.fire("Éxito", "El material se agregó exitosamente al cliente", "success");
         } else {

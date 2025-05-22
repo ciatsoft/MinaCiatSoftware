@@ -1,8 +1,8 @@
 ﻿@model int
 
 <h3>Asociar materiales a la ubicación: <span id="lblNombreUbicacion">@ViewBag.NombreUbicacion</span></h3>
-<input type="hidden" id="txtNombreUbicacion" value="@ViewBag.NombreUbicacion" />
-<input type="hidden" id="txtIdUbicacion" value="@Model" />
+<input type="text" id="txtNombreUbicacion" value="@ViewBag.NombreUbicacion" />
+<input type="text" id="txtIdUbicacion" value="@Model" />
 <input type="text" id="CreatedBy" value="@ViewBag.CreatedBy" />
 <input type="text" id="UpdatedBy" value="@ViewBag.UpdatedBy" />
 <input type="text" id="CreatedDt" value="@ViewBag.CreatedDt" />
@@ -10,7 +10,7 @@
 
 <div class="row">
     <div class="col-md-6">
-        <h5>TABLA DE MATERIALES</h5>
+        <h2>TABLA DE MATERIALES</h2>
         <div class="row">
             <div class="col-lg-12">
                 <table class="table table-bordered table-striped" id="tableTipodematerial" style="width: 100%;"></table>
@@ -18,25 +18,38 @@
         </div>
     </div>
     <div class="col-md-6">
-        <h5>MATERIALES ASOCIADOS </h5>
+        <h2>MATERIALES ASOCIADOS </h2>
         <div class="row">
             <div class="col-lg-12">
                 <table class="table table-bordered table-striped" id="tableUbicacionTipodematerial" style="width: 100%;"></table>
             </div>
         </div>
-    </div>
+    </div>  
 </div>
 
 <script>
     let materialesAsociadosIds = [];
+    let dataTableMateriales = null;
+    let dataTableAsociados = null;
 
     $(document).ready(function () {
         const idUbicacion = $("#txtIdUbicacion").val();
+        inicializarTablas(idUbicacion);
+    });
 
-        // Inicialización de la tabla de tipo de material con formato
-        $("#tableTipodematerial").dataTable({
+    function inicializarTablas(idUbicacion) {
+        // Destruir tablas existentes si las hay
+        if ($.fn.DataTable.isDataTable("#tableTipodematerial")) {
+            $("#tableTipodematerial").DataTable().destroy();
+        }
+        if ($.fn.DataTable.isDataTable("#tableUbicacionTipodematerial")) {
+            $("#tableUbicacionTipodematerial").DataTable().destroy();
+        }
+
+        // Inicialización de la tabla de tipo de material
+        dataTableMateriales = $("#tableTipodematerial").DataTable({
             processing: true,
-            destroy: true,
+            serverSide: false,
             paging: true,
             searching: true,
             columns: [
@@ -49,27 +62,60 @@
                 }
             ],
             language: {
-                // [omitido por brevedad, igual al original]
+                "decimal": ",",
+                "thousands": ".",
+                "processing": "Procesando...",
+                "lengthMenu": "Mostrar _MENU_ entradas",
+                "zeroRecords": "No se encontraron resultados",
+                "emptyTable": "Ningún dato disponible en esta tabla",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+                "search": "Buscar:",
+                "loadingRecords": "Cargando...",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
             }
         });
 
         // Inicialización de la tabla de materiales asociados
-        $("#tableUbicacionTipodematerial").dataTable({
+        dataTableAsociados = $("#tableUbicacionTipodematerial").DataTable({
             processing: true,
-            destroy: true,
+            serverSide: false,
             paging: true,
             searching: true,
             columns: [
-                { data: "materialId", "visible": false, title: "Id" },
+                { data: "id", "visible": false, title: "Id" },
+                { data: "materialId", "visible": false, title: "IdMaterial" },
                 { data: "nombreTipoMaterial", title: "Nombre" },
                 {
-                    data: "materialId", title: "Quitar", render: function (data) {
+                    data: "id", title: "Quitar", render: function (data) {
                         return '<input type="button" value="Quitar Material" class="btn btn-custom-cancel" onclick="QuitarMaterial(' + data + ')" />'
                     }
                 }
             ],
             language: {
-                // [omitido por brevedad, igual al original]
+                "decimal": ",",
+                "thousands": ".",
+                "processing": "Procesando...",
+                "lengthMenu": "Mostrar _MENU_ entradas",
+                "zeroRecords": "No se encontraron resultados",
+                "emptyTable": "Ningún dato disponible en esta tabla",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+                "search": "Buscar:",
+                "loadingRecords": "Cargando...",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
             }
         });
 
@@ -78,15 +124,14 @@
             // Luego cargamos todos los materiales y filtramos
             GetAllTipoMaterialUbicacion();
         });
-    });
+    }
 
     // Obtener materiales asociados
     function GetGetMaterialUbicacionByUbicacion(idUbicacion, callback) {
         GetMVC("/Catalog/GetGetMaterialUbicacionByUbicacion?id=" + idUbicacion, function (r) {
             if (r.IsSuccess) {
-                // Guardamos los IDs de materiales asociados
                 materialesAsociadosIds = r.Response.map(item => item.materialId);
-                MapingPropertiesDataTable("tableUbicacionTipodematerial", r.Response);
+                dataTableAsociados.clear().rows.add(r.Response).draw();
                 if (callback) callback();
             } else {
                 Swal.fire({
@@ -103,11 +148,10 @@
     function GetAllTipoMaterialUbicacion() {
         GetMVC("/Catalog/GetAllTipoMaterialUbicacion", function (r) {
             if (r.IsSuccess) {
-                // Filtramos materiales que NO están ya asociados
                 const materialesFiltrados = r.Response.filter(item =>
                     !materialesAsociadosIds.includes(item.id)
                 );
-                MapingPropertiesDataTable("tableTipodematerial", materialesFiltrados);
+                dataTableMateriales.clear().rows.add(materialesFiltrados).draw();
             } else {
                 Swal.fire({
                     title: 'Error',
@@ -119,6 +163,55 @@
         });
     }
 
+    // Funcion para Agregar
+    function AgregarMaterial(materialId) {
+        var ubicacionId = $("#txtIdUbicacion").val();
+        var createdBy = $("#CreatedBy").val();
+        var createdDt = $("#CreatedDt").val();
+        var updatedBy = $("#UpdatedBy").val();
+        var updatedDt = $("#UpdatedDt").val();
 
-    // Puedes definir AgregarMaterial y QuitarMaterial según tu lógica
+        var data = {
+            UbicacionId: ubicacionId,
+            MaterialId: materialId,
+            CreatedBy: createdBy,
+            CreatedDt: createdDt,
+            UpdatedBy: updatedBy,
+            UpdatedDt: updatedDt
+        };
+
+        PostMVC('/Catalog/SaveOrUpdateMaterialUbicacion', data, function (resultado) {
+            if (resultado.IsSuccess) {
+                window.location.reload();
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al agregar material: ' + resultado.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+        window.location.reload();
+    }
+
+    // Funcion para Eliminar
+    function QuitarMaterial(id) {
+        var ubicacionId = $("#txtIdUbicacion").val();
+        var data = { Id: id };
+
+        PostMVC('/Catalog/QuitMaterialUbicacion', data, function (resultado) {
+            if (resultado.IsSuccess) {
+                window.location.reload();
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al quitar material: ' + resultado.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+        window.location.reload();
+    }
 </script>
