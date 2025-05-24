@@ -69,6 +69,18 @@
         $("#btnAsociar").data('id', UbicacionJson.Id);
 
     }
+
+    // Verificar si hay una bandera para abrir el modal
+    const modalData = sessionStorage.getItem("abrirModalUbicacion");
+    if (modalData) {
+        const datos = JSON.parse(modalData);
+
+        // Llama a la función que abre el modal
+        AbrirModalMateriales(datos.id, datos.nombre);
+
+        // Limpia la bandera para que no se vuelva a ejecutar en futuros reloads
+        sessionStorage.removeItem("abrirModalUbicacion");
+    }
 });
 
 // Función para editar ubicación

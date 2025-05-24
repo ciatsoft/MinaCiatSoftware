@@ -1,12 +1,12 @@
 ﻿@model int
 
 <h3>Asociar materiales a la ubicación: <span id="lblNombreUbicacion">@ViewBag.NombreUbicacion</span></h3>
-<input type="text" id="txtNombreUbicacion" value="@ViewBag.NombreUbicacion" />
-<input type="text" id="txtIdUbicacion" value="@Model" />
-<input type="text" id="CreatedBy" value="@ViewBag.CreatedBy" />
-<input type="text" id="UpdatedBy" value="@ViewBag.UpdatedBy" />
-<input type="text" id="CreatedDt" value="@ViewBag.CreatedDt" />
-<input type="text" id="UpdatedDt" value="@ViewBag.UpdatedDt" />
+<input type="hidden" id="txtNombreUbicacion" value="@ViewBag.NombreUbicacion" />
+<input type="hidden" id="txtIdUbicacion" value="@Model" />
+<input type="hidden" id="CreatedBy" value="@ViewBag.CreatedBy" />
+<input type="hidden" id="UpdatedBy" value="@ViewBag.UpdatedBy" />
+<input type="hidden" id="CreatedDt" value="@ViewBag.CreatedDt" />
+<input type="hidden" id="UpdatedDt" value="@ViewBag.UpdatedDt" />
 
 <div class="row">
     <div class="col-md-6">
@@ -18,13 +18,19 @@
         </div>
     </div>
     <div class="col-md-6">
-        <h2>MATERIALES ASOCIADOS </h2>
+        <h2>MATERIALES ASOCIADOS</h2>
         <div class="row">
             <div class="col-lg-12">
                 <table class="table table-bordered table-striped" id="tableUbicacionTipodematerial" style="width: 100%;"></table>
             </div>
         </div>
-    </div>  
+    </div>
+</div>
+
+<!-- Spinner de carga -->
+<div id="spinnerCarga" style="display: none; position: fixed; top: 50%; left: 50%; z-index: 9999; transform: translate(-50%, -50%);">
+    <div class="spinner-border text-primary" role="status" style="width: 4rem; height: 4rem;">
+    </div>
 </div>
 
 <script>
@@ -37,8 +43,17 @@
         inicializarTablas(idUbicacion);
     });
 
+    function mostrarCargando() {
+        $("#spinnerCarga").show();
+    }
+
+    function ocultarCargando() {
+        $("#spinnerCarga").hide();
+    }
+
     function inicializarTablas(idUbicacion) {
-        // Destruir tablas existentes si las hay
+        mostrarCargando();
+
         if ($.fn.DataTable.isDataTable("#tableTipodematerial")) {
             $("#tableTipodematerial").DataTable().destroy();
         }
@@ -46,14 +61,13 @@
             $("#tableUbicacionTipodematerial").DataTable().destroy();
         }
 
-        // Inicialización de la tabla de tipo de material
         dataTableMateriales = $("#tableTipodematerial").DataTable({
             processing: true,
             serverSide: false,
             paging: true,
             searching: true,
             columns: [
-                { data: "id", "visible": false, title: "Id" },
+                { data: "id", visible: false, title: "Id" },
                 { data: "nombreTipoMaterial", title: "Nombre" },
                 {
                     data: "id", title: "Agregar", render: function (data) {
@@ -82,15 +96,14 @@
             }
         });
 
-        // Inicialización de la tabla de materiales asociados
         dataTableAsociados = $("#tableUbicacionTipodematerial").DataTable({
             processing: true,
             serverSide: false,
             paging: true,
             searching: true,
             columns: [
-                { data: "id", "visible": false, title: "Id" },
-                { data: "materialId", "visible": false, title: "IdMaterial" },
+                { data: "id", visible: false, title: "Id" },
+                { data: "materialId", visible: false, title: "IdMaterial" },
                 { data: "nombreTipoMaterial", title: "Nombre" },
                 {
                     data: "id", title: "Quitar", render: function (data) {
@@ -119,14 +132,11 @@
             }
         });
 
-        // Primero obtenemos materiales asociados
         GetGetMaterialUbicacionByUbicacion(idUbicacion, function () {
-            // Luego cargamos todos los materiales y filtramos
             GetAllTipoMaterialUbicacion();
         });
     }
 
-    // Obtener materiales asociados
     function GetGetMaterialUbicacionByUbicacion(idUbicacion, callback) {
         GetMVC("/Catalog/GetGetMaterialUbicacionByUbicacion?id=" + idUbicacion, function (r) {
             if (r.IsSuccess) {
@@ -140,13 +150,14 @@
                     icon: 'error',
                     confirmButtonText: 'Aceptar'
                 });
+                ocultarCargando();
             }
         });
     }
 
-    // Obtener todos los materiales disponibles y filtrar
     function GetAllTipoMaterialUbicacion() {
         GetMVC("/Catalog/GetAllTipoMaterialUbicacion", function (r) {
+            ocultarCargando();
             if (r.IsSuccess) {
                 const materialesFiltrados = r.Response.filter(item =>
                     !materialesAsociadosIds.includes(item.id)
@@ -163,27 +174,32 @@
         });
     }
 
-    // Funcion para Agregar
     function AgregarMaterial(materialId) {
-        var ubicacionId = $("#txtIdUbicacion").val();
-        var createdBy = $("#CreatedBy").val();
-        var createdDt = $("#CreatedDt").val();
-        var updatedBy = $("#UpdatedBy").val();
-        var updatedDt = $("#UpdatedDt").val();
+        mostrarCargando();
 
-        var data = {
-            UbicacionId: ubicacionId,
+        const idUbicacion = $("#txtIdUbicacion").val();
+        const nombreUbicacion = $("#txtNombreUbicacion").val();
+
+        // Guardar bandera para abrir modal después del reload
+        sessionStorage.setItem("abrirModalUbicacion", JSON.stringify({
+            id: idUbicacion,
+            nombre: nombreUbicacion
+        }));
+
+        const data = {
+            UbicacionId: idUbicacion,
             MaterialId: materialId,
-            CreatedBy: createdBy,
-            CreatedDt: createdDt,
-            UpdatedBy: updatedBy,
-            UpdatedDt: updatedDt
+            CreatedBy: $("#CreatedBy").val(),
+            CreatedDt: $("#CreatedDt").val(),
+            UpdatedBy: $("#UpdatedBy").val(),
+            UpdatedDt: $("#UpdatedDt").val()
         };
 
         PostMVC('/Catalog/SaveOrUpdateMaterialUbicacion', data, function (resultado) {
             if (resultado.IsSuccess) {
-                window.location.reload();
+                location.reload(); // reload después del post
             } else {
+                ocultarCargando();
                 Swal.fire({
                     title: 'Error',
                     text: 'Error al agregar material: ' + resultado.ErrorMessage,
@@ -192,18 +208,38 @@
                 });
             }
         });
-        window.location.reload();
+        location.reload(); // reload después del post
     }
 
-    // Funcion para Eliminar
     function QuitarMaterial(id) {
-        var ubicacionId = $("#txtIdUbicacion").val();
-        var data = { Id: id };
+        mostrarCargando();
+        window.location.reload();
+
+
+        const idUbicacion = $("#txtIdUbicacion").val();
+        const nombreUbicacion = $("#txtNombreUbicacion").val();
+
+        // Guardar bandera para abrir modal después del reload
+        sessionStorage.setItem("abrirModalUbicacion", JSON.stringify({
+            id: idUbicacion,
+            nombre: nombreUbicacion
+        }));
+
+
+        const data = { Id: id };
+
 
         PostMVC('/Catalog/QuitMaterialUbicacion', data, function (resultado) {
             if (resultado.IsSuccess) {
-                window.location.reload();
+                location.reload(); // reload después del post
+                const idUbicacion = $("#txtIdUbicacion").val();
+                GetGetMaterialUbicacionByUbicacion(idUbicacion, function () {
+                    GetAllTipoMaterialUbicacion();
+                    ocultarCargando();
+                });
             } else {
+                ocultarCargando();
+                window.location.reload();
                 Swal.fire({
                     title: 'Error',
                     text: 'Error al quitar material: ' + resultado.ErrorMessage,
@@ -212,6 +248,8 @@
                 });
             }
         });
-        window.location.reload();
+        location.reload(); // reload después del post
+
     }
+
 </script>
