@@ -1,0 +1,47 @@
+﻿
+@{
+    ViewBag.Title = "CorteDeCaja";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+<div class="content">
+    <br>
+    <center><h1>Corte de Caja Diario</h1></center>
+    <div class="tabla-consultas-roll">
+        <div class="rectangulos" style="width: 100%;">
+            <div class="row align-items-end">
+                @* FILTRADO POR FECHA *@
+
+                <div class="col-auto">
+                    <label for="fechaFiltro" class="form-label">Fecha:</label>
+                    <input type="date" id="fechaFiltro" name="fechaFiltro" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                </div>
+
+                <div class="col-auto">
+                    <label for="userName" class="form-label">Encargado:</label>
+                    <input type="text" id="userName" name="userName" class="form-control" value="@ViewBag.UserToken.UserName" readonly />
+                    <input type="hidden" id="userId" name="userId" class="form-control" value="@ViewBag.UserToken.UserID" readonly />
+                </div>
+
+                <div class="col-auto">
+                    <input id="btnFiltrar" type="button" value="Buscar" class="btn btn-custom-clean" style="margin-top: -30px" />
+                </div>
+            </div>
+        </div>
+        <br />
+        <h2><label for="fechaFiltro" class="form-label">Ventas Aprobadas:</label></h2>
+        <table id="tblVentas_Aprobadas" class="table table-bordered table-striped" style="width: 100%;"></table>
+        <br />
+        <h2><label for="fechaFiltro" class="form-label">Ventas Realizadas:</label></h2>
+        <table id="tblVentas_Realizadas" class="table table-bordered table-striped" style="width: 100%;"></table>
+        <br />
+        <h2><label for="fechaFiltro" class="form-label">En Caja:</label></h2>
+        <table id="tblEn_Caja" class="table table-bordered table-striped" style="width: 100%;"></table>
+    </div>
+</div>
+
+<script src="@(Url.StaticFile("Scripts/VentaPublicoGeneral/CorteDeCaja.js"))"></script>

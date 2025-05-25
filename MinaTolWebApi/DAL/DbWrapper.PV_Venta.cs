@@ -161,7 +161,39 @@ namespace MinaTolWebApi.DAL
             return response;
         }
 
+        //Para el modulo de Corte de Caja Diario
+        public ModelResponse SearchPV_VentasByDateAndUser(int usuarioId, DateTime fecha)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var fechaSolo = fecha.Date;
 
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@UsuarioId", SqlDbType.Int)   { Value = usuarioId },
+                    new SqlParameter("@Fecha",    SqlDbType.Date)   { Value = fechaSolo }
+                };
+
+                // CORREGIDO: usar GetList para obtener varios registros
+                var result = GetList(
+                    "SearchPV_VentasByDateAndUser",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader => FillEntity<PV_Ventas>(reader)
+                );
+
+                response.Response = result; // ahora será una lista de PV_CajaChica
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
 
     }
 }

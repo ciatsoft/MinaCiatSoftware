@@ -254,6 +254,39 @@ namespace MinaToMVC.Controllers
         }
         #endregion
 
+
+        #region Corte de Caja
+
+        public ActionResult CorteDeCaja()
+        {
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            return View();
+        }
+
+        //Buscar filtrado
+        public async Task<string> SearchPV_VentasByDateAndUser(int usuarioId, DateTime fecha)
+        {
+            var result = await httpClientConnection.SearchPV_VentasByDateAndUser(usuarioId, fecha);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+
+        #endregion
+
         #endregion
     }
 }
