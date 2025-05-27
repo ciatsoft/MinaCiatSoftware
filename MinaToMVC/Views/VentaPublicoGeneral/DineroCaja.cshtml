@@ -10,9 +10,8 @@
 
 @using (Html.BeginForm("SaveOrUpdatePV_CorteCaja", "VentaPublicoGeneral", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmPrecioMaterial", @id = "frmPrecioMaterial" }))
 {
-    @Html.HiddenFor(x => x.Id)
     @Html.HiddenFor(x => x.Estatus)
-    @Html.HiddenFor("CreatedDt", DateTime.Now.ToString("yyyy-MM-ddTHH:mm"), new { @class = "form-control", type = "datetime-local", style = "display:none;" })
+    @Html.TextBox("CreatedDt", DateTime.Now.ToString("yyyy-MM-ddTHH:mm"), new { @class = "form-control", type = "datetime-local", style = "display:none;" })
     @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy" })
     @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy" })
     @Html.TextBox("UpdatedDt", DateTime.Now.ToString("yyyy-MM-ddTHH:mm"), new { @class = "form-control", type = "datetime-local", style = "display:none;" })
@@ -22,13 +21,29 @@
 
     <div class="content">
         <br>
-        <center><h1>Corte de caja</h1></center>
+        <center><h1>Dinero en Caja</h1></center>
         <div class="tabla-consultas-roll">
             <div class="rectangulos" style="width: 100%;">
                 <div class="row">
                     <div class="col-lg-3">
                         <label>ID CorteCaja:</label>
-                        <input type="text" id="txtidcortecaja" name="idcortecaja" class="form-control" disabled />
+                        @Html.TextBox("idcortecaja", "0", new { @id = "txtidcortecaja", @class = "form-control", @disabled = "disabled" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Fecha:</label>
+                        @Html.TextBox("Fecha", DateTime.Now.ToString("yyyy-MM-dd"), new { @class = "form-control", type = "date", @readonly = "readonly" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Venta de Vales:</label>
+                        @Html.TextBoxFor(x => x.VentaVale, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Venta por Transferencia:</label>
+                        @Html.TextBoxFor(x => x.VentaTransferencia, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Venta en Efectivo:</label>
+                        @Html.TextBoxFor(x => x.VentaEfectivo, new { @class = "form-control" })
                     </div>
                     <div class="col-lg-3">
                         <label>Ingreso:</label>
@@ -39,12 +54,20 @@
                         @Html.TextBoxFor(x => x.Egreso, new { @class = "form-control" })
                     </div>
                     <div class="col-lg-3">
+                        <label>Total Unidad:</label>
+                        @Html.TextBoxFor(x => x.TotalUtilidad, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
                         <label>Comentario:</label>
                         @Html.TextBoxFor(x => x.Comentarios, new { @class = "form-control" })
                     </div>
                     <div class="col-lg-3">
                         <label>MontoTotal:</label>
                         @Html.TextBoxFor(x => x.MontoTotal, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>BILLETES DE 1000:</label>
+                        @Html.TextBoxFor(x => x.B1000, new { @class = "form-control" })
                     </div>
                     <div class="col-lg-3">
                         <label>BILLETES DE 500:</label>
@@ -86,11 +109,7 @@
                         <label>MONEDAS DE 50C:</label>
                         @Html.TextBoxFor(x => x.M050, new { @class = "form-control" })
                     </div>
-
-
                 </div>
-
-
                 <div class="row">
                     <div class="col-md-12">
                         <input type="submit" value="Guardar" onclick="" class="btn btn-success" />
@@ -98,13 +117,10 @@
                         <input type="button" value="Eliminar" id="btnEliminar" class="btn btn-danger" disabled onclick="" />
                     </div>
                 </div>
-
-
-
             </div>
         </div>
         <br />
-        <table id="tblPrecios" class="table table-bordered table-striped" style="width: 100%;"></table>
+        <table id="tblDineroCaja" class="table table-bordered table-striped" style="width: 100%;"></table>
     </div>
 }
 

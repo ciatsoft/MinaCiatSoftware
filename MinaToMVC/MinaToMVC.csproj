@@ -291,6 +291,7 @@
     <Content Include="Views\VentaPublicoGeneral\CorteCaja.cshtml" />
     <Content Include="Views\Catalog\PartialConfigurationUbicacionMaterial.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\CorteDeCaja.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\DineroCaja.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

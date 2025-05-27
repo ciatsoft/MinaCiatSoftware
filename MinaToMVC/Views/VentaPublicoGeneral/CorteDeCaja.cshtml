@@ -41,6 +41,35 @@
         <br />
         <h2><label for="fechaFiltro" class="form-label">En Caja:</label></h2>
         <table id="tblEn_Caja" class="table table-bordered table-striped" style="width: 100%;"></table>
+        <br />
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+            <!-- Lado Izquierdo - Caja Chica -->
+            <div style="flex: 1; margin-right: 10px;">
+                <h2><label for="fechaFiltro" class="form-label">Caja Chica:</label></h2>
+                <table id="tblCajaChica" class="table table-bordered table-striped" style="width: 100%;"></table>
+            </div>
+
+            <!-- Lado Derecho - Utilidad del Día -->
+            <div style="flex: 1; margin-left: 10px;">
+                <h2 style="text-align: right;"><label for="fechaFiltro" class="form-label">Utilidad del Día</label></h2>
+                <div class="mb-2" style="text-align: right;">
+                    <label for="ingreso" class="form-label" style="display: inline-block; margin-right: 5px;">Ingresos: $</label>
+                    <input class="form-control" type="text" name="ingreso" id="ingreso" value="0" style="display: inline-block; width: auto; text-align: right;" />
+                </div>
+                <div class="mb-2" style="text-align: right;">
+                    <label for="caja" class="form-label" style="display: inline-block; margin-right: 5px;">Caja: $</label>
+                    <input class="form-control" type="text" name="caja" id="caja" value="0" style="display: inline-block; width: auto; text-align: right;" />
+                </div>
+                <div class="mb-2" style="text-align: right;">
+                    <label for="total" class="form-label" style="display: inline-block; margin-right: 5px;">Total: $</label>
+                    <input class="form-control" type="text" name="total" id="total" value="0" style="display: inline-block; width: auto; text-align: right;" />
+                </div>
+                <div class="mb-2" style="text-align: right;">
+                    <button style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
+                        Generar Reporte
+                    </button>
+                </div>
+            </div>
     </div>
 </div>
 

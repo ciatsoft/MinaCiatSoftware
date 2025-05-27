@@ -1,3 +1,148 @@
+$(document).ready(function () {
+    $("#tblDineroCaja").dataTable({
+        processing: true,
+        destroy: true,
+        paging: true,
+        searching: true,
+        columns: [
+            { data: "id", "visible": false, title: "id" },
+            {
+                data: "ventaVale",
+                title: "Venta por Vales",
+                render: function (data, type, row) {
+                    if (data == null || data === "") return "$0.00";
+                    return parseFloat(data).toLocaleString('es-MX', {
+                        style: 'currency',
+                        currency: 'MXN',
+                        minimumFractionDigits: 2
+                    });
+                }
+            },
+            {
+                data: "ventaTransferencia",
+                title: "Venta por Transferencia",
+                render: function (data, type, row) {
+                    if (data == null || data === "") return "$0.00";
+                    return parseFloat(data).toLocaleString('es-MX', {
+                        style: 'currency',
+                        currency: 'MXN',
+                        minimumFractionDigits: 2
+                    });
+                }
+            },
+            {
+                data: "ventaEfectivo",
+                title: "Venta por Efectivo",
+                render: function (data, type, row) {
+                    if (data == null || data === "") return "$0.00";
+                    return parseFloat(data).toLocaleString('es-MX', {
+                        style: 'currency',
+                        currency: 'MXN',
+                        minimumFractionDigits: 2
+                    });
+                }
+            },
+            {
+                data: "totalUtilidad",
+                title: "Total Unidad",
+                render: function (data, type, row) {
+                    if (data == null || data === "") return "$0.00";
+                    return parseFloat(data).toLocaleString('es-MX', {
+                        style: 'currency',
+                        currency: 'MXN',
+                        minimumFractionDigits: 2
+                    });
+                }
+            },
+            {
+                data: "montoTotal",
+                title: "Monto Total",
+                render: function (data, type, row) {
+                    if (data == null || data === "") return "$0.00";
+                    return parseFloat(data).toLocaleString('es-MX', {
+                        style: 'currency',
+                        currency: 'MXN',
+                        minimumFractionDigits: 2
+                    });
+                }
+            },
+            {
+                data: "ingreso",
+                title: "Ingreso",
+                render: function (data, type, row) {
+                    if (data == null || data === "") return "$0.00";
+                    return parseFloat(data).toLocaleString('es-MX', {
+                        style: 'currency',
+                        currency: 'MXN',
+                        minimumFractionDigits: 2
+                    });
+                }
+            },
+            {
+                data: "egreso",
+                title: "Egreso",
+                render: function (data, type, row) {
+                    if (data == null || data === "") return "$0.00";
+                    return parseFloat(data).toLocaleString('es-MX', {
+                        style: 'currency',
+                        currency: 'MXN',
+                        minimumFractionDigits: 2
+                    });
+                }
+            },
+            { data: "comentarios", title: "Comentario" },
+            { data: "b1000", title: "Billetes de 1000" },
+            { data: "b500", title: "Billetes de 500" },
+            { data: "b200", title: "Billetes de 200" },
+            { data: "b100", title: "Billetes de 100" },
+            { data: "b50", title: "Billetes de 50" },
+            { data: "b20", title: "Billetes de 20" },
+            { data: "m10", title: "Monedas de 10" },
+            { data: "m5", title: "Monedas de 5" },
+            { data: "m2", title: "Monedas de 2" },
+            { data: "m1", title: "Monedas de 1" },
+            { data: "m050", title: "Monedas de 0.50c" },
+            {
+                data: "fecha",
+                title: "Fecha",
+                render: function (data, type, row) {
+                    if (!data) return "";
+                    let date = new Date(data);
+                    let day = String(date.getDate()).padStart(2, '0');
+                    let month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses empiezan en 0
+                    let year = date.getFullYear();
+                    return `${day}/${month}/${year}`;
+                }
+            },
+        ]
+        ,
+        language: {
+            "decimal": ",",
+            "thousands": ".",
+            "processing": "Procesando...",
+            "lengthMenu": "Mostrar _MENU_ entradas",
+            "zeroRecords": "No se encontraron resultados",
+            "emptyTable": "Ningún dato disponible en esta tabla",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+            "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+            "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+            "search": "Buscar:",
+            "loadingRecords": "Cargando...",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                "sortDescending": ": activar para ordenar la columna de manera descendente"
+            }
+        }
+    });
+
+    GetAllPV_CorteCaja();
+});
 $(function () {
     jQuery.validator.addMethod("lettersonly", function (value, element) {
         return this.optional(element) || /^[a-z\s]+$/i.test(value);
@@ -63,6 +208,29 @@ $(function () {
         }
     });
 });
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function () {
+    const drop = document.getElementById("usuarioDrop");
+    const createdBy = document.getElementById("createdBy");
+    const updatedBy = document.getElementById("updatedBy");
+    const usuarioName = document.getElementById("usuarioName");
+    const fecha = document.getElementById("fecha");
+
+    function syncValues() {
+        const selectedName = drop.options[drop.selectedIndex].text;
+
+        createdBy.value = selectedName;
+        updatedBy.value = selectedName;
+        usuarioName.value = selectedName;
+    }
 
 });
+
+function GetAllPV_CorteCaja() {
+    GetMVC("/VentaPublicoGeneral/GetAllPV_CorteCaja", function (r) {
+        if (r.IsSuccess) {
+            MapingPropertiesDataTable("tblDineroCaja", r.Response);
+        } else {
+            alert("Error al cargar las Ventas: " + r.ErrorMessage);
+        }
+    });
+}

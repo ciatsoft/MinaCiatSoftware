@@ -144,14 +144,48 @@ namespace MinaTolWebApi.DAL
                 var fechaSolo = fecha.Date;
 
                 var parameters = new List<SqlParameter>
-        {
-            new SqlParameter("@UserName", SqlDbType.NVarChar, 100) { Value = userName },
-            new SqlParameter("@Fecha",    SqlDbType.Date)          { Value = fechaSolo }
-        };
+                {
+                    new SqlParameter("@UserName", SqlDbType.NVarChar, 100) { Value = userName },
+                    new SqlParameter("@Fecha",    SqlDbType.Date)          { Value = fechaSolo }
+                };
 
                 // CORREGIDO: usar GetList para obtener varios registros
                 var result = GetList(
                     "SearchPV_VajaChicaByDateAndUser",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader => FillEntity<PV_CajaChica>(reader)
+                );
+
+                response.Response = result; // ahora será una lista de PV_CajaChica
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+
+        //Obtener Caja Chica por Usuario y Fecha y NULL
+        public ModelResponse SearchPV_CajaChicaByDateAndUserAndCorteId(string userName, DateTime fecha)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var fechaSolo = fecha.Date;
+
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@UserName", SqlDbType.NVarChar, 100) { Value = userName },
+                    new SqlParameter("@Fecha",    SqlDbType.Date)          { Value = fechaSolo }
+                };
+
+                // CORREGIDO: usar GetList para obtener varios registros
+                var result = GetList(
+                    "SearchPV_CajaChicaByDateAndUserAndCorteId",
                     CommandType.StoredProcedure,
                     parameters,
                     reader => FillEntity<PV_CajaChica>(reader)

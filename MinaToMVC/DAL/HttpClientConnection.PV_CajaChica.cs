@@ -84,5 +84,21 @@ namespace MinaToMVC.DAL
             return modelResponse;
         }
 
+        //Obtener Filtrado por Usuario Logueado y Fecha Corte_Id Null
+        public async Task<ModelResponse> SearchPV_CajaChicaByDateAndUserAndCorteId(string userName, DateTime fecha)
+        {
+            // Armar la URL con parámetros de consulta correctamente
+            string url = $"api/PV_CajaChica/search/Reporte?userName={HttpUtility.UrlEncode(userName)}&fecha={fecha.ToString("yyyy-MM-dd")}";
+
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+
     }
 }
