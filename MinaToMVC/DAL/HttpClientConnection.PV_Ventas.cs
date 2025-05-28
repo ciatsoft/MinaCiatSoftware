@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using MinaTolEntidades.DtoSucursales;
 using MinaTolEntidades.DtoViajes;
 using MinaTolEntidades.DtoVentaPublicoGeneral;
+using System.Web;
 
 namespace MinaToMVC.DAL
 {
@@ -56,6 +57,20 @@ namespace MinaToMVC.DAL
             return modelResponse;
         }
 
+        public async Task<ModelResponse> SearchPV_VentasByDateAndUser(int usuarioId, DateTime fecha)
+        {
+            // Armar la URL con parámetros de consulta correctamente
+            string url = $"api/PV_Venta/search?usuarioId={usuarioId}&fecha={fecha.ToString("yyyy-MM-dd")}";
+
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
 
     }
 }

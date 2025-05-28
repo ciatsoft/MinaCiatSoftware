@@ -10,6 +10,7 @@ using System.Web.Http;
 
 namespace MinaTolWebApi.Controllers
 {
+    [RoutePrefix("api/PV_CorteCaja")]
     public class PV_CorteCajaController : ApiController
     {
         private DbWrapper wrapper { get; set; }
@@ -39,6 +40,13 @@ namespace MinaTolWebApi.Controllers
         public async Task<ModelResponse> SaveOrUpdatePV_CorteCaja(PV_CorteCaja t)
         {
             var result = wrapper.SaveOrUpdatePV_CorteCaja(t);
+            return result;
+        }
+
+        [HttpGet, Route("search")]
+        public async Task<ModelResponse> SearchPV_DineroCajaByDateAndUser([FromUri] string userName, [FromUri] DateTime fecha)
+        {
+            var result = wrapper.SearchPV_DineroCajaByDateAndUser(userName, fecha);
             return result;
         }
     }

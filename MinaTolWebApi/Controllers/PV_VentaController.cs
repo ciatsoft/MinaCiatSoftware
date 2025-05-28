@@ -47,5 +47,12 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
+        [HttpGet, Route("search")]
+        public async Task<ModelResponse> SearchPV_VentasByDateAndUser(int usuarioId, [FromUri] DateTime fecha)
+        {
+            var result = wrapper.SearchPV_VentasByDateAndUser(usuarioId, fecha);
+            return result;
+        }
+
     }
 }

@@ -177,6 +177,7 @@
     <Content Include="Scripts\Vehiculo\Vehiculo.js" />
     <Content Include="Scripts\VentaPublicoGeneral\CajaChica.js" />
     <Content Include="Scripts\VentaPublicoGeneral\CorteCaja.js" />
+    <Content Include="Scripts\VentaPublicoGeneral\CorteDeCaja.js" />
     <Content Include="Scripts\VentaPublicoGeneral\Index.js" />
     <Content Include="Scripts\VentaPublicoGeneral\Precios.js" />
     <Content Include="Scripts\Viajes\Internos.js" />
@@ -289,6 +290,8 @@
     <Content Include="Views\VentaPublicoGeneral\CajaChica.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\CorteCaja.cshtml" />
     <Content Include="Views\Catalog\PartialConfigurationUbicacionMaterial.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\CorteDeCaja.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\DineroCaja.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
