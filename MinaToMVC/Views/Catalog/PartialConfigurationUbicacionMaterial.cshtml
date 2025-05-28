@@ -29,18 +29,28 @@
 
 <!-- Spinner de carga -->
 <div id="spinnerCarga" style="display: none; position: fixed; top: 50%; left: 50%; z-index: 9999; transform: translate(-50%, -50%);">
-    <div class="spinner-border text-primary" role="status" style="width: 4rem; height: 4rem;">
-    </div>
+    <div class="spinner-border text-primary" role="status" style="width: 4rem; height: 4rem;"></div>
 </div>
 
 <script>
-    let materialesAsociadosIds = [];
-    let dataTableMateriales = null;
-    let dataTableAsociados = null;
+    // Evitar redeclaración
+    if (typeof materialesAsociadosIds === 'undefined') {
+        var materialesAsociadosIds = [];
+    }
+    var dataTableMateriales = null;
+    var dataTableAsociados = null;
 
     $(document).ready(function () {
         const idUbicacion = $("#txtIdUbicacion").val();
         inicializarTablas(idUbicacion);
+
+        // Reabrir modal si está en sessionStorage
+        const datosModal = sessionStorage.getItem("abrirModalUbicacion");
+        if (datosModal) {
+            sessionStorage.removeItem("abrirModalUbicacion");
+            // Aquí puedes reabrir tu modal si usas uno como Bootstrap Modal
+            // $('#modalAsociarMaterial').modal('show');
+        }
     });
 
     function mostrarCargando() {
@@ -75,25 +85,7 @@
                     }
                 }
             ],
-            language: {
-                "decimal": ",",
-                "thousands": ".",
-                "processing": "Procesando...",
-                "lengthMenu": "Mostrar _MENU_ entradas",
-                "zeroRecords": "No se encontraron resultados",
-                "emptyTable": "Ningún dato disponible en esta tabla",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-                "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-                "search": "Buscar:",
-                "loadingRecords": "Cargando...",
-                "paginate": {
-                    "first": "Primero",
-                    "last": "Último",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
-                }
-            }
+            language: languageES()
         });
 
         dataTableAsociados = $("#tableUbicacionTipodematerial").DataTable({
@@ -111,25 +103,7 @@
                     }
                 }
             ],
-            language: {
-                "decimal": ",",
-                "thousands": ".",
-                "processing": "Procesando...",
-                "lengthMenu": "Mostrar _MENU_ entradas",
-                "zeroRecords": "No se encontraron resultados",
-                "emptyTable": "Ningún dato disponible en esta tabla",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-                "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-                "search": "Buscar:",
-                "loadingRecords": "Cargando...",
-                "paginate": {
-                    "first": "Primero",
-                    "last": "Último",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
-                }
-            }
+            language: languageES()
         });
 
         GetGetMaterialUbicacionByUbicacion(idUbicacion, function () {
@@ -173,7 +147,6 @@
             }
         });
     }
-
     function AgregarMaterial(materialId) {
         mostrarCargando();
 
@@ -250,6 +223,28 @@
         });
         location.reload(); // reload después del post
 
+    }
+
+    function languageES() {
+        return {
+            "decimal": ",",
+            "thousands": ".",
+            "processing": "Procesando...",
+            "lengthMenu": "Mostrar _MENU_ entradas",
+            "zeroRecords": "No se encontraron resultados",
+            "emptyTable": "Ningún dato disponible en esta tabla",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+            "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+            "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+            "search": "Buscar:",
+            "loadingRecords": "Cargando...",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+        };
     }
 
 </script>
