@@ -331,6 +331,14 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
             // Convertir el resumen en array para DataTable
             const resumenArray = Object.values(resumenPorPago);
 
+            // Calcular el total general y mostrarlo en el input
+            const totalGeneral = resumenArray.reduce((acc, item) => acc + item.totalPago, 0);
+
+            document.getElementById('ingreso').value = totalGeneral.toLocaleString('es-MX', {
+                style: 'currency',
+                currency: 'MXN'
+            });
+
             // Crear una nueva tabla con datos resumidos
             $('#tblVentas_Aprobadas').DataTable({
                 data: resumenArray,
@@ -424,7 +432,7 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                     }
                 },
                 {
-                    data: "ventaEfectivo",
+                    data: "ventaEfectivo", 
                     title: "Venta por Efectivo",
                     render: function (data, type, row) {
                         if (data == null || data === "") return "$0.00";
