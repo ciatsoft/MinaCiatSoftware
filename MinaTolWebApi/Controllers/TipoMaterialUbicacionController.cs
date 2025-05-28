@@ -66,5 +66,7 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.QuitMaterialUbicacion(t);
             return result;
         }
+
+
     }
 }
