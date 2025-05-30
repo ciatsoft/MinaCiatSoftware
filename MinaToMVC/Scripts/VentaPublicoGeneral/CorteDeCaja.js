@@ -210,12 +210,13 @@ document.getElementById("btnFiltrar").addEventListener("click", function () {
         return;
     }
 
+    limpiarCalculos();
+
     SearchPV_VentasByDateAndUser(usuarioId, fecha, userName);
 });
 
 function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
     PostMVC('/VentaPublicoGeneral/SearchPV_VentasByDateAndUser', { usuarioId, fecha }, function (r, textStatus, jqXHR) {
-        console.log("Respuesta objeto r:", r);
         if (r.IsSuccess) {
             const data = r.Response;
 
@@ -304,7 +305,6 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
             });
 
             // Mapea los datos al DataTable Ventas Aprobadas
-
             const datosFiltrados = data.filter(item => item.estatusVenta === "E");
 
             // Agrupar por formaDePago
@@ -380,146 +380,186 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                     }
                 }
             });
+
+            // Objeto para almacenar los resultados
+            const resultados = {
+                totalGeneral: totalGeneral,
+                totalMonto: 0
+            };
+
+            PostMVC('/VentaPublicoGeneral/SearchPV_DineroCajaByDateAndUser', { userName, fecha }, function (r, textStatus, jqXHR) {
+                if ($.fn.DataTable.isDataTable('#tblEn_Caja')) {
+                    $('#tblEn_Caja').DataTable().clear().destroy();
+                }
+                const cajaData = r.Response;
+
+                // Tabla de Dinero en Caja
+                $('#tblEn_Caja').DataTable({
+                    data: cajaData,
+                    columns: [
+                        { data: "id", "visible": false, title: "id" },
+                        { data: "b1000", title: "Billetes de 1000" },
+                        { data: "b500", title: "Billetes de 500" },
+                        { data: "b200", title: "Billetes de 200" },
+                        { data: "b100", title: "Billetes de 100" },
+                        { data: "b50", title: "Billetes de 50" },
+                        { data: "b20", title: "Billetes de 20" },
+                        { data: "m10", title: "Monedas de 10" },
+                        { data: "m5", title: "Monedas de 5" },
+                        { data: "m2", title: "Monedas de 2" },
+                        { data: "m1", title: "Monedas de 1" },
+                        { data: "m050", title: "Monedas de 0.50c" },
+                        {
+                            data: "ventaVale",
+                            title: "Venta por Vales",
+                            render: function (data, type, row) {
+                                if (data == null || data === "") return "$0.00";
+                                return parseFloat(data).toLocaleString('es-MX', {
+                                    style: 'currency',
+                                    currency: 'MXN',
+                                    minimumFractionDigits: 2
+                                });
+                            }
+                        },
+                        {
+                            data: "ventaTransferencia",
+                            title: "Venta por Transferencia",
+                            render: function (data, type, row) {
+                                if (data == null || data === "") return "$0.00";
+                                return parseFloat(data).toLocaleString('es-MX', {
+                                    style: 'currency',
+                                    currency: 'MXN',
+                                    minimumFractionDigits: 2
+                                });
+                            }
+                        },
+                        {
+                            data: "ventaEfectivo",
+                            title: "Venta por Efectivo",
+                            render: function (data, type, row) {
+                                if (data == null || data === "") return "$0.00";
+                                return parseFloat(data).toLocaleString('es-MX', {
+                                    style: 'currency',
+                                    currency: 'MXN',
+                                    minimumFractionDigits: 2
+                                });
+                            }
+                        },
+                    ],
+                    language: {
+                        "decimal": ",",
+                        "thousands": ".",
+                        "processing": "Procesando...",
+                        "lengthMenu": "Mostrar _MENU_ entradas",
+                        "zeroRecords": "No se encontraron resultados",
+                        "emptyTable": "Ningún dato disponible en esta tabla",
+                        "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                        "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                        "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+                        "search": "Buscar:",
+                        "loadingRecords": "Cargando...",
+                        "paginate": {
+                            "first": "Primero",
+                            "last": "Último",
+                            "next": "Siguiente",
+                            "previous": "Anterior"
+                        },
+                        "aria": {
+                            "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                            "sortDescending": ": activar para ordenar la columna de manera descendente"
+                        }
+                    }
+                });
+
+                PostMVC('/VentaPublicoGeneral/SearchPV_CajaChicaByDateAndUserAndCorteId', { userName, fecha }, function (r, textStatus, jqXHR) {
+                    if ($.fn.DataTable.isDataTable('#tblCajaChica')) {
+                        $('#tblCajaChica').DataTable().clear().destroy();
+                    }
+
+                    const cajaChicaData = r.Response;
+
+                    // Calcular suma de montos
+                    resultados.totalMonto = 0;
+                    cajaChicaData.forEach(item => {
+                        resultados.totalMonto += parseFloat(item.monto);
+                    });
+
+                    // Asignar al input con id="caja"
+                    $('#caja').val(resultados.totalMonto.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }));
+
+                    // Tabla de Dinero en Caja
+                    $('#tblCajaChica').DataTable({
+                        data: cajaChicaData,
+                        columns: [
+                            { data: "id", "visible": false, title: "id" },
+                            {
+                                data: 'fecha',
+                                title: 'Fecha',
+                                render: function (data) {
+                                    return new Date(data).toLocaleString('es-MX');
+                                }
+                            },
+                            {
+                                data: 'monto',
+                                title: 'Monto',
+                                render: function (data) {
+                                    return `$${parseFloat(data).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }).replace('$', '')}`;
+                                }
+                            },
+                            { data: "comentarios", title: "Comentarios" },
+                        ],
+                        language: {
+                            "decimal": ",",
+                            "thousands": ".",
+                            "processing": "Procesando...",
+                            "lengthMenu": "Mostrar _MENU_ entradas",
+                            "zeroRecords": "No se encontraron resultados",
+                            "emptyTable": "Ningún dato disponible en esta tabla",
+                            "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                            "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                            "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+                            "search": "Buscar:",
+                            "loadingRecords": "Cargando...",
+                            "paginate": {
+                                "first": "Primero",
+                                "last": "Último",
+                                "next": "Siguiente",
+                                "previous": "Anterior"
+                            },
+                            "aria": {
+                                "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                                "sortDescending": ": activar para ordenar la columna de manera descendente"
+                            }
+                        }
+                    });
+
+                    // Calcular la resta y formatear como moneda MXN
+                    const restaTotal = resultados.totalGeneral - resultados.totalMonto;
+                    const formatoMXN = new Intl.NumberFormat('es-MX', {
+                        style: 'currency',
+                        currency: 'MXN'
+                    }).format(restaTotal);
+
+                    // Asignar el valor formateado al input
+                    document.getElementById('total').value = formatoMXN;
+
+                    // También puedes mantener el console.log si lo necesitas
+                    //console.log("Resultados consolidados:", {
+                    //    totalGeneral: resultados.totalGeneral,
+                    //    totalMonto: resultados.totalMonto,
+                    //    restaTotal: restaTotal
+                    //});
+                });
+            });
+
         } else {
             alert("Error al obtener registros. Ver consola para más detalles.");
         }
     });
+}
 
-    PostMVC('/VentaPublicoGeneral/SearchPV_DineroCajaByDateAndUser', { userName, fecha }, function (r, textStatus, jqXHR) {
-        if ($.fn.DataTable.isDataTable('#tblEn_Caja')) {
-            $('#tblEn_Caja').DataTable().clear().destroy();
-        }
-        const cajaData = r.Response; // Usamos un nombre diferente para evitar confusión con 'data' anterior
-
-        // Tabla de Dinero en Caja
-        $('#tblEn_Caja').DataTable({
-            data: cajaData, // Usamos los datos de la respuesta
-            columns: [
-                { data: "id", "visible": false, title: "id" },
-                { data: "b1000", title: "Billetes de 1000" },
-                { data: "b500", title: "Billetes de 500" },
-                { data: "b200", title: "Billetes de 200" },
-                { data: "b100", title: "Billetes de 100" },
-                { data: "b50", title: "Billetes de 50" },
-                { data: "b20", title: "Billetes de 20" },
-                { data: "m10", title: "Monedas de 10" },
-                { data: "m5", title: "Monedas de 5" },
-                { data: "m2", title: "Monedas de 2" },
-                { data: "m1", title: "Monedas de 1" },
-                { data: "m050", title: "Monedas de 0.50c" },
-                {
-                    data: "ventaVale",
-                    title: "Venta por Vales",
-                    render: function (data, type, row) {
-                        if (data == null || data === "") return "$0.00";
-                        return parseFloat(data).toLocaleString('es-MX', {
-                            style: 'currency',
-                            currency: 'MXN',
-                            minimumFractionDigits: 2
-                        });
-                    }
-                },
-                {
-                    data: "ventaTransferencia",
-                    title: "Venta por Transferencia",
-                    render: function (data, type, row) {
-                        if (data == null || data === "") return "$0.00";
-                        return parseFloat(data).toLocaleString('es-MX', {
-                            style: 'currency',
-                            currency: 'MXN',
-                            minimumFractionDigits: 2
-                        });
-                    }
-                },
-                {
-                    data: "ventaEfectivo", 
-                    title: "Venta por Efectivo",
-                    render: function (data, type, row) {
-                        if (data == null || data === "") return "$0.00";
-                        return parseFloat(data).toLocaleString('es-MX', {
-                            style: 'currency',
-                            currency: 'MXN',
-                            minimumFractionDigits: 2
-                        });
-                    }
-                },
-            ],
-            language: {
-                "decimal": ",",
-                "thousands": ".",
-                "processing": "Procesando...",
-                "lengthMenu": "Mostrar _MENU_ entradas",
-                "zeroRecords": "No se encontraron resultados",
-                "emptyTable": "Ningún dato disponible en esta tabla",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-                "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-                "search": "Buscar:",
-                "loadingRecords": "Cargando...",
-                "paginate": {
-                    "first": "Primero",
-                    "last": "Último",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
-                },
-                "aria": {
-                    "sortAscending": ": activar para ordenar la columna de manera ascendente",
-                    "sortDescending": ": activar para ordenar la columna de manera descendente"
-                }
-            }
-        });
-    });
-
-    PostMVC('/VentaPublicoGeneral/SearchPV_CajaChicaByDateAndUserAndCorteId', { userName, fecha }, function (r, textStatus, jqXHR) {
-        if ($.fn.DataTable.isDataTable('#tblCajaChica')) {
-            $('#tblCajaChica').DataTable().clear().destroy();
-        }
-        const cajaChicaData = r.Response; // Usamos un nombre diferente para evitar confusión con 'data' anterior
-
-        // Tabla de Dinero en Caja
-        $('#tblCajaChica').DataTable({
-            data: cajaChicaData, // Usamos los datos de la respuesta
-            columns: [
-                { data: "id", "visible": false, title: "id" },
-                {
-                    data: 'fecha',
-                    title: 'Fecha',
-                    render: function (data) {
-                        return new Date(data).toLocaleString('es-MX'); // muestra fecha + hora
-                    }
-                },
-                {
-                    data: 'monto',
-                    title: 'Monto',
-                    render: function (data) {
-                        return `$${parseFloat(data).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }).replace('$', '')}`;
-                    }
-                },
-                { data: "comentarios", title: "Comentarios" },
-            ],
-            language: {
-                "decimal": ",",
-                "thousands": ".",
-                "processing": "Procesando...",
-                "lengthMenu": "Mostrar _MENU_ entradas",
-                "zeroRecords": "No se encontraron resultados",
-                "emptyTable": "Ningún dato disponible en esta tabla",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-                "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-                "search": "Buscar:",
-                "loadingRecords": "Cargando...",
-                "paginate": {
-                    "first": "Primero",
-                    "last": "Último",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
-                },
-                "aria": {
-                    "sortAscending": ": activar para ordenar la columna de manera ascendente",
-                    "sortDescending": ": activar para ordenar la columna de manera descendente"
-                }
-            }
-        });
-    });
+function limpiarCalculos() {
+    $('#ingreso').val('');
+    $('#caja').val();
+    $('#total').val();
 }
