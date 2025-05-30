@@ -8,6 +8,16 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 
+<style>
+    .titulo-pequeno {
+        font-size: 12px;
+    }
+</style>
+
+<!-- En el head de tu HTML -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <div class="content">
     <br>
     <center><h1>Corte de Caja Diario</h1></center>
@@ -65,12 +75,12 @@
                     <input class="form-control" type="text" name="total" id="total" value="0" style="display: inline-block; width: auto; text-align: right;" disabled />
                 </div>
                 <div class="mb-2" style="text-align: right;">
-                    <button style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
-                        Generar Reporte
+                    <button id="btnGenerarPDF" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
+                        Generar Reporte PDF
                     </button>
                 </div>
             </div>
+        </div>
     </div>
 </div>
-
 <script src="@(Url.StaticFile("Scripts/VentaPublicoGeneral/CorteDeCaja.js"))"></script>
