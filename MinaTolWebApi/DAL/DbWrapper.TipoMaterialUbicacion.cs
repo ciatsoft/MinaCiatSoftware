@@ -49,16 +49,30 @@ namespace MinaTolWebApi.DAL
             return modelResponse;
         }
 
-        public ModelResponse SaveOrUpdateTipoMaterialUbicacion (DtoTipoMaterialUbicacion t)
+        public ModelResponse SaveOrUpdateTipoMaterialUbicacion(DtoTipoMaterialUbicacion t)
         {
             var response = new ModelResponse();
             try
             {
                 response.IsSuccess = true;
-                var parameters = GenerateSQLParameters(t);
-                var tipoMaterialU = ExecuteScalar($"SaveOrUpdateTipoMaterialUbicacion", System.Data.CommandType.StoredProcedure, parameters);
-                t.Id = Convert.ToInt64(tipoMaterialU);
 
+                // Solo los parámetros necesarios para el SP
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@Id", t.Id),
+                    new SqlParameter("@NombreTipoMaterial", t.NombreTipoMaterial ?? (object)DBNull.Value),
+                    new SqlParameter("@DescripcionTipoMaterial", t.DescripcionTipoMaterial ?? (object)DBNull.Value),
+                    new SqlParameter("@UnidadMedida", t.UnidadMedida?.Id ?? 0),
+                    new SqlParameter("@Estatus", t.Estatus),
+                    new SqlParameter("@CreatedBy", t.CreatedBy ?? (object)DBNull.Value),
+                    new SqlParameter("@CreatedDt", t.CreatedDt != DateTime.MinValue ? t.CreatedDt : DateTime.Now),
+                    new SqlParameter("@UpdatedBy", t.UpdatedBy ?? (object)DBNull.Value),
+                    new SqlParameter("@UpdatedDt", t.UpdatedDt != DateTime.MinValue ? t.UpdatedDt : DateTime.Now)
+                };
+
+                // Ejecutar procedimiento
+                var tipoMaterialU = ExecuteScalar("SaveOrUpdateTipoMaterialUbicacion", CommandType.StoredProcedure, parameters);
+                t.Id = Convert.ToInt64(tipoMaterialU);
                 response.Response = t;
             }
             catch (Exception ex)
@@ -67,6 +81,7 @@ namespace MinaTolWebApi.DAL
                 response.Message = ex.Message;
                 response.Enum = Enumeration.ErrorNoControlado;
             }
+
             return response;
         }
 
