@@ -576,6 +576,30 @@ function generarReportePDF() {
             confirmButtonText: 'Entendido'
         });
         return;
+    } else if ($('#tblCajaChica').DataTable().data().count() === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Sin datos',
+            text: 'Ya se realizo el corte de esta fecha.',
+            confirmButtonText: 'Entendido'
+        });
+        return;
+    } else if ($('#tblVentas_Aprobadas').DataTable().data().count() === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Sin datos',
+            text: 'No existen ventas aprobadas para generar el reporte.',
+            confirmButtonText: 'Entendido'
+        });
+        return;
+    } else if ($('#tblEn_Caja').DataTable().data().count() === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Sin datos',
+            text: 'Sin datos en Dinero en Caja.',
+            confirmButtonText: 'Entendido'
+        });
+        return;
     }
 
     // Crear un div temporal para el contenido del PDF con estilos mejorados
@@ -717,5 +741,38 @@ function generarReportePDF() {
 
         // Eliminar el contenido temporal
         document.body.removeChild(pdfContent);
+    });
+
+    var usuarioId = $("#userId").val();
+    var fechaFiltro = $("#fechaFiltro").val();
+    var usuarioName = $("#userName").val();
+    var estatus = 1;
+    var createdBy = $("#userName").val();
+    var createdDt = new Date().toISOString();
+    var updatedBy = $("#userName").val();
+    var updatedDt = new Date().toISOString();
+
+    InfoReporte(usuarioId ,usuarioName, fechaFiltro, estatus, createdBy, createdDt, updatedBy, updatedDt);
+}
+
+function InfoReporte(usuarioId, usuarioName, fechaFiltro, estatus, createdBy, createdDt, updatedBy, updatedDt) {
+    PostMVC('/VentaPublicoGeneral/SaveOrUpdateReporte_Venta', { usuarioId, usuarioName, fechaFiltro, estatus, createdBy, createdDt, updatedBy, updatedDt }, function (r, textStatus, jqXHR) {
+        if (!r.IsSuccess) {
+            Swal.fire({
+                title: "Reporte Generado!",
+                text: "El reporte ha sido generado exitosamente.",
+                icon: "success",
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.reload();
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al guardar los datos: ' + r.ErrorMessage,
+                confirmButtonText: 'Aceptar'
+            });
+        }
     });
 }

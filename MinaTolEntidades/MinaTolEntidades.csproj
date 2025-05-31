@@ -65,6 +65,7 @@
     <Compile Include="DtoSucursales\UnidadMedida.cs" />
     <Compile Include="DtoVentaPublicoGeneral\PV_CajaChica.cs" />
     <Compile Include="DtoVentaPublicoGeneral\PV_CorteCaja.cs" />
+    <Compile Include="DtoVentaPublicoGeneral\Reporte_Venta.cs" />
     <Compile Include="DtoVentas\MaterialUbicacion.cs" />
     <Compile Include="DtoVentas\PV_Material.cs" />
     <Compile Include="DtoVentas\PV_Planta.cs" />
