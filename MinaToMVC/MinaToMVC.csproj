@@ -213,6 +213,7 @@
     <Compile Include="DAL\HttpClientConnection.PV_Precios.cs" />
     <Compile Include="DAL\HttpClientConnection.Precios.cs" />
     <Compile Include="DAL\HttpClientConnection.PV_Ventas.cs" />
+    <Compile Include="DAL\HttpClientConnection.Reporte_Venta.cs" />
     <Compile Include="DAL\httpClientConnection.Rfid.cs" />
     <Compile Include="DAL\httpClientConnection.Roll.cs" />
     <Compile Include="DAL\HttpClientConnection.TipoMaterialUbicacion.cs" />
@@ -303,6 +304,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
     <Folder Include="Views\Default\" />
+    <Folder Include="Views\Reporte_Venta\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MinaTolEntidades\MinaTolEntidades.csproj">

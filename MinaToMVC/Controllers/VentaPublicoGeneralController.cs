@@ -192,6 +192,11 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetMaterialUbicacionByUbicacion(id);
             return JsonConvert.SerializeObject(result);
         }
+        public async Task<ActionResult> SaveOrUpdateReporte_Venta(Reporte_Venta reporte)
+        {
+            var r = await httpClientConnection.SaveOrUpdateReporte_Venta(reporte);
+            return Redirect("Index");
+        }
         #endregion
 
         #region Precios
