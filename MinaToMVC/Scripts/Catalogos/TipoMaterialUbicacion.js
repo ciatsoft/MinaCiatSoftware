@@ -112,7 +112,7 @@ function SaveOrUpdateTipoMaterialUbicacion() {
                    <strong>Unidad de Medida:</strong> ${$("#ddlUnidadDeMedida option:selected").text()}<br/>
                    <strong>Estatus:Activo</strong> `,
             icon: 'info',
-            showCancelButton: true,
+            showCancelButton: true, 
             confirmButtonText: confirmButtonText,
             cancelButtonText: 'Cancelar'
         }).then((result) => {
