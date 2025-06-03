@@ -10,6 +10,7 @@ namespace MinaTolEntidades.DtoVentaPublicoGeneral
     public class PV_CorteCaja : BaseObject
     {
         public string UsuarioName { get; set; }
+        public int Corte_Id { get; set; }
         public int VentaVale { get; set; }
         public int VentaTransferencia { get; set; }
         public int VentaEfectivo { get; set; }

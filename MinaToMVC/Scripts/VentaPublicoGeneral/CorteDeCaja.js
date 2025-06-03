@@ -53,6 +53,7 @@ $(document).ready(function () {
                     return new Date(data).toLocaleString('es-MX'); // muestra fecha + hora
                 }
             },
+            { data: 'corte_Id', title: 'ID Corte', visible: false },
         ],
         language: {
             "decimal": ",",
@@ -131,6 +132,7 @@ $(document).ready(function () {
                     });
                 }
             },
+            { data: 'corte_Id', title: 'ID Corte', visible: false },
         ],
         language: {
             "decimal": ",",
@@ -171,6 +173,7 @@ $(document).ready(function () {
             },
             { data: "monto", title: "Monto" },
             { data: "comentarios", title: "Comentarios" },
+            { data: 'corte_Id', title: 'ID Corte', visible: false },
         ],
         language: {
             "decimal": ",",
@@ -278,6 +281,18 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                             return new Date(data).toLocaleString('es-MX'); // muestra fecha + hora
                         }
                     },
+                    {
+                        data: 'corte_Id',
+                        title: 'ID Corte',
+                        render: function (data) {
+                            // Mostrar solo si el valor es mayor que 0
+                            return data > 0 ? data : '';
+                        },
+                        visible: (function () {
+                            // Verificar si hay al menos un valor mayor que 0 en los datos
+                            return data.some(item => item.corte_Id > 0);
+                        })() // Auto-ejecutamos la función
+                    }
                 ],
                 language: {
                     "decimal": ",",
@@ -433,6 +448,18 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                                 return data ? parseFloat(data).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) : "$0.00";
                             }
                         },
+                        {
+                            data: 'corte_Id',
+                            title: 'ID Corte',
+                            render: function (data) {
+                                // Mostrar solo si el valor es mayor que 0
+                                return data > 0 ? data : '';
+                            },
+                            visible: (function () {
+                                // Verificar si hay al menos un valor mayor que 0 en los datos
+                                return cajaData.some(item => item.corte_Id > 0);
+                            })() // Auto-ejecutamos la función
+                        }
                     ],
                     language: {
                         "decimal": ",",
@@ -495,6 +522,18 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                                 }
                             },
                             { data: "comentarios", title: "Comentarios" },
+                            {
+                                data: 'corte_Id',
+                                title: 'ID Corte',
+                                render: function (data) {
+                                    // Mostrar solo si el valor es mayor que 0
+                                    return data > 0 ? data : '';
+                                },
+                                visible: (function () {
+                                    // Verificar si hay al menos un valor mayor que 0 en los datos
+                                    return cajaChicaData.some(item => item.corte_Id > 0);
+                                })() // Auto-ejecutamos la función
+                            }
                         ],
                         language: {
                             "decimal": ",",
@@ -558,65 +597,82 @@ document.getElementById("btnGenerarPDF").addEventListener("click", function () {
 });
 
 function generarReportePDF() {
-    // Verificar que las librerías están cargadas
     if (typeof window.jspdf === 'undefined') {
         alert('Error: La biblioteca jsPDF no está cargada correctamente.');
         return;
     }
 
-    // Obtener jsPDF del objeto global
     const { jsPDF } = window.jspdf;
 
-    // Verificar que hay datos para generar el reporte
-    if ($('#tblVentas_Realizadas').DataTable().data().count() === 0) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Sin datos',
-            text: 'No hay datos para generar el reporte. Realice una consulta primero.',
-            confirmButtonText: 'Entendido'
-        });
-        return;
-    } else if ($('#tblCajaChica').DataTable().data().count() === 0) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Sin datos',
-            text: 'Ya se realizo el corte de esta fecha.',
-            confirmButtonText: 'Entendido'
-        });
-        return;
-    } else if ($('#tblVentas_Aprobadas').DataTable().data().count() === 0) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Sin datos',
-            text: 'No existen ventas aprobadas para generar el reporte.',
-            confirmButtonText: 'Entendido'
-        });
-        return;
-    } else if ($('#tblEn_Caja').DataTable().data().count() === 0) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Sin datos',
-            text: 'Sin datos en Dinero en Caja.',
-            confirmButtonText: 'Entendido'
-        });
-        return;
+    // Validar si las tablas están vacías
+    const tablas = [
+        { id: '#tblCajaChica', nombre: 'Caja Chica' },
+        { id: '#tblVentas_Realizadas', nombre: 'Ventas Realizadas' },
+        { id: '#tblEn_Caja', nombre: 'En Caja' }
+    ];
+
+    for (let tabla of tablas) {
+        if ($(tabla.id).DataTable().data().count() === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Sin datos',
+                text: `La tabla "${tabla.nombre}" está vacía.`,
+                confirmButtonText: 'Entendido'
+            });
+            return;
+        }
     }
 
-    // Crear un div temporal para el contenido del PDF con estilos mejorados
+    // Obtener datos de tablas
+    const datosVentas = $('#tblVentas_Realizadas').DataTable().rows().data().toArray();
+    const datosCajaChica = $('#tblCajaChica').DataTable().rows().data().toArray();
+    const datosEnCaja = $('#tblEn_Caja').DataTable().rows().data().toArray();
+
+    // Función para validar si existen Corte_Id
+    function tieneCorteId(datos) {
+        return datos.some(row => {
+            // Verifica si existe la propiedad (case insensitive)
+            const corteId = row.corte_Id !== undefined ? row.corte_Id :
+                row.Corte_Id !== undefined ? row.Corte_Id : null;
+
+            return corteId !== null && !isNaN(corteId) && parseInt(corteId) > 0;
+        });
+    }
+
+    // Cambia todas las referencias de Corte_Id a corte_Id
+    const existeCorteId = (
+        tieneCorteId(datosVentas) ||
+        tieneCorteId(datosCajaChica) ||
+        tieneCorteId(datosEnCaja)
+    );
+
+    // Si NO hay Corte_Id, ejecuta InfoReporte()
+    if (!existeCorteId) {
+        if (typeof InfoReporte === 'function') {
+            var usuarioId = $("#userId").val();
+            var fechaFiltro = $("#fechaFiltro").val();
+            var usuarioName = $("#userName").val();
+            var estatus = 1;
+            var createdBy = $("#userName").val();
+            var createdDt = new Date().toISOString();
+            var updatedBy = $("#userName").val();
+            var updatedDt = new Date().toISOString();
+
+            InfoReporte(usuarioId, usuarioName, fechaFiltro, estatus, createdBy, createdDt, updatedBy, updatedDt);
+        }
+    }
+
+    // Comienza la generación del PDF
     const pdfContent = document.createElement('div');
     pdfContent.style.padding = '20px';
-    pdfContent.style.width = '1000px'; // Ancho mayor para acomodar tablas
-    pdfContent.style.fontSize = '14px'; // Tamaño de fuente base más grande
+    pdfContent.style.width = '1000px';
+    pdfContent.style.fontSize = '14px';
 
-    // Obtener la fecha del filtro
     const fecha = $("#fechaFiltro").val();
     const userName = $("#userName").val();
-
-    // Obtener fecha y hora actual formateada correctamente
     const now = new Date();
     const fechaGeneracion = now.toLocaleDateString('es-MX') + ', ' + now.toLocaleTimeString('es-MX');
 
-    // Agregar título y fecha con estilos mejorados
     pdfContent.innerHTML = `
         <h1 style="text-align: center; margin-bottom: 20px; font-size: 24px;">Reporte de Utilidades Diarias</h1>
         <div style="margin-bottom: 30px; font-size: 16px;">
@@ -626,40 +682,55 @@ function generarReportePDF() {
         </div>
     `;
 
-    // Clonar las tablas y agregarlas al contenido con estilos mejorados
-    const tablas = [
+    // Si ya existe un Corte_Id, agregar leyenda
+    if (existeCorteId) {
+        const leyenda = document.createElement('div');
+        leyenda.style.margin = '30px 0';
+        leyenda.style.padding = '15px';
+        leyenda.style.border = '2px dashed red';
+        leyenda.style.color = 'red';
+        leyenda.style.fontWeight = 'bold';
+        leyenda.style.fontSize = '16px';
+        leyenda.textContent = 'Este reporte ya ha sido generado anteriormente.';
+        pdfContent.appendChild(leyenda);
+
+        Swal.fire({
+            title: "Reporte Generado!",
+            text: "El reporte ha sido generado exitosamente.",
+            icon: "success",
+            confirmButtonText: 'OK'
+        }).then(() => {
+            window.location.reload();
+        });
+    }
+
+    const tablasAExportar = [
         { id: 'tblVentas_Realizadas', title: 'Ventas Realizadas' },
         { id: 'tblVentas_Aprobadas', title: 'Resumen de Ventas Aprobadas' },
         { id: 'tblEn_Caja', title: 'Dinero en Caja' },
         { id: 'tblCajaChica', title: 'Movimientos de Caja Chica' }
     ];
 
-    tablas.forEach(tabla => {
+    tablasAExportar.forEach(tabla => {
         const tableElement = document.getElementById(tabla.id);
         if (tableElement) {
-            // Clonar la tabla y ajustar estilos
             const tableClone = tableElement.cloneNode(true);
-
-            // Aplicar estilos para mejorar la legibilidad
             tableClone.style.width = '100%';
             tableClone.style.marginBottom = '40px';
             tableClone.style.fontSize = '12px';
 
-            // Ajustar estilos de las celdas
             const cells = tableClone.querySelectorAll('td, th');
             cells.forEach(cell => {
                 cell.style.padding = '8px';
                 cell.style.border = '1px solid #ddd';
             });
 
-            // Ajustar estilos del encabezado
             const headers = tableClone.querySelectorAll('th');
             headers.forEach(header => {
                 header.style.backgroundColor = '#f2f2f2';
                 header.style.fontWeight = 'bold';
             });
 
-            // Agregar título de sección
             const titleElement = document.createElement('h2');
             titleElement.textContent = tabla.title;
             titleElement.style.margin = '20px 0 10px 0';
@@ -672,7 +743,6 @@ function generarReportePDF() {
         }
     });
 
-    // Agregar resumen de utilidades con estilos mejorados
     const utilidadesDiv = document.createElement('div');
     utilidadesDiv.style.marginTop = '40px';
     utilidadesDiv.style.padding = '20px';
@@ -690,22 +760,17 @@ function generarReportePDF() {
 
     pdfContent.appendChild(utilidadesDiv);
 
-    // Agregar el contenido temporal al body
     document.body.appendChild(pdfContent);
 
-    // Opciones mejoradas para html2canvas
-    const options = {
-        scale: 3, // Aumentar la escala para mejor calidad
+    html2canvas(pdfContent, {
+        scale: 3,
         logging: false,
         useCORS: true,
         scrollX: 0,
         scrollY: 0,
         windowWidth: pdfContent.scrollWidth,
         windowHeight: pdfContent.scrollHeight
-    };
-
-    // Configurar y generar el PDF con ajustes de tamaño
-    html2canvas(pdfContent, options).then(canvas => {
+    }).then(canvas => {
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF({
             orientation: 'portrait',
@@ -713,46 +778,28 @@ function generarReportePDF() {
             format: 'a4'
         });
 
-        // Calcular dimensiones para ajustar correctamente al PDF
-        const imgWidth = 190; // Ancho máximo en mm (dejando márgenes)
-        const pageHeight = 277; // Alto de página en mm (A4 menos márgenes)
+        const imgWidth = 190;
+        const pageHeight = 277;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
         let heightLeft = imgHeight;
-        let position = 10; // Margen superior
-        let pageNumber = 1;
+        let position = 10;
 
-        // Agregar primera página
         pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
 
-        // Agregar páginas adicionales si es necesario
         while (heightLeft >= 0) {
             pdf.addPage();
             position = heightLeft - imgHeight;
             pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
             heightLeft -= pageHeight;
-            pageNumber++;
         }
 
-        // Guardar el PDF con nombre descriptivo
         const fileName = `Reporte_Utilidades_${fecha.replace(/\//g, '-')}_${userName}.pdf`;
         pdf.save(fileName);
 
-        // Eliminar el contenido temporal
         document.body.removeChild(pdfContent);
     });
-
-    var usuarioId = $("#userId").val();
-    var fechaFiltro = $("#fechaFiltro").val();
-    var usuarioName = $("#userName").val();
-    var estatus = 1;
-    var createdBy = $("#userName").val();
-    var createdDt = new Date().toISOString();
-    var updatedBy = $("#userName").val();
-    var updatedDt = new Date().toISOString();
-
-    InfoReporte(usuarioId ,usuarioName, fechaFiltro, estatus, createdBy, createdDt, updatedBy, updatedDt);
 }
 
 function InfoReporte(usuarioId, usuarioName, fechaFiltro, estatus, createdBy, createdDt, updatedBy, updatedDt) {

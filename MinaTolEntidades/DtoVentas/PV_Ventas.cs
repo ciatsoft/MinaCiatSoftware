@@ -12,6 +12,7 @@ namespace MinaTolEntidades.DtoVentas
     public class PV_Ventas : BaseObject
     {
         public string Folio { get; set; }
+        public int Corte_Id { get; set; }
         public DtoUbicacion Ubicacion { get; set; }
         public long PV_PlantaId { get; set; }
         public string NombreUbicacion { get; set; }
