@@ -18,6 +18,7 @@ $(document).ready(function () {
         destroy: true,
         paging: true,
         searching: true,
+        order: [[0, 'desc']],
         columns: [
             { data: "id", "visible": false, title: "id" },
             { data: "folio", title: "Folio" },
@@ -113,8 +114,16 @@ $(document).ready(function () {
                     return data;
                 }
             },
+            { data: "corte_Id", title: "ID Corte", visible: false },
             {
-                data: "id", render: function (data) {
+                data: "id",
+                render: function (data, type, row) {
+                    // row contiene toda la fila, así que podemos acceder a corte_Id
+                    if (row.corte_Id > 0) {
+                        return '<label>Ya en corte<label/>'; // No se muestran los botones si corte_Id > 0
+                    }
+
+                    // Mostrar botones si corte_Id <= 0
                     return '<input type="button" value="Cancelar Venta" class="btn btn-custom-cancel" onclick="ActualizarVenta(' + data + ', \'C\')" />' +
                         '<br /><br />' +
                         '<input type="button" value="Rechazar Venta" class="btn btn-custom-clean" onclick="ActualizarVenta(' + data + ', \'R\')" />';
