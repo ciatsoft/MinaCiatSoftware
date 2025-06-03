@@ -342,3 +342,152 @@ function ActualizarVenta(idVenta, tipoAccion) {
         }
     });
 }
+
+// Evento del botón Filtrado
+document.getElementById("btnFiltrar").addEventListener("click", function () {
+
+    var usuarioId = $("#userId").val();
+    var fecha = $("#fechaFiltro").val();
+    var userName = $("#userName").val();
+
+    if (!usuarioId || !fecha || !userName) {
+        alert("Por favor, seleccione un usuario y una fecha válida.");
+        return;
+    }
+
+    SearchPV_VentasByDateAndUser(usuarioId, fecha, userName);
+});
+
+function SearchPV_VentasByDateAndUser(usuarioId, fecha) {
+    PostMVC('/VentaPublicoGeneral/SearchPV_VentasByDateAndUser', { usuarioId, fecha }, function (r, textStatus, jqXHR) {
+        if (r.IsSuccess && Array.isArray(r.Response)) {
+            const data = r.Response;
+
+            if ($.fn.DataTable.isDataTable('#tablePuntoVenta')) {
+                $('#tablePuntoVenta').DataTable().clear().destroy();
+            }
+
+            $("#tablePuntoVenta").DataTable({
+                processing: true,
+                paging: true,
+                searching: true,
+                order: [[0, 'desc']],
+                data: data,
+                columns: [
+                    { data: "id", visible: false, title: "id" },
+                    { data: "folio", title: "Folio" },
+                    { data: "nombreUbicacion", title: "Planta" },
+                    { data: "nombreTipoMaterial", title: "Material" },
+                    {
+                        data: "formaDePago",
+                        title: "Forma de Pago",
+                        render: function (data) {
+                            if (data === "E") return "Efectivo";
+                            if (data === "T") return "Transferencia";
+                            return "Vale";
+                        }
+                    },
+                    {
+                        data: "cantidadRecibida",
+                        title: "Cantidad Recibida",
+                        render: function (data) {
+                            return data ? parseFloat(data).toLocaleString('es-MX', {
+                                style: 'currency', currency: 'MXN', minimumFractionDigits: 2
+                            }) : "$0.00";
+                        }
+                    },
+                    {
+                        data: "totalPago",
+                        title: "Total Pago",
+                        render: function (data) {
+                            return data ? parseFloat(data).toLocaleString('es-MX', {
+                                style: 'currency', currency: 'MXN', minimumFractionDigits: 2
+                            }) : "$0.00";
+                        }
+                    },
+                    { data: "transporte", title: "Transporte" },
+                    { data: "placa", title: "Placa" },
+                    { data: "cantidad", title: "Cantidad" },
+                    {
+                        data: "precioUnidad",
+                        title: "Precio por Unidad",
+                        render: function (data) {
+                            return data ? parseFloat(data).toLocaleString('es-MX', {
+                                style: 'currency', currency: 'MXN', minimumFractionDigits: 2
+                            }) : "$0.00";
+                        }
+                    },
+                    { data: "nombreUnidadMedida", title: "Unidad Medida" },
+                    { data: "userName", title: "Usuario" },
+                    {
+                        data: "fecha",
+                        title: "Fecha",
+                        render: function (data) {
+                            if (!data) return "";
+                            const date = new Date(data);
+                            const day = String(date.getDate()).padStart(2, '0');
+                            const month = String(date.getMonth() + 1).padStart(2, '0');
+                            const year = date.getFullYear();
+                            return `${day}/${month}/${year}`;
+                        }
+                    },
+                    {
+                        data: "estatus",
+                        title: "Estatus",
+                        render: function (data) {
+                            return data == 1 ? "Activo" : "Inactivo";
+                        }
+                    },
+                    {
+                        data: "estatusVenta",
+                        title: "Pago",
+                        render: function (data) {
+                            if (data === "E") return "Efectivo";
+                            if (data === "C") return "Cancelada";
+                            return "Rechazada";
+                        }
+                    },
+                    { data: "corte_Id", title: "ID Corte", visible: false },
+                    {
+                        data: "id",
+                        render: function (data, type, row) {
+                            if (row.corte_Id > 0) {
+                                return '<label>Ya en corte</label>';
+                            }
+                            return `
+                                <input type="button" value="Cancelar Venta" class="btn btn-custom-cancel" onclick="ActualizarVenta(${data}, 'C')" />
+                                <br /><br />
+                                <input type="button" value="Rechazar Venta" class="btn btn-custom-clean" onclick="ActualizarVenta(${data}, 'R')" />
+                            `;
+                        }
+                    }
+                ],
+                language: {
+                    decimal: ",",
+                    thousands: ".",
+                    processing: "Procesando...",
+                    lengthMenu: "Mostrar _MENU_ entradas",
+                    zeroRecords: "No se encontraron resultados",
+                    emptyTable: "Ningún dato disponible en esta tabla",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                    infoEmpty: "Mostrando 0 a 0 de 0 entradas",
+                    infoFiltered: "(filtrado de un total de _MAX_ entradas)",
+                    search: "Buscar:",
+                    loadingRecords: "Cargando...",
+                    paginate: {
+                        first: "Primero",
+                        last: "Último",
+                        next: "Siguiente",
+                        previous: "Anterior"
+                    },
+                    aria: {
+                        sortAscending: ": activar para ordenar la columna de manera ascendente",
+                        sortDescending: ": activar para ordenar la columna de manera descendente"
+                    }
+                }
+            });
+        } else {
+            console.warn("No se recibieron datos válidos o la respuesta no fue exitosa.");
+        }
+    });
+}
