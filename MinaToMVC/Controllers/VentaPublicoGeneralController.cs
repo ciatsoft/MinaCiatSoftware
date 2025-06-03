@@ -195,7 +195,7 @@ namespace MinaToMVC.Controllers
         public async Task<ActionResult> SaveOrUpdateReporte_Venta(Reporte_Venta reporte)
         {
             var r = await httpClientConnection.SaveOrUpdateReporte_Venta(reporte);
-            return Redirect("Index");
+            return Redirect("CorteDeCaja");
         }
         #endregion
 

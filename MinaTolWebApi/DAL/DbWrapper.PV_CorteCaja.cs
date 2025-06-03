@@ -162,7 +162,7 @@ namespace MinaTolWebApi.DAL
 
                 var parameters = new List<SqlParameter>
                 {
-                    new SqlParameter("@UserName", SqlDbType.NVarChar, 100) { Value = userName },
+                    new SqlParameter("@UsuarioName", SqlDbType.NVarChar, 100) { Value = userName },
                     new SqlParameter("@Fecha",    SqlDbType.Date)          { Value = fechaSolo }
                 };
 
