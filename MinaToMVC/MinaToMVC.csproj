@@ -166,6 +166,7 @@
     <Content Include="Scripts\Catalogos\AltCliente.js" />
     <Content Include="Scripts\Catalogos\AreaTrabajo.js" />
     <Content Include="Scripts\Catalogos\AsociarMaterial.js" />
+    <Content Include="Scripts\Catalogos\TipoGastos.js" />
     <Content Include="Scripts\Catalogos\TipoMaterialUbicacion.js" />
     <Content Include="Scripts\Catalogos\Ubicacion.js" />
     <Content Include="Scripts\Catalogos\UnidadMedida.js" />
@@ -202,6 +203,7 @@
     <Compile Include="Controllers\AlmacenController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ViajesController.cs" />
+    <Compile Include="DAL\HttpClientConnection.Catalogos.cs" />
     <Compile Include="DAL\HttpClientConnection.DireccionCliente.cs" />
     <Compile Include="DAL\HttpClientConnection.ClienteTipoMaterial.cs" />
     <Compile Include="DAL\HttpClientConnection.Foliador.cs" />
@@ -293,6 +295,7 @@
     <Content Include="Views\Catalog\PartialConfigurationUbicacionMaterial.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\CorteDeCaja.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\DineroCaja.cshtml" />
+    <Content Include="Views\Catalog\TipoGastos.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -1,6 +1,9 @@
 ﻿using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.DtoSucursales;
+using MinaTolEntidades.DtoVentaPublicoGeneral;
+using MinaTolEntidades.Security;
+using MinaToMVC.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -125,7 +128,7 @@ namespace MinaToMVC.Controllers
         #endregion
 
         #region Ubicacion 
-        public async Task<ActionResult> Ubicacion( long id = 0)
+        public async Task<ActionResult> Ubicacion(long id = 0)
         {
             var token = Helpers.SessionHelper.GetSessionUser();
             var result = await httpClientConnection.GetAllAreaTrabajo();
@@ -137,9 +140,9 @@ namespace MinaToMVC.Controllers
                 ubicacion = JsonConvert.DeserializeObject<DtoUbicacion>(response.Response.ToString());
             }
             else
-            
+
                 ubicacion = new DtoUbicacion();
-				
+
             ViewBag.AreaDeUbicacion = areaDeUbicacion;
             return View(ubicacion);
 
@@ -298,5 +301,37 @@ namespace MinaToMVC.Controllers
             return View(metodoPago);
         }
         #endregion
+
+        #region TiposGasto
+        public async Task<ActionResult> TipoGastos(long id = 0)
+        {
+            var tipoGastos = new DtoTipoGasto();
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            return View(tipoGastos);
+        }
+        public async Task<ActionResult> SaveOrUpdateTipoGastos(DtoTipoGasto tipoGasto)
+        {
+            var r = await httpClientConnection.SaveOrUpdateTipoGastos(tipoGasto);
+            return Redirect("TipoGastos");
+        }
+
+        #endregion
+
     }
 }
