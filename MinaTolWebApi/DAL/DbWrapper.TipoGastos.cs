@@ -40,24 +40,23 @@ namespace MinaTolWebApi.DAL
         public ModelResponse GetTipoGastosById(int id)
         {
             var response = new ModelResponse();
+
             try
             {
-                response.IsSuccess = true;
-                var parameters = new List<SqlParameter>();
-                parameters.Add(new SqlParameter()
-                {
-                    Value = id,
-                    IsNullable = true,
-                    ParameterName = "@Id",
-                    SqlDbType = System.Data.SqlDbType.Int
-                });
+                var parameters = new List<SqlParameter>
+        {
+            new SqlParameter
+            {
+                Value = id,
+                ParameterName = "@Id",
+                SqlDbType = SqlDbType.Int
+            }
+        };
 
-                var result = GetObject("GetTipoGastosById", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, DtoTipoGasto>((reader) =>
-                    {
-                        var r = FillEntity<DtoTipoGasto>(reader);
-                        return r;
-                    }));
+                var result = GetObject("GetTipoGastosById", CommandType.StoredProcedure,
+                    parameters, reader => FillEntity<DtoTipoGasto>(reader));
+
+                response.IsSuccess = true;
                 response.Response = result;
             }
             catch (Exception ex)
@@ -66,9 +65,10 @@ namespace MinaTolWebApi.DAL
                 response.Message = ex.Message;
                 response.Enum = Enumeration.ErrorNoControlado;
             }
-            return response;
 
+            return response;
         }
+
 
         public ModelResponse SaveOrUpdateTipoGastos(DtoTipoGasto u)
         {
@@ -91,7 +91,7 @@ namespace MinaTolWebApi.DAL
             return modelResponse;
         }
 
-        public ModelResponse DeleteTipoGastos(int id)
+        public ModelResponse DeleteTipoGastos(long id)
         {
             var response = new ModelResponse();
             try

@@ -19,36 +19,42 @@
     <div class="content">
         <br>
         <center><h1>Tipo de Gastos</h1></center>
+
         <div class="tabla-consultas-roll">
             <div class="rectangulos" style="width: 100%;">
                 <div class="row">
                     <div class="col-lg-4">
-                        <label>ID TipoGastos:</label>
+                        <label id="id">ID TipoGastos:</label>
                         @Html.TextBoxFor(x => x.Id, new { @class = "form-control", @min = "0", @readonly = "readonly", @Id = "id" })
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-4">
-                        <label for="txtPrecioActivo">Nombre:</label>
+                        <label for="txtPrecioActivo" id="nombre">Nombre:</label>
                         @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control", @Id = "nombre" })
                     </div>
                     <div class="col-lg-8">
-                        <label>Descripcion:</label>
+                        <label id="descripcion">Descripcion:</label>
                         @Html.TextBoxFor(x => x.Descripcion, new { @class = "form-control", @Id = "descripcion" })
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
                         <input id="btnGuardar" type="submit" value="Guardar" class="btn btn-success" />
-                        <a href="/VentaPublicoGeneral/Precios" class="btn btn-custom-cancel">Cancelar</a>
-                        <input type="button" value="Eliminar" id="btnEliminar" class="btn btn-custom-cancel" data-id="@(Model?.Id ?? 0)" onclick="EliminarPrecio(this)" />
+                        <a href="/Catalog/TipoGastos" class="btn btn-custom-cancel">Cancelar</a>
                     </div>
                 </div>
             </div>
         </div>
         <br />
-        <table id="tblPrecios" class="table table-bordered table-striped" style="width: 100%;"></table>
+        <table id="tblTipoGastos" class="table table-bordered table-striped" style="width: 100%;"></table>
     </div>
-}
+
+}   
+
+<!-- Antes de cargar el archivo .js -->
+<script type="text/javascript">
+    var TipoGastosJson = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+</script>
 
 <script src="@(Url.StaticFile("Scripts/Catalogos/TipoGastos.js"))"></script>

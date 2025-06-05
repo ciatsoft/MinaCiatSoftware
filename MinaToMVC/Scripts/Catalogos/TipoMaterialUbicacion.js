@@ -68,7 +68,6 @@
         $("#txtDescripcionTipoMaterial").val(tipoMaterialUbicacionJson.DescripcionTipoMaterial);
         $("#ddlUnidadDeMedida").val(tipoMaterialUbicacionJson.UnidadMedida.Id);
         $("#chbEstatus").prop('checked', tipoMaterialUbicacionJson.Estatus);
-
         $("#btnEliminaru").hide();
         $("#btnGuardaru").show();
         $("#estatusContainer").show(); // Mostrar solo si se está editando

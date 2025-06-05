@@ -77,11 +77,12 @@ namespace MinaTolWebApi.Controllers
 
         // DELETE: Gastos
         [HttpDelete, Route("TipoGastos/{id:long}")]
-        public IHttpActionResult DeleteTipoGastos(int id)
+        public IHttpActionResult DeleteTipoGastos(long id)
         {
             var result = wrapper.DeleteTipoGastos(id);
             return Ok(result);
         }
+
         #endregion
     }
 }

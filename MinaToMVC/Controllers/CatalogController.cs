@@ -320,7 +320,13 @@ namespace MinaToMVC.Controllers
 
             var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
 
-            ViewBag.UserToken = usuarioAutenticado;
+            if (id != 0)
+            {
+                var response = await httpClientConnection.GetTipoGastosById(id);
+                tipoGastos = JsonConvert.DeserializeObject<DtoTipoGasto>(response.Response.ToString());
+            }
+
+                ViewBag.UserToken = usuarioAutenticado;
             ViewBag.Usuarios = usuarios;
 
             return View(tipoGastos);
@@ -329,6 +335,24 @@ namespace MinaToMVC.Controllers
         {
             var r = await httpClientConnection.SaveOrUpdateTipoGastos(tipoGasto);
             return Redirect("TipoGastos");
+        }
+
+        public async Task<string> GetAllTipoGastos()
+        {
+            var result = await httpClientConnection.GetAllTipoGastos();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<String> DeleteTipoGastos(long id)
+        {
+            var result = await httpClientConnection.DeleteTipoGastos(id);
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetTipoGastosById(long id)
+        {
+            var result = await httpClientConnection.GetTipoGastosById(id);
+            return JsonConvert.SerializeObject(result);
         }
 
         #endregion
