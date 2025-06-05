@@ -38,13 +38,8 @@
                 data: "id",
                 title: "Acciones",
                 render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarTVehiculo(' + data + ')" />' +
-<<<<<<< HEAD
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarTipoVehiculo(' + data + ')" />' +
                      ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarTVehiculo(' + data + ')" />';
-=======
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarTVehiculo(' + data + ')" />';
-                    ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarTVehiculo(' + data + ')" />';
->>>>>>> a6a18eb96ad9518e29752a837846b7844b47c19f
                 }
             }
         ],
@@ -80,6 +75,7 @@
     if (tVehiculoJson && tVehiculoJson.Id && tVehiculoJson.Id !== 0) {
         $("#txtidtipovehiculo").val(tVehiculoJson.Id);
         $("#txtNombre").val(tVehiculoJson.Nombre);
+        $("#txtCapacidad").val(tVehiculoJson.Capacidad);
         $("#txtDescripcion").val(tVehiculoJson.Descripcion);
         $("#chbEstatus").prop('checked', tVehiculoJson.Estatus);
     }
