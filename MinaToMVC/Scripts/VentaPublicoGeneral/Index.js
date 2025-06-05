@@ -128,6 +128,19 @@ $(document).ready(function () {
                         '<br /><br />' +
                         '<input type="button" value="Rechazar Venta" class="btn btn-custom-clean" onclick="ActualizarVenta(' + data + ', \'R\')" />';
                 }
+            },
+            {
+                data: "id",
+                render: function (data, type, row, meta) {
+                    return `
+                        <button 
+                            type="button"
+                            onclick="printItem(${meta.row})"
+                            style="background-color: yellow; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                            Imprimir
+                        </button>
+                    `;
+                }
             }
         ]
         ,
@@ -490,4 +503,92 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha) {
             console.warn("No se recibieron datos válidos o la respuesta no fue exitosa.");
         }
     });
+}
+
+// Generar Tickets
+function printItem(rowIndex) {
+    var table = $('#tablePuntoVenta').DataTable();
+    var rowData = table.row(rowIndex).data();
+
+    var folio = rowData.folio;
+    var nombrePlana = rowData.nombreUbicacion;
+    var nombreMaterial = rowData.nombreTipoMaterial;
+    var formaPago = rowData.formaDePago;
+    var cantidadRecibida = parseFloat(rowData.cantidadRecibida).toFixed(2);
+    var totalPago = parseFloat(rowData.totalPago).toFixed(2);
+    var transporte = rowData.transporte;
+    var placa = rowData.placa;
+    var cantidad = parseFloat(rowData.cantidad).toFixed(2);
+    var precioUnidad = parseFloat(rowData.precioUnidad).toFixed(2);
+    var vendedor = rowData.userName;
+
+    var fechaOriginal = new Date(rowData.fecha);
+    var fechaFormateada =
+        String(fechaOriginal.getDate()).padStart(2, '0') + '/' +
+        String(fechaOriginal.getMonth() + 1).padStart(2, '0') + '/' +
+        fechaOriginal.getFullYear() + ' ' +
+        String(fechaOriginal.getHours()).padStart(2, '0') + ':' +
+        String(fechaOriginal.getMinutes()).padStart(2, '0');
+
+    var formatoPagoFinal = formaPago === 'T' ? 'Transferencia'
+        : formaPago === 'E' ? 'Efectivo'
+            : 'Vale';
+
+    const { jsPDF } = window.jspdf;
+
+    const generarTicket = (tituloSecundario, nombreArchivo) => {
+        const pdf = new jsPDF({
+            unit: 'mm',
+            format: [80, 150],
+            orientation: 'portrait'
+        });
+
+        let y = 10;
+        pdf.setFontSize(12);
+        pdf.setFont("calibri", "bold");
+        pdf.text("Ticket de Venta", 40, y, { align: 'center' });
+
+        y += 6;
+        pdf.text(tituloSecundario, 40, y, { align: 'center' });
+
+        y += 6;
+        pdf.setFontSize(8);
+        pdf.setFont("calibri", "normal");
+        pdf.text(`Fecha: ${fechaFormateada}`, 40, y, { align: 'center' });
+
+        y += 4;
+        pdf.line(10, y, 70, y); // línea separadora
+
+        const addRow = (label, value) => {
+            y += 5;
+            pdf.setFont("calibri", "bold");
+            pdf.text(`${label}:`, 10, y);
+            pdf.setFont("calibri", "normal");
+            pdf.text(String(value), 70, y, { align: 'right' });
+        };
+
+        addRow("Folio", folio);
+        addRow("Planta", nombrePlana);
+        addRow("Material", nombreMaterial);
+        addRow("Cantidad", `${cantidad}`);
+        addRow("Precio/Unidad", `$${precioUnidad}`);
+        addRow("Total a Pagar", `$${totalPago}`);
+        addRow("Recibido", `$${cantidadRecibida}`);
+        addRow("Forma de Pago", formatoPagoFinal);
+        addRow("Transporte", transporte);
+        addRow("Placa", placa);
+        addRow("Vendedor", vendedor);
+
+        y += 6;
+        pdf.line(10, y, 70, y); // línea final
+        y += 6;
+        pdf.setFont("calibri", "italic");
+        pdf.text("Gracias por su compra", 40, y, { align: 'center' });
+
+        pdf.save(nombreArchivo);
+    };
+
+    // Generar dos PDFs independientes
+    generarTicket("Vale de Carga en Planta", `ticket_folio_${folio}_carga.pdf`);
+    generarTicket("Vale de Salida", `ticket_folio_${folio}_vale_salida.pdf`);
 }
