@@ -13,7 +13,7 @@ namespace MinaTolWebApi.DAL
     public partial class DbWrapper
     {
         public ModelResponse GetAllViajeInterno()
-        {
+            {
             var modelResponse = new ModelResponse();
             var parameters = new List<SqlParameter>();
 
