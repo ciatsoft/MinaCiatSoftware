@@ -28,7 +28,21 @@ namespace MinaToMVC.DAL
 
         }
 
-        
+        public async Task<ModelResponse> GetDireccionesCliente(long id)
+        {
+            var result = await RequestAsync<object>($"api/DireccionCliente/Cliente/{id}", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+
+
+
 
         public async Task<ModelResponse> GetDireccionClienteById(long id, long clienteid)
         {

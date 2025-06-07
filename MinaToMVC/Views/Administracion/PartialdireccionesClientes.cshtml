@@ -1,10 +1,21 @@
-﻿<form id="contenedor">
+﻿<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+<!-- jQuery (requerido por DataTables) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<form id="contenedor">
     <div class="modal-header bg-dark text-white">
         <h5 class="modal-title" id="exampleModalLabel">Direcciones</h5>
     </div>
     <div class="modal-body">
-        <input  id="idCliente" name="idCliente" disabled />
-        <input  id="idDireccionCliente" name="idDireccionCliente" value="0" disabled/>
+        <input hidden id="createdByParcialUbicacion" name="createdByParcialUbicacion" disabled />
+        <input hidden id="createdDtParcialUbicacion" name="createdDtParcialUbicacion" disabled />
+        <input hidden id="updatedByParcialUbicacion" name="updatedByParcialUbicacion" disabled />
+        <input hidden id="updatedDtParcialUbicacion" name="updatedDtParcialUbicacion" disabled />
+        <input hidden id="idCliente" name="idCliente" disabled />
+        <input id="idDireccionCliente" name="idDireccionCliente" value="0" disabled />
         <div class="row g-3 mt-4">
             <div class="col-md-6">
                 <label class="form-label">Nombre del Cliente:</label>
@@ -43,29 +54,34 @@
                 <input type="text" class="form-control" id="txtestado" name="txtestado" autocomplete="off" />
             </div>
         </div>
+        <div class="modal-footer mt-3">
+            <button type="button" class="btn btn-danger" onclick="closeModal()">Cerrar</button>
+            <button type="button" class="btn btn-success" onclick="GuardarDireccion()">Guardar</button>
+        </div>
         <div class="row mt-4">
             <div class="col-md-12">
                 <h5>Direcciones registradas</h5>
                 <table id="tbDirecciones" class="table table-bordered table-striped" style="width: 100%;">
                     <thead>
-                        <tr>
-                            <th>Calle</th>
-                            <th>No. Int/Ext</th>
-                            <th>Colonia</th>
-                            <th>CP</th>
-                            <th>Delegación</th>
-                            <th>Municipio</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
+
             </div>
         </div>
     </div>
-    <div class="modal-footer mt-3">
-        <button type="button" class="btn btn-danger" onclick="closeModal()">Cerrar</button>
-        <button type="button" class="btn btn-success" onclick="GuardarDireccion()">Guardar</button>
-    </div>
 </form>
+
+<script>
+    setTimeout(() => {
+        const fecha = new Date();
+
+        // Función auxiliar para agregar ceros a la izquierda
+        const pad = (n) => n.toString().padStart(2, '0');
+
+        const fechaFormateada = `${fecha.getFullYear()}-${pad(fecha.getMonth() + 1)}-${pad(fecha.getDate())} ${pad(fecha.getHours())}:${pad(fecha.getMinutes())}:${pad(fecha.getSeconds())}`;
+
+        document.getElementById("createdDtParcialUbicacion").value = fechaFormateada;
+        document.getElementById("updatedDtParcialUbicacion").value = fechaFormateada;
+    }, 100);
+</script>

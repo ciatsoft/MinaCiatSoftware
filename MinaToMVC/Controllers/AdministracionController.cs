@@ -62,6 +62,24 @@ namespace MinaToMVC.Controllers
                 direccionporClientes = Enumerable.Empty<DireccionCliente>().ToArray();
                 direccionCliente = Enumerable.Empty<DireccionCliente>().ToArray();
             }
+
+            
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
             ViewBag.MaterialesCliente = materialesPorClientes;
 
             return View(Cliente);
@@ -72,6 +90,12 @@ namespace MinaToMVC.Controllers
             httpClientConnection.MappingColumSecurity(t);
             var result = await httpClientConnection.SaveOrUpdateDireccionCliente(t);
             return JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetDireccionesCliente(long id)
+        {
+            var result = await httpClientConnection.GetDireccionesCliente(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
         public async Task<String> DeletDireccionCliente(long id)
@@ -108,8 +132,6 @@ namespace MinaToMVC.Controllers
         //--------------------------------- Cliente
         public async Task<string> SaveOrUpdateClienteTipoMaterial(ClienteTipoMaterial t)
         {
-
-
             httpClientConnection.MappingColumSecurity(t);
             var result = await httpClientConnection.SaveOrUpdateClienteTipoMaterial(t);
             return JsonConvert.SerializeObject(result);
@@ -182,10 +204,10 @@ namespace MinaToMVC.Controllers
                 var result = await httpClientConnection.GetDireccionClienteById(clienteId, direccionClientebyiD);
                 ubicacionCliente = JsonConvert.DeserializeObject<List<DireccionCliente>>(result.Response.ToString());
             }
+
             ViewBag.ClienteId = clienteId;
             ViewBag.ubicacionCliente = direccionClientebyiD;
             ViewBag.ubicacionCliente = ubicacionCliente;
-            ViewBag.ClienteNombre = ubicacionCliente.FirstOrDefault()?.Cliente.Nombre ?? "N/A";
             ViewBag.ubicacionCliente = ubicacionCliente.FirstOrDefault()?.Colonia ?? "N/A";
             return PartialView(ubicacionCliente);
         }
