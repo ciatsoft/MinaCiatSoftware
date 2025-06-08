@@ -105,12 +105,10 @@ namespace MinaToMVC.Controllers
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
-        public async Task<String> GetDireccionClienteById(long id, long clienteid)
-        
+        public async Task<String> GetDireccionClienteById(long id)
         {
-            var resuslt = await httpClientConnection.GetDireccionClienteById(id, clienteid);
+            var resuslt = await httpClientConnection.GetDireccionClienteByIdDireccion(id);
             return Newtonsoft.Json.JsonConvert.SerializeObject(resuslt);
-
         }
 
 
@@ -196,24 +194,19 @@ namespace MinaToMVC.Controllers
             return PartialView(precios);
         }
         //Pntalla parcial para el modal de vista clientes, para ingresar la ubicacion del cliente 
-        public async Task<ActionResult> PartialConfiguracionUbicacionCliente(int clienteId, int direccionClientebyiD)
+        public async Task<ActionResult> PartialdireccionesClientes(long direccionClientebyiD, int clienteId)
         {
-            var ubicacionCliente = new List<DireccionCliente>();
-            if (clienteId != 0 && direccionClientebyiD != 0)
+            var direccion = new List<DireccionCliente>();
+            if (direccionClientebyiD != 0)
             {
-                var result = await httpClientConnection.GetDireccionClienteById(clienteId, direccionClientebyiD);
-                ubicacionCliente = JsonConvert.DeserializeObject<List<DireccionCliente>>(result.Response.ToString());
+                var result = await httpClientConnection.GetDireccionClienteByIdDireccion(direccionClientebyiD);
+                direccion = JsonConvert.DeserializeObject<List<DireccionCliente>>(result.Response.ToString());
             }
 
             ViewBag.ClienteId = clienteId;
             ViewBag.ubicacionCliente = direccionClientebyiD;
-            ViewBag.ubicacionCliente = ubicacionCliente;
-            ViewBag.ubicacionCliente = ubicacionCliente.FirstOrDefault()?.Colonia ?? "N/A";
-            return PartialView(ubicacionCliente);
-        }
-        public ActionResult PartialdireccionesClientes()
-        {
-            return PartialView();
+            return PartialView(direccion);
+
         }
 
         #endregion

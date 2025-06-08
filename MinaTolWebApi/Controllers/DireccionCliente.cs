@@ -22,8 +22,8 @@ namespace MinaTolWebApi.Controllers
         }
         
         
-        [HttpGet, Route("{id:long}")]
-        public ModelResponse GetDireccionClienteById(int id)
+        [HttpGet, Route("ClienteById/{id:long}")]
+        public ModelResponse GetDireccionClienteById(long id)
         {
             var result = wrapper.GetDireccionClienteById(id);
             return result;
@@ -36,7 +36,7 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
         [HttpDelete, Route("{id:long}")]
-        public ModelResponse DeleteDireccionCliente(int id)
+        public ModelResponse DeleteDireccionCliente(long id)
         {
             var result = wrapper.DeleteDireccionCliente(id);
             return result;

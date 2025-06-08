@@ -90,29 +90,27 @@ namespace MinaTolWebApi.DAL
             return response;
         }
 
-        public ModelResponse GetDireccionClienteById(int id)
+        public ModelResponse GetDireccionClienteById(long id)
         {
             var response = new ModelResponse();
             try
             {
                 response.IsSuccess = true;
-                var parameters = new List<SqlParameter>();
-                parameters.Add(new SqlParameter()
+
+                var parameters = new List<SqlParameter>
                 {
-                    Value = id,
-                    IsNullable = true,
-                    ParameterName = "@Id",
-                    SqlDbType = System.Data.SqlDbType.Int
-                });
+                    new SqlParameter("@Id", SqlDbType.BigInt) { Value = id },
+                };
 
-                var result = GetObject("GetDireccionClienteById", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, DireccionCliente>((reader) =>
-                    {
-                        var r = FillEntity<DireccionCliente>(reader);
-                        return r;
-                    }));
-                response.Response = result;
+                // CORREGIDO: usar GetList para obtener varios registros
+                var result = GetList(
+                    "GetDireccionClienteById",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader => FillEntity<DireccionCliente>(reader)
+                );
 
+                response.Response = result; // ahora será una lista de PV_CajaChica
             }
             catch (Exception ex)
             {
@@ -122,7 +120,7 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
-        public ModelResponse DeleteDireccionCliente(int id)
+        public ModelResponse DeleteDireccionCliente(long id)
         {
             var response = new ModelResponse();
             try

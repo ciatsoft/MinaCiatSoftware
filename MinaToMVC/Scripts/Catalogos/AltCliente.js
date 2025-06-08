@@ -404,7 +404,9 @@ function LimpiarFormulario() {
 
 //Cerrar Modal
 function closeModal() {
-    $("#genericModal").modal("hide");
+    // Obtener el ID del cliente del campo oculto en el formulario
+    const idCliente = $('#idCliente').val();
+    window.location.href = '/Administracion/Clientes/' + idCliente;
 }
 
 //Mostrar modal de Direccion
@@ -424,6 +426,32 @@ $("#contenedor").on("submit", function (e) {
 });
 
 function GuardarDireccion() {
+    // Validación manual de campos requeridos
+    const camposRequeridos = [
+        { id: "#txtcalle", nombre: "Calle" },
+        { id: "#txtnointerno", nombre: "No. Interno" },
+        { id: "#txtnoexterno", nombre: "No. Externo" },
+        { id: "#txtcolonia", nombre: "Colonia" },
+        { id: "#txtcp", nombre: "C.P." },
+        { id: "#txtdelegacion", nombre: "Delegación" },
+        { id: "#txtmunicipio", nombre: "Municipio" },
+        { id: "#txtestado", nombre: "Estado" }
+    ];
+
+    for (let campo of camposRequeridos) {
+        if ($(campo.id).val().trim() === "") {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Campo requerido',
+                text: `Por favor completa el campo: ${campo.nombre}`,
+                confirmButtonText: 'Aceptar'
+            });
+            $(campo.id).focus();
+            return; // Se detiene si un campo está vacío
+        }
+    }
+
+    // Si pasa la validación, continúa con el guardado
     const direccion = {
         Id: $("#idDireccionCliente").val() || 0,
         ClienteId: $("#idCliente").val(),
@@ -440,7 +468,6 @@ function GuardarDireccion() {
         CreatedDt: $("#createdDtParcialUbicacion").val(),
         UpdatedBy: $("#updatedByParcialUbicacion").val(),
         UpdatedDt: $("#updatedDtParcialUbicacion").val(),
-
     };
 
     PostMVC('/Administracion/SaveOrUpdateDireccionCliente', direccion, function (r) {
@@ -458,7 +485,9 @@ function GuardarDireccion() {
         }
     });
 }
-function AbrirModalDirecciones(idCliente, nombreCliente) {
+
+// Función modificada para aceptar parámetro de edición
+function AbrirModalDirecciones(idCliente, nombreCliente, idDireccion = 0) {
     // Ocultar el modal si está visible
     if ($('#genericModal').hasClass('show')) {
         $('#genericModal').modal('hide');
@@ -467,19 +496,17 @@ function AbrirModalDirecciones(idCliente, nombreCliente) {
     // Limpiar completamente el modal y el backdrop
     $('body').removeClass('modal-open');
     $('.modal-backdrop').remove();
-    $('#boddyGeericModal').empty(); // Mejor usar empty() que html("")
+    $('#boddyGeericModal').empty();
 
     // Resetear cualquier estado del modal
-    $('#genericModal').removeData('bs.modal'); // Esto es importante para resetear el modal
+    $('#genericModal').removeData('bs.modal');
 
     // Establecer título
-    $('#titleGenerciModal').text("Configuración de dirección del cliente");
+    $('#titleGenerciModal').text(idDireccion ? "Editar dirección" : "Nueva dirección");
 
     // Cargar vista parcial en el body del modal
-    $('#boddyGeericModal').load('/Administracion/PartialdireccionesClientes', function () {
-        console.log("Vista parcial cargada correctamente");
-
-        // Asignar valores recibidos
+    $('#boddyGeericModal').load(`/Administracion/PartialdireccionesClientes?direccionClientebyiD=${idDireccion}&clienteId=${idCliente}`, function () {
+        // Asignar valores básicos (siempre)
         $('#idCliente').val(idCliente);
         $('#nombreCliente').val(nombreCliente);
 
@@ -488,6 +515,12 @@ function AbrirModalDirecciones(idCliente, nombreCliente) {
 
         $('#createdByParcialUbicacion').val(createdBy);
         $('#updatedByParcialUbicacion').val(updatedBy);
+
+        // Si estamos en modo edición, cargar los datos de la dirección
+        if (idDireccion !== 0) {
+            CargarDatosDireccion(idDireccion);
+            SearchDireccionesCliente(idCliente);
+        }
 
         // Mostrar modal con opciones
         $('#genericModal').modal({
@@ -506,6 +539,54 @@ function AbrirModalDirecciones(idCliente, nombreCliente) {
         SearchDireccionesCliente(idCliente);
     });
 }
+
+// Función para cargar los datos de una dirección específica
+function CargarDatosDireccion(idDireccion) {
+    $.ajax({
+        url: '/Administracion/GetDireccionClienteById',
+        method: 'GET',
+        data: { id: idDireccion },
+        success: function (response) {
+            const result = JSON.parse(response);
+
+            if (result.IsSuccess && result.Response && result.Response.length > 0) {
+                const direccion = result.Response[0];
+
+                // Llenar campos del formulario
+                $('#idDireccionCliente').val(direccion.id);
+                $('#txtcalle').val(direccion.calle);
+                $('#txtnointerno').val(direccion.noInterno);
+                $('#txtnoexterno').val(direccion.noExterno);
+                $('#txtcolonia').val(direccion.colonia);
+                $('#txtcp').val(direccion.cp);
+                $('#txtdelegacion').val(direccion.delegacion);
+                $('#txtmunicipio').val(direccion.municipio);
+                $('#txtestado').val(direccion.estado);
+
+                // Actualizar fechas
+                const fecha = new Date();
+                const pad = (n) => n.toString().padStart(2, '0');
+                const fechaFormateada = `${fecha.getFullYear()}-${pad(fecha.getMonth() + 1)}-${pad(fecha.getDate())} ${pad(fecha.getHours())}:${pad(fecha.getMinutes())}:${pad(fecha.getSeconds())}`;
+                $('#updatedDtParcialUbicacion').val(fechaFormateada);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo obtener la dirección',
+                });
+            }
+        },
+        error: function (err) {
+            console.error(err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al obtener datos del servidor',
+            });
+        }
+    });
+}
+
 
 
 // Función auxiliar para cargar direcciones y generar DataTable
@@ -536,15 +617,18 @@ function SearchDireccionesCliente(clienteId) {
                         orderable: false,
                         render: function (data, type, row) {
                             return `
-                                <button class="btn btn-sm btn-primary btnEditar" data-id="${row.id}" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger btnEliminar" data-id="${row.id}" title="Eliminar">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>`;
+                    <button class="btn btn-sm btn-primary btnEditar" data-id="${row.id}" title="Editar">
+                        Editar
+                    </button>
+                    <button class="btn btn-sm btn-danger btnEliminar" data-id="${row.id}" title="Eliminar">
+                        Eliminar
+                    </button>`;
                         }
                     }
                 ],
+                scrollX: true,           // habilita scroll horizontal
+                responsive: true,        // mejora la experiencia en pantallas pequeñas
+                autoWidth: false,        // evita el autoajuste de ancho que a veces rompe el diseño
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json'
                 }
@@ -555,3 +639,30 @@ function SearchDireccionesCliente(clienteId) {
         }
     });
 }
+
+$(document).on('click', '.btnEliminar', function () {
+    const id = $(this).data('id');
+    PostMVC('/Administracion/DeletDireccionCliente', { Id: id }, function (r) {
+        if (r.IsSuccess) {
+            const clienteId = $('#idCliente').val();
+            SearchDireccionesCliente(clienteId);
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo eliminar la dirección',
+            });
+            console.error(r);
+        }
+    });
+});
+
+// Modificación en el evento de edición
+$(document).on('click', '.btnEditar', function () {
+    const idDireccion = $(this).data('id');
+    const idCliente = $('#idCliente').val();
+    const nombreCliente = $('#nombreCliente').val();
+
+    // Abrir modal en modo edición
+    AbrirModalDirecciones(idCliente, nombreCliente, idDireccion);
+});
