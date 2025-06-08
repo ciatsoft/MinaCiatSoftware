@@ -12,7 +12,6 @@ using System.Web.Http;
 
 namespace MinaTolWebApi.Controllers
 {
-    [Authorize]//Autorizacion de los permisos de token 
     [RoutePrefix("api/DireccionCliente")]
     public class DireccionClienteController : ApiController
     {
@@ -23,8 +22,8 @@ namespace MinaTolWebApi.Controllers
         }
         
         
-        [HttpGet, Route("{id:long}")]
-        public ModelResponse GetDireccionClienteById(int id)
+        [HttpGet, Route("ClienteById/{id:long}")]
+        public ModelResponse GetDireccionClienteById(long id)
         {
             var result = wrapper.GetDireccionClienteById(id);
             return result;
@@ -37,9 +36,16 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
         [HttpDelete, Route("{id:long}")]
-        public ModelResponse DeleteDireccionCliente(int id)
+        public ModelResponse DeleteDireccionCliente(long id)
         {
             var result = wrapper.DeleteDireccionCliente(id);
+            return result;
+        }
+
+        [HttpGet, Route("Cliente/{id:long}")]
+        public ModelResponse GetDireccionesCliente(long id)
+        {
+            var result = wrapper.GetDireccionesCliente(id);
             return result;
         }
     }

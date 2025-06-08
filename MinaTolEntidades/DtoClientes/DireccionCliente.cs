@@ -9,12 +9,7 @@ namespace MinaTolEntidades.DtoClientes
 {
     public class DireccionCliente : BaseObject
     {
-        public DireccionCliente() {
-            Cliente = new Cliente();
-
-        }
-
-        public Cliente Cliente { get; set; }
+        public long ClienteId { get; set; }
         public string Calle { get; set; }
         public string NoExterno { get; set; }
         public string NoInterno { get; set; }
@@ -23,8 +18,5 @@ namespace MinaTolEntidades.DtoClientes
         public string Delegacion { get; set; }
         public string Municipio { get; set; }
         public string Estado{ get; set;}
-        
-
-
     }
 }
