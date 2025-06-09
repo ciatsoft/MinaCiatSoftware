@@ -8,6 +8,7 @@ using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.Security;
 using System.Data;
+using MinaTolEntidades.DtoClientes;
 
 namespace MinaTolWebApi.DAL
 {
@@ -46,22 +47,21 @@ namespace MinaTolWebApi.DAL
             try
             {
                 response.IsSuccess = true;
-                var parameters = new List<SqlParameter>();
-                parameters.Add(new SqlParameter()
-                {
-                    Value = id,
-                    IsNullable = true,
-                    ParameterName = "@Id",
-                    SqlDbType = System.Data.SqlDbType.Int
-                });
 
-                var result = GetObject("GetPrestamosById", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, DtoCatalogoPrestamo>((reader) =>
-                    {
-                        var r = FillEntity<DtoCatalogoPrestamo>(reader);
-                        return r;
-                    }));
-                response.Response = result;
+                var parameters = new List<SqlParameter>
+    {
+        new SqlParameter("@Id", SqlDbType.BigInt) { Value = id },
+    };
+
+                // CORREGIDO: usar GetList para obtener varios registros
+                var result = GetList(
+                    "GetPrestamosById",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader => FillEntity<DtoCatalogoPrestamo>(reader)
+                );
+
+                response.Response = result; // ahora será una lista de PV_CajaChica
             }
             catch (Exception ex)
             {
@@ -70,7 +70,6 @@ namespace MinaTolWebApi.DAL
                 response.Enum = Enumeration.ErrorNoControlado;
             }
             return response;
-
         }
 
         public ModelResponse SaveOrUpdatePrestamos(DtoCatalogoPrestamo u)

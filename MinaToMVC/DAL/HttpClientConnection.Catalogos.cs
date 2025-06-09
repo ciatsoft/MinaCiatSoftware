@@ -69,8 +69,64 @@ namespace MinaToMVC.DAL
             return modelResponse;
         }
 
-
         #endregion
 
+
+
+        #region Prestamos
+
+        public async Task<ModelResponse> SaveOrUpdatePrestamos(DtoCatalogoPrestamo tipoPrestamo)
+        {
+            MappingColumSecurity(tipoPrestamo);
+            var result = await RequestAsync<object>("api/Catalogos/Prestamos/", HttpMethod.Post, tipoPrestamo,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+
+        public async Task<ModelResponse> GetAllPrestamos()
+        {
+            var result = await RequestAsync<object>("api/Catalogos/Prestamos/List", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+       
+        public async Task<ModelResponse> GetPrestamosById(long id)
+        {
+
+            var result = await RequestAsync<object>($"api/Catalogos/Prestamos/{id}", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+
+        public async Task<ModelResponse> DeletePrestamos(long id)
+        {
+            var result = await RequestAsync<object>($"api/Catalogos/Prestamos/{id}", HttpMethod.Delete, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
+
+
+        #endregion
     }
 }

@@ -15,6 +15,8 @@ using System.Web.Mvc;
 using static MinaToMVC.Controllers.Filters.FiltersHelper;
 using System.Security.Cryptography;
 using MinaTolEntidades.DtoViajes;
+using System.Security.Policy;
+using MinaTolEntidades.DtoClientes;
 
 namespace MinaToMVC.Controllers
 {
@@ -324,6 +326,73 @@ namespace MinaToMVC.Controllers
         }
 
 
+        #endregion
+
+        #region Prestamos
+
+        public async Task<ActionResult> Prestamos(long id = 0)
+        {
+            DtoCatalogoPrestamo prestamo = new DtoCatalogoPrestamo();
+
+            if (id != 0)    
+            {
+                var result = await httpClientConnection.GetPrestamosById(id);
+                var lista = JsonConvert.DeserializeObject<List<DtoCatalogoPrestamo>>(result.Response.ToString());
+
+                if (lista != null && lista.Count > 0)
+                {
+                    prestamo = lista.FirstOrDefault(); 
+                }
+            }
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            return View(prestamo); 
+        }
+
+
+        public async Task<string> GetAllPrestamos()
+        {
+            var result = await httpClientConnection.GetAllPrestamos();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<ActionResult> SaveOrUpdatePrestamos(DtoCatalogoPrestamo tipoPrestamo)
+        {
+            var r = await httpClientConnection.SaveOrUpdatePrestamos(tipoPrestamo);
+            return Redirect("TipoPrestamo");
+        }
+
+
+        public async Task<string> GetPrestamosById(long id)
+        {
+            var result = await httpClientConnection.GetPrestamosById(id);
+            return JsonConvert.SerializeObject(result);
+        }
+
+
+        public async Task<String> DeletePrestamos(long id)
+        {
+            var result = await httpClientConnection.DeletePrestamos(id);
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
         #endregion
 
         #endregion
