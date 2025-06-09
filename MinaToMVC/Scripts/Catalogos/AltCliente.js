@@ -121,10 +121,8 @@ $(document).ready(function () {
             });
         }
     });
-
-
-
-
+    
+        
     if (clienteJson.Id != 0)
         GetAllTipoMaterial();
 
@@ -403,14 +401,12 @@ function LimpiarFormulario() {
     $("#txtComentarios").val('');
     $("#chbEstatus").prop('checked', false);
 }
-// EN este punto inicia en apartado del modal
-
-
-
 
 //Cerrar Modal
 function closeModal() {
-    $("#genericModal").modal("hide");
+    // Obtener el ID del cliente del campo oculto en el formulario
+    const idCliente = $('#idCliente').val();
+    window.location.href = '/Administracion/Clientes/' + idCliente;
 }
 
 //Mostrar modal de Direccion
@@ -423,69 +419,6 @@ function GetCliente(id, nombre) {
     $("#FormModal").modal("show");
 }
 
-
-// Parte en la que se manda a llamar la direccion del cliente despues de dar un clic 
-function DireccionClienteB(id, nombre) {
-    $("#idCliente").val(id);
-    $("#nombreCliente").val(nombre);
-    $("#idDireccion").val('');
-
-    // Inicializar DataTable
-    $('#tbDirecciones').DataTable({
-        ajax: {
-            url: '/api/DireccionCliente/List',
-            type: 'GET',
-            data: { clienteId: id },
-            dataSrc: function (json) {
-                if (json.IsSuccess && json.Response) {
-                    return json.Response.filter(dir => dir.Cliente && dir.Cliente.Id == id);
-                }
-                return [];
-            }
-        },
-        columns: [
-            { data: 'calle' },
-            {
-                data: null,
-                render: data => `${data.NoInterno || ''} / ${data.NoExterno || ''}`
-            },
-            { data: 'Colonia' },
-            { data: 'Cp' },
-            { data: 'Delegacion' },
-            { data: 'Municipio' },
-            { data: 'Estado' },
-            {
-                data: null,
-                render: data => `
-                    <button class="btn btn-sm btn-warning me-1" onclick="CargarDireccionParaEdicion(${data.Id})">Editar</button>
-                    <button class="btn btn-sm btn-danger" onclick="EliminarDireccion(${data.Id})">Eliminar</button>
-                `,
-                orderable: false
-            }
-        ],
-        language: {
-            decimal: ",",
-            thousands: ".",
-            processing: "Procesando...",
-            lengthMenu: "Mostrar _MENU_ registros",
-            zeroRecords: "No se encontraron direcciones",
-            info: "Mostrando _START_ a _END_ de _TOTAL_ direcciones",
-            infoEmpty: "Mostrando 0 a 0 de 0 direcciones",
-            infoFiltered: "(filtrado de _MAX_ direcciones totales)",
-            search: "Buscar:",
-            paginate: {
-                first: "Primero",
-                last: "Último",
-                next: "Siguiente",
-                previous: "Anterior"
-            }
-        }
-    });
-
-    // Mostrar el modal
-    $("#FormModal").modal("show");
-}
-
 // Manejo del envío
 $("#contenedor").on("submit", function (e) {
     e.preventDefault();
@@ -493,10 +426,35 @@ $("#contenedor").on("submit", function (e) {
 });
 
 function GuardarDireccion() {
-    const direccion = {
+    // Validación manual de campos requeridos
+    const camposRequeridos = [
+        { id: "#txtcalle", nombre: "Calle" },
+        { id: "#txtnointerno", nombre: "No. Interno" },
+        { id: "#txtnoexterno", nombre: "No. Externo" },
+        { id: "#txtcolonia", nombre: "Colonia" },
+        { id: "#txtcp", nombre: "C.P." },
+        { id: "#txtdelegacion", nombre: "Delegación" },
+        { id: "#txtmunicipio", nombre: "Municipio" },
+        { id: "#txtestado", nombre: "Estado" }
+    ];
 
+    for (let campo of camposRequeridos) {
+        if ($(campo.id).val().trim() === "") {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Campo requerido',
+                text: `Por favor completa el campo: ${campo.nombre}`,
+                confirmButtonText: 'Aceptar'
+            });
+            $(campo.id).focus();
+            return; // Se detiene si un campo está vacío
+        }
+    }
+
+    // Si pasa la validación, continúa con el guardado
+    const direccion = {
         Id: $("#idDireccionCliente").val() || 0,
-        Cliente: $("#idCliente").val(),
+        ClienteId: $("#idCliente").val(),
         Calle: $("#txtcalle").val(),
         NoInterno: $("#txtnointerno").val(),
         NoExterno: $("#txtnoexterno").val(),
@@ -505,110 +463,206 @@ function GuardarDireccion() {
         Delegacion: $("#txtdelegacion").val(),
         Municipio: $("#txtmunicipio").val(),
         Estado: $("#txtestado").val(),
-        Estatus: 1
+        Estatus: 1,
+        CreatedBy: $("#createdByParcialUbicacion").val(),
+        CreatedDt: $("#createdDtParcialUbicacion").val(),
+        UpdatedBy: $("#updatedByParcialUbicacion").val(),
+        UpdatedDt: $("#updatedDtParcialUbicacion").val(),
     };
 
+    PostMVC('/Administracion/SaveOrUpdateDireccionCliente', direccion, function (r) {
+        if (r.IsSuccess) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Dirección guardada correctamente',
+                showConfirmButton: false,
+                timer: 2000
+            }).then(() => {
+                location.href = '/Administracion/Clientes/' + direccion.ClienteId;
+            });
+        } else {
+            alert("Error al guardar la dirección. Ver consola para más detalles.");
+        }
+    });
+}
+
+// Función modificada para aceptar parámetro de edición
+function AbrirModalDirecciones(idCliente, nombreCliente, idDireccion = 0) {
+    // Ocultar el modal si está visible
+    if ($('#genericModal').hasClass('show')) {
+        $('#genericModal').modal('hide');
+    }
+
+    // Limpiar completamente el modal y el backdrop
+    $('body').removeClass('modal-open');
+    $('.modal-backdrop').remove();
+    $('#boddyGeericModal').empty();
+
+    // Resetear cualquier estado del modal
+    $('#genericModal').removeData('bs.modal');
+
+    // Establecer título
+    $('#titleGenerciModal').text(idDireccion ? "Editar dirección" : "Nueva dirección");
+
+    // Cargar vista parcial en el body del modal
+    $('#boddyGeericModal').load(`/Administracion/PartialdireccionesClientes?direccionClientebyiD=${idDireccion}&clienteId=${idCliente}`, function () {
+        // Asignar valores básicos (siempre)
+        $('#idCliente').val(idCliente);
+        $('#nombreCliente').val(nombreCliente);
+
+        const createdBy = $('#txtCreatedBy').val();
+        const updatedBy = $('#txtUpdatedBy').val();
+
+        $('#createdByParcialUbicacion').val(createdBy);
+        $('#updatedByParcialUbicacion').val(updatedBy);
+
+        // Si estamos en modo edición, cargar los datos de la dirección
+        if (idDireccion !== 0) {
+            CargarDatosDireccion(idDireccion);
+            SearchDireccionesCliente(idCliente);
+        }
+
+        // Mostrar modal con opciones
+        $('#genericModal').modal({
+            backdrop: 'static',
+            keyboard: false
+        }).on('hidden.bs.modal', function () {
+            // Redireccionar al cerrar el modal
+            window.location.href = '/Administracion/Clientes/' + idCliente;
+
+            // Limpiar al cerrar para futuras aperturas
+            $(this).removeData('bs.modal');
+            $('#boddyGeericModal').empty();
+        });
+
+        // Cargar tabla con direcciones
+        SearchDireccionesCliente(idCliente);
+    });
+}
+
+// Función para cargar los datos de una dirección específica
+function CargarDatosDireccion(idDireccion) {
     $.ajax({
-        url: '/api/DireccionCliente/',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(direccion),
+        url: '/Administracion/GetDireccionClienteById',
+        method: 'GET',
+        data: { id: idDireccion },
         success: function (response) {
-            if (response.IsSuccess) {
-                Swal.fire("Éxito", "Dirección guardada correctamente", "success");
-                $('#tbDirecciones').DataTable().ajax.reload(null, false);
-                LimpiarFormularioDireccion();
+            const result = JSON.parse(response);
+
+            if (result.IsSuccess && result.Response && result.Response.length > 0) {
+                const direccion = result.Response[0];
+
+                // Llenar campos del formulario
+                $('#idDireccionCliente').val(direccion.id);
+                $('#txtcalle').val(direccion.calle);
+                $('#txtnointerno').val(direccion.noInterno);
+                $('#txtnoexterno').val(direccion.noExterno);
+                $('#txtcolonia').val(direccion.colonia);
+                $('#txtcp').val(direccion.cp);
+                $('#txtdelegacion').val(direccion.delegacion);
+                $('#txtmunicipio').val(direccion.municipio);
+                $('#txtestado').val(direccion.estado);
+
+                // Actualizar fechas
+                const fecha = new Date();
+                const pad = (n) => n.toString().padStart(2, '0');
+                const fechaFormateada = `${fecha.getFullYear()}-${pad(fecha.getMonth() + 1)}-${pad(fecha.getDate())} ${pad(fecha.getHours())}:${pad(fecha.getMinutes())}:${pad(fecha.getSeconds())}`;
+                $('#updatedDtParcialUbicacion').val(fechaFormateada);
             } else {
-                Swal.fire("Error", "Error al guardar: " + response.ErrorMessage, "error");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo obtener la dirección',
+                });
             }
         },
-        error: function (xhr, status, error) {
-            Swal.fire("Error", "Ocurrió un error al guardar: " + error, "error");
-        }
-    });
-}
-
-function CargarDireccionParaEdicion(id) {
-    $.ajax({
-        url: '/api/DireccionCliente/' + id,
-        type: 'GET',
-        success: function (response) {
-            if (response.IsSuccess) {
-                const dir = response.Response;
-                $("#idDireccion").val(dir.Id);
-                $("#txtCalle").val(dir.calle);
-                $("#txtNoInterno").val(dir.NoInterno);
-                $("#txtNoExterno").val(dir.NoExterno);
-                $("#txtColonia").val(dir.Colonia);
-                $("#txtCP").val(dir.Cp);
-                $("#txtDelegacion").val(dir.Delegacion);
-                $("#txtMunicipio").val(dir.Municipio);
-                $("#txtEstado").val(dir.Estado);
-
-                $('html, body').animate({
-                    scrollTop: $("#contenedor").offset().top
-                }, 500);
-            } else {
-                Swal.fire("Error", "No se pudo cargar la dirección: " + response.ErrorMessage, "error");
-            }
-        }
-    });
-}
-
-function EliminarDireccion(id) {
-    Swal.fire({
-        title: '¿Estás seguro?',
-        text: "Esta acción no se puede deshacer",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: '/api/DireccionCliente/' + id,
-                type: 'DELETE',
-                success: function (response) {
-                    if (response.IsSuccess) {
-                        Swal.fire("Éxito", "Dirección eliminada correctamente", "success");
-                        $('#tbDirecciones').DataTable().ajax.reload(null, false);
-                    } else {
-                        Swal.fire("Error", "Error al eliminar: " + response.ErrorMessage, "error");
-                    }
-                }
+        error: function (err) {
+            console.error(err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al obtener datos del servidor',
             });
         }
     });
 }
 
-function AbrirModalDirecciones(idCliente, nombreCliente) {
-    $("#titleGenerciModal").text("Configuración de dirección del cliente");
-    $("#boddyGeericModal").empty().load("/Administracion/PartialdireccionesClientes", function () {
-        // Una vez que el contenido del modal se ha cargado, asignamos los valores
-        $("#idCliente").val(idCliente);
-        $("#nombreCliente").val(nombreCliente);
 
-        $("#genericModal").modal("show");
+
+// Función auxiliar para cargar direcciones y generar DataTable
+function SearchDireccionesCliente(clienteId) {
+    PostMVC('/Administracion/GetDireccionesCliente', { Id: clienteId }, function (r) {
+        if (r.IsSuccess) {
+            const data = r.Response;
+
+            if ($.fn.DataTable.isDataTable('#tbDirecciones')) {
+                $('#tbDirecciones').DataTable().clear().destroy();
+            }
+
+            $('#tbDirecciones').DataTable({
+                data: data,
+                columns: [
+                    { data: 'id', title: 'ID', visible: false },
+                    { data: 'calle', title: 'Calle' },
+                    { data: 'noExterno', title: 'Numero Exterior' },
+                    { data: 'noInterno', title: 'Numero Interior' },
+                    { data: 'colonia', title: 'Colonia' },
+                    { data: 'cp', title: 'CP' },
+                    { data: 'delegacion', title: 'Delegación' },
+                    { data: 'municipio', title: 'Municipio' },
+                    { data: 'estado', title: 'Estado' },
+                    {
+                        data: null,
+                        title: 'Acciones',
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return `
+                    <button class="btn btn-sm btn-primary btnEditar" data-id="${row.id}" title="Editar">
+                        Editar
+                    </button>
+                    <button class="btn btn-sm btn-danger btnEliminar" data-id="${row.id}" title="Eliminar">
+                        Eliminar
+                    </button>`;
+                        }
+                    }
+                ],
+                scrollX: true,           // habilita scroll horizontal
+                responsive: true,        // mejora la experiencia en pantallas pequeñas
+                autoWidth: false,        // evita el autoajuste de ancho que a veces rompe el diseño
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json'
+                }
+            });
+        } else {
+            alert("Error al obtener registros. Ver consola para más detalles.");
+            console.error(r);
+        }
     });
 }
 
-//esto no va aquí, le esta poniendo un método con clic al todo el docmiedocumento
-//$(document).on("click", ".btn-direccion", function () {
-//    var clienteId = $(this).data("cliente-id");
-//    var direccionId = $(this).data("direccion-id");
+$(document).on('click', '.btnEliminar', function () {
+    const id = $(this).data('id');
+    PostMVC('/Administracion/DeletDireccionCliente', { Id: id }, function (r) {
+        if (r.IsSuccess) {
+            const clienteId = $('#idCliente').val();
+            SearchDireccionesCliente(clienteId);
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo eliminar la dirección',
+            });
+            console.error(r);
+        }
+    });
+});
 
-//    $("#titleGenerciModal").text("Configuración de dirección del cliente");
-//    $("#boddyGeericModal").empty().load("/Administracion/PartialConfiguracionUbicacionCliente", {
-//        clienteId: clienteId,
-//        direccionClientebyiD: direccionId
-//    }, function () {
-//        $("#genericModal").modal("show");
-//    });
-//});
+// Modificación en el evento de edición
+$(document).on('click', '.btnEditar', function () {
+    const idDireccion = $(this).data('id');
+    const idCliente = $('#idCliente').val();
+    const nombreCliente = $('#nombreCliente').val();
 
-function LimpiarFormularioDireccion() {
-    $("#idDireccion").val('');
-    $("#contenedor")[0].reset();
-}
+    // Abrir modal en modo edición
+    AbrirModalDirecciones(idCliente, nombreCliente, idDireccion);
+});

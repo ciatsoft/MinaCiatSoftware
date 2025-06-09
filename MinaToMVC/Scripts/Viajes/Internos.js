@@ -123,7 +123,6 @@ $(document).ready(function () {
 // Función para guardar o actualizar el viaje interno
 function SaveOrUpdateViajeInterno() {
     if ($("#frmViajesInternos").valid()) {
-        // Se construye el objeto de parámetros para el viaje interno
         var parametro = {
             Id: $("#txtViajeinterno").val(),
             UbicacionOrigen: { Id: $("#ddlUOrigen").val() },
@@ -141,37 +140,41 @@ function SaveOrUpdateViajeInterno() {
             Folio: $("#Folio").val()
         };
 
-        // Mostrar los datos capturados en una alerta usando SweetAlert
+        // Mostrar los datos capturados
         Swal.fire({
             title: 'Datos del viaje',
-            html: `<strong>Origen:</strong> ${$("#ddlUOrigen option:selected").text()}<br/>
-                   <strong>Cliente:</strong> ${$("#ddlcliente option:selected").text()}<br/>
-                   <strong>Transportista:</strong> ${$("#ddlTransportistas option:selected").text()}<br/>
-                   <strong>Material:</strong> ${$("#ddlTipoMaterial option:selected").text()}<br/>
-                   <strong>Vehículo:</strong> ${$("#ddlVehiculo option:selected").text()}<br/>
-                   <strong>Unidad de Medida:</strong> ${$("#ddlUnidadM option:selected").text()}<br/>
-                   <strong>Fecha del Viaje:</strong> ${$("#dtpFechaViaje").val()}<br/>
-                   <strong>Observaciones:</strong> ${$("#txtObservaciones").val()}`,
+            html: `
+                <strong>Folio:</strong> ${$("#Folio").val()}<br/>
+                <strong>Origen:</strong> ${$("#ddlUOrigen option:selected").text()}<br/>
+                <strong>Cliente:</strong> ${$("#dllcliente option:selected").text()}<br/>
+                <strong>Transportista:</strong> ${$("#ddlTransportistas option:selected").text()}<br/>
+                <strong>Material:</strong> ${$("#ddlTipoMaterial option:selected").text()}<br/>
+                <strong>Vehículo:</strong> ${$("#ddlVehiculo option:selected").text()}<br/>
+                <strong>Fecha del Viaje:</strong> ${$("#dtpFechaViaje").val()}<br/>
+                <strong>Observaciones:</strong> ${$("#txtObservaciones").val() || 'Ninguna'}`,
             icon: 'info',
             showCancelButton: true,
             confirmButtonText: 'Confirmar y Guardar',
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Enviar los datos al servidor para guardar o actualizar el viaje
                 PostMVC("/Viajes/SaveOrUpdateViajeInterno", parametro, function (r) {
                     if (r.IsSuccess) {
+                        Swal.fire('Éxito', 'Datos guardados correctamente.', 'success').then(() => {
+                            window.location.href = '/Viajes/Internos';
+                        });
                     } else {
                         Swal.fire('Error', 'Error al guardar los datos: ' + r.response.ErrorMessage, 'error');
                     }
                 });
             }
-            window.location.href = '/Viajes/Internos';
         });
+
     } else {
         Swal.fire('Advertencia', 'Por favor, complete todos los campos obligatorios.', 'warning');
     }
 }
+
 
 
 // Función para eliminar con confirmación y estructura de mensajes de SweetAlert
