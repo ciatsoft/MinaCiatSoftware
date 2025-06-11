@@ -333,7 +333,6 @@ namespace MinaToMVC.Controllers
         public async Task<ActionResult> Prestamos(long id = 0)
         {
             DtoCatalogoPrestamo prestamo = new DtoCatalogoPrestamo();
-
             if (id != 0)    
             {
                 var result = await httpClientConnection.GetPrestamosById(id);
@@ -344,9 +343,7 @@ namespace MinaToMVC.Controllers
                     prestamo = lista.FirstOrDefault(); 
                 }
             }
-
             var usuarioToken = SessionHelper.GetSessionUser();
-
             var usuario = new List<Usuario>()
             {
                 new Usuario()
@@ -355,13 +352,16 @@ namespace MinaToMVC.Controllers
                     Nombre = usuarioToken.UserName
                 }
             };
-
             var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
-
             var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            var trabajadores = new List<DtoTrabajador>();
+            var responsetrabajadores = await httpClientConnection.GetAllTrabajador();
+            trabajadores = JsonConvert.DeserializeObject<List<DtoTrabajador>>(responsetrabajadores.Response.ToString());
 
             ViewBag.UserToken = usuarioAutenticado;
             ViewBag.Usuarios = usuarios;
+            ViewBag.Trabajadores = trabajadores;
 
             return View(prestamo); 
         }
@@ -371,6 +371,7 @@ namespace MinaToMVC.Controllers
         {
             var result = await httpClientConnection.GetAllPrestamos();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+
         }
 
         public async Task<ActionResult> SaveOrUpdatePrestamos(DtoCatalogoPrestamo tipoPrestamo)

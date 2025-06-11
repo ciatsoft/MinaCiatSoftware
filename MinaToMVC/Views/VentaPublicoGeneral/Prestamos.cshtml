@@ -2,6 +2,8 @@
 @{
     ViewBag.Title = "Prestamos";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var trabajadores = (List<MinaTolEntidades.DtoSucursales.DtoTrabajador>)ViewBag.Trabajadores;
 }
 
 <link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
@@ -32,6 +34,13 @@
                     <div class="col-lg-4">
                         <label>Nombre:</label>
                         @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control", @id = "nombre" })
+                    </div>
+                    <div class="col-lg-4">
+                        <label>Trabajador:</label>
+                        @Html.DropDownListFor(x => x.IdTrabajador,
+                            new SelectList(trabajadores, "Id", "Nombre", Model.IdTrabajador),
+                            "Seleccione un trabajador",
+                            new { @class = "form-control", @id = "ddlTransportistas" })
                     </div>
                     <div class="col-lg-4">
                         <label>Descripción:</label>

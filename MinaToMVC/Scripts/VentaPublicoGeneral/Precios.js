@@ -78,7 +78,11 @@ function Createtable() {
                         data: "esPrecioActivo",
                         title: "Es activo",
                         render: function (data) {
-                            return data ? "Activo" : "Inactivo";
+                            if (data) {
+                                return '<span style="display: inline-block; width: 10px; height: 10px; background-color: green; border-radius: 50%; margin-right: 5px;"></span>Activo';
+                            } else {
+                                return '<span style="display: inline-block; width: 10px; height: 10px; background-color: red; border-radius: 50%; margin-right: 5px;"></span>Inactivo';
+                            }
                         }
                     },
                     { data: "comentario", title: "Comentario" },

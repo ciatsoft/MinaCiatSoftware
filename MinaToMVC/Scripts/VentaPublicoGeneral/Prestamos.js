@@ -33,6 +33,7 @@ $(document).ready(function () {
             { data: "id", visible: true, title: "Id" },
             { data: "nombre", title: "Nombre" },
             { data: "descripcion", title: "Descripción de Préstamo" },
+            { data: "idTrabajador.nombre", title: "Nombre del Trabajador" },
             {
                 data: "monto",
                 title: "Monto",
@@ -89,6 +90,10 @@ $(document).ready(function () {
         $("#encargado").val(PrestamosJson.UsuarioName);
         $("#estatus").val(PrestamosJson.Estatus ? "1" : "0");
         $("#chbestatus").prop('checked', PrestamosJson.Estatus === 1);
+
+        if (PrestamosJson.IdTrabajador && PrestamosJson.IdTrabajador.Id) {
+            $("#ddlTransportistas").val(PrestamosJson.IdTrabajador.Id);
+        }
     } else {
         $("#btnEliminaru").hide();
         $("#btnGuardaru").show();
@@ -114,6 +119,7 @@ function SaveOrUpdatePrestamos() {
             Monto: $("#monto").val(),
             Fecha: $("#fecha").val(),
             UsuarioName: $("#encargado").val(),
+            IdTrabajador: { Id: $("#ddlTransportistas").val() },
             Estatus: 1,
             CreatedBy: $("#encargado").val(),
             CreatedDt: $("#fecha").val(),
@@ -126,6 +132,7 @@ function SaveOrUpdatePrestamos() {
             title: isUpdating ? '¿Desea actualizar el registro?' : '¿Desea guardar el nuevo registro?',
             html: `<strong>Id:</strong> ${parametro.Id}<br/>
                    <strong>Nombre:</strong> ${parametro.nombre}<br/> 
+                   <strong>Trabajador:</strong> ${parametro.IdTrabajador.Id}<br/> 
                    <strong>Descripción:</strong> ${parametro.descripcion}<br/>
                    <strong>Monto:</strong> ${parametro.Monto}<br/>
                    <strong>Fecha:</strong> ${parametro.Fecha}<br/>
