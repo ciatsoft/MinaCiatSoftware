@@ -9,6 +9,7 @@ using MinaTolEntidades.DtoSucursales;
 using MinaTolEntidades;
 using MinaTolWebApi.DAL;
 using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.DtoClientes;
 
 namespace MinaTolWebApi.Controllers
 {
@@ -83,6 +84,37 @@ namespace MinaTolWebApi.Controllers
             return Ok(result);
         }
 
+        #endregion
+        #region VehiculoPublicoGeneral
+
+        [Route("VehiculoPublicoGral/List"), HttpGet]
+        public async Task<ModelResponse> GetAllVehiculosPublicoGral()
+        {
+            var result = wrapper.GetAllVehiculosPublicoGral();
+            return result;
+        }
+
+        [HttpGet, Route("VehiculoPublicoGral/{id:long}")]
+        public async Task<ModelResponse> GetVehiculosPublicoGralById(int id)
+        {
+            var result = wrapper.GetVehiculosPublicoGralById(id);
+            return result;
+        }
+
+        [HttpPost, Route("VehiculoPublicoGral/")]
+        public async Task<ModelResponse> SaveOrUpdateVehiculosPublicoGral(DtoClientesVehiculoPublicoGral p)
+        {
+            var result = wrapper.SaveOrUpdateVehiculosPublicoGral(p);
+            return result;
+        }
+
+        // DELETE: VPG
+        [HttpDelete, Route("VehiculoPublicoGral/{id:long}")]
+        public IHttpActionResult DeleteVehiculosPublicoGral(long id)
+        {
+            var result = wrapper.DeleteVehiculosPublicoGral(id);
+            return Ok(result);
+        }
         #endregion
     }
 }
