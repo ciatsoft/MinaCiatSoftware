@@ -63,9 +63,9 @@ namespace MinaTolWebApi.DAL
                 response.IsSuccess = true;
 
                 var parameters = new List<SqlParameter>
-        {
-            new SqlParameter("@Id", SqlDbType.BigInt) { Value = id },
-        };
+                {
+                    new SqlParameter("@Id", SqlDbType.BigInt) { Value = id },
+                };
 
                 var result = GetList(
                     "GetPrestamosById",

@@ -1,0 +1,77 @@
+﻿@model MinaTolEntidades.DtoClientes.DtoClientesVehiculoPublicoGral
+@{
+    ViewBag.Title = "VehiculosPublicoGeneral";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var clientes = (List<MinaTolEntidades.DtoClientes.Cliente>)ViewBag.Clientes;
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+@using (Html.BeginForm("SaveOrUpdateVehiculosPublicoGral", "Catalog", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmVehiculoPublicoGral", @id = "frmVehiculoPublicoGral" }))
+{
+    @Html.HiddenFor(x => x.Estatus)
+    @Html.HiddenFor(x => x.CreatedDt, new { @Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") })
+    @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy" })
+    @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy" })
+    @Html.HiddenFor(x => x.UpdatedDt, new { @Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") })
+
+    <div class="content">
+        <br>
+        <center><h1>Vehiculos de Clientes Publico General</h1></center>
+
+        <div class="tabla-consultas-roll">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>ID Vehiculo Cliente:</label>
+                        @Html.TextBoxFor(x => x.Id, new { @class = "form-control", @min = "0", @readonly = "readonly", @Id = "id" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>Nombre:</label>
+                        @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control", @Id = "nombre" })
+                    </div>
+                    <div class="col-lg-4">
+                        <label>Capacidad en M3:</label>
+                        @Html.TextBoxFor(x => x.Capacidad, new { @class = "form-control", @id = "capacidad", @oninput = "this.value = this.value.replace(/[^0-9]/g, '')" })
+                    </div>
+                    <div class="col-lg-4">
+                        <label>Cliente:</label>
+                        @Html.DropDownListFor(x => x.ClienteID,
+                            new SelectList(clientes, "Id", "Nombre", Model.ClienteID),
+                            "Seleccione un cliente",
+                            new { @class = "form-control", @id = "ddlClientes" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>Color:</label>
+                        @Html.TextBoxFor(x => x.Color, new { @class = "form-control", @Id = "color" })
+                    </div>
+                    <div class="col-lg-4">
+                        <label>Placa:</label>
+                        @Html.TextBoxFor(x => x.Placa, new { @class = "form-control", @Id = "placa" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input id="btnGuardaru" type="button" value="Guardar" onclick="SaveOrUpdateVehiculosPublicoGral()" class="btn btn-success" />
+                        <a href="/Catalog/VehiculosPublicoGeneral" class="btn btn-custom-cancel">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <table id="tblVehiculosPublicoGral" class="table table-bordered table-striped" style="width: 100%;"></table>
+    </div>
+}
+<!-- Antes de cargar el archivo .js -->
+<script type="text/javascript">
+    var VehiculoPubligoGralJson = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+</script>
+
+<script src="@(Url.StaticFile("Scripts/Catalogos/VehiculosPublicoGral.js"))"></script>

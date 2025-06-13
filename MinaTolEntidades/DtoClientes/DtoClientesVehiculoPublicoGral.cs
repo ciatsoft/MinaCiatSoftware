@@ -9,14 +9,13 @@ namespace MinaTolEntidades.DtoClientes
 {
     public class DtoClientesVehiculoPublicoGral : BaseObject
     {
-        public string Nombre { get; set; }
-
-        public int Capacidad { get; set; }
-
         public DtoClientesVehiculoPublicoGral()
         {
             ClienteID = new Cliente();
         }
+        public string Nombre { get; set; }
+
+        public int Capacidad { get; set; }
 
         public Cliente ClienteID { get; set; }
 

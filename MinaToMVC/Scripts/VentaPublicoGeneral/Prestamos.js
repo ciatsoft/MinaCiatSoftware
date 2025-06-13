@@ -158,7 +158,7 @@ function SaveOrUpdatePrestamos() {
     }
 }
 
-function EditarPrestamos(id) {
+function EditarPrestamos(id) {  
     window.location.href = "/VentaPublicoGeneral/Prestamos/" + id;
 }
 

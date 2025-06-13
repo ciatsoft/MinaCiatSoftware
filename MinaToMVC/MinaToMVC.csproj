@@ -170,6 +170,7 @@
     <Content Include="Scripts\Catalogos\TipoMaterialUbicacion.js" />
     <Content Include="Scripts\Catalogos\Ubicacion.js" />
     <Content Include="Scripts\Catalogos\UnidadMedida.js" />
+    <Content Include="Scripts\Catalogos\VehiculosPublicoGral.js" />
     <Content Include="Scripts\Comun\Comun.js" />
     <Content Include="Scripts\Home\Autenticacion.js" />
     <Content Include="Scripts\RFID\RFID.js" />
@@ -298,6 +299,7 @@
     <Content Include="Views\VentaPublicoGeneral\DineroCaja.cshtml" />
     <Content Include="Views\Catalog\TipoGastos.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\Prestamos.cshtml" />
+    <Content Include="Views\Catalog\VehiculosPublicoGeneral.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
