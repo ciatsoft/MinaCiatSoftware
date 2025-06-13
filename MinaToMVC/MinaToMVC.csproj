@@ -300,6 +300,7 @@
     <Content Include="Views\Catalog\TipoGastos.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\Prestamos.cshtml" />
     <Content Include="Views\Catalog\VehiculosPublicoGeneral.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\PartialVehiculoClientesPublicoGeneral.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
