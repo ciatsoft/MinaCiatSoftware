@@ -23,6 +23,13 @@ $(document).ready(function () {
             { data: "rfc", title: "RFC" },
             { data: "razon_Social", title: "Razón Social" },
             {
+                data: "ventaPublicoGeneral",
+                title: "Tipo de Cliente",
+                render: function (data, type, row) {
+                    return data == 1 ? "Venta Publico General" : "Viajes Locales";
+                }
+            },
+            {
                 data: "estatus",
                 title: "Estatus",
                 render: function (data, type, row) {
@@ -239,7 +246,6 @@ function AgregarPreciosMaterialACliente() {
     });
 }
 
-
 function EliminarMaterialDelCliente(clienteId, materialId) {
     var parametros = {
         Cliente: {
@@ -263,8 +269,6 @@ function EliminarMaterialDelCliente(clienteId, materialId) {
         }
     });
 }
-
-
 
 // Función para obtener todos los tipos de material
 function GetAllTipoMaterial() {
@@ -299,7 +303,8 @@ function SaveOrUpdateCliente() {
             CreatedBy: $("#txtCreatedBy").val(),
             CreatedDt: $("#txtCreatedDt").val(),
             UpdatedBy: $("#txtUpdatedBy").val(),
-            UpdatedDt: $("#txtUpdatedDt").val()
+            UpdatedDt: $("#txtUpdatedDt").val(),
+            VentaPublicoGeneral: $("#ViajeLocal").is(":checked")
         };
 
         // Mostrar una alerta de éxito con SweetAlert

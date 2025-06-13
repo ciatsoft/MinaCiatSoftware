@@ -111,23 +111,6 @@ namespace MinaToMVC.Controllers
             return Newtonsoft.Json.JsonConvert.SerializeObject(resuslt);
         }
 
-
-        //------------------------------------------ClienteTipoMaterial----------------------------------------------------
-
-
-        //public async Task<string> DeleteDireccionCliente(DireccionCliente t)
-        //{
-
-        //    httpClientConnection.MappingColumSecurity(t);
-        //    var result = await httpClientConnection.DeleteDireccionCliente(t);
-        //    return JsonConvert.SerializeObject(result);
-        //}
-
-
-        
-
-
-        //--------------------------------- Cliente
         public async Task<string> SaveOrUpdateClienteTipoMaterial(ClienteTipoMaterial t)
         {
             httpClientConnection.MappingColumSecurity(t);

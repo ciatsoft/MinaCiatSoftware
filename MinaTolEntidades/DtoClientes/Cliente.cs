@@ -14,5 +14,6 @@ namespace MinaTolEntidades.DtoClientes
         public string RFC { get; set; }
         public string Razon_Social { get; set; }
         public string Comentarios { get; set; }
+        public bool VentaPublicoGeneral { get; set; }
     }
 }
