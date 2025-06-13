@@ -592,3 +592,16 @@ function printItem(rowIndex) {
     generarTicket("Vale de Carga en Planta", `ticket_folio_${folio}_carga.pdf`);
     generarTicket("Vale de Salida", `ticket_folio_${folio}_vale_salida.pdf`);
 }
+
+// Asociar Vehiculos CLiente
+function AbrirModalVehiculoPublicoGeneral() {
+    // Limpiar completamente el modal antes de cargar nuevo contenido
+    $("#genericModal").removeData('bs.modal');
+    $("#boddyGeericModal").empty();
+
+    $("#titleGenerciModal").text("Agregar Vehiculo a Cliente:");
+
+    $("#boddyGeericModal").load("/VentaPublicoGeneral/PartialVehiculoClientesPublicoGeneral", function () {
+        $("#genericModal").modal("show");
+    });
+}

@@ -199,6 +199,37 @@ namespace MinaToMVC.Controllers
             var r = await httpClientConnection.SaveOrUpdateReporte_Venta(reporte);
             return Redirect("CorteDeCaja");
         }
+
+        public async Task<ActionResult> PartialVehiculoClientesPublicoGeneral()
+        {
+            DtoClientesVehiculoPublicoGral vehiculoPG = new DtoClientesVehiculoPublicoGral();
+            
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            var clientes = new List<Cliente>();
+            var responseclientes = await httpClientConnection.GetAllCliente();
+            // Deserializa la respuesta
+            clientes = JsonConvert.DeserializeObject<List<Cliente>>(responseclientes.Response.ToString());
+            // Filtra por VentaPublicoGeneral == true
+            var clientesFiltrados = clientes.Where(c => c.VentaPublicoGeneral == true).ToList();
+
+            ViewBag.Clientes = clientesFiltrados;
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            return PartialView(vehiculoPG);
+        }
+
         #endregion
 
         #region Precios
