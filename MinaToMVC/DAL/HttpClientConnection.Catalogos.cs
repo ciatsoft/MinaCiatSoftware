@@ -13,6 +13,7 @@ using MinaTolEntidades.DtoSucursales;
 using MinaTolEntidades.DtoViajes;
 using MinaTolEntidades.DtoVentaPublicoGeneral;
 using System.Web;
+using MinaTolEntidades.DtoClientes;
 
 namespace MinaToMVC.DAL
 {
@@ -70,9 +71,6 @@ namespace MinaToMVC.DAL
         }
 
         #endregion
-
-
-
         #region Prestamos
 
         public async Task<ModelResponse> SaveOrUpdatePrestamos(DtoCatalogoPrestamo tipoPrestamo)
@@ -126,6 +124,58 @@ namespace MinaToMVC.DAL
 
         }
 
+
+        #endregion
+        #region VehiculoPublicoGeneral
+
+        public async Task<ModelResponse> SaveOrUpdateVehiculosPublicoGral(DtoClientesVehiculoPublicoGral vehiculoPublicoGral)
+        {
+            MappingColumSecurity(vehiculoPublicoGral);
+            var result = await RequestAsync<object>("api/Catalogos/VehiculoPublicoGral/", HttpMethod.Post, vehiculoPublicoGral,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+
+        public async Task<ModelResponse> GetAllVehiculosPublicoGral()
+        {
+            var result = await RequestAsync<object>("api/Catalogos/VehiculoPublicoGral/List", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+
+        public async Task<ModelResponse> DeleteVehiculosPublicoGral(long id)
+        {
+            var result = await RequestAsync<ModelResponse>($"api/Catalogos/VehiculoPublicoGral/{id}", HttpMethod.Delete, null,
+            (responseString) =>
+            {
+                return JsonConvert.DeserializeObject<ModelResponse>(responseString);
+            }, token.Token.access_token);
+
+            return result;
+        }
+
+        public async Task<ModelResponse> GetVehiculosPublicoGralById(long id)
+        {
+            var responseString = await RequestAsync<string>(
+                $"api/Catalogos/VehiculoPublicoGral/{id}",
+                HttpMethod.Get,
+                null,
+                response => response // Si necesitas un transformador, aunque esto es redundante
+            );
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(responseString);
+            return modelResponse;
+        }
 
         #endregion
     }

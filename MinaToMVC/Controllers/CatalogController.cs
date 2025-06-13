@@ -326,7 +326,7 @@ namespace MinaToMVC.Controllers
                 tipoGastos = JsonConvert.DeserializeObject<DtoTipoGasto>(response.Response.ToString());
             }
 
-                ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.UserToken = usuarioAutenticado;
             ViewBag.Usuarios = usuarios;
 
             return View(tipoGastos);
@@ -356,6 +356,65 @@ namespace MinaToMVC.Controllers
         }
 
         #endregion
+
+        #region VehiculoPublicoGeneral
+        public async Task<ActionResult> VehiculosPublicoGeneral(long id = 0)
+        {
+            DtoClientesVehiculoPublicoGral vehiculoPG = new DtoClientesVehiculoPublicoGral();
+            if(id != 0)
+            {
+                var result = await httpClientConnection.GetVehiculosPublicoGralById(id);
+                var lista = JsonConvert.DeserializeObject<List<DtoClientesVehiculoPublicoGral>>(result.Response.ToString());
+
+                if(lista != null && lista.Count > 0)
+                {
+                    vehiculoPG = lista.FirstOrDefault();
+                }
+            }
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            var clientes = new List<Cliente>();
+            var responseclientes = await httpClientConnection.GetAllCliente();
+            clientes = JsonConvert.DeserializeObject<List<Cliente>>(responseclientes.Response.ToString());
+
+            ViewBag.Clientes = clientes;
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            return View(vehiculoPG);
+        }
+
+        public async Task<string> GetAllVehiculosPublicoGral()
+        {
+            var result = await httpClientConnection.GetAllVehiculosPublicoGral();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<ActionResult> SaveOrUpdateVehiculosPublicoGral(DtoClientesVehiculoPublicoGral vehiculoPublicoGral)
+        {
+            var r = await httpClientConnection.SaveOrUpdateVehiculosPublicoGral(vehiculoPublicoGral);
+            return Redirect("VehiculosPublicoGeneral");
+        }
+
+        public async Task<String> DeleteVehiculosPublicoGral(long id)
+        {
+            var result = await httpClientConnection.DeleteVehiculosPublicoGral(id);
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        #endregion
+
 
     }
 }

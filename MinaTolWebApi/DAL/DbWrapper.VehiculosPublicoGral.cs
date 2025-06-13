@@ -5,28 +5,33 @@ using System.Web;
 using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades;
 using System.Data.SqlClient;
+using System.Data;
+using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.DtoSucursales;
 
 namespace MinaTolWebApi.DAL
 {
     public partial class DbWrapper
     {
-        public ModelResponse SaveOrUpdateVehiculosPublicoGral(DtoClientesVehiculoPublicoGral v)
+        public ModelResponse SaveOrUpdateVehiculosPublicoGral(DtoClientesVehiculoPublicoGral u)
         {
-            var response = new ModelResponse();
+            var modelResponse = new ModelResponse();
+
             try
             {
-                response.IsSuccess = true;
-                var parameters = GenerateSQLParameters(v);
-                var result = ExecuteNonQuery("SaveOrUpdateVehiculosPublicoGral", System.Data.CommandType.StoredProcedure, parameters);
-                response.Response = result;
+                var userID = ExecuteScalar($"SaveOrUpdateVehiculosPublicoGral", CommandType.StoredProcedure, GenerateSQLParameters(u));
+                u.Id = Convert.ToInt64(userID);
+
+                modelResponse.Response = u;
             }
             catch (Exception ex)
             {
-                response.IsSuccess = false;
-                response.Message = ex.Message;
-                response.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
             }
-            return response;
+
+            return modelResponse;
         }
 
         public ModelResponse GetAllVehiculosPublicoGral()
@@ -36,11 +41,26 @@ namespace MinaTolWebApi.DAL
             {
                 response.IsSuccess = true;
                 var parameters = new List<SqlParameter>();
+
                 var result = GetObjects("GetAllVehiculosPublicoGral", System.Data.CommandType.StoredProcedure,
                     parameters, new Func<System.Data.IDataReader, DtoClientesVehiculoPublicoGral>((reader) =>
                     {
-                        var r = FillEntity<DtoClientesVehiculoPublicoGral>(reader);
-                        return r;
+
+                        var vehiculoPublicoGral = new DtoClientesVehiculoPublicoGral
+                        {
+                            Id = reader.GetInt64(reader.GetOrdinal("Id")),
+                            Nombre = reader.GetString(reader.GetOrdinal("Nombre")),
+                            Capacidad = reader.GetInt32(reader.GetOrdinal("Capacidad")),
+                            ClienteID = new Cliente
+                            {
+                                Id = reader.GetInt64(reader.GetOrdinal("ClienteId")),
+                                Nombre = reader.GetString(reader.GetOrdinal("NombreCliente"))
+                            },
+                            Color = reader.GetString(reader.GetOrdinal("Color")),
+                            Placa = reader.GetString(reader.GetOrdinal("Placa")),
+                        };
+
+                        return vehiculoPublicoGral;
                     }));
                 response.Response = result;
             }
@@ -53,27 +73,40 @@ namespace MinaTolWebApi.DAL
             return response;
         }
 
-        public ModelResponse GetVehiculosPublicoGralById(int id)
+        public ModelResponse GetVehiculosPublicoGralById(long id)
         {
             var response = new ModelResponse();
             try
             {
                 response.IsSuccess = true;
-                var parameters = new List<SqlParameter>();
-                parameters.Add(new SqlParameter()
-                {
-                    Value = id,
-                    IsNullable = true,
-                    ParameterName = "@Id",
-                    SqlDbType = System.Data.SqlDbType.BigInt
-                });
 
-                var result = GetObject("GetVehiculosPublicoGralById", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, DtoClientesVehiculoPublicoGral>((reader) =>
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@Id", SqlDbType.BigInt) { Value = id },
+                };
+
+                var result = GetList(
+                    "GetVehiculosPublicoGralById",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader =>
                     {
-                        var r = FillEntity<DtoClientesVehiculoPublicoGral>(reader);
-                        return r;
-                    }));
+                        return new DtoClientesVehiculoPublicoGral
+                        {
+                            Id = reader.GetInt64(reader.GetOrdinal("Id")),
+                            ClienteID = new Cliente
+                            {
+                                Id = reader.GetInt64(reader.GetOrdinal("ClienteID"))
+                                // Puedes mapear más propiedades si tu SP las retorna
+                            },
+                            Nombre = reader.GetString(reader.GetOrdinal("Nombre")),
+                            Capacidad = reader.GetInt32(reader.GetOrdinal("Capacidad")),
+                            Color = reader.GetString(reader.GetOrdinal("Color")),
+                            Placa = reader.GetString(reader.GetOrdinal("Placa"))
+                        };
+                    }
+                );
+
                 response.Response = result;
             }
             catch (Exception ex)
