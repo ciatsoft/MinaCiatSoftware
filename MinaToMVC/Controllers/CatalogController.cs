@@ -385,9 +385,12 @@ namespace MinaToMVC.Controllers
 
             var clientes = new List<Cliente>();
             var responseclientes = await httpClientConnection.GetAllCliente();
+            // Deserializa la respuesta
             clientes = JsonConvert.DeserializeObject<List<Cliente>>(responseclientes.Response.ToString());
+            // Filtra por VentaPublicoGeneral == true
+            var clientesFiltrados = clientes.Where(c => c.VentaPublicoGeneral == true).ToList();
 
-            ViewBag.Clientes = clientes;
+            ViewBag.Clientes = clientesFiltrados;
             ViewBag.UserToken = usuarioAutenticado;
             ViewBag.Usuarios = usuarios;
 
