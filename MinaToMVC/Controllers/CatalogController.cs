@@ -384,13 +384,11 @@ namespace MinaToMVC.Controllers
             var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
 
             var clientes = new List<Cliente>();
-            var responseclientes = await httpClientConnection.GetAllCliente();
+            var responseclientes = await httpClientConnection.GetAllClientePublicoGral();
             // Deserializa la respuesta
             clientes = JsonConvert.DeserializeObject<List<Cliente>>(responseclientes.Response.ToString());
-            // Filtra por VentaPublicoGeneral == true
-            var clientesFiltrados = clientes.Where(c => c.VentaPublicoGeneral == true).ToList();
 
-            ViewBag.Clientes = clientesFiltrados;
+            ViewBag.Clientes = clientes;
             ViewBag.UserToken = usuarioAutenticado;
             ViewBag.Usuarios = usuarios;
 

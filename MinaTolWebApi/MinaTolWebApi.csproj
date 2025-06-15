@@ -134,6 +134,7 @@
     <Compile Include="App_Start\App_Start.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\CatalogosController.cs" />
+    <Compile Include="Controllers\ClientePublicoGralController.cs" />
     <Compile Include="Controllers\PV_CorteCajaController.cs" />
     <Compile Include="Controllers\DireccionCliente.cs" />
     <Compile Include="Controllers\AreaTrabajoController.cs" />
@@ -159,6 +160,7 @@
     <Compile Include="Controllers\VentaPublicoGeneralController.cs" />
     <Compile Include="Controllers\ViajesController.cs" />
     <Compile Include="DAL\BaseDbWrapper.cs" />
+    <Compile Include="DAL\DbWrapper.ClientePublicoGral.cs" />
     <Compile Include="DAL\DbWrapper.DireccionCliente.cs" />
     <Compile Include="DAL\DbWrapper.AreaTrabajo.cs" />
     <Compile Include="DAL\DbWrapper.Cliente.cs" />

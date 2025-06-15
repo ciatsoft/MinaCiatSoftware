@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MinaTolEntidades.DtoClientes;
+using MinaTolEntidades.DtoVentaPublicoGeneral;
 
 namespace MinaTolEntidades.DtoClientes
 {
@@ -11,13 +11,13 @@ namespace MinaTolEntidades.DtoClientes
     {
         public DtoClientesVehiculoPublicoGral()
         {
-            ClienteID = new Cliente();
+            ClienteID = new ClientePublicoGral();
         }
         public string Nombre { get; set; }
 
         public int Capacidad { get; set; }
 
-        public Cliente ClienteID { get; set; }
+        public ClientePublicoGral ClienteID { get; set; }
 
         public string Color { get; set; }
 

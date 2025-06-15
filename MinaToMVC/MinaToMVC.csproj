@@ -178,6 +178,7 @@
     <Content Include="Scripts\Trabajador\AltaEdicion.js" />
     <Content Include="Scripts\Vehiculo\Vehiculo.js" />
     <Content Include="Scripts\VentaPublicoGeneral\CajaChica.js" />
+    <Content Include="Scripts\VentaPublicoGeneral\ClientePublicoGral.js" />
     <Content Include="Scripts\VentaPublicoGeneral\CorteCaja.js" />
     <Content Include="Scripts\VentaPublicoGeneral\CorteDeCaja.js" />
     <Content Include="Scripts\VentaPublicoGeneral\Index.js" />
@@ -206,6 +207,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ViajesController.cs" />
     <Compile Include="DAL\HttpClientConnection.Catalogos.cs" />
+    <Compile Include="DAL\HttpClientConnection.ClientePublicoGral.cs" />
     <Compile Include="DAL\HttpClientConnection.DireccionCliente.cs" />
     <Compile Include="DAL\HttpClientConnection.ClienteTipoMaterial.cs" />
     <Compile Include="DAL\HttpClientConnection.Foliador.cs" />
@@ -301,6 +303,7 @@
     <Content Include="Views\VentaPublicoGeneral\Prestamos.cshtml" />
     <Content Include="Views\Catalog\VehiculosPublicoGeneral.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\PartialVehiculoClientesPublicoGeneral.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\ClientePublicoGeneral.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
