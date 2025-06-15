@@ -66,6 +66,7 @@
     <Compile Include="DtoSucursales\Precio.cs" />
     <Compile Include="DtoSucursales\Producto.cs" />
     <Compile Include="DtoSucursales\UnidadMedida.cs" />
+    <Compile Include="DtoVentaPublicoGeneral\ClientePublicoGral.cs" />
     <Compile Include="DtoVentaPublicoGeneral\PV_CajaChica.cs" />
     <Compile Include="DtoVentaPublicoGeneral\PV_CorteCaja.cs" />
     <Compile Include="DtoVentaPublicoGeneral\Reporte_Venta.cs" />

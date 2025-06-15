@@ -32,19 +32,19 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-4">
-                        <label>Nombre:</label>
-                        @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control", @Id = "nombre" })
-                    </div>
-                    <div class="col-lg-4">
-                        <label>Capacidad en M3:</label>
-                        @Html.TextBoxFor(x => x.Capacidad, new { @class = "form-control", @id = "capacidad", @oninput = "this.value = this.value.replace(/[^0-9]/g, '')" })
-                    </div>
-                    <div class="col-lg-4">
                         <label>Cliente:</label>
                         @Html.DropDownListFor(x => x.ClienteID,
                             new SelectList(clientes, "Id", "Nombre", Model.ClienteID),
                             "Seleccione un cliente",
                             new { @class = "form-control", @id = "ddlClientes" })
+                    </div>
+                    <div class="col-lg-4">
+                        <label>Descripcion:</label>
+                        @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control", @Id = "nombre" })
+                    </div>
+                    <div class="col-lg-4">
+                        <label>Capacidad en M3:</label>
+                        @Html.TextBoxFor(x => x.Capacidad, new { @class = "form-control", @id = "capacidad", @oninput = "this.value = this.value.replace(/[^0-9]/g, '')" })
                     </div>
                 </div>
                 <div class="row">

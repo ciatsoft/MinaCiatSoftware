@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using System.Data;
 using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoSucursales;
+using MinaTolEntidades.DtoVentaPublicoGeneral;
 
 namespace MinaTolWebApi.DAL
 {
@@ -51,7 +52,7 @@ namespace MinaTolWebApi.DAL
                             Id = reader.GetInt64(reader.GetOrdinal("Id")),
                             Nombre = reader.GetString(reader.GetOrdinal("Nombre")),
                             Capacidad = reader.GetInt32(reader.GetOrdinal("Capacidad")),
-                            ClienteID = new Cliente
+                            ClienteID = new ClientePublicoGral
                             {
                                 Id = reader.GetInt64(reader.GetOrdinal("ClienteId")),
                                 Nombre = reader.GetString(reader.GetOrdinal("NombreCliente"))
@@ -94,7 +95,7 @@ namespace MinaTolWebApi.DAL
                         return new DtoClientesVehiculoPublicoGral
                         {
                             Id = reader.GetInt64(reader.GetOrdinal("Id")),
-                            ClienteID = new Cliente
+                            ClienteID = new ClientePublicoGral
                             {
                                 Id = reader.GetInt64(reader.GetOrdinal("ClienteID"))
                                 // Puedes mapear más propiedades si tu SP las retorna

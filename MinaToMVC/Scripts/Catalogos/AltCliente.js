@@ -23,13 +23,6 @@ $(document).ready(function () {
             { data: "rfc", title: "RFC" },
             { data: "razon_Social", title: "Razón Social" },
             {
-                data: "ventaPublicoGeneral",
-                title: "Tipo de Cliente",
-                render: function (data, type, row) {
-                    return data == 1 ? "Venta Publico General" : "Viajes Locales";
-                }
-            },
-            {
                 data: "estatus",
                 title: "Estatus",
                 render: function (data, type, row) {
@@ -304,7 +297,6 @@ function SaveOrUpdateCliente() {
             CreatedDt: $("#txtCreatedDt").val(),
             UpdatedBy: $("#txtUpdatedBy").val(),
             UpdatedDt: $("#txtUpdatedDt").val(),
-            VentaPublicoGeneral: $("#ViajeLocal").is(":checked")
         };
 
         // Mostrar una alerta de éxito con SweetAlert

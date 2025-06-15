@@ -220,10 +220,8 @@ namespace MinaToMVC.Controllers
             var responseclientes = await httpClientConnection.GetAllCliente();
             // Deserializa la respuesta
             clientes = JsonConvert.DeserializeObject<List<Cliente>>(responseclientes.Response.ToString());
-            // Filtra por VentaPublicoGeneral == true
-            var clientesFiltrados = clientes.Where(c => c.VentaPublicoGeneral == true).ToList();
 
-            ViewBag.Clientes = clientesFiltrados;
+            ViewBag.Clientes = clientes;
             ViewBag.UserToken = usuarioAutenticado;
             ViewBag.Usuarios = usuarios;
 
@@ -326,7 +324,6 @@ namespace MinaToMVC.Controllers
         }
         #endregion
 
-
         #region Corte de Caja
 
         public ActionResult CorteDeCaja()
@@ -396,35 +393,77 @@ namespace MinaToMVC.Controllers
 
             return View(prestamo); 
         }
-
-
         public async Task<string> GetAllPrestamos()
         {
             var result = await httpClientConnection.GetAllPrestamos();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
 
         }
-
         public async Task<ActionResult> SaveOrUpdatePrestamos(DtoCatalogoPrestamo tipoPrestamo)
         {
             var r = await httpClientConnection.SaveOrUpdatePrestamos(tipoPrestamo);
             return Redirect("TipoPrestamo");
         }
-
-
-        public async Task<string> GetPrestamosById(long id)
-        {
-            var result = await httpClientConnection.GetPrestamosById(id);
-            return JsonConvert.SerializeObject(result);
-        }
-
-
         public async Task<String> DeletePrestamos(long id)
         {
             var result = await httpClientConnection.DeletePrestamos(id);
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+        #endregion
+
+        #region ClientePublicoGeneral
+
+        public async Task<ActionResult> ClientePublicoGeneral(long id = 0)
+        {
+            ClientePublicoGral clientePublicoGral = new ClientePublicoGral();
+
+            if (id != 0)
+            {
+                var result = await httpClientConnection.GetClientePublicoGralById(id);
+                var cliente = JsonConvert.DeserializeObject<ClientePublicoGral>(result.Response.ToString());
+
+                if (cliente != null)
+                {
+                    clientePublicoGral = cliente;
+                }
+            }
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+            clientePublicoGral.CreatedBy = usuarioAutenticado.UserName;
+            clientePublicoGral.UpdatedBy = usuarioAutenticado.UserName;
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            return View(clientePublicoGral);
+        }
+        public async Task<string> GetAllClientePublicoGral()
+        {
+            var result = await httpClientConnection.GetAllClientePublicoGral();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<ActionResult> SaveOrUpdateClientePublicoGral(ClientePublicoGral c)
+        {
+            var r = await httpClientConnection.SaveOrUpdateClientePublicoGral(c);
+            return Redirect("ClientePublicoGeneral");
+        }
+        public async Task<String> DeleteClientePublicoGral(long id)
+        {
+            var result = await httpClientConnection.DeleteClientePublicoGral(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
         #endregion
 
         #endregion

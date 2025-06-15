@@ -27,7 +27,7 @@
             searching: true,
             columns: [
                 { data: "id", visible: true, title: "Id" },
-                { data: "nombre", title: "Nombre" },
+                { data: "nombre", title: "Descripcion" },
                 { data: "capacidad", title: "Capacidad" },
                 { data: "clienteID.nombre", title: "Nombre del Cliente" },
                 { data: "color", title: "Color" },
@@ -111,7 +111,7 @@ function SaveOrUpdateVehiculosPublicoGral() {
             Estatus: 1,
             CreatedBy: $("#createdBy").val(),
             CreatedDt: $("#CreatedDt").val(),
-            UpdatedBy: $("#updatedBy").val(),
+            UpdatedBy: $("#createdBy").val(),
             UpdatedDt: $("#UpdatedDt").val()
         };
 
