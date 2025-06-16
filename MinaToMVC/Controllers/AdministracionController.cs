@@ -155,6 +155,38 @@ namespace MinaToMVC.Controllers
         {
             return View();
         }
+        
+        public async Task<ActionResult>Usuarios(long id = 0)
+        {
+            Usuario User = new Usuario();
+            if(id != 0)
+            {
+                var result = await httpClientConnection.GetUsuarioById(id);
+                var lista = JsonConvert.DeserializeObject<List<Usuario>>(result.Response.ToString());
+
+                if (lista != null && lista.Count > 0)
+                {
+                    User = lista.FirstOrDefault();
+                }
+            }
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            return View(User);
+        }
         #endregion
 
         #region Partials Views
