@@ -54,6 +54,13 @@ namespace MinaTolWebApi.Controllers
             var result = dbWrapper.SaveOrUpdateUsuario(u);
             return result;
         }
-     
+
+        [HttpDelete, Route("{long:id}")]
+        public ModelResponse DeleteUsuario(long id)
+        {
+            var result = dbWrapper.DeleteUsuario(id);
+            return result;
+        }
+
     }
 }

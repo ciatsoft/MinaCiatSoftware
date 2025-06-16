@@ -187,6 +187,26 @@ namespace MinaToMVC.Controllers
 
             return View(User);
         }
+
+        public async Task<ActionResult> SaveOrUpdateUsuario(Usuario u)
+        {
+            var r = await httpClientConnection.SaveOrUpdateUsuario(u);
+            return Redirect("Usuarios");
+        }
+
+        public async Task<string> GetAllUsuarios()
+        {
+            var result = await httpClientConnection.GetAllUsuarios();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<String> DeleteUsuario(long id)
+        {
+            var result = await httpClientConnection.DeleteUsuario(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+
         #endregion
 
         #region Partials Views

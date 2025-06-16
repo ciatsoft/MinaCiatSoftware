@@ -11,20 +11,20 @@
 @using (Html.BeginForm("SaveOrUpdateUsuario", "Administracion", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmUsuario", @id = "frmUsuario" }))
 {
     @Html.HiddenFor(x => x.Estatus)
-    @Html.HiddenFor(x => x.CreatedDt, new { @Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") })
+    @Html.HiddenFor(x => x.CreatedDt, new { @Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), id = "createdDt" })
     @Html.HiddenFor(x => x.CreatedBy, new { @Value = ViewBag.UserToken.UserName, id = "createdBy" })
     @Html.HiddenFor(x => x.UpdatedBy, new { @Value = ViewBag.UserToken.UserName, id = "updatedBy" })
-    @Html.HiddenFor(x => x.UpdatedDt, new { @Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") })
+    @Html.HiddenFor(x => x.UpdatedDt, new { @Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), id = "updatedDt" })
 
     <div class="content">
         <br>
-        <center><h1>Préstamos</h1></center>
+        <center><h1>Usuarios</h1></center>
 
         <div class="tabla-consultas-roll">
             <div class="rectangulos" style="width: 100%;">
                 <div class="row">
                     <div class="col-lg-4">
-                        <label>ID Préstamo:</label>
+                        <label>ID Usuario:</label>
                         @Html.TextBoxFor(x => x.Id, new { @class = "form-control", @readonly = "readonly", @id = "id" })
                     </div>
                 </div>
@@ -63,4 +63,4 @@
     var UsuariosJson = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
 </script>
 
-<script src="@(Url.StaticFile("Scripts/VentaPublicoGeneral/Usuarios.js"))"></script>
+<script src="@(Url.StaticFile("Scripts/Catalogos/Usuarios.js"))"></script>

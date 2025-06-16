@@ -63,6 +63,19 @@ namespace MinaToMVC.DAL
 
             return modelResponse;
         }
+
+        public async Task<ModelResponse> GetAllUsuarios()
+        {
+            var result = await RequestAsync<object>("api/PV_Venta/List", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+
         public async Task<ModelResponse> SaveOrUpdateUsuario(Usuario u)
         {
             var result = await RequestAsync<object>("api/Usuario/", HttpMethod.Post, u,
@@ -76,6 +89,19 @@ namespace MinaToMVC.DAL
         public async Task<ModelResponse> GetUsuarioById(long UserID)
         {
             var result = await RequestAsync<object>($"api/Usuario/{UserID}", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
+
+        public async Task<ModelResponse> DeleteUsuario(long id)
+        {
+            var result = await RequestAsync<object>($"api/Usuario/{id}", HttpMethod.Delete, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
