@@ -9,6 +9,8 @@ namespace MinaTolEntidades.DtoVentaPublicoGeneral
     public class ClientePublicoGral : BaseObject
     {
         public string Nombre { get; set; }
+        public string RFID { get; set; }
+
         public string Telefono { get; set; }
         public string Email { get; set; }
         public string RFC {  get; set; }
