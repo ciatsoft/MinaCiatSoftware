@@ -31,6 +31,7 @@ $(document).ready(function () {
         searching: true,
         columns: [
             { data: "id", visible: true, title: "Id" },
+            { data: "rfid", visible: true, title: "RFID" },
             { data: "nombre", title: "Nombre" },
             { data: "telefono", title: "Telefono" },
             { data: "email", title: "Email" },
@@ -106,6 +107,7 @@ function SaveOrUpdateClientePublicoGral() {
     if ($("#frmClientePublicoGral").valid()) {
         var parametro = {
             Id: $("#id").val(),
+            RFID: $("#rfid").val(),
             nombre: $("#nombre").val(),
             telefono: $("#telefono").val(),
             email: $("#email").val(),
@@ -123,6 +125,7 @@ function SaveOrUpdateClientePublicoGral() {
         Swal.fire({
             title: isUpdating ? '¿Desea actualizar el registro?' : '¿Desea guardar el nuevo registro?',
             html: `<strong>Id:</strong> ${parametro.Id}<br/>
+                   <strong>RFID:</strong> ${parametro.RFID}<br/>
                    <strong>Nombre:</strong> ${parametro.nombre}<br/> 
                    <strong>Telefono:</strong> ${parametro.telefono}<br/> 
                    <strong>Email:</strong> ${parametro.email}<br/> 
@@ -177,3 +180,4 @@ function EliminarClientePublicoGral(id) {
         }
     });
 }
+
