@@ -11,7 +11,6 @@ using System.Web.Http;
 
 namespace MinaTolWebApi.Controllers
 {
-    [Authorize]
     [RoutePrefix("api/VentaPublicoGeneral")]
     public class VentaPublicoGeneralController : ApiController
     {
@@ -25,10 +24,9 @@ namespace MinaTolWebApi.Controllers
         [HttpGet, Route("{id:long}/")]
         public ModelResponse GetMaterialUbicacionByUbicacion(int id)
         {
-            var result =  wrapper.GetMaterialUbicacionByUbicacion(id);
+            var result = wrapper.GetMaterialUbicacionByUbicacion(id);
             return result;
         }
-        #endregion
+        #endregion  
     }
-
 }

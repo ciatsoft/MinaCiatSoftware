@@ -56,11 +56,17 @@
 
     GetAllRoll();
 
-    if (typeof rollJson.Id != 0) {
+    if (rollJson.Id && rollJson.Id != 0) {
         $("#txtidroll").val(rollJson.Id);
         $("#txtNombre").val(rollJson.Nombre);
         $("#txtDescripcion").val(rollJson.Descripcion);
         $("#chbEstatus").prop('checked', rollJson.Estatus);
+
+        // Habilitar el botón al editar
+        $("#btnAsociar").prop("disabled", false);
+    } else {
+        // Deshabilitar el botón al crear nuevo
+        $("#btnAsociar").prop("disabled", true);
     }
 });
 
@@ -163,4 +169,21 @@ function LimpiarFormulario() {
     $("#txtNombre").val('');
     $("#txtDescripcion").val('');
     $("#chbEstatus").prop('checked', false);
+}
+
+
+function AbrirModalAsociarPermisos(idRol, NombreRol) {
+    // Limpiar completamente el modal antes de cargar nuevo contenido
+    $("#genericModal").removeData('bs.modal');
+    $("#boddyGeericModal").empty();
+
+    $("#titleGenerciModal").text("Configuración de Permisos: " + NombreRol);
+
+    $("#boddyGeericModal").load("/Catalog/PartialAsociarPermisos" +
+        "?idRol=" + idRol +
+        "&NombreRol=" + encodeURIComponent(NombreRol),
+        function () {
+            $("#genericModal").modal("show");
+        }
+    );
 }

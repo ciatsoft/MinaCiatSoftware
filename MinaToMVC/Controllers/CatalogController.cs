@@ -202,6 +202,29 @@ namespace MinaToMVC.Controllers
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
+        public async Task<ActionResult> PartialAsociarPermisos(int idRol, string NombreRol)
+        {
+            // Pasar los valores a la vista usando ViewBag
+            ViewBag.IdRol = idRol;
+            ViewBag.NombreRol = NombreRol;
+
+            return PartialView();
+        }
+
+        public async Task<string> GetAllPermisos()
+        {
+            var result = await httpClientConnection.GetAllPermisos();
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetPermisosByIdRol(long id)
+        {
+            var result = await httpClientConnection.GetPermisosByIdRol(id);
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
         #region PartialViewUbicacion
 
         //Pantalla parcial para el modal de vista ubicacion, para ingresar Material Asociado
@@ -229,6 +252,8 @@ namespace MinaToMVC.Controllers
             var result = httpClientConnection.QuitMaterialUbicacion(t);
             return JsonConvert.SerializeObject(result);
         }
+
+
 
         #endregion
 

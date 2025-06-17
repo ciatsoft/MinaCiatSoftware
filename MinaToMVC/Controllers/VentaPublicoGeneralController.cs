@@ -203,7 +203,7 @@ namespace MinaToMVC.Controllers
         public async Task<ActionResult> PartialVehiculoClientesPublicoGeneral()
         {
             DtoClientesVehiculoPublicoGral vehiculoPG = new DtoClientesVehiculoPublicoGral();
-            
+
             var usuarioToken = SessionHelper.GetSessionUser();
             var usuario = new List<Usuario>()
             {
@@ -361,14 +361,14 @@ namespace MinaToMVC.Controllers
         public async Task<ActionResult> Prestamos(long id = 0)
         {
             DtoCatalogoPrestamo prestamo = new DtoCatalogoPrestamo();
-            if (id != 0)    
+            if (id != 0)
             {
                 var result = await httpClientConnection.GetPrestamosById(id);
                 var lista = JsonConvert.DeserializeObject<List<DtoCatalogoPrestamo>>(result.Response.ToString());
 
                 if (lista != null && lista.Count > 0)
                 {
-                    prestamo = lista.FirstOrDefault(); 
+                    prestamo = lista.FirstOrDefault();
                 }
             }
             var usuarioToken = SessionHelper.GetSessionUser();
@@ -391,7 +391,7 @@ namespace MinaToMVC.Controllers
             ViewBag.Usuarios = usuarios;
             ViewBag.Trabajadores = trabajadores;
 
-            return View(prestamo); 
+            return View(prestamo);
         }
         public async Task<string> GetAllPrestamos()
         {
@@ -461,6 +461,15 @@ namespace MinaToMVC.Controllers
         public async Task<String> DeleteClientePublicoGral(long id)
         {
             var result = await httpClientConnection.DeleteClientePublicoGral(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+
+        //--------Permisos
+
+        public async Task<string> GetAllPermisos()
+        {
+            var result = await httpClientConnection.GetAllPermisos();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 

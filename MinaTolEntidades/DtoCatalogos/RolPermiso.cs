@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace MinaTolEntidades.DtoCatalogos
 {
-    public class DtoRoll : BaseObject
+    public class RolPermiso : BaseObject
     {
-        public string Nombre { get; set; }
-        public string Descripcion { get; set; }
+        public long IdRol {  get; set; }
+        public long PermisoId { get; set; }
 
     }
 }

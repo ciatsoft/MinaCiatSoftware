@@ -116,5 +116,22 @@ namespace MinaTolWebApi.Controllers
             return Ok(result);
         }
         #endregion
+        #region RolPermisos
+
+        [Route("RolPermisos/List"), HttpGet]
+        public async Task<ModelResponse> GetAllPermisos()
+        {
+            var result = wrapper.GetAllPermisos();
+            return result;
+        }
+
+        [Route("RolPermisos/{id:long}")]
+        public async Task<ModelResponse> GetPermisosByIdRol(long id)
+        {
+            var result = wrapper.GetPermisosByIdRol(id);
+            return result;
+        }
+
+        #endregion
     }
 }

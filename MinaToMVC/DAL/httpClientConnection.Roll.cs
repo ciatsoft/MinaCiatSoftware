@@ -32,7 +32,7 @@ namespace MinaToMVC.DAL
             var result = await RequestAsync<object>("api/Roll", HttpMethod.Get, null,
             new Func<string, string>((responseString) =>
             {
-                return responseString; 
+                return responseString;
             }), token.Token.access_token);
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
 
@@ -63,6 +63,5 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
-
     }
 }

@@ -1,0 +1,157 @@
+﻿@{
+    // Obtener los valores de ViewBag
+    var idRol = ViewBag.IdRol;
+    var nombreRol = ViewBag.NombreRol;
+}
+<h3>Asociar Permisos: <span id="lblNombreRol">@nombreRol</span></h3>
+<input type="hidden" id="txtid" value="@idRol" />
+<input type="hidden" id="txtnombre" value="@nombreRol" />
+
+<div class="row">
+    <div class="col-md-6">
+        <h2>PERMISOS ASOCIADOS</h2>
+        <div class="row">
+            <div class="col-lg-12">
+                <table class="table table-bordered table-striped" id="tblRoll" style="width: 100%;"></table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <h2>PERMISOS GLOBALES</h2>
+        <div class="row">
+            <div class="col-lg-12">
+                <table class="table table-bordered table-striped" id="tblPermisos" style="width: 100%;"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Variables globales
+    var permisosAsociadosIds = [];
+    var dataTablePermisos;
+    var dataTableRoll;
+    var idRol = $('#txtid').val();
+
+    // Función para inicializar las tablas
+    function inicializarTablas() {
+        // Destruir si ya existen
+        if ($.fn.DataTable.isDataTable('#tblPermisos')) {
+            $('#tblPermisos').DataTable().clear().destroy();
+        }
+        if ($.fn.DataTable.isDataTable('#tblRoll')) {
+            $('#tblRoll').DataTable().clear().destroy();
+        }
+
+        // Tabla de permisos globales
+        dataTablePermisos = $("#tblPermisos").DataTable({
+            processing: true,
+            serverSide: false,
+            paging: true,
+            searching: true,
+            columns: [
+                { data: "id", visible: false, title: "ID" },
+                { data: "nombre", title: "Nombre del Permiso" },
+                { data: "descripcion", title: "Descripción" },
+                {
+                    data: "id",
+                    title: "Acciones",
+                    render: function (data) {
+                        return `
+                        <button class="btn btn-sm btn-success" onclick="AgregarPermiso(${data}, ${idRol})">
+                            <i class="fas fa-plus"></i> Añadir
+                        </button>`;
+                    }
+                }
+            ],
+            language: languageES()
+        });
+
+        // Tabla de permisos asociados
+        dataTableRoll = $("#tblRoll").DataTable({
+            processing: true,
+            serverSide: false,
+            paging: true,
+            searching: true,
+            columns: [
+                { data: "id", visible: false, title: "ID" },
+                { data: "idRol", title: "Nombre del Permiso" },
+                { data: "permisoId", title: "Descripción" },
+                {
+                    data: "id",
+                    title: "Acciones",
+                    render: function (data) {
+                        return `
+                        <button class="btn btn-sm btn-danger" onclick="QuitarPermiso(${data}, ${idRol})">
+                            <i class="fas fa-trash"></i> Quitar
+                        </button>`;
+                    }
+                }
+            ],
+            language: languageES()
+        });
+    }
+
+
+    // Función para cargar todos los permisos globales
+    function GetAllPermisos() {
+        GetMVC("/Catalog/GetAllPermisos", function (r) {
+            if (r.IsSuccess) {
+                // Filtrar permisos no asociados
+                const permisosFiltrados = r.Response.filter(item =>
+                    !permisosAsociadosIds.includes(item.id)
+                );
+
+                dataTablePermisos.clear().rows.add(permisosFiltrados).draw();
+            } else {
+                mostrarError(r.ErrorMessage);
+            }
+        });
+    }
+
+    // Función para cargar permisos asociados al rol
+    function GetPermisosByIdRol(id) {
+        GetMVC("/Catalog/GetPermisosByIdRol/" + id, function (r) {
+            console.log("Respuesta GetPermisosByIdRol:", r);
+
+            if (r.IsSuccess && Array.isArray(r.Response)) {
+                permisosAsociadosIds = r.Response.map(item => item.id);
+                dataTableRoll.clear().rows.add(r.Response).draw();
+                GetAllPermisos();
+            } else {
+                mostrarError("La respuesta del servidor no es válida.");
+            }
+        });
+    }
+
+    // Idioma para DataTables
+    function languageES() {
+        return {
+            "decimal": "",
+            "emptyTable": "No hay datos disponibles",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "Cargando...",
+            "processing": "Procesando...",
+            "search": "Buscar:",
+            "zeroRecords": "No se encontraron coincidencias",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+        };
+    }
+
+    // Inicializar cuando el documento esté listo
+    $(document).ready(function () {
+        inicializarTablas();
+        GetPermisosByIdRol(idRol);
+        GetAllPermisos();
+    });
+</script>

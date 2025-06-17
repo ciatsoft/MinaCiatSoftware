@@ -60,7 +60,7 @@
     function ocultarCargando() {
         $("#spinnerCarga").hide();
     }
-
+    //-----------primer tabla
     function inicializarTablas(idUbicacion) {
         mostrarCargando();
 
@@ -110,7 +110,7 @@
             GetAllTipoMaterialUbicacion();
         });
     }
-
+    //------------segunda tabla
     function GetGetMaterialUbicacionByUbicacion(idUbicacion, callback) {
         GetMVC("/Catalog/GetGetMaterialUbicacionByUbicacion?id=" + idUbicacion, function (r) {
             if (r.IsSuccess) {

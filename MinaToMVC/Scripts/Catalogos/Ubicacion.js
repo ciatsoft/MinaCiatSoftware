@@ -16,7 +16,7 @@
                     return data == 1 ? "Interna" : "Externa";
                 }
             },
-            {
+            {   
                 data: null,
                 render: function (data) {
                     return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarUbicacion(' + data.id + ', \'' + data.nombreUbicacion.replace(/'/g, "\\'") + '\')" />';

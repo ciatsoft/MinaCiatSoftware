@@ -214,6 +214,7 @@
     <Compile Include="DAL\HttpClientConnection.IngresosRfid.cs" />
     <Compile Include="DAL\HttpClientConnection.MaterialesUbicacion.cs" />
     <Compile Include="DAL\HttpClientConnection.MetodoPago.cs" />
+    <Compile Include="DAL\HttpClientConnection.Permisos.cs" />
     <Compile Include="DAL\HttpClientConnection.PV_CajaChica.cs" />
     <Compile Include="DAL\HttpClientConnection.PV_CorteCaja.cs" />
     <Compile Include="DAL\HttpClientConnection.PV_Precios.cs" />
@@ -304,6 +305,7 @@
     <Content Include="Views\Catalog\VehiculosPublicoGeneral.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\PartialVehiculoClientesPublicoGeneral.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\ClientePublicoGeneral.cshtml" />
+    <Content Include="Views\Catalog\PartialAsociarPermisos.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

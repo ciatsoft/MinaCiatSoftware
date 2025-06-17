@@ -66,13 +66,6 @@
                         <label>Nombre del Rol:</label>
                         <input type="text" id="txtNombre" name="txtNombre" class="form-control" />
                     </div>
-
-                    <div class="col-lg-3">
-                        <div class="col-lg-6">
-                            <label>Estatus:</label>
-                            <input type="checkbox" name="chbEstatus" id="chbEstatus" value="" class="form-control" />
-                        </div>
-                    </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-8">
@@ -84,11 +77,10 @@
                     <div class="col-md-12">
                         <input href="/Catalog/Roll" type="button" value="Guardar" onclick="SaveOrUpdateRoll()" class="btn btn-success" />
                         <a href="/Catalog/Roll" class="btn btn-custom-cancel">Cancelar</a>
-
+                        <input type="button" value="Asociar Permisos" id="btnAsociar" class="btn btn-custom-clean" disabled
+                               onclick="AbrirModalAsociarPermisos(parseInt($('#txtidroll').val()), $('#txtNombre').val())" />
                     </div>
                 </div>
-
-
             </div>
         </div>
 
