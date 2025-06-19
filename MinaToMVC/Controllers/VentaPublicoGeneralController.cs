@@ -218,7 +218,7 @@ namespace MinaToMVC.Controllers
 
             var clientes = new List<Cliente>();
             var responseclientes = await httpClientConnection.GetAllCliente();
-            // Deserializa la respuesta
+            // Deseriali  za la respuesta
             clientes = JsonConvert.DeserializeObject<List<Cliente>>(responseclientes.Response.ToString());
 
             ViewBag.Clientes = clientes;

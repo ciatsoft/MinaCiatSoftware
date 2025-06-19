@@ -155,23 +155,26 @@ namespace MinaToMVC.Controllers
         {
             return View();
         }
-        
-        public async Task<ActionResult>Usuarios(long id = 0)
+
+        public async Task<ActionResult> Usuarios(long id = 0)
         {
-            Usuario User = new Usuario();
-            if(id != 0)
+            Usuario user = new Usuario();
+
+            if (id != 0)
             {
                 var result = await httpClientConnection.GetUsuarioById(id);
-                var lista = JsonConvert.DeserializeObject<List<Usuario>>(result.Response.ToString());
-
-                if (lista != null && lista.Count > 0)
+                if (result != null && result.Response != null)
                 {
-                    User = lista.FirstOrDefault();
+                    var usuario = JsonConvert.DeserializeObject<Usuario>(result.Response.ToString());
+                    if (usuario != null)
+                    {
+                        user = usuario;
+                    }
                 }
             }
 
             var usuarioToken = SessionHelper.GetSessionUser();
-            var usuario = new List<Usuario>()
+            var usuariosList = new List<Usuario>()
             {
                 new Usuario()
                 {
@@ -179,13 +182,33 @@ namespace MinaToMVC.Controllers
                     Nombre = usuarioToken.UserName
                 }
             };
-            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+
+            var usuariosDropdown = MappingPropertiToDropDownList<Usuario>(usuariosList, "Id", "Nombre");
             var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
 
             ViewBag.UserToken = usuarioAutenticado;
-            ViewBag.Usuarios = usuarios;
+            ViewBag.Usuarios = usuariosDropdown;
 
-            return View(User);
+            return View(user);
+        }
+
+        public async Task<string> GetAllUsuario()
+        {
+            var result = await httpClientConnection.GetAllUsuario();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<ActionResult> SaveOrUpdateUsuario(Usuario u)
+        {
+            var r = await httpClientConnection.SaveOrUpdateUsuario(u);
+            return Redirect("Usuarios");
+        }
+
+        public async Task<String> DeleteUsuario(long id)
+        {
+            var result = await httpClientConnection.DeleteUsuario(id);
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
         #endregion
 

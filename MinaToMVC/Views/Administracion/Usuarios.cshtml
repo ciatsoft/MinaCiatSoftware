@@ -11,14 +11,14 @@
 @using (Html.BeginForm("SaveOrUpdateUsuario", "Administracion", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmUsuario", @id = "frmUsuario" }))
 {
     @Html.HiddenFor(x => x.Estatus)
-    @Html.HiddenFor(x => x.CreatedDt, new { @Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") })
+    @Html.HiddenFor(x => x.CreatedDt, new { @Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), id = "createdDt" })
     @Html.HiddenFor(x => x.CreatedBy, new { @Value = ViewBag.UserToken.UserName, id = "createdBy" })
     @Html.HiddenFor(x => x.UpdatedBy, new { @Value = ViewBag.UserToken.UserName, id = "updatedBy" })
-    @Html.HiddenFor(x => x.UpdatedDt, new { @Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") })
+    @Html.HiddenFor(x => x.UpdatedDt, new { @Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), id = "updatedDt" })
 
     <div class="content">
         <br>
-        <center><h1>Préstamos</h1></center>
+        <center><h1>Usuarios</h1></center>
 
         <div class="tabla-consultas-roll">
             <div class="rectangulos" style="width: 100%;">
@@ -48,8 +48,8 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <input id="btnGuardaru" type="button" value="Guardar" onclick="SaveOrUpdatePrestamos()" class="btn btn-success" />
-                        <a href="/VentaPublicoGeneral/Prestamos" class="btn btn-custom-cancel">Cancelar</a>
+                        <input id="btnGuardaru" type="button" value="Guardar" onclick="SaveOrUpdateUsuario()" class="btn btn-success" />
+                        <a href="/Administracion/Usuarios" class="btn btn-custom-cancel">Cancelar</a>
                     </div>
                 </div>
             </div>
@@ -63,4 +63,4 @@
     var UsuariosJson = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
 </script>
 
-<script src="@(Url.StaticFile("Scripts/VentaPublicoGeneral/Usuarios.js"))"></script>
+<script src="@(Url.StaticFile("Scripts/Seguridad/Usuario.js"))"></script>
