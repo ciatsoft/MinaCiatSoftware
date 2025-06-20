@@ -16,13 +16,19 @@ $(document).ready(function () {
     // Filtrado RFID cliente venta publico general
     $('#rfid').on('input', function () {
         const valorRFID = $(this).val().trim();
+        const $nombreCliente = $('#nombreCliente');
+        const $descripcionVehiculo = $('#descripcionVehiculo');
+        const $placa = $('#placa');
+        const $cantidadRecibida = $('#cantidadRecibida');
+        const $dropdown = $('#vehiculosDropdown');
 
+        // Limpiar todo si no hay RFID
         if (!valorRFID) {
-            $('#resultadosBusqueda').empty();
-            $('#nombreCliente').val(''); // Limpiar el input si no hay RFID
-            $('#descripcionVehiculo').val(''); // Limpiar el input si no hay RFID
-            $('#placa').val(''); // Limpiar el input si no hay RFID
-            $('#cantidadRecibida').val(''); // Limpiar el input si no hay RFID
+            $nombreCliente.val('');
+            $descripcionVehiculo.val('');
+            $placa.val('');
+            $cantidadRecibida.val('');
+            $dropdown.empty().append('<option value="">Seleccione un vehículo</option>');
             return;
         }
 
@@ -32,95 +38,79 @@ $(document).ready(function () {
             data: { rfid: valorRFID },
             dataType: 'json',
             success: function (respuesta) {
-
                 if (respuesta.IsSuccess && respuesta.Response && Object.keys(respuesta.Response).length > 0) {
                     const cliente = respuesta.Response;
+                    $nombreCliente.val(cliente.nombre || '');
 
-                    $('#nombreCliente').val(cliente.nombre || '');
-
-                    var idCliente = cliente.id;
-
+                    // Solo si encontramos cliente, buscamos vehículos
                     $.ajax({
                         url: '/VentaPublicoGeneral/GetVehiculosPublicoGralByIdCliente',
                         type: 'GET',
-                        data: { id: idCliente },
+                        data: { id: cliente.id },
                         dataType: 'json',
                         success: function (respuesta2) {
-                            
-                            const $dropdown = $('#vehiculosDropdown');
-
-                            // Limpiar dropdown previo y restablecer opción por defecto
-                            $dropdown.empty().append('<option value="">Seleccione un vehiculo</option>');
+                            $dropdown.empty();
 
                             if (respuesta2.IsSuccess && respuesta2.Response) {
-                                const vehiculosCliente = respuesta2.Response;
-
-                                // Normalizar a array
-                                const vehiculosArray = Array.isArray(vehiculosCliente) ? vehiculosCliente : [vehiculosCliente];
+                                const vehiculosArray = Array.isArray(respuesta2.Response) ?
+                                    respuesta2.Response : [respuesta2.Response];
 
                                 if (vehiculosArray.length > 0) {
-                                    // Llenar el dropdown
-                                    vehiculosArray.forEach((vehiculo) => {
+                                    $dropdown.append('<option value="">Seleccione un vehiculo</option>');
+
+                                    vehiculosArray.forEach(vehiculo => {
                                         $dropdown.append($('<option></option>')
-                                            .val(vehiculo.nombre)  // Usamos el nombre como valor
-                                            .text(`${vehiculo.nombre}`)
+                                            .val(vehiculo.nombre)
+                                            .text(vehiculo.nombre)
                                             .data('placa', vehiculo.placa)
                                             .data('capacidad', vehiculo.capacidad));
                                     });
 
-                                    // Manejar el cambio de selección
                                     $dropdown.on('change', function () {
-                                        const selectedOption = $(this).find('option:selected');
-
-                                        // Actualizar todos los campos
-                                        $('#descripcionVehiculo').val($(this).val());
-                                        $('#placa').val(selectedOption.data('placa'));
-                                        $('#cantidadRecibida').val(selectedOption.data('capacidad'));
+                                        const selected = $(this).find('option:selected');
+                                        if (selected.val()) {
+                                            $descripcionVehiculo.val(selected.val());
+                                            $placa.val(selected.data('placa'));
+                                            $cantidadRecibida.val(selected.data('capacidad'));
+                                        } else {
+                                            $descripcionVehiculo.val('');
+                                            $placa.val('');
+                                            $cantidadRecibida.val('');
+                                        }
                                     });
 
-                                    // Si solo hay un vehículo, seleccionarlo automáticamente
                                     if (vehiculosArray.length === 1) {
                                         $dropdown.val(vehiculosArray[0].nombre).trigger('change');
                                     }
                                 } else {
-                                    $dropdown.append('<option value="">No hay vehículos disponibles</option>');
-                                    // Limpiar campos si no hay vehículos
-                                    $('#descripcionVehiculo').val('');
-                                    $('#placa').val('');
-                                    $('#cantidadRecibida').val('');
+                                    $dropdown.append('<option value="">No hay vehiculos</option>');
+                                    // No limpiamos otros campos si no hay vehículos pero sí cliente
                                 }
                             } else {
-                                $dropdown.append('<option value="">Error al cargar vehículos</option>');
-                                // Limpiar campos si hay error
-                                $('#descripcionVehiculo').val('');
-                                $('#placa').val('');
-                                $('#cantidadRecibida').val('');
+                                $dropdown.append('<option value="">Error al cargar</option>');
+                                // No limpiamos otros campos si hay error pero sí cliente encontrado
                             }
                         },
-                        error: function (xhr, status, error) {
-                            console.error("Error al obtener vehículos:", error);
-                            $('#vehiculosDropdown').empty()
-                                .append('<option value="">Error al cargar vehículos</option>');
-                            // Limpiar campos si hay error
-                            $('#descripcionVehiculo').val('');
-                            $('#placa').val('');
-                            $('#cantidadRecibida').val('');
+                        error: function () {
+                            $dropdown.append('<option value="">Error al cargar</option>');
+                            // No limpiamos campos existentes en error de vehículos
                         }
                     });
                 } else {
-                    console.log("No se encontraron clientes con ese RFID o la respuesta no tiene datos");
+                    // Solo limpiamos si no encontramos cliente
+                    $nombreCliente.val('');
+                    $descripcionVehiculo.val('');
+                    $placa.val('');
+                    $cantidadRecibida.val('');
+                    $dropdown.empty().append('<option value="">No se encontro cliente</option>');
                 }
             },
-            error: function (xhr, status, error) {
-                console.error("Error en la solicitud AJAX:", {
-                    Status: status,
-                    Error: error,
-                    ResponseText: xhr.responseText
-                });
+            error: function () {
+                // No limpiamos campos en error de conexión (podría ser temporal)
+                console.error("Error en la solicitud AJAX");
             }
         });
     });
-
 
     $("#tablePuntoVenta").dataTable({
         processing: true,
