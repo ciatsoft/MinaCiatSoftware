@@ -1,4 +1,5 @@
 ﻿using MinaTolEntidades;
+using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.DtoVentaPublicoGeneral;
 using MinaTolEntidades.DtoVentas;
 using MinaTolEntidades.DtoViajes;
@@ -39,7 +40,9 @@ namespace MinaTolWebApi.DAL
                     new SqlParameter("@CreatedBy", v.CreatedBy),
                     new SqlParameter("@CreatedDt", v.CreatedDt),
                     new SqlParameter("@UpdatedBy", v.UpdatedBy),
-                    new SqlParameter("@UpdatedDt", v.UpdatedDt)
+                    new SqlParameter("@UpdatedDt", v.UpdatedDt),
+                    new SqlParameter("@RFID", v.RFID),
+                    new SqlParameter("@NombreCliente", v.NombreCliente)
                 };
 
                 var result = ExecuteScalar("SaveOrUpdatePV_Ventas", CommandType.StoredProcedure, parameters);
@@ -185,6 +188,82 @@ namespace MinaTolWebApi.DAL
                 );
 
                 response.Response = result; // ahora será una lista de PV_CajaChica
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+
+        public ModelResponse SearchClienteByRFID(string rfid)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = rfid,
+                    IsNullable = true,
+                    ParameterName = "@RFID",
+                    SqlDbType = System.Data.SqlDbType.Int
+                });
+
+                var result = GetObject("SearchClienteByRFID", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, ClientePublicoGral>((reader) =>
+                    {
+                        var r = FillEntity<ClientePublicoGral>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+
+        // Obtener lo vehiculos relacionados al Cliente
+        public ModelResponse GetVehiculosPublicoGralByIdCliente(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@Id", SqlDbType.BigInt) { Value = id},
+                };
+
+                // CORREGIDO: usar GetList para obtener varios registros
+                var result = GetList(
+                    "GetVehiculosPublicoGralByIdCliente",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader => {
+                        var dto = new DtoClientesVehiculoPublicoGral();
+                        dto.Id = Convert.ToInt64(reader["Id"]);
+                        dto.Nombre = reader["Nombre"].ToString();
+                        dto.Capacidad = Convert.ToInt32(reader["Capacidad"]);
+                        dto.ClienteID = new ClientePublicoGral
+                        {
+                            Id = Convert.ToInt64(reader["ClienteID"])
+                        };
+                        dto.Color = reader["Color"].ToString();
+                        dto.Placa = reader["Placa"].ToString();
+                        return dto;
+                    }
+                );
+
+                response.Response = result;
             }
             catch (Exception ex)
             {

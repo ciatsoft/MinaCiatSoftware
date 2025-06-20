@@ -13,6 +13,7 @@ using MinaTolEntidades.DtoSucursales;
 using MinaTolEntidades.DtoViajes;
 using MinaTolEntidades.DtoVentaPublicoGeneral;
 using System.Web;
+using System.Security.Policy;
 
 namespace MinaToMVC.DAL
 {
@@ -72,5 +73,32 @@ namespace MinaToMVC.DAL
             return modelResponse;
         }
 
+        public async Task<ModelResponse> SearchClienteByRFID(string rfid)
+        {
+            var url = $"api/PV_Venta/RFID/{rfid}";
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+
+        public async Task<ModelResponse> GetVehiculosPublicoGralByIdCliente(long id)
+        {
+            // Armar la URL con parámetros de consulta correctamente
+            string url = $"api/PV_Venta/VehiculosCliente/{id}";
+
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
     }
 }

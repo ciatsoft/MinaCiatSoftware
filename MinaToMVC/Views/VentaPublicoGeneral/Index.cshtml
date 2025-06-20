@@ -36,6 +36,37 @@
                         @Html.TextBoxFor(x => x.Folio, new { @class = "form-control", @disabled = "disabled" })
                     </div>
                     <div class="col-lg-3">
+                        <label>RFID:</label>
+                        @Html.TextBoxFor(x => x.RFID, new { @class = "form-control", id = "rfid" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Nombre Cliente:</label>
+                        @Html.TextBoxFor(x => x.NombreCliente, new { @class = "form-control", id = "nombreCliente", @readonly = "readonly" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Descripción del transporte:</label>
+                        @Html.HiddenFor(x => x.Transporte, new
+                        {
+                            @class = "form-control",
+                            id = "descripcionVehiculo",
+                            @readonly = "readonly"  /* Opcional: para que sea solo lectura */
+                        })
+                        <!-- Dropdown para seleccionar el vehículo -->
+                        <select id="vehiculosDropdown" class="form-control">
+                            <option value="">Seleccione un vehículo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Placa:</label>
+                        @Html.TextBoxFor(x => x.Placa, new { @class = "form-control", id = "placa", @readonly = "readonly" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Capacidad en M3:</label>
+                        @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control", @type = "number", id = "cantidadRecibida", @readonly = "readonly" })
+                    </div>
+                    <div class="col-lg-3">
                         <label>Planta:</label>
                         @Html.DropDownListFor(x => x.Ubicacion.Id, (IEnumerable<SelectListItem>)ViewBag.Ubicaciones, new { @class = "form-control", @onchange = "CambioUbicacion()" })
                     </div>
@@ -43,16 +74,7 @@
                         <label>Material:</label>
                         @Html.DropDownListFor(x => x.TipoMaterial.Id, (IEnumerable<SelectListItem>)ViewBag.Materiales, new { @class = "form-control" })
                     </div>
-                    <div class="col-lg-3">
-                        <label>Cantidad:</label>
-                        @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control", @type = "number", id = "cantidadRecibida" })
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-3">
-                        <label>Unidad de Medida:</label>
-                        @Html.DropDownListFor(x => x.UnidadMedida.Id, (IEnumerable<SelectListItem>)ViewBag.UnidadMedida, new { @class = "form-control" })
-                    </div>
+                    @Html.DropDownListFor(x => x.UnidadMedida.Id, (IEnumerable<SelectListItem>)ViewBag.UnidadMedida, new { @class = "form-control d-none", @readonly = "readonly" })
                     <div class="col-lg-3">
                         <label>Forma de pago:</label>
                         <select id="formaPago" name="FormaDePago" class="form-control">
@@ -70,16 +92,6 @@
                     <div class="col-lg-3">
                         <label>Vendedor:</label>
                         @Html.DropDownListFor(x => x.Usuario.Id, (IEnumerable<SelectListItem>)ViewBag.Usuarios, new { @class = "form-control" })
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-6">
-                        <label>Descripción del transporte:</label>
-                        @Html.TextBoxFor(x => x.Transporte, new { @class = "form-control" })
-                    </div>
-                    <div class="col-lg-3">
-                        <label>Placa:</label>
-                        @Html.TextBoxFor(x => x.Placa, new { @class = "form-control" })
                     </div>
                     <div class="col-lg-3">
                         <label>Fecha:</label>

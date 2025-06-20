@@ -54,5 +54,19 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
+        [HttpGet, Route("RFID/{rfid}")]
+        public ModelResponse SearchClienteByRFID(string rfid)
+        {
+            var result = wrapper.SearchClienteByRFID(rfid);
+            return result;
+        }
+
+        [HttpGet, Route("VehiculosCliente/{id:long}")]
+        public async Task<ModelResponse> GetVehiculosPublicoGralByIdCliente(long id)
+        {
+            var result = wrapper.GetVehiculosPublicoGralByIdCliente(id);
+            return result;
+        }
+
     }
 }
