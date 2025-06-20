@@ -87,7 +87,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function SearchPV_VajaChicaByDateAndUser(userName, fecha) {
     PostMVC('/VentaPublicoGeneral/SearchPV_VajaChicaByDateAndUser', { userName, fecha }, function (r, textStatus, jqXHR) {
-        console.log("Respuesta objeto r:", r);
         if (r.IsSuccess) {
             const data = r.Response;
 

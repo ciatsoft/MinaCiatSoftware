@@ -2,7 +2,7 @@
 @{
     ViewBag.Title = "PartialVehiculoClientesPublicoGeneral";
 
-    var clientes = (List<MinaTolEntidades.DtoClientes.Cliente>)ViewBag.Clientes;
+    var clientes = (List<MinaTolEntidades.DtoVentaPublicoGeneral.ClientePublicoGral>)ViewBag.Clientes;
 }
 
 <link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
@@ -21,6 +21,7 @@
         <br>
         <div class="tabla-consultas-roll">
             <div class="rectangulos" style="width: 100%;">
+                <h2>Agregar Vehiculo a Clientes Publico General</h2>
                 <div class="row">
                     <div class="col-lg-4">
                         @Html.HiddenFor(x => x.Id, new { @class = "form-control", @min = "0", @readonly = "readonly", @Id = "id" })
@@ -61,7 +62,6 @@
                 </div>
             </div>
         </div>
-        <br />
     </div>
 }
 <!-- Antes de cargar el archivo .js -->

@@ -34,5 +34,10 @@ namespace MinaTolEntidades.DtoVentas
         public int TotalPago { get; set; }
         public decimal PrecioUnidad { get; set; }
         public DateTime Fecha { get; set; }
+
+        // Agregados
+        public string RFID { get; set; }
+        public string NombreCliente { get; set; }
+
     }
 }

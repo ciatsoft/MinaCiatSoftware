@@ -199,6 +199,17 @@ namespace MinaToMVC.Controllers
             var r = await httpClientConnection.SaveOrUpdateReporte_Venta(reporte);
             return Redirect("CorteDeCaja");
         }
+        public async Task<string> SearchClienteByRFID(string rfid)
+        {
+            var r = await httpClientConnection.SearchClienteByRFID(rfid);
+            return JsonConvert.SerializeObject(r);
+        }
+
+        public async Task<string> GetVehiculosPublicoGralByIdCliente(long id)
+        {
+            var result = await httpClientConnection.GetVehiculosPublicoGralByIdCliente(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
 
         public async Task<ActionResult> PartialVehiculoClientesPublicoGeneral()
         {
@@ -216,10 +227,10 @@ namespace MinaToMVC.Controllers
             var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
             var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
 
-            var clientes = new List<Cliente>();
-            var responseclientes = await httpClientConnection.GetAllCliente();
+            var clientes = new List<ClientePublicoGral>();
+            var responseclientes = await httpClientConnection.GetAllClientePublicoGral();
             // Deseriali  za la respuesta
-            clientes = JsonConvert.DeserializeObject<List<Cliente>>(responseclientes.Response.ToString());
+            clientes = JsonConvert.DeserializeObject<List<ClientePublicoGral>>(responseclientes.Response.ToString());
 
             ViewBag.Clientes = clientes;
             ViewBag.UserToken = usuarioAutenticado;

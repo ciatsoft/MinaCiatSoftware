@@ -13,6 +13,115 @@ $(document).ready(function () {
         ObtenerPrecioMaterial();
     });
 
+    // Filtrado RFID cliente venta publico general
+    $('#rfid').on('input', function () {
+        const valorRFID = $(this).val().trim();
+
+        if (!valorRFID) {
+            $('#resultadosBusqueda').empty();
+            $('#nombreCliente').val(''); // Limpiar el input si no hay RFID
+            $('#descripcionVehiculo').val(''); // Limpiar el input si no hay RFID
+            $('#placa').val(''); // Limpiar el input si no hay RFID
+            $('#cantidadRecibida').val(''); // Limpiar el input si no hay RFID
+            return;
+        }
+
+        $.ajax({
+            url: '/VentaPublicoGeneral/SearchClienteByRFID',
+            type: 'GET',
+            data: { rfid: valorRFID },
+            dataType: 'json',
+            success: function (respuesta) {
+
+                if (respuesta.IsSuccess && respuesta.Response && Object.keys(respuesta.Response).length > 0) {
+                    const cliente = respuesta.Response;
+
+                    $('#nombreCliente').val(cliente.nombre || '');
+
+                    var idCliente = cliente.id;
+
+                    $.ajax({
+                        url: '/VentaPublicoGeneral/GetVehiculosPublicoGralByIdCliente',
+                        type: 'GET',
+                        data: { id: idCliente },
+                        dataType: 'json',
+                        success: function (respuesta2) {
+                            
+                            const $dropdown = $('#vehiculosDropdown');
+
+                            // Limpiar dropdown previo y restablecer opción por defecto
+                            $dropdown.empty().append('<option value="">Seleccione un vehiculo</option>');
+
+                            if (respuesta2.IsSuccess && respuesta2.Response) {
+                                const vehiculosCliente = respuesta2.Response;
+
+                                // Normalizar a array
+                                const vehiculosArray = Array.isArray(vehiculosCliente) ? vehiculosCliente : [vehiculosCliente];
+
+                                if (vehiculosArray.length > 0) {
+                                    // Llenar el dropdown
+                                    vehiculosArray.forEach((vehiculo) => {
+                                        $dropdown.append($('<option></option>')
+                                            .val(vehiculo.nombre)  // Usamos el nombre como valor
+                                            .text(`${vehiculo.nombre}`)
+                                            .data('placa', vehiculo.placa)
+                                            .data('capacidad', vehiculo.capacidad));
+                                    });
+
+                                    // Manejar el cambio de selección
+                                    $dropdown.on('change', function () {
+                                        const selectedOption = $(this).find('option:selected');
+
+                                        // Actualizar todos los campos
+                                        $('#descripcionVehiculo').val($(this).val());
+                                        $('#placa').val(selectedOption.data('placa'));
+                                        $('#cantidadRecibida').val(selectedOption.data('capacidad'));
+                                    });
+
+                                    // Si solo hay un vehículo, seleccionarlo automáticamente
+                                    if (vehiculosArray.length === 1) {
+                                        $dropdown.val(vehiculosArray[0].nombre).trigger('change');
+                                    }
+                                } else {
+                                    $dropdown.append('<option value="">No hay vehículos disponibles</option>');
+                                    // Limpiar campos si no hay vehículos
+                                    $('#descripcionVehiculo').val('');
+                                    $('#placa').val('');
+                                    $('#cantidadRecibida').val('');
+                                }
+                            } else {
+                                $dropdown.append('<option value="">Error al cargar vehículos</option>');
+                                // Limpiar campos si hay error
+                                $('#descripcionVehiculo').val('');
+                                $('#placa').val('');
+                                $('#cantidadRecibida').val('');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error al obtener vehículos:", error);
+                            $('#vehiculosDropdown').empty()
+                                .append('<option value="">Error al cargar vehículos</option>');
+                            // Limpiar campos si hay error
+                            $('#descripcionVehiculo').val('');
+                            $('#placa').val('');
+                            $('#cantidadRecibida').val('');
+                        }
+                    });
+                } else {
+                    console.log("No se encontraron clientes con ese RFID o la respuesta no tiene datos");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error en la solicitud AJAX:", {
+                    Status: status,
+                    Error: error,
+                    ResponseText: xhr.responseText
+                });
+            }
+        });
+    });
+
+
     $("#tablePuntoVenta").dataTable({
         processing: true,
         destroy: true,
@@ -114,6 +223,8 @@ $(document).ready(function () {
                     return data;
                 }
             },
+            { data: "rfid", title: "RFID", visible: false },
+            { data: "nombreCliente", title: "Nombre Cliente" },
             { data: "corte_Id", title: "ID Corte", visible: false },
             {
                 data: "id",
@@ -460,6 +571,8 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha) {
                             return "Rechazada";
                         }
                     },
+                    { data: "rfid", title: "RFID", visible: false },
+                    { data: "nombreCliente", title: "Nombre Cliente" },
                     { data: "corte_Id", title: "ID Corte", visible: false },
                     {
                         data: "id",
@@ -472,6 +585,19 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha) {
                                 <br /><br />
                                 <input type="button" value="Rechazar Venta" class="btn btn-custom-clean" onclick="ActualizarVenta(${data}, 'R')" />
                             `;
+                        }
+                    },
+                    {
+                        data: "id",
+                        render: function (data, type, row, meta) {
+                            return `
+                        <button 
+                            type="button"
+                            onclick="printItem(${meta.row})"
+                            style="background-color: yellow; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                            Imprimir
+                        </button>
+                    `;
                         }
                     }
                 ],
@@ -521,6 +647,8 @@ function printItem(rowIndex) {
     var cantidad = parseFloat(rowData.cantidad).toFixed(2);
     var precioUnidad = parseFloat(rowData.precioUnidad).toFixed(2);
     var vendedor = rowData.userName;
+    var RFID = rowData.rfid;
+    var nombreCliente = rowData.nombreCliente;
 
     var fechaOriginal = new Date(rowData.fecha);
     var fechaFormateada =
@@ -578,6 +706,8 @@ function printItem(rowIndex) {
         addRow("Transporte", transporte);
         addRow("Placa", placa);
         addRow("Vendedor", vendedor);
+        addRow("RFID", RFID);
+        addRow("Cliente", nombreCliente);
 
         y += 6;
         pdf.line(10, y, 70, y); // línea final

@@ -74,10 +74,10 @@ function SaveOrUpdateUsuario() {
     if ($("#frmUsuario").valid()) {
         var parametro = {
             Id: $("#id").val(),
-            UserName: $("#nombre").val(),
-            Password: $("#username").val(),
-            Nombre: $("#email").val(),
-            Email: $("#password").val(),
+            UserName: $("#username").val(),
+            Password: $("#password").val(),
+            Nombre: $("#nombre").val(),
+            Email: $("#email").val(),
             Estatus: 1,
             CreatedBy: $("#createdBy").val(),
             CreatedDt: $("#createdDt").val(),
