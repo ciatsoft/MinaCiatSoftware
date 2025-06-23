@@ -39,7 +39,7 @@
                     </div>
                     <div class="col-lg-4">
                         <label>Telefono:</label>
-                        @Html.TextBoxFor(x => x.Telefono, new { @class = "form-control", @id = "telefono", @maxlength = "12", @minlength = "12", @pattern = "\\d{12}", oninput = "this.value = this.value.replace(/[^0-9]/g, '')" })
+                        @Html.TextBoxFor(x => x.Telefono, new { @class = "form-control", @id = "telefono", @pattern = "\\d{12}", oninput = "this.value = this.value.replace(/[^0-9]/g, '')" })
                     </div>
                     <div class="col-lg-4">
                         <label>Email:</label>

@@ -107,7 +107,7 @@ function SaveOrUpdateClientePublicoGral() {
     if ($("#frmClientePublicoGral").valid()) {
         var parametro = {
             Id: $("#id").val(),
-            RFID: $("#rfid").val(),
+            RFID: $("#RFID").val(),
             nombre: $("#nombre").val(),
             telefono: $("#telefono").val(),
             email: $("#email").val(),
