@@ -64,7 +64,7 @@
                 <div class="row">
                     <div class="col-lg-2">
                         <label for="txtPrecioActivo">Es precio Activo:</label>
-                        @Html.EditorFor(x => x.EsPrecioActivo, new { @class = "form-control" })
+                        @Html.CheckBoxFor(x => x.EsPrecioActivo, new { @style = "width: 30px; height: 30px;" })
                     </div>
                     <div class="col-lg-10">
                         <label>Comentarios:</label>
