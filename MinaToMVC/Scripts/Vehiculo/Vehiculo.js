@@ -25,13 +25,13 @@
                 title: "Estado",
                 render: function (valor) {
                     if (valor == 'En patio') {
-                        return "<span style='display: inline-block; width: 10px; height: 10px; background-color: #51b00b; border-radius: 50%; animation: blink 1s infinite alternate;'></span> En Patio";
+                        return "<span style='display: inline-block; width: 20px; height: 20px; background-color: #51b00b; border-radius: 50%; animation: blink 1s infinite alternate;'></span> En Patio";
                     } else if (valor == 'En viaje') {
-                        return "<span style='display: inline-block; width: 10px; height: 10px; background-color: yellow; border-radius: 50%; animation: blink 1s infinite alternate;'></span> En Viaje";
+                        return "<span style='display: inline-block; width: 20px; height: 20px; background-color: yellow; border-radius: 50%; animation: blink 1s infinite alternate;'></span> En Viaje";
                     } else if (valor == 'En taller') {
-                        return "<span style='display: inline-block; width: 10px; height: 10px; background-color: red; border-radius: 50%; animation: blink 1s infinite alternate;'></span> En Taller";
+                        return "<span style='display: inline-block; width: 20px; height: 20px; background-color: red; border-radius: 50%; animation: blink 1s infinite alternate;'></span> En Taller";
                     } else {
-                        return "<span style='display: inline-block; width: 10px; height: 10px; background-color: blue; border-radius: 50%; animation: blink 1s infinite alternate;'></span> Sin estado";
+                        return "<span style='display: inline-block; width: 20px; height: 20px; background-color: blue; border-radius: 50%; animation: blink 1s infinite alternate;'></span> Sin estado";
                     }
                 }
             },

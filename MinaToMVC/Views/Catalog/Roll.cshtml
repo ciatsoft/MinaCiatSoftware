@@ -81,19 +81,21 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12">
-                        <input href="/Catalog/Roll" type="button" value="Guardar" onclick="SaveOrUpdateRoll()" class="btn btn-success" />
+                    <div class="col-md-11">
+                        <input type="button" value="Guardar" onclick="SaveOrUpdateRoll()" class="btn btn-success" />
                         <a href="/Catalog/Roll" class="btn btn-custom-cancel">Cancelar</a>
-
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <input type="button" value="Permisos" id="btnAsociar" class="btn btn-custom-clean"
+                               onclick="AbrirModalPermisosRol()"   />
                     </div>
                 </div>
-
-
             </div>
         </div>
 
         <br />
         <input type="hidden" id="txtCreatedDt" name="CreatedDt" value="@DateTime.Now" />
+        <input type="hidden" id="txtCreatedBy" name="CreatedBy" value="@ViewBag.UserToken.UserName" />
         <table id="tblRoll" class="table table-bordered table-striped" style="width: 100%;"></table>
 
     </div>

@@ -180,6 +180,20 @@ namespace MinaToMVC.Controllers
                 var result = await httpClientConnection.GetRollById(id);
                 roll = JsonConvert.DeserializeObject<DtoRoll>(result.Response.ToString());
             }
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            ViewBag.UserToken = usuarioToken;
+            ViewBag.Usuarios = usuarios;
+
             return View(roll);
         }
         public async Task<string> SaveOrUpdateRoll(DtoRoll rol)
@@ -200,6 +214,59 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.DeleteRoll(id);
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<ActionResult> PartialPermisosRol(long id, string nombre, string createdBy, string updatedBy, string createdDt, string updatedDt)
+        {
+            DtoRoll Rol = new DtoRoll
+            {
+                Id = id,
+                Nombre = nombre
+            };
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            ViewBag.UserToken = usuarioToken;
+            ViewBag.Usuarios = usuarios;
+            ViewBag.CreatedBy = createdBy;
+            ViewBag.UpdatedBy= createdBy;
+            ViewBag.CreatedDt = createdDt;
+            ViewBag.UpdatedDt = createdDt;
+
+            return PartialView(Rol);
+        }
+
+        public async Task<string> GetPermisosByIdRol(long idRol)
+        {
+            var result = await httpClientConnection.GetPermisosByIdRol(idRol);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetAllPermisos()
+        {
+            var result = await httpClientConnection.GetAllPermisos();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> SaveOrUpdatePermisosRol(RolPermiso rp)
+        {
+
+            var result = await httpClientConnection.SaveOrUpdatePermisosRol(rp);
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public string DeletePermiso(long id)
+        {
+            var result = httpClientConnection.DeletePermiso(id);
+            return JsonConvert.SerializeObject(result);
         }
 
         #region PartialViewUbicacion
@@ -284,8 +351,6 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetGetMaterialUbicacionByUbicacion(Id);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-
-
         #endregion
 
         #region Metodo de pago

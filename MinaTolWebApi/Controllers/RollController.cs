@@ -11,7 +11,6 @@ using System.Web.Http;
 
 namespace MinaTolWebApi.Controllers
 {
-    [Authorize]
     [RoutePrefix("api/Roll")]
     public class RollController : ApiController
     {
@@ -43,6 +42,34 @@ namespace MinaTolWebApi.Controllers
         {
             var result = wrapper.SaveOrUpdateRoll(t);
             return result;
+        }
+
+        [HttpGet, Route("GetPermisosByIdRol/{idRol:long}")]
+        public async Task<ModelResponse> GetPermisosByIdRol(long idRol)
+        {
+            var result = wrapper.GetPermisosByIdRol(idRol);
+            return result;
+        }
+
+        [HttpGet, Route("Permisos/List")]
+        public async Task<ModelResponse> GetAllPermisos()
+        {
+            var result = wrapper.GetAllPermisos();
+            return result;
+        }
+
+        [HttpPost, Route("AgregarPermiso/")]
+        public async Task<ModelResponse> SaveOrUpdatePermisosRol(RolPermiso rp)
+        {
+            var result = wrapper.SaveOrUpdatePermisosRol(rp);
+            return result;
+        }
+
+        [HttpPost, Route("QuitarPermiso/{id:long}")]
+        public async Task<ModelResponse> DeletePermiso(long id)
+        {
+            var resul = wrapper.DeletePermiso(id);
+            return resul;
         }
     }
 

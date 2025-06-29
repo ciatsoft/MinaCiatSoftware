@@ -2,6 +2,7 @@
 using MinaTolEntidades.DtoCatalogos;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
@@ -118,5 +119,105 @@ namespace MinaTolWebApi.DAL
             return response;
         }
 
+        public ModelResponse GetPermisosByIdRol(long idRol)
+        {
+            var response = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("@Id", idRol));
+            try
+            {
+                var result = GetList(
+                    "GetPermisosByIdRol",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader => FillEntity<RolPermiso>(reader)
+                );
+
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+
+        public ModelResponse GetAllPermisos()
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                var result = GetObjects("GetAllPermisos", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, Permisos>((reader) =>
+                    {
+                        var r = FillEntity<Permisos>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+
+        public ModelResponse SaveOrUpdatePermisosRol(RolPermiso rp)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = GenerateSQLParameters(rp);
+                var result = GetObject("SaveOrUpdatePermisosRol", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, RolPermiso>((reader) =>
+                    {
+                        var r = FillEntity<RolPermiso>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+
+            }
+            return response;
+        }
+
+        public ModelResponse DeletePermiso(long id)
+        {
+            var response = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("@Id", id));
+            try
+            {
+                var result = GetList(
+                    "DeletePermiso",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader => FillEntity<RolPermiso>(reader)
+                );
+
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
     }
 }
