@@ -7,14 +7,15 @@ using System.Web.Http;
 using MinaTolEntidades;
 using MinaTolWebApi.DAL;
 using MinaTolEntidades.DtoVentas;
+using MinaTolEntidades.DtoVentaPublicoGeneral;
 
 namespace MinaTolWebApi.Controllers
 {
     [RoutePrefix("api/PV_Venta")]
     public class PV_VentaController : ApiController
     {
-        private DbWrapper wrapper {  get; set; }
-        public PV_VentaController() 
+        private DbWrapper wrapper { get; set; }
+        public PV_VentaController()
         {
             wrapper = new DbWrapper();
         }
@@ -68,5 +69,27 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
+        // Parcial para generar Gastos / Deducciones
+        [Route("Deducciones/List"), HttpGet]
+        public ModelResponse GetAllDeducciones()
+        {
+            var result = wrapper.GetAllDeducciones();
+            return result;
+        }
+
+        [HttpPost, Route("Deducciones")]
+        public async Task<ModelResponse> SaveOrUpdateDeducciones(Deducciones v)
+        {
+            var result = wrapper.SaveOrUpdateDeducciones(v);
+            return result;
+        }
+
+
+        [HttpDelete, Route("Deducciones/{id:long}")]
+        public ModelResponse DeleteDeducciones(long id)
+        {
+            var result = wrapper.DeleteDeducciones(id);
+            return result;
+        }
     }
 }

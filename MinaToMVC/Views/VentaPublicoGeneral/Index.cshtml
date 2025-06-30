@@ -133,6 +133,10 @@
                     <input type="button" value="Agregar Vehiculo Nuevo" id="btnAsociar" class="btn btn-custom-clean"
                            onclick="AbrirModalVehiculoPublicoGeneral()"   />
                 </div>
+                <div style="margin-top: 10px;" class="d-flex justify-content-end">
+                    <input type="button" value="Generar Gasto" id="btnAsociar" class="btn btn-custom-cancel"
+                           onclick="AbrirModalDeducciones()"   />
+                </div>
             </div>
         </div>
     }
@@ -161,6 +165,33 @@
     <div class="row">
         <div class="col-lg-12">
             <table class="table table-bordered table-striped" id="tablePuntoVenta" style="width: 100%;"></table>
+        </div>
+    </div>
+
+    <div class="rectangulos" style="width: 100%;">
+        <center><h1>Historial de Gastos/Deducciones</h1></center>
+        <div class="row align-items-end">
+            @* FILTRADO POR FECHA *@
+            <div class="col-auto">
+                <label for="fechaFiltro" class="form-label">Fecha:</label>
+                <input type="date" id="fechaFiltroGastos" name="fechaFiltro" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            </div>
+
+            <div class="col-auto">
+                <label for="userName" class="form-label">Encargado:</label>
+                <input type="text" id="userName" name="userName" class="form-control" value="@ViewBag.UserToken.UserName" readonly />
+                <input type="hidden" id="userId" name="userId" class="form-control" value="@ViewBag.UserToken.UserID" readonly />
+            </div>
+
+            <div class="col-auto">
+                <input id="btnFiltrarGastos" type="button" value="Buscar" class="btn btn-custom-clean" style="margin-top: -30px" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <table class="table table-bordered table-striped" id="tableDeducciones" style="width: 100%;"></table>
         </div>
     </div>
 </div>

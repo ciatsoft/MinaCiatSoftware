@@ -1,0 +1,173 @@
+﻿@model MinaTolEntidades.DtoVentaPublicoGeneral.Deducciones
+@{
+    ViewBag.Title = "PartialDeducciones";
+    var gastos = (List<MinaTolEntidades.DtoCatalogos.DtoTipoGasto>)ViewBag.Gastos;
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+@using (Html.BeginForm("SaveOrUpdateDeducciones", "Catalog", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmDeducciones" }))
+{
+    @Html.HiddenFor(x => x.Id, new { @id = "id" })
+    @Html.HiddenFor(x => x.UsuarioName, new { @id = "user" })
+    @Html.HiddenFor(x => x.Estatus)
+    @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy" })
+    @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy" })
+    @Html.Hidden("CreatedDt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), new { id = "CreatedDt" })
+    @Html.Hidden("UpdatedDt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), new { id = "UpdatedDt" })
+
+    <!-- Campo oculto que ahora sí se usará en el envío -->
+    @Html.HiddenFor(x => x.NombreGasto, new { @id = "nombreGasto" })
+
+    <div class="content">
+        <br />
+        <div class="tabla-consultas-roll">
+            <div class="rectangulos" style="width: 100%;">
+                <h2>Crear Deducción</h2>
+
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-lg-4">
+                        <label>Tipo de Gasto:</label>
+                        @Html.DropDownListFor(x => x.TipoGastoId,
+                            new SelectList(gastos, "Id", "Nombre", Model.TipoGastoId),
+                            "Seleccione un Tipo De Gasto",
+                            new { @class = "form-control", @id = "ddlTipoGasto" })
+                    </div>
+
+                    <div class="col-lg-4">
+                        <label>Descripción:</label>
+                        @Html.TextBoxFor(x => x.Descripcion, new { @class = "form-control", @id = "descripcion" })
+                    </div>
+
+                    <div class="col-lg-4">
+                        <label>Monto:</label>
+                        @Html.TextBoxFor(x => x.Monto, new
+                        {
+                            @class = "form-control",
+                            @id = "monto",
+                            @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')"
+                        })
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>Usuario:</label>
+                        <input type="text" class="form-control" value="@usuarioToken.UserName" readonly />
+                    </div>
+                    <div class="col-lg-4">
+                        <label>Fecha:</label>
+                        @Html.TextBoxFor(x => x.Fecha, new
+                        {
+                            @Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                            @class = "form-control",
+                            @id = "fecha",
+                            @readonly = "readonly"
+                        })
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12">
+                        <input type="button" value="Guardar" onclick="SaveOrUpdateDeducciones()" class="btn btn-success" />
+                        <a href="/VentaPublicoGeneral/Index" class="btn btn-custom-cancel">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        const now = new Date();
+        const pad = (n) => n.toString().padStart(2, '0');
+        const formattedDate = now.getFullYear() + '-' +
+            pad(now.getMonth() + 1) + '-' +
+            pad(now.getDate()) + ' ' +
+            pad(now.getHours()) + ':' +
+            pad(now.getMinutes()) + ':' +
+            pad(now.getSeconds());
+
+        $("#fecha").val(formattedDate);
+        $("#user").val('@usuarioToken.UserName');
+
+        // Actualizar el campo oculto con el nombre del gasto
+        $("#ddlTipoGasto").change(function () {
+            const selectedText = $("#ddlTipoGasto option:selected").text();
+            const selectedValue = $(this).val();
+
+            if (selectedValue && selectedValue !== "") {
+                $("#nombreGasto").val(selectedText);
+            } else {
+                $("#nombreGasto").val("");
+            }
+        });
+    });
+
+    function SaveOrUpdateDeducciones() {
+        if ($("#frmDeducciones").valid()) {
+            const isUpdating = $("#id").val() && $("#id").val() != 0;
+            const currentUser = $("#user").val();
+            const now = $("#fecha").val();
+
+            // Asigna CreatedBy o UpdatedBy según el contexto
+            if (isUpdating) {
+                $("#updatedBy").val(currentUser);
+                $("#UpdatedDt").val(now);
+            } else {
+                $("#createdBy").val(currentUser);
+                $("#CreatedDt").val(now);
+            }
+
+            const parametro = {
+                Id: $("#id").val(),
+                TipoGastoId: $("#ddlTipoGasto").val(),
+                NombreGasto: $("#nombreGasto").val(),
+                Descripcion: $("#descripcion").val(),
+                Monto: $("#monto").val(),
+                UsuarioName: currentUser,
+                Fecha: now,
+                CreatedBy: $("#createdBy").val(),
+                CreatedDt: $("#CreatedDt").val(),
+                UpdatedBy: $("#createdBy").val(),
+                UpdatedDt: $("#CreatedDt").val()
+            };
+
+            console.log("Datos que se enviarán:", parametro);
+
+            Swal.fire({
+                title: isUpdating ? '¿Desea actualizar el registro?' : '¿Desea guardar el nuevo registro?',
+                html: `
+                <strong>Tipo de Gasto:</strong> ${parametro.TipoGastoId}<br/>
+                <strong>Nombre del Gasto:</strong> ${parametro.NombreGasto}<br/>
+                <strong>Descripción:</strong> ${parametro.Descripcion}<br/>
+                <strong>Monto:</strong> ${parametro.Monto}<br/>
+                <strong>Usuario:</strong> ${parametro.UsuarioName}<br/>
+                <strong>Fecha:</strong> ${parametro.Fecha}<br/>
+            `,
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: isUpdating ? 'Actualizar' : 'Guardar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    PostMVC("/VentaPublicoGeneral/SaveOrUpdateDeducciones", parametro, function (success, response) {
+                        if (success) {
+                            Swal.fire('Éxito', isUpdating ? 'Datos actualizados correctamente.' : 'Datos guardados exitosamente.', 'success')
+                                .then(() => window.location.href = '/VentaPublicoGeneral/Index');
+                        } else {
+                            Swal.fire('Error', 'Error al guardar los datos: ' + response.ErrorMessage, 'error');
+                        }
+                    });
+                }
+            });
+        } else {
+            Swal.fire('Advertencia', 'Por favor, complete todos los campos obligatorios.', 'warning');
+        }
+    }
+
+</script>

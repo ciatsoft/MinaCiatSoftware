@@ -121,7 +121,7 @@ $(document).ready(function () {
         columns: [
             { data: "id", "visible": false, title: "id" },
             { data: "folio", title: "Folio" },
-            { data: "nombreUbicacion",title: "Planta"},
+            { data: "nombreUbicacion", title: "Planta" },
             { data: "nombreTipoMaterial", title: "Material" },
             {
                 data: "formaDePago",
@@ -270,8 +270,60 @@ $(document).ready(function () {
         }
     });
 
+    $("#tableDeducciones").DataTable({
+        processing: true,
+        destroy: true,
+        paging: true,
+        searching: true,
+        columns: [
+            { data: "id", visible: true, title: "Id" },
+            { data: "nombreGasto", title: "Tipo Gasto" },
+            { data: "descripcion", title: "Descripción de la Deducción" },
+            {
+                data: "monto",
+                title: "Monto",
+                render: function (data) {
+                    return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
+                }
+            },
+            {
+                data: "id",
+                title: "Acciones",
+                render: function (data) {
+                    return `
+                    <input type="button" value="Cancelar" class="btn btn-custom-cancel" onclick="EliminarDeduccion(${data})" />
+                `;
+                }
+            }
+        ],
+        language: {
+            decimal: ",",
+            thousands: ".",
+            processing: "Procesando...",
+            lengthMenu: "Mostrar _MENU_ entradas",
+            zeroRecords: "No se encontraron resultados",
+            emptyTable: "Ningún dato disponible en esta tabla",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+            infoEmpty: "Mostrando 0 a 0 de 0 entradas",
+            infoFiltered: "(filtrado de un total de _MAX_ entradas)",
+            search: "Buscar:",
+            loadingRecords: "Cargando...",
+            paginate: {
+                first: "Primero",
+                last: "Último",
+                next: "Siguiente",
+                previous: "Anterior"
+            },
+            aria: {
+                sortAscending: ": activar para ordenar ascendente",
+                sortDescending: ": activar para ordenar descendente"
+            }
+        }
+
+    });
+
     GetAllPV_Ventas();
-})
+});
 
 $(function () {
     jQuery.validator.addMethod("lettersonly", function (value, element) {
@@ -441,6 +493,17 @@ function GetAllPV_Ventas() {
     GetMVC("/VentaPublicoGeneral/GetAllPV_Ventas", function (r) {
         if (r.IsSuccess) {
             MapingPropertiesDataTable("tablePuntoVenta", r.Response);
+            GetAllDeducciones();
+        } else {
+            alert("Error al cargar las Ventas: " + r.ErrorMessage);
+        }
+    });
+}
+
+function GetAllDeducciones() {
+    GetMVC("/VentaPublicoGeneral/GetAllDeducciones", function (r) {
+        if (r.IsSuccess) {
+            MapingPropertiesDataTable("tableDeducciones", r.Response);
         } else {
             alert("Error al cargar las Ventas: " + r.ErrorMessage);
         }
@@ -725,3 +788,15 @@ function AbrirModalVehiculoPublicoGeneral() {
         $("#genericModal").modal("show");
     });
 }
+
+function AbrirModalDeducciones() {
+    // Limpiar completamente el modal antes de cargar nuevo contenido
+    $("#genericModal").removeData('bs.modal');
+    $("#titleGenerciModal").text("Deducciones");
+    $("#boddyGeericModal").empty();
+    $("#boddyGeericModal").load("/VentaPublicoGeneral/PartialDeducciones", function () {
+        $("#genericModal").modal("show");
+    });
+}
+
+

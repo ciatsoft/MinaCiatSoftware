@@ -49,10 +49,10 @@ namespace MinaToMVC.DAL
         public async Task<ModelResponse> ActualizarEstatusVenta(int id, string valor)
         {
             var url = $"api/PV_Venta/EstatusVenta/{id}/{valor}";
-            var result = await RequestAsync<object>(url,HttpMethod.Post,null,new Func<string, string>((responseString) =>
+            var result = await RequestAsync<object>(url, HttpMethod.Post, null, new Func<string, string>((responseString) =>
                 {
                     return responseString;
-                }),token.Token.access_token);
+                }), token.Token.access_token);
 
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
             return modelResponse;
@@ -100,5 +100,42 @@ namespace MinaToMVC.DAL
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
             return modelResponse;
         }
+
+        // Parcial para generar Gastos / Deducciones
+        public async Task<ModelResponse> GetAllDeducciones()
+        {
+            var result = await RequestAsync<object>("api/PV_Venta/Deducciones/List", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+
+        public async Task<ModelResponse> SaveOrUpdateDeducciones(Deducciones tmu)
+        {
+            MappingColumSecurity(tmu);
+            var result = await RequestAsync<object>("api/PV_Venta/Deducciones", HttpMethod.Post, tmu,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
+        public async Task<ModelResponse> DeleteDeducciones(long deduccionId)
+        {
+            var result = await RequestAsync($"api/PV_Venta/Deducciones/{deduccionId}", HttpMethod.Delete, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+        }
+
     }
 }
