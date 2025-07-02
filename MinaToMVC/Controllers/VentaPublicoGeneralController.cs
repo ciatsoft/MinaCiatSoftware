@@ -124,19 +124,30 @@ namespace MinaToMVC.Controllers
         {
             var usuarioToken = SessionHelper.GetSessionUser();
             var usuario = new List<Usuario>()
-            {
-                new Usuario()
-                {
-                    Id = usuarioToken.UserID,
-                    Nombre = usuarioToken.UserName
-                }
-            };
+    {
+        new Usuario()
+        {
+            Id = usuarioToken.UserID,
+            Nombre = usuarioToken.UserName
+        }
+    };
             var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
 
             var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
 
             ViewBag.UserToken = usuarioAutenticado;
             ViewBag.Usuarios = usuarios;
+
+            // Genera la lista para todos los dropdowns
+            var rango1a50List = Enumerable.Range(1, 50)
+                .Select(i => new SelectListItem
+                {
+                    Value = i.ToString(),
+                    Text = i.ToString()
+                })
+                .ToList();
+
+            ViewBag.Rango1a50 = rango1a50List;
 
             return View();
         }
@@ -368,20 +379,17 @@ namespace MinaToMVC.Controllers
         #region CoteCaja        
         public async Task<ActionResult> SaveOrUpdatePV_CorteCaja(PV_CorteCaja r)
         {
-
             var result = await httpClientConnection.SaveOrUpdatePV_CorteCaja(r);
             return Redirect("DineroCaja");
         }
         public async Task<string> GetAllPV_CorteCaja()
         {
             var result = await httpClientConnection.GetAllPV_CorteCaja();
-
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
         public async Task<String> DeletePV_CorteCaja(long id)
         {
             var result = await httpClientConnection.DeletePV_CorteCaja(id);
-
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
         #endregion

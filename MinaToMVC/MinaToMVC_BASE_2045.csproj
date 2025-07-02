@@ -1,0 +1,366 @@
+﻿<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9CDE2CB0-AA6A-47D0-A487-E875124CBBF9}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MinaToMVC</RootNamespace>
+    <AssemblyName>MinaToMVC</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <Use64BitIISExpress />
+    <IISExpressSSLPort>44397</IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\lib\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.2.0.1\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.9.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.9\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.9\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\css\all.css" />
+    <Content Include="Assets\css\all.min.css" />
+    <Content Include="Assets\css\bootstrap.css" />
+    <Content Include="Assets\css\bootstrap.min.css" />
+    <Content Include="Assets\css\brands.css" />
+    <Content Include="Assets\css\brands.min.css" />
+    <Content Include="Assets\css\dataTables.dataTables.min.css" />
+    <Content Include="Assets\css\estiloClientes.css" />
+    <Content Include="Assets\css\EstilosBtnCambios\EstiloBtn.css" />
+    <Content Include="Assets\css\estiloVentas.css" />
+    <Content Include="Assets\css\fontawesome.css" />
+    <Content Include="Assets\css\fontawesome.min.css" />
+    <Content Include="Assets\css\jquery.dataTables.min.css" />
+    <Content Include="Assets\css\regular.css" />
+    <Content Include="Assets\css\regular.min.css" />
+    <Content Include="Assets\css\responsive.css" />
+    <Content Include="Assets\css\solid.css" />
+    <Content Include="Assets\css\solid.min.css" />
+    <Content Include="Assets\css\style.css" />
+    <Content Include="Assets\css\svg-with-js.css" />
+    <Content Include="Assets\css\svg-with-js.min.css" />
+    <Content Include="Assets\css\v4-font-face.css" />
+    <Content Include="Assets\css\v4-font-face.min.css" />
+    <Content Include="Assets\css\v4-shims.css" />
+    <Content Include="Assets\css\v4-shims.min.css" />
+    <Content Include="Assets\css\v5-font-face.css" />
+    <Content Include="Assets\css\v5-font-face.min.css" />
+    <Content Include="Assets\img\abierto.png" />
+    <Content Include="Assets\img\actualizar.png" />
+    <Content Include="Assets\img\administracion.png" />
+    <Content Include="Assets\img\agregar.png" />
+    <Content Include="Assets\img\aprobado.png" />
+    <Content Include="Assets\img\borrar.png" />
+    <Content Include="Assets\img\cargando.png" />
+    <Content Include="Assets\img\cerrado.png" />
+    <Content Include="Assets\img\denegado.png" />
+    <Content Include="Assets\img\edit.png" />
+    <Content Include="Assets\img\fb_loading.gif" />
+    <Content Include="Assets\img\fondo-login.png" />
+    <Content Include="Assets\img\fondo.png" />
+    <Content Include="Assets\img\inventario.png" />
+    <Content Include="Assets\img\Logo.ico" />
+    <Content Include="Assets\img\Logo.png" />
+    <Content Include="Assets\img\logow.png" />
+    <Content Include="Assets\img\logow1.png" />
+    <Content Include="Assets\img\logow2.png" />
+    <Content Include="Assets\img\logow3.png" />
+    <Content Include="Assets\img\logow4.jpg" />
+    <Content Include="Assets\img\lupa.png" />
+    <Content Include="Assets\img\mas.png" />
+    <Content Include="Assets\img\MaterialDesign\cash-multiple.png" />
+    <Content Include="Assets\img\menu.png" />
+    <Content Include="Assets\img\minalogin.jpg" />
+    <Content Include="Assets\img\minas.png" />
+    <Content Include="Assets\img\reporte.png" />
+    <Content Include="Assets\img\rh.png" />
+    <Content Include="Assets\img\tel-icono.png" />
+    <Content Include="Assets\img\usuario.png" />
+    <Content Include="Assets\img\vector-escalado.png" />
+    <Content Include="Assets\img\venta.png" />
+    <Content Include="Assets\img\ver.png" />
+    <Content Include="Assets\js\all.min.css" />
+    <Content Include="Assets\js\bootstrap.js" />
+    <Content Include="Assets\js\dataTables.min.js" />
+    <Content Include="Assets\js\jquery-3.4.1.min.js" />
+    <Content Include="Assets\js\jquery.dataTables.min.js" />
+    <Content Include="Assets\js\SweetAlert\sb-admin-2.js" />
+    <Content Include="Assets\js\SweetAlert\sb-admin-2.min.js" />
+    <Content Include="Assets\js\SweetAlert\sweetalert2.min.js" />
+    <Content Include="Assets\script.js" />
+    <Content Include="Assets\styles.css" />
+    <Content Include="bin\MinaToMVC.dll" />
+    <Content Include="bin\MinaToMVC.pdb" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Global.asax" />
+    <Content Include="Scripts\Catalogos\AltaRoll.js" />
+    <Content Include="Scripts\Catalogos\AltaTipoVehiculo.js" />
+    <Content Include="Scripts\Catalogos\AltCliente.js" />
+    <Content Include="Scripts\Catalogos\AreaTrabajo.js" />
+    <Content Include="Scripts\Catalogos\AsociarMaterial.js" />
+    <Content Include="Scripts\Catalogos\TipoGastos.js" />
+    <Content Include="Scripts\Catalogos\TipoMaterialUbicacion.js" />
+    <Content Include="Scripts\Catalogos\Ubicacion.js" />
+    <Content Include="Scripts\Catalogos\UnidadMedida.js" />
+    <Content Include="Scripts\Catalogos\VehiculosPublicoGral.js" />
+    <Content Include="Scripts\Comun\Comun.js" />
+    <Content Include="Scripts\Home\Autenticacion.js" />
+    <Content Include="Scripts\RFID\RFID.js" />
+    <Content Include="Scripts\Seguridad\Usuario.js" />
+    <Content Include="Scripts\Trabajador\AltaEdicion.js" />
+    <Content Include="Scripts\Vehiculo\Vehiculo.js" />
+    <Content Include="Scripts\VentaPublicoGeneral\CajaChica.js" />
+    <Content Include="Scripts\VentaPublicoGeneral\ClientePublicoGral.js" />
+    <Content Include="Scripts\VentaPublicoGeneral\CorteCaja.js" />
+    <Content Include="Scripts\VentaPublicoGeneral\CorteDeCaja.js" />
+    <Content Include="Scripts\VentaPublicoGeneral\Index.js" />
+    <Content Include="Scripts\VentaPublicoGeneral\Precios.js" />
+    <Content Include="Scripts\VentaPublicoGeneral\Prestamos.js" />
+    <Content Include="Scripts\Viajes\Internos.js" />
+    <Content Include="Scripts\Viajes\Locales.js" />
+    <Content Include="Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\CatalogController.cs" />
+    <Compile Include="Controllers\EmpleadoController.cs" />
+    <Compile Include="Controllers\Filters\FiltersHelper.cs" />
+    <Compile Include="Controllers\AdministracionController.cs" />
+    <Compile Include="Controllers\IngresosRfidController.cs" />
+    <Compile Include="Controllers\RFIDController.cs" />
+    <Compile Include="Controllers\VentaPublicoGeneralController.cs" />
+    <Compile Include="Controllers\UsuarioController.cs" />
+    <Compile Include="Controllers\VehiculoController.cs" />
+    <Compile Include="Controllers\VentaController.cs" />
+    <Compile Include="Controllers\TallerController .cs" />
+    <Compile Include="Controllers\RHController.cs" />
+    <Compile Include="Controllers\AlmacenController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ViajesController.cs" />
+    <Compile Include="DAL\HttpClientConnection.Catalogos.cs" />
+    <Compile Include="DAL\HttpClientConnection.ClientePublicoGral.cs" />
+    <Compile Include="DAL\HttpClientConnection.DireccionCliente.cs" />
+    <Compile Include="DAL\HttpClientConnection.ClienteTipoMaterial.cs" />
+    <Compile Include="DAL\HttpClientConnection.Foliador.cs" />
+    <Compile Include="DAL\HttpClientConnection.IngresosRfid.cs" />
+    <Compile Include="DAL\HttpClientConnection.MaterialesUbicacion.cs" />
+    <Compile Include="DAL\HttpClientConnection.MetodoPago.cs" />
+    <Compile Include="DAL\HttpClientConnection.PV_CajaChica.cs" />
+    <Compile Include="DAL\HttpClientConnection.PV_CorteCaja.cs" />
+    <Compile Include="DAL\HttpClientConnection.PV_Precios.cs" />
+    <Compile Include="DAL\HttpClientConnection.Precios.cs" />
+    <Compile Include="DAL\HttpClientConnection.PV_Ventas.cs" />
+    <Compile Include="DAL\HttpClientConnection.Reporte_Venta.cs" />
+    <Compile Include="DAL\httpClientConnection.Rfid.cs" />
+    <Compile Include="DAL\httpClientConnection.Roll.cs" />
+    <Compile Include="DAL\HttpClientConnection.TipoMaterialUbicacion.cs" />
+    <Compile Include="DAL\HttpClientConnection.UbicacionCliente.cs" />
+    <Compile Include="DAL\httpClientConnection.Vehiculo.cs" />
+    <Compile Include="DAL\httpClientConnection.TipoVehiculo.cs" />
+    <Compile Include="DAL\HttpClientConnection.AreaTrabajo.cs" />
+    <Compile Include="DAL\HttpClientConnection.Cliente.cs" />
+    <Compile Include="DAL\HttpClientConnection.Trabajador.cs" />
+    <Compile Include="DAL\HttpClientConnection.Ubicacion.cs" />
+    <Compile Include="DAL\HttpClientConnection.UnidadMedida.cs" />
+    <Compile Include="DAL\HttpClientConnection.Usuario.cs" />
+    <Compile Include="DAL\HttpClientBase.cs" />
+    <Compile Include="DAL\HttpClientConnection.cs" />
+    <Compile Include="DAL\HttpClientConnection.VentaPublicoGeneral.cs" />
+    <Compile Include="DAL\HttpClientConnection.Viajes.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\Cryptography.cs" />
+    <Compile Include="Helpers\EmailHelper.cs" />
+    <Compile Include="Helpers\SessionHelper.cs" />
+    <Compile Include="Helpers\StaticFileHelper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\web.config" />
+    <Content Include="Assets\css\LibreBaskerville-Bold.ttf" />
+    <Content Include="Assets\css\style.css.map" />
+    <Content Include="Assets\css\style.scss" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Shared\_Autentication.cshtml" />
+    <Content Include="Views\Home\Autenticacion.cshtml" />
+    <Content Include="Views\Catalog\UnidadMedida.cshtml" />
+    <Content Include="Views\Shared\_Menu.cshtml" />
+    <Content Include="Views\Administracion\Solicitudes.cshtml" />
+    <Content Include="Views\Administracion\Precios.cshtml" />
+    <Content Include="Views\Administracion\Gestion_Img.cshtml" />
+    <Content Include="Views\Administracion\General.cshtml" />
+    <Content Include="Views\Administracion\Ingresos.cshtml" />
+    <Content Include="Views\Almacen\Inventario.cshtml" />
+    <Content Include="Views\Almacen\SolicitudesProcesadas.cshtml" />
+    <Content Include="Views\RH\Agregar.cshtml" />
+    <Content Include="Views\RH\Editar.cshtml" />
+    <Content Include="Views\Empleado\Index.cshtml" />
+    <Content Include="Views\Empleado\AltaEdicion.cshtml" />
+    <Content Include="Views\Venta\Material.cshtml" />
+    <Content Include="Views\Venta\Salidas.cshtml" />
+    <Content Include="Views\Empleado\PartialCrudSalario.cshtml" />
+    <Content Include="Views\Taller\Vehiculos.cshtml" />
+    <Content Include="Views\Taller\Inventario_Taller.cshtml" />
+    <Content Include="Views\Taller\ReportesCStock.cshtml" />
+    <Content Include="Views\Taller\Reportes_SStock.cshtml" />
+    <Content Include="Views\Catalog\AreaTrabajo.cshtml" />
+    <Content Include="Views\Catalog\TipoVehiculo.cshtml" />
+    <Content Include="Views\Catalog\Ubicacion.cshtml" />
+    <Content Include="Views\Viajes\Internos.cshtml" />
+    <Content Include="Views\Catalog\Roll.cshtml" />
+    <Content Include="Views\Viajes\Locales.cshtml" />
+    <Content Include="Views\Catalog\TipoMaterialUbicacion.cshtml" />
+    <Content Include="Views\Usuario\AltaEdicion.cshtml" />
+    <Content Include="Views\Administracion\PartialCrudMaterial.cshtml" />
+    <Content Include="Views\Administracion\Clientes.cshtml" />
+    <Content Include="Views\Administracion\PartialConfiguracionCostosCliente.cshtml" />
+    <None Include="packages.config" />
+    <Content Include="Views\Vehiculo\Index.cshtml" />
+    <Content Include="Views\Administracion\PartialdireccionesClientes.cshtml" />
+    <Content Include="Views\Catalog\MetodoPago.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\Index.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\Precios.cshtml" />
+    <Content Include="Views\RFID\RFID.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\PartialMaterialCargaPrecio.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\CajaChica.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\CorteCaja.cshtml" />
+    <Content Include="Views\Catalog\PartialConfigurationUbicacionMaterial.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\CorteDeCaja.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\DineroCaja.cshtml" />
+    <Content Include="Views\Catalog\TipoGastos.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\Prestamos.cshtml" />
+    <Content Include="Views\Catalog\VehiculosPublicoGeneral.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\PartialVehiculoClientesPublicoGeneral.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\ClientePublicoGeneral.cshtml" />
+    <Content Include="Views\Administracion\Usuarios.cshtml" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Models\" />
+    <Folder Include="Views\Default\" />
+    <Folder Include="Views\Reporte_Venta\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MinaTolEntidades\MinaTolEntidades.csproj">
+      <Project>{10A8B66F-3DFC-434F-A035-B35D3860C699}</Project>
+      <Name>MinaTolEntidades</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>60300</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:44387/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Este proyecto hace referencia a los paquetes NuGet que faltan en este equipo. Use la restauración de paquetes NuGet para descargarlos. Para obtener más información, consulte http://go.microsoft.com/fwlink/?LinkID=322105. El archivo que falta es {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

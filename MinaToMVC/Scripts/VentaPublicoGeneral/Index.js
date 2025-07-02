@@ -693,7 +693,7 @@ function printItem(rowIndex) {
     var nombrePlana = rowData.nombreUbicacion;
     var nombreMaterial = rowData.nombreTipoMaterial;
     var formaPago = rowData.formaDePago;
-    var cantidadRecibida = parseFloat(rowData.cantidadRecibida).toFixed(2);
+    //var cantidadRecibida = parseFloat(rowData.cantidadRecibida).toFixed(2);
     var totalPago = parseFloat(rowData.totalPago).toFixed(2);
     var transporte = rowData.transporte;
     var placa = rowData.placa;
@@ -754,7 +754,7 @@ function printItem(rowIndex) {
         addRow("Cantidad", `${cantidad}`);
         addRow("Precio/Unidad", `$${precioUnidad}`);
         addRow("Total a Pagar", `$${totalPago}`);
-        addRow("Recibido", `$${cantidadRecibida}`);
+        //addRow("Recibido", `$${cantidadRecibida}`);
         addRow("Forma de Pago", formatoPagoFinal);
         addRow("Transporte", transporte);
         addRow("Placa", placa);

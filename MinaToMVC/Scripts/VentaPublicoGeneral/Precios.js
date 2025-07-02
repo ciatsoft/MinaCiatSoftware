@@ -79,9 +79,9 @@ function Createtable() {
                         title: "Es activo",
                         render: function (data) {
                             if (data) {
-                                return '<span style="display: inline-block; width: 10px; height: 10px; background-color: green; border-radius: 50%; margin-right: 5px;"></span>Activo';
+                                return '<span style="display: inline-block; width: 20px; height: 20px; background-color: green; border-radius: 50%; margin-right: 5px;"></span>Activo';
                             } else {
-                                return '<span style="display: inline-block; width: 10px; height: 10px; background-color: red; border-radius: 50%; margin-right: 5px;"></span>Inactivo';
+                                return '<span style="display: inline-block; width: 20px; height: 20px; background-color: red; border-radius: 50%; margin-right: 5px;"></span>Inactivo';
                             }
                         }
                     },

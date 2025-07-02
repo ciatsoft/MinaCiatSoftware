@@ -56,13 +56,41 @@
 
     GetAllRoll();
 
-    if (typeof rollJson.Id != 0) {
+    if (rollJson.Id !== 0) {
         $("#txtidroll").val(rollJson.Id);
         $("#txtNombre").val(rollJson.Nombre);
         $("#txtDescripcion").val(rollJson.Descripcion);
         $("#chbEstatus").prop('checked', rollJson.Estatus);
+        $("#btnAsociar").show(); // Mostrar botón
+    } else {
+        $("#btnAsociar").hide(); // Ocultar botón
     }
+
 });
+
+function AbrirModalPermisosRol() {
+    var idRoll = $("#txtidroll").val();
+    var nombreRol = $("#txtNombre").val();
+    var createdBy = $('#txtCreatedBy').val();
+    var updatedBy = $('#txtCreatedBy').val();
+    var createdDt = $('#txtCreatedDt').val();
+    var updatedDt = $('#txtCreatedDt').val();
+
+    if (!idRoll) {
+        Swal.fire("ID inválido", "No se ha seleccionado ningún rol.", "warning");
+        return;
+    }
+
+    $("#genericModal").removeData('bs.modal');
+    $("#boddyGeericModal").empty();
+    $("#titleGenerciModal").text(`Agregar Permisos a Rol: ${nombreRol}`);
+
+    const url = `/Catalog/PartialPermisosRol?id=${encodeURIComponent(idRoll)}&nombre=${encodeURIComponent(nombreRol)}&createdBy=${encodeURIComponent(createdBy)}&updatedBy=${encodeURIComponent(updatedBy)}&createdDt=${encodeURIComponent(createdDt)}&updatedDt=${encodeURIComponent(updatedDt)}`;
+
+    $("#boddyGeericModal").load(url, function () {
+        $("#genericModal").modal("show");
+    });
+}
 
 // Funci�n que se ejecuta al hacer clic en el bot�n de Guardar
 function SaveOrUpdateRoll() {
@@ -140,7 +168,6 @@ function EliminarRoll(id) {
         }
     });
 }
-
 
 function EditarRoll(id) {
     location.href = "/Catalog/Roll/" + id;
