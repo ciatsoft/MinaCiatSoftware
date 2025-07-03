@@ -306,6 +306,7 @@
     <Content Include="Views\VentaPublicoGeneral\ClientePublicoGeneral.cshtml" />
     <Content Include="Views\Administracion\Usuarios.cshtml" />
     <Content Include="Views\Catalog\PartialPermisosRol.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\PartialDeducciones.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

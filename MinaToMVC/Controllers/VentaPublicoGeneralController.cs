@@ -250,6 +250,56 @@ namespace MinaToMVC.Controllers
             return PartialView(vehiculoPG);
         }
 
+
+        // Parcial para generar Gastos / Deducciones
+
+        public async Task<ActionResult> PartialDeducciones()
+        {
+            Deducciones vehiculoPG = new Deducciones();
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            var gastos = new List<DtoTipoGasto>();
+            var responseclientes = await httpClientConnection.GetAllTipoGastos();
+            // Deserializa la respuesta
+            gastos = JsonConvert.DeserializeObject<List<DtoTipoGasto>>(responseclientes.Response.ToString());
+
+            ViewBag.Gastos = gastos;
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            return PartialView(vehiculoPG);
+        }
+
+        // Deducciones
+        public async Task<string> GetAllDeducciones()
+        {
+            var result = await httpClientConnection.GetAllDeducciones();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<ActionResult> SaveOrUpdateDeducciones(Deducciones reporte)
+        {
+            var r = await httpClientConnection.SaveOrUpdateDeducciones(reporte);
+            return Redirect("CorteDeCaja");
+        }
+        public async Task<String> DeleteDeducciones(long id)
+        {
+            var result = await httpClientConnection.DeleteDeducciones(id);
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
         #endregion
 
         #region Precios

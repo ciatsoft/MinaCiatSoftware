@@ -161,6 +161,7 @@
     <Compile Include="Controllers\ViajesController.cs" />
     <Compile Include="DAL\BaseDbWrapper.cs" />
     <Compile Include="DAL\DbWrapper.ClientePublicoGral.cs" />
+    <Compile Include="DAL\DbWrapper.Deducciones.cs" />
     <Compile Include="DAL\DbWrapper.DireccionCliente.cs" />
     <Compile Include="DAL\DbWrapper.AreaTrabajo.cs" />
     <Compile Include="DAL\DbWrapper.Cliente.cs" />

@@ -1,12 +1,13 @@
-﻿using System;
+﻿using MinaTolEntidades;
+using MinaTolEntidades.DtoVentaPublicoGeneral;
+using MinaTolEntidades.DtoVentas;
+using MinaTolWebApi.DAL;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using MinaTolEntidades;
-using MinaTolWebApi.DAL;
-using MinaTolEntidades.DtoVentas;
 
 namespace MinaTolWebApi.Controllers
 {
@@ -65,6 +66,29 @@ namespace MinaTolWebApi.Controllers
         public async Task<ModelResponse> GetVehiculosPublicoGralByIdCliente(long id)
         {
             var result = wrapper.GetVehiculosPublicoGralByIdCliente(id);
+            return result;
+        }
+
+        // Parcial para generar Gastos / Deducciones
+
+        [Route("Deducciones/List"), HttpGet]
+        public ModelResponse GetAllDeducciones()
+        {
+            var result = wrapper.GetAllDeducciones();
+            return result;
+        }
+
+        [HttpPost, Route("Deducciones")]
+        public async Task<ModelResponse> SaveOrUpdateDeducciones(Deducciones v)
+        {
+            var result = wrapper.SaveOrUpdateDeducciones(v);
+            return result;
+        }
+
+        [HttpDelete, Route("Deducciones/{id:long}")]
+        public ModelResponse DeleteDeducciones(long id)
+        {
+            var result = wrapper.DeleteDeducciones(id);
             return result;
         }
 
