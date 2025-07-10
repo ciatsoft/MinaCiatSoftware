@@ -64,8 +64,9 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Capacidad en M3:</label>
-                        @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control", @type = "number", id = "cantidadRecibida", @readonly = "readonly" })
+                        @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control no-select", @type = "number", id = "cantidadRecibida" })
                     </div>
+
                     <div class="col-lg-3">
                         <label>Planta:</label>
                         @Html.DropDownListFor(x => x.Ubicacion.Id, (IEnumerable<SelectListItem>)ViewBag.Ubicaciones, new { @class = "form-control", @onchange = "CambioUbicacion()" })

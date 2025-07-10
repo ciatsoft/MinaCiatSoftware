@@ -71,11 +71,10 @@ $(document).ready(function () {
                                         if (selected.val()) {
                                             $descripcionVehiculo.val(selected.val());
                                             $placa.val(selected.data('placa'));
-                                            $cantidadRecibida.val(selected.data('capacidad'));
                                         } else {
                                             $descripcionVehiculo.val('');
                                             $placa.val('');
-                                            $cantidadRecibida.val('');
+
                                         }
                                     });
 
@@ -121,23 +120,24 @@ $(document).ready(function () {
         columns: [
             { data: "id", "visible": false, title: "id" },
             { data: "folio", title: "Folio" },
-            { data: "nombreUbicacion", title: "Planta" },
             { data: "nombreTipoMaterial", title: "Material" },
-            {
-                data: "formaDePago",
-                title: "Forma de Pago",
-                render: function (data, type, row) {
-                    if (data === "E") {
-                        return "Efectivo";
-                    }
-                    else if (data == "T") {
-                        return "Transferencia";
-                    } else {
-                        return "Vale";
-                    }
-                    return data;
-                }
-            },
+            /*
+                        {
+                            data: "formaDePago",
+                            title: "Forma de Pago",
+                            render: function (data, type, row) {
+                                if (data === "E") {
+                                    return "Efectivo";
+                                }
+                                else if (data == "T") {
+                                    return "Transferencia";
+                                } else {
+                                    return "Vale";
+                                }
+                                return data;
+                            }
+                        },
+            */
             {
                 data: "cantidadRecibida",
                 title: "Cantidad Recibida",
@@ -165,6 +165,7 @@ $(document).ready(function () {
             { data: "transporte", title: "Transporte" },
             { data: "placa", title: "Placa" },
             { data: "cantidad", title: "Cantidad" },
+            /*
             {
                 data: "precioUnidad",
                 title: "Precio por Unidad",
@@ -215,6 +216,7 @@ $(document).ready(function () {
             },
             { data: "rfid", title: "RFID", visible: false },
             { data: "nombreCliente", title: "Nombre Cliente" },
+            */
             { data: "corte_Id", title: "ID Corte", visible: false },
             {
                 data: "id",
@@ -779,7 +781,7 @@ function printItem(rowIndex) {
 // Asociar Vehiculos CLiente
 function AbrirModalVehiculoPublicoGeneral() {
     // Limpiar completamente el modal antes de cargar nuevo contenido
-    $("#genericModal").removeData('bs.modal');
+    $("#genericModal").removeData('b s.modal');
     $("#boddyGeericModal").empty();
 
     $("#titleGenerciModal").text("Agregar Vehiculo a Cliente:");
