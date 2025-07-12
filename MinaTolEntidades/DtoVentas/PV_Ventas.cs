@@ -38,6 +38,7 @@ namespace MinaTolEntidades.DtoVentas
         // Agregados
         public string RFID { get; set; }
         public string NombreCliente { get; set; }
+        public int Carga { get; set; }
 
     }
 }

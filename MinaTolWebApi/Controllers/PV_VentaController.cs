@@ -48,6 +48,13 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
+        [HttpPost, Route("Cargar/{id:int}")]
+        public async Task<ModelResponse> UpdateCarga(int id)
+        {
+            var result = wrapper.UpdateCarga(id);
+            return result;
+        }
+
         [HttpGet, Route("search")]
         public async Task<ModelResponse> SearchPV_VentasByDateAndUser(int usuarioId, [FromUri] DateTime fecha)
         {

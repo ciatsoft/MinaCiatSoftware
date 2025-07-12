@@ -222,6 +222,12 @@ namespace MinaToMVC.Controllers
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
+        public async Task<string> UpdateCarga(int id)
+        {
+            var result = await httpClientConnection.UpdateCarga(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
         public async Task<ActionResult> PartialVehiculoClientesPublicoGeneral()
         {
             DtoClientesVehiculoPublicoGral vehiculoPG = new DtoClientesVehiculoPublicoGral();
