@@ -244,6 +244,32 @@ $(document).ready(function () {
                         </button>
                     `;
                 }
+            },
+            {
+                data: "carga",  // Esta es la columna que define si está cargado o no (0 o 1)
+                title: "Carga",
+                render: function (data, type, row) {  // Añade 'row' para acceder a todas las propiedades de la fila
+                    if (data == 0) {
+                        return `
+                            <input type="button" value="Cargar" class="btn btn-success" onclick="Cargar(${row.id})" />
+                        `;
+                                } else if (data == 1) {
+                                    return `
+                            <span style="display: inline-flex; align-items: center; gap: 5px;">
+                              <span style="
+                                display: inline-block;
+                                width: 20px;
+                                height: 20px;
+                                background-color: red;
+                                border-radius: 50%;
+                              "></span> 
+                              Ya cargado
+                            </span>
+                        `;
+                    } else {
+                        return '';
+                    }
+                }
             }
         ]
         ,
@@ -798,5 +824,11 @@ function AbrirModalDeducciones() {
     $("#boddyGeericModal").empty();
     $("#boddyGeericModal").load("/VentaPublicoGeneral/PartialDeducciones", function () {
         $("#genericModal").modal("show");
+    });
+}
+
+function Cargar(id) {
+    PostMVC('/VentaPublicoGeneral/UpdateCarga', { id: id }, function (r, textStatus, jqXHR) {
+        location.reload();
     });
 }

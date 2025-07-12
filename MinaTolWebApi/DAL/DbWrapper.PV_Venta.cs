@@ -61,6 +61,32 @@ namespace MinaTolWebApi.DAL
             return response;
         }
 
+        public ModelResponse UpdateCarga(int id)
+        {
+            var response = new ModelResponse();
+
+            try
+            {
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@Id", id),
+                };
+
+                var result = ExecuteScalar("UpdateCarga", CommandType.StoredProcedure, parameters);
+
+                response.IsSuccess = true;
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = $"Error inesperado: {ex.Message}";
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
+
         public ModelResponse GetAllPV_Venta()
         {
             var response = new ModelResponse();

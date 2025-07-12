@@ -1,19 +1,20 @@
-﻿using MinaTolEntidades.DtoCatalogos;
-using MinaTolEntidades;
+﻿using MinaTolEntidades;
+using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.DtoSucursales;
+using MinaTolEntidades.DtoVentaPublicoGeneral;
 using MinaTolEntidades.DtoVentas;
+using MinaTolEntidades.DtoViajes;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
-using MinaTolEntidades.DtoSucursales;
-using MinaTolEntidades.DtoViajes;
-using MinaTolEntidades.DtoVentaPublicoGeneral;
 using System.Web;
-using System.Security.Policy;
 
 namespace MinaToMVC.DAL
 {
@@ -53,6 +54,18 @@ namespace MinaToMVC.DAL
                 {
                     return responseString;
                 }),token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+
+        public async Task<ModelResponse> UpdateCarga(int id)
+        {
+            var url = $"api/PV_Venta/Cargar/{id}";
+            var result = await RequestAsync<object>(url, HttpMethod.Post, null, new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
 
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
             return modelResponse;
