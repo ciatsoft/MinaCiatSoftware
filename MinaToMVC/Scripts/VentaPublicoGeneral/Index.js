@@ -121,23 +121,21 @@ $(document).ready(function () {
             { data: "id", "visible": false, title: "id" },
             { data: "folio", title: "Folio" },
             { data: "nombreTipoMaterial", title: "Material" },
-            /*
-                        {
-                            data: "formaDePago",
-                            title: "Forma de Pago",
-                            render: function (data, type, row) {
-                                if (data === "E") {
-                                    return "Efectivo";
-                                }
-                                else if (data == "T") {
-                                    return "Transferencia";
-                                } else {
-                                    return "Vale";
-                                }
-                                return data;
-                            }
-                        },
-            */
+            {
+                data: "formaDePago",
+                title: "Forma de Pago",
+                render: function (data, type, row) {
+                    if (data === "E") {
+                        return "Efectivo";
+                    }
+                    else if (data == "T") {
+                        return "Transferencia";
+                    } else {
+                        return "Vale";
+                    }
+                    return data;
+                }
+            },
             {
                 data: "cantidadRecibida",
                 title: "Cantidad Recibida",
@@ -165,7 +163,6 @@ $(document).ready(function () {
             { data: "transporte", title: "Transporte" },
             { data: "placa", title: "Placa" },
             { data: "cantidad", title: "Cantidad" },
-            /*
             {
                 data: "precioUnidad",
                 title: "Precio por Unidad",
@@ -216,7 +213,6 @@ $(document).ready(function () {
             },
             { data: "rfid", title: "RFID", visible: false },
             { data: "nombreCliente", title: "Nombre Cliente" },
-            */
             { data: "corte_Id", title: "ID Corte", visible: false },
             {
                 data: "id",
@@ -567,12 +563,24 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha) {
     PostMVC('/VentaPublicoGeneral/SearchPV_VentasByDateAndUser', { usuarioId, fecha }, function (r, textStatus, jqXHR) {
         if (r.IsSuccess && Array.isArray(r.Response)) {
             const data = r.Response;
+            const table = $('#tablePuntoVenta');
 
-            if ($.fn.DataTable.isDataTable('#tablePuntoVenta')) {
-                $('#tablePuntoVenta').DataTable().clear().destroy();
+            // Destruir DataTable existente si existe
+            if ($.fn.DataTable.isDataTable(table)) {
+                table.DataTable().clear().destroy();
+                table.empty(); // Limpiar la tabla para evitar duplicados
             }
 
-            $("#tablePuntoVenta").DataTable({
+            // Asegurar que la tabla tiene la estructura HTML correcta
+            if (table.find('thead').length === 0) {
+                table.append('<thead><tr></tr></thead>');
+            }
+            if (table.find('tbody').length === 0) {
+                table.append('<tbody></tbody>');
+            }
+
+            // Configuración de DataTable
+            table.DataTable({
                 processing: true,
                 paging: true,
                 searching: true,
@@ -587,40 +595,33 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha) {
                         data: "formaDePago",
                         title: "Forma de Pago",
                         render: function (data) {
-                            if (data === "E") return "Efectivo";
-                            if (data === "T") return "Transferencia";
-                            return "Vale";
+                            const tiposPago = { "E": "Efectivo", "T": "Transferencia" };
+                            return tiposPago[data] || "Vale";
                         }
                     },
                     {
                         data: "cantidadRecibida",
                         title: "Cantidad Recibida",
-                        render: function (data) {
-                            return data ? parseFloat(data).toLocaleString('es-MX', {
-                                style: 'currency', currency: 'MXN', minimumFractionDigits: 2
-                            }) : "$0.00";
-                        }
+                        render: $.fn.dataTable.render.number(',', '.', 2, '$')
                     },
                     {
                         data: "totalPago",
                         title: "Total Pago",
-                        render: function (data) {
-                            return data ? parseFloat(data).toLocaleString('es-MX', {
-                                style: 'currency', currency: 'MXN', minimumFractionDigits: 2
-                            }) : "$0.00";
-                        }
+                        render: $.fn.dataTable.render.number(',', '.', 2, '$')
                     },
                     { data: "transporte", title: "Transporte" },
                     { data: "placa", title: "Placa" },
-                    { data: "cantidad", title: "Cantidad" },
+                    {
+                        data: "cantidad",
+                        title: "Cantidad",
+                        render: function (data) {
+                            return parseFloat(data).toLocaleString('es-MX');
+                        }
+                    },
                     {
                         data: "precioUnidad",
                         title: "Precio por Unidad",
-                        render: function (data) {
-                            return data ? parseFloat(data).toLocaleString('es-MX', {
-                                style: 'currency', currency: 'MXN', minimumFractionDigits: 2
-                            }) : "$0.00";
-                        }
+                        render: $.fn.dataTable.render.number(',', '.', 2, '$')
                     },
                     { data: "nombreUnidadMedida", title: "Unidad Medida" },
                     { data: "userName", title: "Usuario" },
@@ -630,10 +631,7 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha) {
                         render: function (data) {
                             if (!data) return "";
                             const date = new Date(data);
-                            const day = String(date.getDate()).padStart(2, '0');
-                            const month = String(date.getMonth() + 1).padStart(2, '0');
-                            const year = date.getFullYear();
-                            return `${day}/${month}/${year}`;
+                            return date.toLocaleDateString('es-MX');
                         }
                     },
                     {
@@ -647,9 +645,8 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha) {
                         data: "estatusVenta",
                         title: "Pago",
                         render: function (data) {
-                            if (data === "E") return "Efectivo";
-                            if (data === "C") return "Cancelada";
-                            return "Rechazada";
+                            const estados = { "E": "Efectivo", "C": "Cancelada" };
+                            return estados[data] || "Rechazada";
                         }
                     },
                     { data: "rfid", title: "RFID", visible: false },
@@ -658,14 +655,15 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha) {
                     {
                         data: "id",
                         render: function (data, type, row) {
+                            // row contiene toda la fila, así que podemos acceder a corte_Id
                             if (row.corte_Id > 0) {
-                                return '<label>Ya en corte</label>';
+                                return '<label>Ya en corte<label/>'; // No se muestran los botones si corte_Id > 0
                             }
-                            return `
-                                <input type="button" value="Cancelar Venta" class="btn btn-custom-cancel" onclick="ActualizarVenta(${data}, 'C')" />
-                                <br /><br />
-                                <input type="button" value="Rechazar Venta" class="btn btn-custom-clean" onclick="ActualizarVenta(${data}, 'R')" />
-                            `;
+
+                            // Mostrar botones si corte_Id <= 0
+                            return '<input type="button" value="Cancelar Venta" class="btn btn-custom-cancel" onclick="ActualizarVenta(' + data + ', \'C\')" />' +
+                                '<br /><br />' +
+                                '<input type="button" value="Rechazar Venta" class="btn btn-custom-clean" onclick="ActualizarVenta(' + data + ', \'R\')" />';
                         }
                     },
                     {
@@ -680,35 +678,71 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha) {
                         </button>
                     `;
                         }
+                    },
+                    {
+                        data: "carga",
+                        title: "Carga",
+                        render: function (data, type, row) {  // Añade 'row' para acceder a todas las propiedades de la fila
+                            if (data == 0) {
+                                return `
+                            <input type="button" value="Cargar" class="btn btn-success" onclick="Cargar(${row.id})" />
+                        `;
+                            } else if (data == 1) {
+                                return `
+                            <span style="display: inline-flex; align-items: center; gap: 5px;">
+                              <span style="
+                                display: inline-block;
+                                width: 20px;
+                                height: 20px;
+                                background-color: red;
+                                border-radius: 50%;
+                              "></span> 
+                              Ya cargado
+                            </span>
+                        `;
+                            } else {
+                                return '';
+                            }
+                        },
+                        orderable: false,
+                        searchable: false
                     }
                 ],
                 language: {
                     decimal: ",",
                     thousands: ".",
-                    processing: "Procesando...",
-                    lengthMenu: "Mostrar _MENU_ entradas",
+                    processing: '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div>',
+                    lengthMenu: "Mostrar _MENU_ registros",
                     zeroRecords: "No se encontraron resultados",
-                    emptyTable: "Ningún dato disponible en esta tabla",
-                    info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-                    infoEmpty: "Mostrando 0 a 0 de 0 entradas",
-                    infoFiltered: "(filtrado de un total de _MAX_ entradas)",
+                    emptyTable: "No hay datos disponibles",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    infoEmpty: "Mostrando 0 registros",
+                    infoFiltered: "(filtrado de _MAX_ registros totales)",
                     search: "Buscar:",
                     loadingRecords: "Cargando...",
                     paginate: {
                         first: "Primero",
                         last: "Último",
-                        next: "Siguiente",
-                        previous: "Anterior"
-                    },
-                    aria: {
-                        sortAscending: ": activar para ordenar la columna de manera ascendente",
-                        sortDescending: ": activar para ordenar la columna de manera descendente"
+                        next: "Siguiente <i class='fas fa-chevron-right'></i>",
+                        previous: "<i class='fas fa-chevron-left'></i> Anterior"
                     }
+                },
+                responsive: true,
+                dom: '<"top"lf>rt<"bottom"ip><"clear">',
+                initComplete: function () {
+                    // Añadir clases CSS a los elementos de la tabla
+                    $('.dataTables_filter input').addClass('form-control');
+                    $('.dataTables_length select').addClass('form-select');
                 }
             });
         } else {
-            console.warn("No se recibieron datos válidos o la respuesta no fue exitosa.");
+            console.warn("No se recibieron datos válidos o la respuesta no fue exitosa:", r);
+            // Mostrar mensaje al usuario
+            $('#tablePuntoVenta').html('<div class="alert alert-warning">No se encontraron registros para los criterios seleccionados</div>');
         }
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
+        $('#tablePuntoVenta').html('<div class="alert alert-danger">Error al cargar los datos</div>');
     });
 }
 
