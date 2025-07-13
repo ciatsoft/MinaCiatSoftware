@@ -121,8 +121,10 @@ $(document).ready(function () {
             { data: "id", "visible": false, title: "id" },
             { data: "folio", title: "Folio" },
             { data: "nombreTipoMaterial", title: "Material" },
+            { data: "nombreUbicacion", title: "Planta" },
             {
                 data: "formaDePago",
+                "visible": false,
                 title: "Forma de Pago",
                 render: function (data, type, row) {
                     if (data === "E") {
@@ -165,6 +167,7 @@ $(document).ready(function () {
             { data: "cantidad", title: "Cantidad" },
             {
                 data: "precioUnidad",
+                "visible": false,
                 title: "Precio por Unidad",
                 render: function (data, type, row) {
                     if (data == null || data === "") return "$0.00";
@@ -175,8 +178,8 @@ $(document).ready(function () {
                     });
                 }
             },
-            { data: "nombreUnidadMedida", title: "Unidad Medida" },
-            { data: "userName", title: "Usuario" },
+            { data: "nombreUnidadMedida", title: "Unidad Medida", "visible": false },
+            { data: "userName", title: "Usuario", "visible": false },
             {
                 data: "fecha",
                 title: "Fecha",
@@ -191,6 +194,7 @@ $(document).ready(function () {
             },
             {
                 data: "estatus",
+                "visible": false,
                 title: "Estatus",
                 render: function (data, type, row) {
                     return data == 1 ? "Activo" : "Inactivo";
@@ -198,6 +202,7 @@ $(document).ready(function () {
             },
             {
                 data: "estatusVenta",
+                "visible": false,
                 title: "Pago",
                 render: function (data, type, row) {
                     if (data === "E") {
@@ -589,10 +594,11 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha) {
                 columns: [
                     { data: "id", visible: false, title: "id" },
                     { data: "folio", title: "Folio" },
-                    { data: "nombreUbicacion", title: "Planta" },
                     { data: "nombreTipoMaterial", title: "Material" },
+                    { data: "nombreUbicacion", title: "Planta" },
                     {
                         data: "formaDePago",
+                        visible: false,
                         title: "Forma de Pago",
                         render: function (data) {
                             const tiposPago = { "E": "Efectivo", "T": "Transferencia" };
@@ -620,11 +626,12 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha) {
                     },
                     {
                         data: "precioUnidad",
+                        visible: false,
                         title: "Precio por Unidad",
                         render: $.fn.dataTable.render.number(',', '.', 2, '$')
                     },
-                    { data: "nombreUnidadMedida", title: "Unidad Medida" },
-                    { data: "userName", title: "Usuario" },
+                    { data: "nombreUnidadMedida", title: "Unidad Medida", visible: false },
+                    { data: "userName", title: "Usuario", visible: false },
                     {
                         data: "fecha",
                         title: "Fecha",
@@ -636,6 +643,7 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha) {
                     },
                     {
                         data: "estatus",
+                        visible: false,
                         title: "Estatus",
                         render: function (data) {
                             return data == 1 ? "Activo" : "Inactivo";
@@ -643,6 +651,7 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha) {
                     },
                     {
                         data: "estatusVenta",
+                        visible: false,
                         title: "Pago",
                         render: function (data) {
                             const estados = { "E": "Efectivo", "C": "Cancelada" };
