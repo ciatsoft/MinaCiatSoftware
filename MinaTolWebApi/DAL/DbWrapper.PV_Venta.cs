@@ -191,7 +191,7 @@ namespace MinaTolWebApi.DAL
         }
 
         //Para el modulo de Corte de Caja Diario
-        public ModelResponse SearchPV_VentasByDateAndUser(int usuarioId, DateTime fecha)
+        public ModelResponse SearchPV_VentasByDateAndUser(DateTime fecha)
         {
             var response = new ModelResponse();
             try
@@ -201,7 +201,6 @@ namespace MinaTolWebApi.DAL
 
                 var parameters = new List<SqlParameter>
                 {
-                    new SqlParameter("@UsuarioId", SqlDbType.Int)   { Value = usuarioId },
                     new SqlParameter("@Fecha",    SqlDbType.Date)   { Value = fechaSolo }
                 };
 
@@ -214,6 +213,38 @@ namespace MinaTolWebApi.DAL
                 );
 
                 response.Response = result; // ahora será una lista de PV_CajaChica
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+
+        public ModelResponse SearchDeduccionesByDate(DateTime fechaDeducciones)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var fechaSolo = fechaDeducciones.Date;
+
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@Fecha",    SqlDbType.Date)   { Value = fechaSolo }
+                };
+
+                // CORREGIDO: usar GetList para obtener varios registros
+                var result = GetList(
+                    "SearchDeduccionesByDate",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader => FillEntity<Deducciones>(reader)
+                );
+
+                response.Response = result;
             }
             catch (Exception ex)
             {

@@ -421,10 +421,16 @@ namespace MinaToMVC.Controllers
             return View();
         }
 
-        //Buscar filtrado
-        public async Task<string> SearchPV_VentasByDateAndUser(int usuarioId, DateTime fecha)
+        //Buscar filtrado 
+        public async Task<string> SearchPV_VentasByDateAndUser(DateTime fecha)
         {
-            var result = await httpClientConnection.SearchPV_VentasByDateAndUser(usuarioId, fecha);
+            var result = await httpClientConnection.SearchPV_VentasByDateAndUser(fecha);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> SearchDeduccionesByDate(DateTime fechaDeducciones)
+        {
+            var result = await httpClientConnection.SearchDeduccionesByDate(fechaDeducciones);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 

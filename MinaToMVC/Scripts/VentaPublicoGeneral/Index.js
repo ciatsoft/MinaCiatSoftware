@@ -179,7 +179,7 @@ $(document).ready(function () {
                 }
             },
             { data: "nombreUnidadMedida", title: "Unidad Medida", "visible": false },
-            { data: "userName", title: "Usuario", "visible": false },
+            { data: "userName", title: "Vendedor"},
             {
                 data: "fecha",
                 title: "Fecha",
@@ -308,6 +308,7 @@ $(document).ready(function () {
             { data: "id", visible: true, title: "Id" },
             { data: "nombreGasto", title: "Tipo Gasto" },
             { data: "descripcion", title: "Descripción de la Deducción" },
+            { data: "usuarioName", title: "Encargado" },
             {
                 data: "monto",
                 title: "Monto",
@@ -315,6 +316,7 @@ $(document).ready(function () {
                     return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
                 }
             },
+            { data: "fecha", title: "Fecha" },
             {
                 data: "id",
                 title: "Acciones",
@@ -561,11 +563,118 @@ document.getElementById("btnFiltrar").addEventListener("click", function () {
         return;
     }
 
-    SearchPV_VentasByDateAndUser(usuarioId, fecha, userName);
+    SearchPV_VentasByDateAndUser( fecha, userName);
+});
+// Escucha del botón
+document.getElementById("btnDeducciones").addEventListener("click", function () {
+    var usuarioIdDeducciones = $("#userIdDeducciones").val();
+    var fechaDeducciones = $("#fechaDeducciones").val();
+    var userNameDeducciones = $("#userNameDeducciones").val();
+
+    if (!usuarioIdDeducciones || !fechaDeducciones || !userNameDeducciones) {
+        alert("Por favor, seleccione un usuario y una fecha válida.");
+        return;
+    }
+
+    SearchDeduccionesFecha(fechaDeducciones);
 });
 
-function SearchPV_VentasByDateAndUser(usuarioId, fecha) {
-    PostMVC('/VentaPublicoGeneral/SearchPV_VentasByDateAndUser', { usuarioId, fecha }, function (r, textStatus, jqXHR) {
+// Función principal
+function SearchDeduccionesFecha(fechaDeducciones) {
+    PostMVC('/VentaPublicoGeneral/SearchDeduccionesByDate', { fechaDeducciones }, function (r) {
+        if (r.IsSuccess && Array.isArray(r.Response)) {
+            const data = r.Response;
+            const table = $("#tableDeducciones");
+
+            // Destruir tabla existente
+            if ($.fn.DataTable.isDataTable(table)) {
+                table.DataTable().clear().destroy();
+                table.empty();
+            }
+
+            // Asegurar estructura básica
+            if (table.find('thead').length === 0) {
+                table.append('<thead><tr></tr></thead>');
+            }
+            if (table.find('tbody').length === 0) {
+                table.append('<tbody></tbody>');
+            }
+
+            // Crear DataTable
+            table.DataTable({
+                data: data,
+                processing: true,
+                paging: true,
+                searching: true,
+                columns: [
+                    { data: "id", title: "Id" },
+                    { data: "nombreGasto", title: "Tipo Gasto" },
+                    { data: "descripcion", title: "Descripción de la Deducción" },
+                    { data: "usuarioName", title: "Encargado" },
+                    {
+                        data: "monto",
+                        title: "Monto",
+                        render: function (data) {
+                            return new Intl.NumberFormat('es-MX', {
+                                style: 'currency',
+                                currency: 'MXN'
+                            }).format(data);
+                        }
+                    },
+                    {
+                        data: "fecha",
+                        title: "Fecha",
+                        render: function (data) {
+                            return new Date(data).toLocaleDateString('es-MX');
+                        }
+                    },
+                    {
+                        data: "id",
+                        title: "Acciones",
+                        render: function (data) {
+                            return `
+                                <input type="button" value="Cancelar" class="btn btn-custom-cancel" onclick="EliminarDeduccion(${data})" />
+                            `;
+                        }
+                    }
+                ],
+                language: {
+                    decimal: ",",
+                    thousands: ".",
+                    processing: "Procesando...",
+                    lengthMenu: "Mostrar _MENU_ entradas",
+                    zeroRecords: "No se encontraron resultados",
+                    emptyTable: "Ningún dato disponible en esta tabla",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                    infoEmpty: "Mostrando 0 a 0 de 0 entradas",
+                    infoFiltered: "(filtrado de un total de _MAX_ entradas)",
+                    search: "Buscar:",
+                    loadingRecords: "Cargando...",
+                    paginate: {
+                        first: "Primero",
+                        last: "Último",
+                        next: "Siguiente",
+                        previous: "Anterior"
+                    },
+                    aria: {
+                        sortAscending: ": activar para ordenar ascendente",
+                        sortDescending: ": activar para ordenar descendente"
+                    }
+                }
+            });
+
+        } else {
+            console.warn("No se recibieron datos válidos o la respuesta no fue exitosa:", r);
+            $('#tableDeducciones').html('<div class="alert alert-warning">No se encontraron registros para los criterios seleccionados</div>');
+        }
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
+        $('#tableDeducciones').html('<div class="alert alert-danger">Error al cargar los datos</div>');
+    });
+}
+
+function SearchPV_VentasByDateAndUser( fecha) {
+    PostMVC('/VentaPublicoGeneral/SearchPV_VentasByDateAndUser', { fecha }, function (r, textStatus, jqXHR) {
         if (r.IsSuccess && Array.isArray(r.Response)) {
             const data = r.Response;
             const table = $('#tablePuntoVenta');
@@ -631,7 +740,7 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha) {
                         render: $.fn.dataTable.render.number(',', '.', 2, '$')
                     },
                     { data: "nombreUnidadMedida", title: "Unidad Medida", visible: false },
-                    { data: "userName", title: "Usuario", visible: false },
+                    { data: "userName", title: "Vendedor"},
                     {
                         data: "fecha",
                         title: "Fecha",
@@ -872,6 +981,12 @@ function AbrirModalDeducciones() {
 
 function Cargar(id) {
     PostMVC('/VentaPublicoGeneral/UpdateCarga', { id: id }, function (r, textStatus, jqXHR) {
+        location.reload();
+    });
+}
+
+function EliminarDeduccion(id) {
+    PostMVC('/VentaPublicoGeneral/DeleteDeducciones', { id: id }, function (r, textStatus, jqXHR) {
         location.reload();
     });
 }
