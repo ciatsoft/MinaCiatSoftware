@@ -316,7 +316,13 @@ $(document).ready(function () {
                     return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
                 }
             },
-            { data: "fecha", title: "Fecha" },
+            {
+                data: "fecha",
+                title: "Fecha",
+                render: function (data) {
+                    return new Date(data).toLocaleDateString('es-MX');
+                }
+            },
             {
                 data: "id",
                 title: "Acciones",
