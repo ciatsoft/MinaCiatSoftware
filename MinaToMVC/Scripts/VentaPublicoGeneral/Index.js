@@ -323,6 +323,8 @@ $(document).ready(function () {
                 render: function (data) {
                     return `
                     <input type="button" value="Cancelar" class="btn btn-custom-cancel" onclick="EliminarDeduccion(${data})" />
+                     <input type="button" value="Imprimir" class="btn btn-custom-cancel" style="background-color: yellow; border:
+                     none; color:black;  padding: 5px 10px; border-radius: 4px; cursor: pointer;" onclick="ImprimirDeduccion(${data})" />
                 `;
                 }
             }
@@ -989,4 +991,87 @@ function EliminarDeduccion(id) {
     PostMVC('/VentaPublicoGeneral/DeleteDeducciones', { id: id }, function (r, textStatus, jqXHR) {
         location.reload();
     });
+}
+async function ImprimirDeduccion(id) {
+    const table = $("#tableDeducciones").DataTable();
+    const data = table.rows().data().toArray().find(d => d.id === id);
+
+    if (!data) {
+        alert("No se encontró la deducción.");
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "letter"
+    });
+
+    const empresa = "PLANTA PROCESADORA DE MATERIALES PÉTREOS SAN MIGUEL, S.A. DE C.V.";
+    const ubicacion = "Calimaya, Estado de México";
+    const folio = String(data.id).padStart(6, '0');
+    const monto = Number(data.monto).toFixed(2);
+    const concepto = data.descripcion || "Sin concepto";
+    const fecha = new Date(data.fecha);
+    const fechaFormateada = fecha.toLocaleDateString('es-MX', {
+        day: '2-digit', month: 'long', year: 'numeric'
+    });
+
+    // Encabezado
+    let y = 30;
+    pdf.setFont("times", "bold");
+    pdf.setFontSize(16);
+    pdf.text("RECIBO DE DINERO", 105, y, { align: "center" });
+
+    // Datos principales
+    y += 15;
+    pdf.setFontSize(12);
+    pdf.setFont("times", "normal");
+    pdf.text(`Recibo No. ${folio}`, 20, y);
+    pdf.text(`Bueno por: $${monto}`, 160, y);
+
+    y += 10;
+    pdf.setFont("times", "bold");
+    pdf.text("Recibí de:", 20, y);
+    pdf.setFont("times", "normal");
+    pdf.text(empresa, 50, y);
+
+    y += 10;
+    pdf.setFont("times", "bold");
+    pdf.text("La cantidad de:", 20, y);
+    pdf.setFont("times", "normal");
+    pdf.text(`$${parseFloat(monto).toLocaleString('es-MX', { minimumFractionDigits: 2 })} M.N.`, 60, y);
+
+    y += 10;
+    pdf.setFont("times", "bold");
+    pdf.text("Por concepto de:", 20, y);
+    pdf.setFont("times", "normal");
+    pdf.text(concepto, 60, y);
+
+    y += 10;
+    pdf.setFont("times", "bold");
+    pdf.text("Encargado:", 20, y);
+
+    y += 10;
+    pdf.setFont("times", "italic");
+    pdf.text(`${ubicacion} a: ${fechaFormateada}`, 20, y);
+
+    // Firmas
+    y += 30;
+    pdf.line(30, y, 80, y); // línea firma nombre
+    pdf.line(130, y, 180, y); // línea firma quien recibe
+    y += 5;
+    pdf.setFontSize(10);
+    pdf.setFont("times", "italic");
+    pdf.text("Nombre", 55, y);
+    pdf.text("Firma de quien recibe", 155, y);
+
+    // Guardar PDF
+    pdf.save(`ReciboDeduccion_${folio}.pdf`);
+
+    // Redirigir después
+    setTimeout(() => {
+        window.location.href = '/VentaPublicoGeneral/Index';
+    }, 500);
 }
