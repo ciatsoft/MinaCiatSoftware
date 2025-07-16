@@ -1081,3 +1081,5 @@ async function ImprimirDeduccion(id) {
         window.location.href = '/VentaPublicoGeneral/Index';
     }, 500);
 }
+
+
