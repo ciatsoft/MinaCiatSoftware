@@ -642,6 +642,8 @@ function SearchDeduccionesFecha(fechaDeducciones) {
                         render: function (data) {
                             return `
                                 <input type="button" value="Cancelar" class="btn btn-custom-cancel" onclick="EliminarDeduccion(${data})" />
+                                <input type="button" value="Imprimir" class="btn btn-custom-cancel" style="background-color: yellow; border:
+                                none; color:black;  padding: 7px 10px; border-radius: 5px; cursor: pointer;" onclick="ImprimirDeduccion(${data})" />
                             `;
                         }
                     }
@@ -998,6 +1000,7 @@ function EliminarDeduccion(id) {
         location.reload();
     });
 }
+
 async function ImprimirDeduccion(id) {
     const table = $("#tableDeducciones").DataTable();
     const data = table.rows().data().toArray().find(d => d.id === id);
@@ -1014,8 +1017,8 @@ async function ImprimirDeduccion(id) {
         format: "letter"
     });
 
-    const empresa = "PLANTA PROCESADORA DE MATERIALES PÉTREOS SAN MIGUEL, S.A. DE C.V.";
-    const ubicacion = "Calimaya, Estado de México";
+    const empresa = "PLANTA PROCESADORA DE MATERIALES PETREOS SAN MIGUEL, S.A. DE C.V.";
+    const ubicacion = "Calimaya, Estado de Mexico";
     const folio = String(data.id).padStart(6, '0');
     const monto = Number(data.monto).toFixed(2);
     const concepto = data.descripcion || "Sin concepto";
@@ -1024,13 +1027,17 @@ async function ImprimirDeduccion(id) {
         day: '2-digit', month: 'long', year: 'numeric'
     });
 
-    // Encabezado
+    // Definir límites de contenido para el rectángulo
+    const margenX = 17.5;
+    let topY = 20;
+    let bottomY = 150;
+
+    // Dibujar encabezado y contenido
     let y = 30;
     pdf.setFont("times", "bold");
     pdf.setFontSize(16);
     pdf.text("RECIBO DE DINERO", 105, y, { align: "center" });
 
-    // Datos principales
     y += 15;
     pdf.setFontSize(12);
     pdf.setFont("times", "normal");
@@ -1039,9 +1046,9 @@ async function ImprimirDeduccion(id) {
 
     y += 10;
     pdf.setFont("times", "bold");
-    pdf.text("Recibí de:", 20, y);
+    pdf.text("Recibi de:", 20, y);
     pdf.setFont("times", "normal");
-    pdf.text(empresa, 50, y);
+    pdf.text(empresa, 40, y);
 
     y += 10;
     pdf.setFont("times", "bold");
@@ -1056,22 +1063,28 @@ async function ImprimirDeduccion(id) {
     pdf.text(concepto, 60, y);
 
     y += 10;
-    pdf.setFont("times", "bold");
-    pdf.text("Encargado:", 20, y);
-
-    y += 10;
     pdf.setFont("times", "italic");
     pdf.text(`${ubicacion} a: ${fechaFormateada}`, 20, y);
 
-    // Firmas
-    y += 30;
+    // Calcular altura real del contenido
+    bottomY = y + 35;
+
+    // Dibujar el rectángulo con borde de 10px (10mm) solo alrededor del contenido y firmas
+    pdf.setLineWidth(0.35);
+    pdf.setDrawColor(0, 0, 0);
+    pdf.rect(margenX, topY, 180, bottomY - topY);
+
+    // Volver a grosor fino antes de las líneas de firma
+    pdf.setLineWidth(0.5);
+    y += 25;
     pdf.line(30, y, 80, y); // línea firma nombre
     pdf.line(130, y, 180, y); // línea firma quien recibe
+
     y += 5;
     pdf.setFontSize(10);
     pdf.setFont("times", "italic");
-    pdf.text("Nombre", 55, y);
-    pdf.text("Firma de quien recibe", 155, y);
+    pdf.text("Nombre", 50, y);
+    pdf.text("Firma de quien recibe", 140, y);
 
     // Guardar PDF
     pdf.save(`ReciboDeduccion_${folio}.pdf`);
@@ -1081,5 +1094,3 @@ async function ImprimirDeduccion(id) {
         window.location.href = '/VentaPublicoGeneral/Index';
     }, 500);
 }
-
-
