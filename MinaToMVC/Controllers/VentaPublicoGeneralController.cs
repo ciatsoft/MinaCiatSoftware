@@ -162,6 +162,11 @@ namespace MinaToMVC.Controllers
             }
             return View(roll);
         }
+
+        public ActionResult VentaPorPlanta()
+        {
+            return View();
+        }
         #endregion
 
         #region Partial View
@@ -305,6 +310,18 @@ namespace MinaToMVC.Controllers
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+        public async Task<string> SearchDeduccionesByDate(DateTime fechaDeducciones)
+        {
+            var result = await httpClientConnection.SearchDeduccionesByDate(fechaDeducciones);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        // Total Por Planta
+        public async Task<string> TotalPlantaByFecha(DateTime fecha)
+        {
+            var result = await httpClientConnection.TotalPlantaByFecha(fecha);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
 
         #endregion
 
@@ -427,13 +444,6 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.SearchPV_VentasByDateAndUser(fecha);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-
-        public async Task<string> SearchDeduccionesByDate(DateTime fechaDeducciones)
-        {
-            var result = await httpClientConnection.SearchDeduccionesByDate(fechaDeducciones);
-            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
-        }
-
 
         #endregion
 

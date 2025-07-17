@@ -303,6 +303,7 @@ $(document).ready(function () {
         processing: true,
         destroy: true,
         paging: true,
+        order: [[0, 'desc']],
         searching: true,
         columns: [
             { data: "id", visible: true, title: "Id" },

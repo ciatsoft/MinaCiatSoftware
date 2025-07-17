@@ -254,6 +254,38 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
+        
+        public ModelResponse TotalPlantaByFecha(DateTime Fecha)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var fechaSolo = Fecha.Date;
+
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@Fecha",    SqlDbType.Date)   { Value = fechaSolo }
+                };
+
+                // CORREGIDO: usar GetList para obtener varios registros
+                var result = GetList(
+                    "TotalPlantaByFecha",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader => FillEntity<TotalPlanta>(reader)
+                );
+
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
 
         public ModelResponse SearchClienteByRFID(string rfid)
         {
