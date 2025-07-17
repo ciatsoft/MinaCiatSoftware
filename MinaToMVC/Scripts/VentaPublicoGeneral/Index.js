@@ -1000,6 +1000,18 @@ function EliminarDeduccion(id) {
         location.reload();
     });
 }
+// Función para capitalizar el tipo de gasto
+function formatearTipoGasto(nombreGasto) {
+    if (!nombreGasto || typeof nombreGasto !== 'string' || nombreGasto.trim() === '') {
+        return "Tipo de gasto no especificado";
+    }
+
+    return nombreGasto
+        .toLowerCase()
+        .split(' ')
+        .map(p => p.charAt(0).toUpperCase() + p.slice(1))
+        .join(' ');
+}
 
 async function ImprimirDeduccion(id) {
     const table = $("#tableDeducciones").DataTable();
@@ -1021,6 +1033,7 @@ async function ImprimirDeduccion(id) {
     const ubicacion = "Calimaya, Estado de Mexico";
     const folio = String(data.id).padStart(6, '0');
     const monto = Number(data.monto).toFixed(2);
+    const tipoGasto = formatearTipoGasto(data.nombreGasto);
     const concepto = data.descripcion || "Sin concepto";
     const fecha = new Date(data.fecha);
     const fechaFormateada = fecha.toLocaleDateString('es-MX', {
@@ -1054,13 +1067,20 @@ async function ImprimirDeduccion(id) {
     pdf.setFont("times", "bold");
     pdf.text("La cantidad de:", 20, y);
     pdf.setFont("times", "normal");
-    pdf.text(`$${parseFloat(monto).toLocaleString('es-MX', { minimumFractionDigits: 2 })} M.N.`, 60, y);
+    pdf.text(`$${parseFloat(monto).toLocaleString('es-MX', { minimumFractionDigits: 2 })} M.N.`, 50, y);
+
+
+    y += 10;
+    pdf.setFont("times", "bold");
+    pdf.text("Tipo de gasto:", 20, y);
+    pdf.setFont("times", "normal");
+    pdf.text(tipoGasto, 47, y);
 
     y += 10;
     pdf.setFont("times", "bold");
     pdf.text("Por concepto de:", 20, y);
     pdf.setFont("times", "normal");
-    pdf.text(concepto, 60, y);
+    pdf.text(concepto, 52, y);
 
     y += 10;
     pdf.setFont("times", "italic");
@@ -1069,12 +1089,12 @@ async function ImprimirDeduccion(id) {
     // Calcular altura real del contenido
     bottomY = y + 35;
 
-    // Dibujar el rectángulo con borde de 10px (10mm) solo alrededor del contenido y firmas
+    // Dibujar el rectángulo con borde alrededor del contenido y firmas
     pdf.setLineWidth(0.35);
     pdf.setDrawColor(0, 0, 0);
     pdf.rect(margenX, topY, 180, bottomY - topY);
 
-    // Volver a grosor fino antes de las líneas de firma
+    // Firmas
     pdf.setLineWidth(0.5);
     y += 25;
     pdf.line(30, y, 80, y); // línea firma nombre
