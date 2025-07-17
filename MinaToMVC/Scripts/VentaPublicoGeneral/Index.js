@@ -332,6 +332,7 @@ $(document).ready(function () {
                     <input type="button" value="Cancelar" class="btn btn-custom-cancel" onclick="EliminarDeduccion(${data})" />
                      <input type="button" value="Imprimir" class="btn btn-custom-cancel" style="background-color: yellow; border:
                      none; color:black;  padding: 7px 10px; border-radius: 5px; cursor: pointer;" onclick="ImprimirDeduccion(${data})" />
+                      <input type="button" value="Editar" class="btn btn-custom-clean" style="width: 65px;" onclick="EditarDeduccion(${data})" />
                 `;
                 }
             }
@@ -645,7 +646,7 @@ function SearchDeduccionesFecha(fechaDeducciones) {
                                 <input type="button" value="Cancelar" class="btn btn-custom-cancel" onclick="EliminarDeduccion(${data})" />
                                 <input type="button" value="Imprimir" class="btn btn-custom-cancel" style="background-color: yellow; border:
                                 none; color:black;  padding: 7px 10px; border-radius: 5px; cursor: pointer;" onclick="ImprimirDeduccion(${data})" />
-                            `;
+                                    `;
                         }
                     }
                 ],
