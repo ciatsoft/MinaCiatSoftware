@@ -106,5 +106,11 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
+        [HttpGet, Route("totalPlanta")]
+        public async Task<ModelResponse> TotalPlantaByFecha([FromUri] DateTime fecha)
+        {
+            var result = wrapper.TotalPlantaByFecha(fecha);
+            return result;
+        }
     }
 }

@@ -184,6 +184,7 @@
     <Content Include="Scripts\VentaPublicoGeneral\Index.js" />
     <Content Include="Scripts\VentaPublicoGeneral\Precios.js" />
     <Content Include="Scripts\VentaPublicoGeneral\Prestamos.js" />
+    <Content Include="Scripts\VentaPublicoGeneral\VentaPlanta.js" />
     <Content Include="Scripts\Viajes\Internos.js" />
     <Content Include="Scripts\Viajes\Locales.js" />
     <Content Include="Web.config" />
@@ -307,6 +308,7 @@
     <Content Include="Views\Administracion\Usuarios.cshtml" />
     <Content Include="Views\Catalog\PartialPermisosRol.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\PartialDeducciones.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\VentaPorPlanta.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
