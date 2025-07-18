@@ -264,35 +264,39 @@ namespace MinaToMVC.Controllers
 
         // Parcial para generar Gastos / Deducciones
 
-        public async Task<ActionResult> PartialDeducciones()
+        public async Task<ActionResult> PartialDeducciones(long id = 0)
         {
-            Deducciones vehiculoPG = new Deducciones();
+            var modelo = new Deducciones();
+
+            if (id != 0)
+            {
+                var response = await httpClientConnection.GetDeduccionesById(id);
+                modelo = JsonConvert.DeserializeObject<Deducciones>(response.Response.ToString());
+            }
 
             var usuarioToken = SessionHelper.GetSessionUser();
-            var usuario = new List<Usuario>()
-            {
-                new Usuario()
-                {
-                    Id = usuarioToken.UserID,
-                    Nombre = usuarioToken.UserName
-                }
-            };
-            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
-            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>
+    {
+        new Usuario
+        {
+            Id = usuarioToken.UserID,
+            Nombre = usuarioToken.UserName
+        }
+    };
 
-            var gastos = new List<DtoTipoGasto>();
-            var responseclientes = await httpClientConnection.GetAllTipoGastos();
-            // Deserializa la respuesta
-            gastos = JsonConvert.DeserializeObject<List<DtoTipoGasto>>(responseclientes.Response.ToString());
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+
+            var responseClientes = await httpClientConnection.GetAllTipoGastos();
+            var gastos = JsonConvert.DeserializeObject<List<DtoTipoGasto>>(responseClientes.Response.ToString());
 
             ViewBag.Gastos = gastos;
-            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.UserToken = usuarioToken;
             ViewBag.Usuarios = usuarios;
 
-            return PartialView(vehiculoPG);
+            return PartialView("PartialDeducciones", modelo);
         }
 
-        // Deducciones
+        // ---------------------------------------Deducciones------------------------------------------
         public async Task<string> GetAllDeducciones()
         {
             var result = await httpClientConnection.GetAllDeducciones();

@@ -332,7 +332,7 @@ $(document).ready(function () {
                     <input type="button" value="Cancelar" class="btn btn-custom-cancel" onclick="EliminarDeduccion(${data})" />
                      <input type="button" value="Imprimir" class="btn btn-custom-cancel" style="background-color: yellow; border:
                      none; color:black;  padding: 7px 10px; border-radius: 5px; cursor: pointer;" onclick="ImprimirDeduccion(${data})" />
-                      <input type="button" value="Editar" class="btn btn-custom-clean" style="width: 65px;" onclick="EditarDeduccion(${data})" />
+                     <input type="button" value="Editar" class="btn btn-custom-clean" style="width: 80px;" onclick="AbrirModalDeduccion(${data})" />
                 `;
                 }
             }
@@ -981,12 +981,13 @@ function AbrirModalVehiculoPublicoGeneral() {
     });
 }
 
-function AbrirModalDeducciones() {
-    // Limpiar completamente el modal antes de cargar nuevo contenido
-    $("#genericModal").removeData('bs.modal');
-    $("#titleGenerciModal").text("Deducciones");
-    $("#boddyGeericModal").empty();
-    $("#boddyGeericModal").load("/VentaPublicoGeneral/PartialDeducciones", function () {
+function AbrirModalDeduccion(id = 0) {
+    const titulo = id !== 0 ? "Editar Deducción" : "Nueva Deducción";
+    $("#titleGenerciModal").text(titulo);
+    $("#boddyGeericModal").html('<p class="text-center">Cargando...</p>');
+
+    // Carga la vista parcial desde el backend
+    $("#boddyGeericModal").load(`/VentaPublicoGeneral/PartialDeducciones?id=${id}`, function () {
         $("#genericModal").modal("show");
     });
 }

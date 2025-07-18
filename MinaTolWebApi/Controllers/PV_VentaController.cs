@@ -14,8 +14,8 @@ namespace MinaTolWebApi.Controllers
     [RoutePrefix("api/PV_Venta")]
     public class PV_VentaController : ApiController
     {
-        private DbWrapper wrapper {  get; set; }
-        public PV_VentaController() 
+        private DbWrapper wrapper { get; set; }
+        public PV_VentaController()
         {
             wrapper = new DbWrapper();
         }
@@ -83,7 +83,7 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-        // Parcial para generar Gastos / Deducciones
+        // ------------------------------------Parcial para generar Gastos / Deducciones-----------------------------------
 
         [Route("Deducciones/List"), HttpGet]
         public ModelResponse GetAllDeducciones()
@@ -112,5 +112,14 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.TotalPlantaByFecha(fecha);
             return result;
         }
+
+
+        [HttpGet, Route("Deducciones/{id:long}")]
+        public async Task<ModelResponse> GetDeduccionesById(int id)
+        {
+            var result = wrapper.GetDeduccionesById(id);
+            return result;
+        }
+
     }
 }

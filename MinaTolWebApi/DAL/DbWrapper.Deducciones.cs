@@ -84,6 +84,39 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
+        public ModelResponse GetDeduccionesById(int id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id",
+                    SqlDbType = System.Data.SqlDbType.Int
+                });
+
+                var result = GetObject("GetDeduccionesById", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, Deducciones>((reader) =>
+                    {
+                        var r = FillEntity<Deducciones>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+
+        }
+
 
     }
 }
