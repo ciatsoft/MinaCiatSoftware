@@ -445,6 +445,12 @@ namespace MinaToMVC.Controllers
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
+        //public async Task<string> TotalPlantaByFecha(DateTime fecha)
+        //{
+        //    var result = await httpClientConnection.TotalPlantaByFecha(fecha);
+        //    return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        //}
+
         #endregion
 
         #region Prestamos

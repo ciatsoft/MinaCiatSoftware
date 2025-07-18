@@ -159,6 +159,54 @@ $(document).ready(function () {
         }
     });
 
+    //Inicializar tabla vacia Deducciones
+    $('#tblDeducciones').DataTable({
+        data: [],
+        columns: [
+            { data: 'Id', title: 'Id' },
+            { data: 'nombreGasto', title: 'Tipo de Gasto' },
+            { data: "descripcion", title: "Descripción de la Deducción" },
+            { data: "usuarioName", title: "Encargado" },
+            {
+                data: "monto",
+                title: "Monto",
+                render: function (data) {
+                    return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
+                }
+            },
+            {
+                data: "fecha",
+                title: "Fecha",
+                render: function (data) {
+                    return new Date(data).toLocaleDateString('es-MX');
+                }
+            }   
+        ],
+        language: {
+            "decimal": ",",
+            "thousands": ".",
+            "processing": "Procesando...",
+            "lengthMenu": "Mostrar _MENU_ entradas",
+            "zeroRecords": "No se encontraron resultados",
+            "emptyTable": "Ningún dato disponible en esta tabla",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+            "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+            "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+            "search": "Buscar:",
+            "loadingRecords": "Cargando...",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                "sortDescending": ": activar para ordenar la columna de manera descendente"
+            }
+        }
+    });
+
     //Inicializar tabla vacia Caja Chica
     $('#tblCajaChica').DataTable({
         data: [],
@@ -241,57 +289,41 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                         data: 'totalPago',
                         title: 'Total Pago',
                         render: function (data) {
-                            return `$${parseFloat(data).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }).replace('$', '')}`;
+                            return `$${parseFloat(data).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`;
                         }
                     },
                     {
                         data: "formaDePago",
                         title: "Forma de Pago",
-                        render: function (data, type, row) {
-                            if (data === "E") {
-                                return "Efectivo";
-                            }
-                            else if (data == "T") {
-                                return "Transferencia";
-                            } else {
-                                return "Vale";
-                            }
-                            return data;
+                        render: function (data) {
+                            if (data === "E") return "Efectivo";
+                            if (data === "T") return "Transferencia";
+                            return "Vale";
                         }
                     },
                     {
                         data: "estatusVenta",
                         title: "Estado de Venta",
-                        render: function (data, type, row) {
-                            if (data === "E") {
-                                return "Efectiva";
-                            }
-                            else if (data == "C") {
-                                return "Cancelada";
-                            } else {
-                                return "Rechazada";
-                            }
-                            return data;
+                        render: function (data) {
+                            if (data === "E") return "Efectiva";
+                            if (data === "C") return "Cancelada";
+                            return "Rechazada";
                         }
                     },
                     {
                         data: 'fecha',
                         title: 'Fecha',
                         render: function (data) {
-                            return new Date(data).toLocaleString('es-MX'); // muestra fecha + hora
+                            return new Date(data).toLocaleString('es-MX');
                         }
                     },
                     {
                         data: 'corte_Id',
                         title: 'ID Corte',
                         render: function (data) {
-                            // Mostrar solo si el valor es mayor que 0
                             return data > 0 ? data : '';
                         },
-                        visible: (function () {
-                            // Verificar si hay al menos un valor mayor que 0 en los datos
-                            return data.some(item => item.corte_Id > 0);
-                        })() // Auto-ejecutamos la función
+                        visible: data.some(item => item.corte_Id > 0)
                     }
                 ],
                 language: {
@@ -363,10 +395,7 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                         data: 'totalPago',
                         title: 'Total Acumulado',
                         render: function (data) {
-                            return `$${parseFloat(data).toLocaleString('es-MX', {
-                                style: 'currency',
-                                currency: 'MXN'
-                            }).replace('$', '')}`;
+                            return `$${parseFloat(data).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`;
                         }
                     },
                     { data: 'cantidadRegistros', title: 'Cantidad de Registros' }
@@ -402,7 +431,19 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                 totalMonto: 0
             };
 
+            // Función para manejar errores de las llamadas AJAX
+            const handleAjaxError = (error) => {
+                console.error("Error en la llamada AJAX:", error);
+                alert("Ocurrió un error al obtener los datos. Por favor revisa la consola para más detalles.");
+            };
+
+            // Primera llamada AJAX para dinero en caja
             PostMVC('/VentaPublicoGeneral/SearchPV_DineroCajaByDateAndUser', { userName, fecha }, function (r, textStatus, jqXHR) {
+                if (!r.IsSuccess) {
+                    handleAjaxError(r.Message);
+                    return;
+                }
+
                 if ($.fn.DataTable.isDataTable('#tblEn_Caja')) {
                     $('#tblEn_Caja').DataTable().clear().destroy();
                 }
@@ -452,13 +493,9 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                             data: 'corte_Id',
                             title: 'ID Corte',
                             render: function (data) {
-                                // Mostrar solo si el valor es mayor que 0
                                 return data > 0 ? data : '';
                             },
-                            visible: (function () {
-                                // Verificar si hay al menos un valor mayor que 0 en los datos
-                                return cajaData.some(item => item.corte_Id > 0);
-                            })() // Auto-ejecutamos la función
+                            visible: cajaData.some(item => item.corte_Id > 0)
                         }
                     ],
                     language: {
@@ -486,7 +523,13 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                     }
                 });
 
+                // Segunda llamada AJAX para caja chica
                 PostMVC('/VentaPublicoGeneral/SearchPV_CajaChicaByDateAndUserAndCorteId', { userName, fecha }, function (r, textStatus, jqXHR) {
+                    if (!r.IsSuccess) {
+                        handleAjaxError(r.Message);
+                        return;
+                    }
+
                     if ($.fn.DataTable.isDataTable('#tblCajaChica')) {
                         $('#tblCajaChica').DataTable().clear().destroy();
                     }
@@ -518,7 +561,7 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                                 data: 'monto',
                                 title: 'Monto',
                                 render: function (data) {
-                                    return `$${parseFloat(data).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }).replace('$', '')}`;
+                                    return `$${parseFloat(data).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`;
                                 }
                             },
                             { data: "comentarios", title: "Comentarios" },
@@ -526,13 +569,9 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                                 data: 'corte_Id',
                                 title: 'ID Corte',
                                 render: function (data) {
-                                    // Mostrar solo si el valor es mayor que 0
                                     return data > 0 ? data : '';
                                 },
-                                visible: (function () {
-                                    // Verificar si hay al menos un valor mayor que 0 en los datos
-                                    return cajaChicaData.some(item => item.corte_Id > 0);
-                                })() // Auto-ejecutamos la función
+                                visible: cajaChicaData.some(item => item.corte_Id > 0)
                             }
                         ],
                         language: {
@@ -560,30 +599,103 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                         }
                     });
 
-                    // Calcular la resta y formatear como moneda MXN
-                    const restaTotal = resultados.totalGeneral - resultados.totalMonto;
-                    const formatoMXN = new Intl.NumberFormat('es-MX', {
-                        style: 'currency',
-                        currency: 'MXN'
-                    }).format(restaTotal);
+                    // Tercera llamada AJAX para deducciones
+                    PostMVC('/VentaPublicoGeneral/SearchDeduccionesByDateAndUserAndCorteId', { userName, fecha }, function (r, textStatus, jqXHR) {
+                        if (!r.IsSuccess) {
+                            handleAjaxError(r.Message);
+                            return;
+                        }
 
-                    // Asignar el valor formateado al input
-                    document.getElementById('total').value = formatoMXN;
+                        if ($.fn.DataTable.isDataTable('#tblDeducciones')) {
+                            $('#tblDeducciones').DataTable().clear().destroy();
+                        }
 
-                    // También puedes mantener el console.log si lo necesitas
-                    //console.log("Resultados consolidados:", {
-                    //    totalGeneral: resultados.totalGeneral,
-                    //    totalMonto: resultados.totalMonto,
-                    //    restaTotal: restaTotal
-                    //});
+                        const deduccionesData = r.Response;
+
+                        // Calcular suma de montos de deducciones
+                        let totalDeducciones = 0;
+                        deduccionesData.forEach(item => {
+                            totalDeducciones += parseFloat(item.monto);
+                        });
+
+                        // Sumar al total de monto (caja chica + deducciones)
+                        resultados.totalMonto += totalDeducciones;
+
+                        // Actualizar el input de caja
+                        $('#caja').val(resultados.totalMonto.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }));
+
+                        // Tabla de Deducciones
+                        $('#tblDeducciones').DataTable({
+                            data: deduccionesData,
+                            columns: [
+                                { data: "id", "visible": false, title: "id" },
+                                {
+                                    data: 'fecha',
+                                    title: 'Fecha',
+                                    render: function (data) {
+                                        return new Date(data).toLocaleString('es-MX');
+                                    }
+                                },
+                                {
+                                    data: 'monto',
+                                    title: 'Monto',
+                                    render: function (data) {
+                                        return `$${parseFloat(data).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`;
+                                    }
+                                },
+                                { data: "comentarios", title: "Comentarios" },
+                                {
+                                    data: 'corte_Id',
+                                    title: 'ID Corte',
+                                    render: function (data) {
+                                        return data > 0 ? data : '';
+                                    },
+                                    visible: deduccionesData.some(item => item.corte_Id > 0)
+                                }
+                            ],
+                            language: {
+                                "decimal": ",",
+                                "thousands": ".",
+                                "processing": "Procesando...",
+                                "lengthMenu": "Mostrar _MENU_ entradas",
+                                "zeroRecords": "No se encontraron resultados",
+                                "emptyTable": "Ningún dato disponible en esta tabla",
+                                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                                "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+                                "search": "Buscar:",
+                                "loadingRecords": "Cargando...",
+                                "paginate": {
+                                    "first": "Primero",
+                                    "last": "Último",
+                                    "next": "Siguiente",
+                                    "previous": "Anterior"
+                                },
+                                "aria": {
+                                    "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                                    "sortDescending": ": activar para ordenar la columna de manera descendente"
+                                }
+                            }
+                        });
+
+                        // Calcular la resta y formatear como moneda MXN
+                        const restaTotal = resultados.totalGeneral - resultados.totalMonto;
+                        const formatoMXN = new Intl.NumberFormat('es-MX', {
+                            style: 'currency',
+                            currency: 'MXN'
+                        }).format(restaTotal);
+
+                        // Asignar el valor formateado al input
+                        document.getElementById('total').value = formatoMXN;
+                    });
                 });
             });
-
         } else {
             alert("Error al obtener registros. Ver consola para más detalles.");
+            console.error("Error en la respuesta:", r);
         }
     });
-}
+}   
 
 function limpiarCalculos() {
     $('#ingreso').val('');
