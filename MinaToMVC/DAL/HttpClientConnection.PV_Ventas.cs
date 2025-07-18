@@ -50,10 +50,10 @@ namespace MinaToMVC.DAL
         public async Task<ModelResponse> ActualizarEstatusVenta(int id, string valor)
         {
             var url = $"api/PV_Venta/EstatusVenta/{id}/{valor}";
-            var result = await RequestAsync<object>(url,HttpMethod.Post,null,new Func<string, string>((responseString) =>
+            var result = await RequestAsync<object>(url, HttpMethod.Post, null, new Func<string, string>((responseString) =>
                 {
                     return responseString;
-                }),token.Token.access_token);
+                }), token.Token.access_token);
 
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
             return modelResponse;
@@ -144,7 +144,7 @@ namespace MinaToMVC.DAL
             return modelResponse;
         }
 
-        // Parcial para generar Gastos / Deducciones
+        // --------------------Parcial para generar Gastos / Deducciones--------------------------------
         public async Task<ModelResponse> GetAllDeducciones()
         {
             var result = await RequestAsync<object>("api/PV_Venta/Deducciones/List", HttpMethod.Get, null,
@@ -178,6 +178,22 @@ namespace MinaToMVC.DAL
                     return responseString;
                 }), token.Token.access_token);
             return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+        }
+
+
+        public async Task<ModelResponse> GetDeduccionesById(long id)
+        {
+            // Armar la URL con parámetros de consulta correctamente
+            string url = $"api/PV_Venta/Deducciones/{id}";
+
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
         }
     }
 }
