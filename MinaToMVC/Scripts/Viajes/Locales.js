@@ -68,7 +68,7 @@ $(document).ready(function () {
             {
                 data: "id", title: "Acciones", render: function (data) {
                     return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarViajeLocal(' + data + ', this)" />' +
-                        '<input type="button" value="Imprimir" class="btn btn-custom-clean" onclick="ImprimirReporte(' + data + ', this)" />';
+                        '<input type="button" value="Imprimir" class="btn btn-custom-clean" style="background-color: yellow; border:none; color: black; padding: 7px 10px; border - radius: 5px; cursor: pointer; "  onclick="ImprimirReporte(' + data + ', this)" />';
                 }
             }
 
