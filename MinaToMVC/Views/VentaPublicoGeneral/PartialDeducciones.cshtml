@@ -16,10 +16,9 @@
     @Html.HiddenFor(x => x.Estatus)
     @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy" })
     @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy" })
-    @Html.Hidden("CreatedDt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), new { id = "CreatedDt" })
-    @Html.Hidden("UpdatedDt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), new { id = "UpdatedDt" })
+    @Html.HiddenFor(x => x.CreatedDt, new { id = "CreatedDt" })
+    @Html.HiddenFor(x => x.UpdatedDt, new { id = "UpdatedDt" })
 
-    <!-- Campo oculto que ahora sí se usará en el envío -->
     @Html.HiddenFor(x => x.NombreGasto, new { @id = "nombreGasto" })
 
     <div class="content">
@@ -62,7 +61,6 @@
                         <label>Fecha:</label>
                         @Html.TextBoxFor(x => x.Fecha, new
                         {
-                            @Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                             @class = "form-control",
                             @id = "fecha",
                             @readonly = "readonly"
@@ -83,28 +81,17 @@
 
 <script>
     $(document).ready(function () {
-        const now = new Date();
-        const pad = (n) => n.toString().padStart(2, '0');
-        const formattedDate = now.getFullYear() + '-' +
-            pad(now.getMonth() + 1) + '-' +
-            pad(now.getDate()) + ' ' +
-            pad(now.getHours()) + ':' +
-            pad(now.getMinutes()) + ':' +
-            pad(now.getSeconds());
-
-        $("#fecha").val(formattedDate);
+        const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        $("#fecha").val(now);
+        $("#CreatedDt").val(now);
+        $("#UpdatedDt").val(now);
         $("#user").val('@usuarioToken.UserName');
 
-        // Actualizar el campo oculto con el nombre del gasto
         $("#ddlTipoGasto").change(function () {
             const selectedText = $("#ddlTipoGasto option:selected").text();
             const selectedValue = $(this).val();
 
-            if (selectedValue && selectedValue !== "") {
-                $("#nombreGasto").val(selectedText);
-            } else {
-                $("#nombreGasto").val("");
-            }
+            $("#nombreGasto").val(selectedValue ? selectedText : "");
         });
     });
 
@@ -112,9 +99,8 @@
         if ($("#frmDeducciones").valid()) {
             const isUpdating = $("#id").val() && $("#id").val() != 0;
             const currentUser = $("#user").val();
-            const now = $("#fecha").val();
+            const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-            // Asigna CreatedBy o UpdatedBy según el contexto
             if (isUpdating) {
                 $("#updatedBy").val(currentUser);
                 $("#UpdatedDt").val(now);
@@ -130,25 +116,23 @@
                 Descripcion: $("#descripcion").val(),
                 Monto: $("#monto").val(),
                 UsuarioName: currentUser,
-                Fecha: now,
+                Fecha: $("#fecha").val(),
                 CreatedBy: $("#createdBy").val(),
                 CreatedDt: $("#CreatedDt").val(),
-                UpdatedBy: $("#createdBy").val(),
-                UpdatedDt: $("#CreatedDt").val()
+                UpdatedBy: $("#updatedBy").val(),
+                UpdatedDt: $("#UpdatedDt").val()
             };
-
-            console.log("Datos que se enviarán:", parametro);
 
             Swal.fire({
                 title: isUpdating ? '¿Desea actualizar el registro?' : '¿Desea guardar el nuevo registro?',
                 html: `
-                <strong>Tipo de Gasto:</strong> ${parametro.TipoGastoId}<br/>
-                <strong>Nombre del Gasto:</strong> ${parametro.NombreGasto}<br/>
-                <strong>Descripción:</strong> ${parametro.Descripcion}<br/>
-                <strong>Monto:</strong> ${parametro.Monto}<br/>
-                <strong>Usuario:</strong> ${parametro.UsuarioName}<br/>
-                <strong>Fecha:</strong> ${parametro.Fecha}<br/>
-            `,
+                    <strong>Tipo de Gasto:</strong> ${parametro.TipoGastoId}<br/>
+                    <strong>Nombre del Gasto:</strong> ${parametro.NombreGasto}<br/>
+                    <strong>Descripción:</strong> ${parametro.Descripcion}<br/>
+                    <strong>Monto:</strong> ${parametro.Monto}<br/>
+                    <strong>Usuario:</strong> ${parametro.UsuarioName}<br/>
+                    <strong>Fecha:</strong> ${parametro.Fecha}<br/>
+                `,
                 icon: 'info',
                 showCancelButton: true,
                 confirmButtonText: isUpdating ? 'Actualizar' : 'Guardar',
