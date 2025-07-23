@@ -180,7 +180,6 @@ namespace MinaToMVC.DAL
             return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
         }
 
-
         public async Task<ModelResponse> GetDeduccionesById(long id)
         {
             // Armar la URL con parámetros de consulta correctamente
