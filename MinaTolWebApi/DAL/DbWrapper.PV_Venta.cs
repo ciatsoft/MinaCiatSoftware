@@ -191,7 +191,40 @@ namespace MinaTolWebApi.DAL
         }
 
         //Para el modulo de Corte de Caja Diario
-        public ModelResponse SearchPV_VentasByDateAndUser(DateTime fecha)
+        public ModelResponse SearchPV_VentasByDateAndUser(long usuarioId, DateTime fecha)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var fechaSolo = fecha.Date;
+
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@UsuarioId",    SqlDbType.BigInt)   { Value = usuarioId },
+                    new SqlParameter("@Fecha",    SqlDbType.Date)   { Value = fechaSolo }
+                };
+
+                // CORREGIDO: usar GetList para obtener varios registros
+                var result = GetList(
+                    "SearchPV_VentasByDateAndUser",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader => FillEntity<PV_Ventas>(reader)
+                );
+
+                response.Response = result; // ahora será una lista de PV_CajaChica
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+
+        public ModelResponse SearchPV_VentasByDate(DateTime fecha)
         {
             var response = new ModelResponse();
             try
@@ -206,7 +239,7 @@ namespace MinaTolWebApi.DAL
 
                 // CORREGIDO: usar GetList para obtener varios registros
                 var result = GetList(
-                    "SearchPV_VentasByDateAndUser",
+                    "SearchPV_VentasByDate",
                     CommandType.StoredProcedure,
                     parameters,
                     reader => FillEntity<PV_Ventas>(reader)
@@ -363,5 +396,37 @@ namespace MinaTolWebApi.DAL
             return response;
         }
 
+        public ModelResponse SearchDeduccionesByDateAndUser(string userName, DateTime Fecha)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var fechaSolo = Fecha.Date;
+
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@Fecha",    SqlDbType.Date)   { Value = fechaSolo },
+                    new SqlParameter("@UserName",    SqlDbType.NVarChar)   { Value = userName }
+                };
+
+                // CORREGIDO: usar GetList para obtener varios registros
+                var result = GetList(
+                    "SearchDeduccionesByDateAndUser",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader => FillEntity<Deducciones>(reader)
+                );
+
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
     }
 }
