@@ -327,6 +327,12 @@ namespace MinaToMVC.Controllers
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
+        // Deducciones por Fecha y Usuario Autenticado
+        public async Task<string> SearchDeduccionesByDateAndUserAndCorteId(string userName, DateTime fecha)
+        {
+            var result = await httpClientConnection.SearchDeduccionesByDateAndUser(userName, fecha);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
         #endregion
 
         #region Precios
@@ -443,9 +449,15 @@ namespace MinaToMVC.Controllers
         }
 
         //Buscar filtrado 
-        public async Task<string> SearchPV_VentasByDateAndUser(DateTime fecha)
+        public async Task<string> SearchPV_VentasByDateAndUser(int usuarioId, DateTime fecha)
         {
-            var result = await httpClientConnection.SearchPV_VentasByDateAndUser(fecha);
+            var result = await httpClientConnection.SearchPV_VentasByDateAndUser(usuarioId ,fecha);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> SearchPV_VentasByDate(DateTime fecha)
+        {
+            var result = await httpClientConnection.SearchPV_VentasByDate(fecha);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 

@@ -56,9 +56,16 @@ namespace MinaTolWebApi.Controllers
         }
 
         [HttpGet, Route("search")]
-        public async Task<ModelResponse> SearchPV_VentasByDateAndUser([FromUri] DateTime fecha)
+        public async Task<ModelResponse> SearchPV_VentasByDateAndUser([FromUri] int usuarioId, [FromUri] DateTime fecha)
         {
-            var result = wrapper.SearchPV_VentasByDateAndUser(fecha);
+            var result = wrapper.SearchPV_VentasByDateAndUser(usuarioId, fecha);
+            return result;
+        }
+
+        [HttpGet, Route("searchDate")]
+        public async Task<ModelResponse> SearchPV_VentasByDate([FromUri] DateTime fecha)
+        {
+            var result = wrapper.SearchPV_VentasByDate(fecha);
             return result;
         }
 
@@ -121,5 +128,11 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
+        [HttpGet, Route("Deducciones/DeduccionesByUserAndDate")]
+        public async Task<ModelResponse> SearchDeduccionesByDateAndUser(string userName, [FromUri] DateTime fecha)
+        {
+            var result = wrapper.SearchDeduccionesByDateAndUser(userName, fecha);
+            return result;
+        }
     }
-}
+}   

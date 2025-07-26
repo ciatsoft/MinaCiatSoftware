@@ -71,10 +71,25 @@ namespace MinaToMVC.DAL
             return modelResponse;
         }
 
-        public async Task<ModelResponse> SearchPV_VentasByDateAndUser(DateTime fecha)
+        public async Task<ModelResponse> SearchPV_VentasByDateAndUser(int usuarioId, DateTime fecha)
         {
-            // Armar la URL con parámetros de consulta correctamente
-            string url = $"api/PV_Venta/search?fecha={fecha.ToString("yyyy-MM-dd")}";
+            // Correct URL with proper query parameter separation
+            string url = $"api/PV_Venta/search?usuarioId={usuarioId}&fecha={fecha.ToString("yyyy-MM-dd")}";
+
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+
+        public async Task<ModelResponse> SearchPV_VentasByDate(DateTime fecha)
+        {
+            // Correct URL with proper query parameter separation
+            string url = $"api/PV_Venta/searchDate?fecha={fecha.ToString("yyyy-MM-dd")}";
 
             var result = await RequestAsync<object>(url, HttpMethod.Get, null,
                 new Func<string, string>((responseString) =>
@@ -190,6 +205,21 @@ namespace MinaToMVC.DAL
                 new Func<string, string>((responseString) =>
                 {
                     return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+
+        public async Task<ModelResponse> SearchDeduccionesByDateAndUser(string userName, DateTime fecha)
+        {
+            // Armar la URL con parametros de consulta correctamente
+            string url = $"api/PV_Venta/Deducciones/DeduccionesByUserAndDate?userName={userName}&fecha={fecha:yyyy-MM-dd}";
+
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((resposeString) =>
+                {
+                    return resposeString;
                 }), token.Token.access_token);
 
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());

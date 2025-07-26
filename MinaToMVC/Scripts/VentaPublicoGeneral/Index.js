@@ -573,7 +573,7 @@ document.getElementById("btnFiltrar").addEventListener("click", function () {
         return;
     }
 
-    SearchPV_VentasByDateAndUser( fecha, userName);
+    SearchPV_VentasByDate(fecha);
 });
 // Escucha del botón
 document.getElementById("btnDeducciones").addEventListener("click", function () {
@@ -685,8 +685,8 @@ function SearchDeduccionesFecha(fechaDeducciones) {
     });
 }
 
-function SearchPV_VentasByDateAndUser( fecha) {
-    PostMVC('/VentaPublicoGeneral/SearchPV_VentasByDateAndUser', { fecha }, function (r, textStatus, jqXHR) {
+function SearchPV_VentasByDate(fecha) {
+    PostMVC('/VentaPublicoGeneral/SearchPV_VentasByDate', { fecha }, function (r, textStatus, jqXHR) {
         if (r.IsSuccess && Array.isArray(r.Response)) {
             const data = r.Response;
             const table = $('#tablePuntoVenta');
