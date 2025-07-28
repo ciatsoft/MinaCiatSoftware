@@ -332,7 +332,7 @@ namespace MinaTolWebApi.DAL
                     Value = rfid,
                     IsNullable = true,
                     ParameterName = "@RFID",
-                    SqlDbType = System.Data.SqlDbType.Int
+                    SqlDbType = System.Data.SqlDbType.NVarChar
                 });
 
                 var result = GetObject("SearchClienteByRFID", System.Data.CommandType.StoredProcedure,
