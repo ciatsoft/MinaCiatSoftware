@@ -163,7 +163,7 @@ $(document).ready(function () {
     $('#tblDeducciones').DataTable({
         data: [],
         columns: [
-            { data: 'Id', title: 'Id' },
+            { data: 'Id', title: 'Id', visible: false},
             { data: 'nombreGasto', title: 'Tipo de Gasto' },
             { data: "descripcion", title: "Descripción de la Deducción" },
             { data: "usuarioName", title: "Encargado" },
@@ -523,7 +523,7 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                         table.DataTable({
                             data: data,
                             columns: [
-                                { data: "id", title: "Id" },
+                                { data: "id", title: "Id", visible: false },
                                 { data: "nombreGasto", title: "Tipo Gasto" },
                                 { data: "descripcion", title: "Descripción de la Deducción" },
                                 { data: "usuarioName", title: "Encargado", visible: false },
