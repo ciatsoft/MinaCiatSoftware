@@ -207,6 +207,55 @@ $(document).ready(function () {
         }
     });
 
+
+    //Iniciar tabla vacia de Prepago
+    $('#tblPrepago').DataTable({
+        data: [],
+        columns: [
+            { data: "folio", title: "Folio" },
+            { data: "noVale", title: "No. Vale" },
+            { data: "rfid", title: "RFID" },
+            { data: "idCliente", title: "ID Cliente" ,visible: false},
+            { data: "nombreCliente", title: "Nombre Cliente" },
+            { data: "userName", title: "Usuario", visible: false },
+            { data: "importeVenta", title: "Importe Venta", render: $.fn.dataTable.render.number(',', '.', 2, '$') },
+            { data: "idMaterial", title: "ID Material", visible: false },
+            { data: "nombreMaterial", title: "Nombre Material" },
+            {
+                data: "fecha",
+                title: "Fecha",
+                render: function (data) {
+                    return new Date(data).toLocaleString('es-MX');
+                }
+            }
+        ],
+        language: {
+            "decimal": ",",
+            "thousands": ".",
+            "processing": "Procesando...",
+            "lengthMenu": "Mostrar _MENU_ entradas",
+            "zeroRecords": "No se encontraron resultados",
+            "emptyTable": "Ningún dato disponible en esta tabla",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+            "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+            "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+            "search": "Buscar:",
+            "loadingRecords": "Cargando...",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": activar para ordenar columna ascendente",
+                "sortDescending": ": activar para ordenar columna descendente"
+            }
+        }
+    });
+
+
+
     //Inicializar tabla vacia Caja Chica
     $('#tblCajaChica').DataTable({
         data: [],
@@ -788,7 +837,7 @@ function generarReportePDF() {
         leyenda.style.margin = '30px 0';
         leyenda.style.padding = '15px';
         leyenda.style.border = '2px dashed red';
-        leyenda.style.color = 'red';
+        leyenda.style.color = 'red'; 
         leyenda.style.fontWeight = 'bold';
         leyenda.style.fontSize = '16px';
         leyenda.textContent = 'Este reporte ya ha sido generado anteriormente.';
