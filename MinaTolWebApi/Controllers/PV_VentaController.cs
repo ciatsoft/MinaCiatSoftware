@@ -120,6 +120,13 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
+        [HttpGet, Route("totalPlanta2")]
+        public async Task<ModelResponse> TotalPlantaByFecha2([FromUri] DateTime fecha2, [FromUri] DateTime fecha3)
+        {
+            var result = wrapper.TotalPlantaByFecha2(fecha2, fecha3);
+            return result;
+        }
+
 
         [HttpGet, Route("Deducciones/{id:long}")]
         public async Task<ModelResponse> GetDeduccionesById(int id)

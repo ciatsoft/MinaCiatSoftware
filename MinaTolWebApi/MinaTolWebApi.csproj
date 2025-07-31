@@ -170,6 +170,7 @@
     <Compile Include="DAL\DbWrapper.Foliador.cs" />
     <Compile Include="DAL\DbWrapper.MaterialUbicacion.cs" />
     <Compile Include="DAL\DbWrapper.MetodoPago.cs" />
+    <Compile Include="DAL\DbWrapper.Prepago.cs" />
     <Compile Include="DAL\DbWrapper.Prestamos.cs" />
     <Compile Include="DAL\DbWrapper.PV_CajaChica.cs" />
     <Compile Include="DAL\DbWrapper.PV_CorteCaja.cs" />

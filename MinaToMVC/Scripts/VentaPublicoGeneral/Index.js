@@ -981,6 +981,19 @@ function AbrirModalVehiculoPublicoGeneral() {
     });
 }
 
+// Modal de Prepago para generar Valera
+function AbrirModalPrepago() {
+    // Limpiar completamente el modal antes de cargar nuevo contenido
+    $("#genericModal").removeData('b s.modal');
+    $("#boddyGeericModal").empty();
+
+    $("#titleGenerciModal").text("Generar Valera para Prepago:");
+
+    $("#boddyGeericModal").load("/VentaPublicoGeneral/PartialPrepago", function () {
+        $("#genericModal").modal("show");
+    });
+}
+
 function AbrirModalDeduccion(id = 0) {
     const titulo = id !== 0 ? "Editar Deducción" : "Nueva Deducción";
     $("#titleGenerciModal").text(titulo);

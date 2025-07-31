@@ -525,7 +525,7 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                             columns: [
                                 { data: "id", title: "Id", visible: false },
                                 { data: "nombreGasto", title: "Tipo Gasto" },
-                                { data: "descripcion", title: "Descripción de la Deducción" },
+                                { data: "descripcion", title: "Descripcion de la Deduccion" },
                                 { data: "usuarioName", title: "Encargado", visible: false },
                                 {
                                     data: "monto",
@@ -556,7 +556,7 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                                 "processing": "Procesando...",
                                 "lengthMenu": "Mostrar _MENU_ entradas",
                                 "zeroRecords": "No se encontraron resultados",
-                                "emptyTable": "Ningún dato disponible en esta tabla",
+                                "emptyTable": "Sin Gastos Registrados",
                                 "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
                                 "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
                                 "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -676,437 +676,6 @@ function calcularTotal() {
     }));
 }
 
-//function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
-//    PostMVC('/VentaPublicoGeneral/SearchPV_VentasByDateAndUser', { usuarioId, fecha }, function (r, textStatus, jqXHR) {
-//        if (r.IsSuccess) {
-//            const data = r.Response;
-
-//            // Destruye DataTable si ya existe (evita duplicados al hacer múltiples filtros)
-//            if ($.fn.DataTable.isDataTable('#tblVentas_Realizadas')) {
-//                $('#tblVentas_Realizadas').DataTable().clear().destroy();
-//            }
-
-//            if ($.fn.DataTable.isDataTable('#tblVentas_Aprobadas')) {
-//                $('#tblVentas_Aprobadas').DataTable().clear().destroy();
-//            }
-
-//            // Mapea los datos al DataTable Ventas GENERALES
-//            $('#tblVentas_Realizadas').DataTable({
-//                data: data,
-//                columns: [
-//                    { data: 'folio', title: 'Folio' },
-//                    {
-//                        data: 'totalPago',
-//                        title: 'Total Pago',
-//                        render: function (data) {
-//                            return `$${parseFloat(data).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`;
-//                        }
-//                    },
-//                    {
-//                        data: "formaDePago",
-//                        title: "Forma de Pago",
-//                        render: function (data) {
-//                            if (data === "E") return "Efectivo";
-//                            if (data === "T") return "Transferencia";
-//                            return "Vale";
-//                        }
-//                    },
-//                    {
-//                        data: "estatusVenta",
-//                        title: "Estado de Venta",
-//                        render: function (data) {
-//                            if (data === "E") return "Efectiva";
-//                            if (data === "C") return "Cancelada";
-//                            return "Rechazada";
-//                        }
-//                    },
-//                    {
-//                        data: 'fecha',
-//                        title: 'Fecha',
-//                        render: function (data) {
-//                            return new Date(data).toLocaleString('es-MX');
-//                        }
-//                    },
-//                    {
-//                        data: 'corte_Id',
-//                        title: 'ID Corte',
-//                        render: function (data) {
-//                            return data > 0 ? data : '';
-//                        },
-//                        visible: data.some(item => item.corte_Id > 0)
-//                    }
-//                ],
-//                language: {
-//                    "decimal": ",",
-//                    "thousands": ".",
-//                    "processing": "Procesando...",
-//                    "lengthMenu": "Mostrar _MENU_ entradas",
-//                    "zeroRecords": "No se encontraron resultados",
-//                    "emptyTable": "Ningún dato disponible en esta tabla",
-//                    "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-//                    "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-//                    "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-//                    "search": "Buscar:",
-//                    "loadingRecords": "Cargando...",
-//                    "paginate": {
-//                        "first": "Primero",
-//                        "last": "Último",
-//                        "next": "Siguiente",
-//                        "previous": "Anterior"
-//                    },
-//                    "aria": {
-//                        "sortAscending": ": activar para ordenar la columna de manera ascendente",
-//                        "sortDescending": ": activar para ordenar la columna de manera descendente"
-//                    }
-//                }
-//            });
-
-//            // Mapea los datos al DataTable Ventas Aprobadas
-//            const datosFiltrados = data.filter(item => item.estatusVenta === "E");
-
-//            // Agrupar por formaDePago
-//            const resumenPorPago = datosFiltrados.reduce((acc, item) => {
-//                let tipoPago = "";
-//                if (item.formaDePago === "E") tipoPago = "Efectivo";
-//                else if (item.formaDePago === "T") tipoPago = "Transferencia";
-//                else tipoPago = "Vale";
-
-//                if (!acc[tipoPago]) {
-//                    acc[tipoPago] = {
-//                        formaDePago: tipoPago,
-//                        totalPago: 0,
-//                        cantidadRegistros: 0
-//                    };
-//                }
-
-//                acc[tipoPago].totalPago += parseFloat(item.totalPago);
-//                acc[tipoPago].cantidadRegistros += 1;
-
-//                return acc;
-//            }, {});
-
-//            // Convertir el resumen en array para DataTable
-//            const resumenArray = Object.values(resumenPorPago);
-
-//            // Calcular el total general y mostrarlo en el input
-//            const totalGeneral = resumenArray.reduce((acc, item) => acc + item.totalPago, 0);
-
-//            document.getElementById('ingreso').value = totalGeneral.toLocaleString('es-MX', {
-//                style: 'currency',
-//                currency: 'MXN'
-//            });
-
-//            // Crear una nueva tabla con datos resumidos
-//            $('#tblVentas_Aprobadas').DataTable({
-//                data: resumenArray,
-//                columns: [
-//                    { data: 'formaDePago', title: 'Forma de Pago' },
-//                    {
-//                        data: 'totalPago',
-//                        title: 'Total Acumulado',
-//                        render: function (data) {
-//                            return `$${parseFloat(data).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`;
-//                        }
-//                    },
-//                    { data: 'cantidadRegistros', title: 'Cantidad de Registros' }
-//                ],
-//                language: {
-//                    "decimal": ",",
-//                    "thousands": ".",
-//                    "processing": "Procesando...",
-//                    "lengthMenu": "Mostrar _MENU_ entradas",
-//                    "zeroRecords": "No se encontraron resultados",
-//                    "emptyTable": "Ningún dato disponible en esta tabla",
-//                    "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-//                    "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-//                    "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-//                    "search": "Buscar:",
-//                    "loadingRecords": "Cargando...",
-//                    "paginate": {
-//                        "first": "Primero",
-//                        "last": "Último",
-//                        "next": "Siguiente",
-//                        "previous": "Anterior"
-//                    },
-//                    "aria": {
-//                        "sortAscending": ": activar para ordenar la columna de manera ascendente",
-//                        "sortDescending": ": activar para ordenar la columna de manera descendente"
-//                    }
-//                }
-//            });
-
-//            // Objeto para almacenar los resultados
-//            const resultados = {
-//                totalGeneral: totalGeneral,
-//                totalMonto: 0
-//            };
-
-//            // Función para manejar errores de las llamadas AJAX
-//            const handleAjaxError = (error) => {
-//                console.error("Error en la llamada AJAX:", error);
-//                alert("Ocurrió un error al obtener los datos. Por favor revisa la consola para más detalles.");
-//            };
-
-//            // Primera llamada AJAX para dinero en caja
-//            PostMVC('/VentaPublicoGeneral/SearchPV_DineroCajaByDateAndUser', { userName, fecha }, function (r, textStatus, jqXHR) {
-//                if (!r.IsSuccess) {
-//                    handleAjaxError(r.Message);
-//                    return;
-//                }
-
-//                if ($.fn.DataTable.isDataTable('#tblEn_Caja')) {
-//                    $('#tblEn_Caja').DataTable().clear().destroy();
-//                }
-//                const cajaData = r.Response;
-
-//                // Tabla de Dinero en Caja
-//                $('#tblEn_Caja').DataTable({
-//                    data: cajaData,
-//                    columns: [
-//                        { data: "id", visible: false, title: "id" },
-//                        { data: "b1000", title: "Billetes de 1000", className: 'titulo-pequeno' },
-//                        { data: "b500", title: "Billetes de 500", className: 'titulo-pequeno' },
-//                        { data: "b200", title: "Billetes de 200", className: 'titulo-pequeno' },
-//                        { data: "b100", title: "Billetes de 100", className: 'titulo-pequeno' },
-//                        { data: "b50", title: "Billetes de 50", className: 'titulo-pequeno' },
-//                        { data: "b20", title: "Billetes de 20", className: 'titulo-pequeno' },
-//                        { data: "m10", title: "Monedas de 10", className: 'titulo-pequeno' },
-//                        { data: "m5", title: "Monedas de 5", className: 'titulo-pequeno' },
-//                        { data: "m2", title: "Monedas de 2", className: 'titulo-pequeno' },
-//                        { data: "m1", title: "Monedas de 1", className: 'titulo-pequeno' },
-//                        { data: "m050", title: "Monedas de 0.50c", className: 'titulo-pequeno' },
-//                        {
-//                            data: "ventaVale",
-//                            title: "Venta por Vales",
-//                            className: 'titulo-pequeno',
-//                            render: function (data) {
-//                                return data ? parseFloat(data).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) : "$0.00";
-//                            }
-//                        },
-//                        {
-//                            data: "ventaTransferencia",
-//                            title: "Venta por Transferencia",
-//                            className: 'titulo-pequeno',
-//                            render: function (data) {
-//                                return data ? parseFloat(data).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) : "$0.00";
-//                            }
-//                        },
-//                        {
-//                            data: "ventaEfectivo",
-//                            title: "Venta por Efectivo",
-//                            className: 'titulo-pequeno',
-//                            render: function (data) {
-//                                return data ? parseFloat(data).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) : "$0.00";
-//                            }
-//                        },
-//                        {
-//                            data: 'corte_Id',
-//                            title: 'ID Corte',
-//                            render: function (data) {
-//                                return data > 0 ? data : '';
-//                            },
-//                            visible: cajaData.some(item => item.corte_Id > 0)
-//                        }
-//                    ],
-//                    language: {
-//                        "decimal": ",",
-//                        "thousands": ".",
-//                        "processing": "Procesando...",
-//                        "lengthMenu": "Mostrar _MENU_ entradas",
-//                        "zeroRecords": "No se encontraron resultados",
-//                        "emptyTable": "Ningún dato disponible en esta tabla",
-//                        "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-//                        "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-//                        "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-//                        "search": "Buscar:",
-//                        "loadingRecords": "Cargando...",
-//                        "paginate": {
-//                            "first": "Primero",
-//                            "last": "Último",
-//                            "next": "Siguiente",
-//                            "previous": "Anterior"
-//                        },
-//                        "aria": {
-//                            "sortAscending": ": activar para ordenar la columna de manera ascendente",
-//                            "sortDescending": ": activar para ordenar la columna de manera descendente"
-//                        }
-//                    }
-//                });
-
-//                // Segunda llamada AJAX para caja chica
-//                PostMVC('/VentaPublicoGeneral/SearchPV_CajaChicaByDateAndUserAndCorteId', { userName, fecha }, function (r, textStatus, jqXHR) {
-//                    if (!r.IsSuccess) {
-//                        handleAjaxError(r.Message);
-//                        return;
-//                    }
-
-//                    if ($.fn.DataTable.isDataTable('#tblCajaChica')) {
-//                        $('#tblCajaChica').DataTable().clear().destroy();
-//                    }
-
-//                    const cajaChicaData = r.Response;
-
-//                    // Calcular suma de montos
-//                    resultados.totalMonto = 0;
-//                    cajaChicaData.forEach(item => {
-//                        resultados.totalMonto += parseFloat(item.monto);
-//                    });
-
-//                    // Asignar al input con id="caja"
-//                    $('#caja').val(resultados.totalMonto.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }));
-
-//                    // Tabla de Dinero en Caja
-//                    $('#tblCajaChica').DataTable({
-//                        data: cajaChicaData,
-//                        columns: [
-//                            { data: "id", "visible": false, title: "id" },
-//                            {
-//                                data: 'fecha',
-//                                title: 'Fecha',
-//                                render: function (data) {
-//                                    return new Date(data).toLocaleString('es-MX');
-//                                }
-//                            },
-//                            {
-//                                data: 'monto',
-//                                title: 'Monto',
-//                                render: function (data) {
-//                                    return `$${parseFloat(data).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`;
-//                                }
-//                            },
-//                            { data: "comentarios", title: "Comentarios" },
-//                            {
-//                                data: 'corte_Id',
-//                                title: 'ID Corte',
-//                                render: function (data) {
-//                                    return data > 0 ? data : '';
-//                                },
-//                                visible: cajaChicaData.some(item => item.corte_Id > 0)
-//                            }
-//                        ],
-//                        language: {
-//                            "decimal": ",",
-//                            "thousands": ".",
-//                            "processing": "Procesando...",
-//                            "lengthMenu": "Mostrar _MENU_ entradas",
-//                            "zeroRecords": "No se encontraron resultados",
-//                            "emptyTable": "Ningún dato disponible en esta tabla",
-//                            "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-//                            "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-//                            "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-//                            "search": "Buscar:",
-//                            "loadingRecords": "Cargando...",
-//                            "paginate": {
-//                                "first": "Primero",
-//                                "last": "Último",
-//                                "next": "Siguiente",
-//                                "previous": "Anterior"
-//                            },
-//                            "aria": {
-//                                "sortAscending": ": activar para ordenar la columna de manera ascendente",
-//                                "sortDescending": ": activar para ordenar la columna de manera descendente"
-//                            }
-//                        }
-//                    });
-
-//                    // Tercera llamada AJAX para deducciones
-//                    PostMVC('/VentaPublicoGeneral/SearchDeduccionesByDateAndUser', { userName, fecha }, function (r, textStatus, jqXHR) {
-//                        if (!r.IsSuccess) {
-//                            handleAjaxError(r.Message);
-//                            return;
-//                        }
-
-//                        if ($.fn.DataTable.isDataTable('#tblDeducciones')) {
-//                            $('#tblDeducciones').DataTable().clear().destroy();
-//                        }
-
-//                        const deduccionesData = r.Response;
-
-//                        // Calcular suma de montos de deducciones
-//                        let totalDeducciones = 0;
-//                        deduccionesData.forEach(item => {
-//                            totalDeducciones += parseFloat(item.monto);
-//                        });
-
-//                        // Sumar al total de monto (caja chica + deducciones)
-//                        resultados.totalMonto += totalDeducciones;
-
-//                        // Actualizar el input de caja
-//                        $('#caja').val(resultados.totalMonto.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }));
-
-//                        // Tabla de Deducciones
-//                        $('#tblDeducciones').DataTable({
-//                            data: deduccionesData,
-//                            columns: [
-//                                { data: "id", "visible": false, title: "id" },
-//                                {
-//                                    data: 'fecha',
-//                                    title: 'Fecha',
-//                                    render: function (data) {
-//                                        return new Date(data).toLocaleString('es-MX');
-//                                    }
-//                                },
-//                                {
-//                                    data: 'monto',
-//                                    title: 'Monto',
-//                                    render: function (data) {
-//                                        return `$${parseFloat(data).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`;
-//                                    }
-//                                },
-//                                { data: "comentarios", title: "Comentarios" },
-//                                {
-//                                    data: 'corte_Id',
-//                                    title: 'ID Corte',
-//                                    render: function (data) {
-//                                        return data > 0 ? data : '';
-//                                    },
-//                                    visible: deduccionesData.some(item => item.corte_Id > 0)
-//                                }
-//                            ],
-//                            language: {
-//                                "decimal": ",",
-//                                "thousands": ".",
-//                                "processing": "Procesando...",
-//                                "lengthMenu": "Mostrar _MENU_ entradas",
-//                                "zeroRecords": "No se encontraron resultados",
-//                                "emptyTable": "Ningún dato disponible en esta tabla",
-//                                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-//                                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-//                                "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-//                                "search": "Buscar:",
-//                                "loadingRecords": "Cargando...",
-//                                "paginate": {
-//                                    "first": "Primero",
-//                                    "last": "Último",
-//                                    "next": "Siguiente",
-//                                    "previous": "Anterior"
-//                                },
-//                                "aria": {
-//                                    "sortAscending": ": activar para ordenar la columna de manera ascendente",
-//                                    "sortDescending": ": activar para ordenar la columna de manera descendente"
-//                                }
-//                            }
-//                        });
-
-//                        // Calcular la resta y formatear como moneda MXN
-//                        const restaTotal = resultados.totalGeneral - resultados.totalMonto;
-//                        const formatoMXN = new Intl.NumberFormat('es-MX', {
-//                            style: 'currency',
-//                            currency: 'MXN'
-//                        }).format(restaTotal);
-
-//                        // Asignar el valor formateado al input
-//                        document.getElementById('total').value = formatoMXN;
-//                    });
-//                });
-//            });
-//        } else {
-//            alert("Error al obtener registros. Ver consola para más detalles.");
-//            console.error("Error en la respuesta:", r);
-//        }
-//    });
-//}   
-
 function limpiarCalculos() {
     $('#ingreso').val('');
     $('#caja').val();
@@ -1127,15 +696,24 @@ function generarReportePDF() {
 
     const { jsPDF } = window.jspdf;
 
-    // Validar si las tablas están vacías
-    const tablas = [
+    // Mostrar animación de carga
+    Swal.fire({
+        title: "Generando reporte...",
+        text: "Por favor espere mientras se genera el PDF",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    // Validar si las tablas están vacías (excepto Deducciones)
+    const tablasRequeridas = [
         { id: '#tblCajaChica', nombre: 'Caja Chica' },
         { id: '#tblVentas_Realizadas', nombre: 'Ventas Realizadas' },
-        { id: '#tblEn_Caja', nombre: 'En Caja' },
-        { id: '#tblDeducciones', nombre: 'Deducciones' }
+        { id: '#tblEn_Caja', nombre: 'En Caja' }
     ];
 
-    for (let tabla of tablas) {
+    for (let tabla of tablasRequeridas) {
         if ($(tabla.id).DataTable().data().count() === 0) {
             Swal.fire({
                 icon: 'warning',
@@ -1147,7 +725,7 @@ function generarReportePDF() {
         }
     }
 
-    // Obtener datos de tablas
+    // Obtener datos de tablas (incluyendo Deducciones aunque esté vacía)
     const datosVentas = $('#tblVentas_Realizadas').DataTable().rows().data().toArray();
     const datosCajaChica = $('#tblCajaChica').DataTable().rows().data().toArray();
     const datosDeducciones = $('#tblDeducciones').DataTable().rows().data().toArray();
@@ -1156,15 +734,13 @@ function generarReportePDF() {
     // Función para validar si existen Corte_Id
     function tieneCorteId(datos) {
         return datos.some(row => {
-            // Verifica si existe la propiedad (case insensitive)
             const corteId = row.corte_Id !== undefined ? row.corte_Id :
                 row.Corte_Id !== undefined ? row.Corte_Id : null;
-
             return corteId !== null && !isNaN(corteId) && parseInt(corteId) > 0;
         });
     }
 
-    // Cambia todas las referencias de Corte_Id a corte_Id
+    // Verificar si existe algún Corte_Id
     const existeCorteId = (
         tieneCorteId(datosVentas) ||
         tieneCorteId(datosCajaChica) ||
@@ -1173,19 +749,17 @@ function generarReportePDF() {
     );
 
     // Si NO hay Corte_Id, ejecuta InfoReporte()
-    if (!existeCorteId) {
-        if (typeof InfoReporte === 'function') {
-            var usuarioId = $("#userId").val();
-            var fechaFiltro = $("#fechaFiltro").val();
-            var usuarioName = $("#userName").val();
-            var estatus = 1;
-            var createdBy = $("#userName").val();
-            var createdDt = new Date().toISOString();
-            var updatedBy = $("#userName").val();
-            var updatedDt = new Date().toISOString();
+    if (!existeCorteId && typeof InfoReporte === 'function') {
+        var usuarioId = $("#userId").val();
+        var fechaFiltro = $("#fechaFiltro").val();
+        var usuarioName = $("#userName").val();
+        var estatus = 1;
+        var createdBy = $("#userName").val();
+        var createdDt = new Date().toISOString();
+        var updatedBy = $("#userName").val();
+        var updatedDt = new Date().toISOString();
 
-            InfoReporte(usuarioId, usuarioName, fechaFiltro, estatus, createdBy, createdDt, updatedBy, updatedDt);
-        }
+        InfoReporte(usuarioId, usuarioName, fechaFiltro, estatus, createdBy, createdDt, updatedBy, updatedDt);
     }
 
     // Comienza la generación del PDF
@@ -1219,15 +793,6 @@ function generarReportePDF() {
         leyenda.style.fontSize = '16px';
         leyenda.textContent = 'Este reporte ya ha sido generado anteriormente.';
         pdfContent.appendChild(leyenda);
-
-        Swal.fire({
-            title: "Reporte Generado!",
-            text: "El reporte ha sido generado exitosamente.",
-            icon: "success",
-            confirmButtonText: 'OK'
-        }).then(() => {
-            window.location.reload();
-        });
     }
 
     const tablasAExportar = [
@@ -1241,6 +806,12 @@ function generarReportePDF() {
     tablasAExportar.forEach(tabla => {
         const tableElement = document.getElementById(tabla.id);
         if (tableElement) {
+            // Verificar si la tabla tiene datos (excepto para Deducciones)
+            const dataTable = $(`#${tabla.id}`).DataTable();
+            if (tabla.id !== 'tblDeducciones' && dataTable.data().count() === 0) {
+                return; // Saltar esta tabla (excepto Deducciones)
+            }
+
             const tableClone = tableElement.cloneNode(true);
             tableClone.style.width = '100%';
             tableClone.style.marginBottom = '40px';
@@ -1287,7 +858,6 @@ function generarReportePDF() {
     `;
 
     pdfContent.appendChild(utilidadesDiv);
-
     document.body.appendChild(pdfContent);
 
     html2canvas(pdfContent, {
@@ -1326,6 +896,26 @@ function generarReportePDF() {
         const fileName = `Reporte_Utilidades_${fecha.replace(/\//g, '-')}_${userName}.pdf`;
         pdf.save(fileName);
 
+        document.body.removeChild(pdfContent);
+
+        Swal.fire({
+            title: "Reporte Generado!",
+            text: "El reporte ha sido generado exitosamente.",
+            icon: "success",
+            confirmButtonText: 'OK'
+        }).then(() => {
+            if (existeCorteId) {
+                window.location.reload();
+            }
+        });
+    }).catch(error => {
+        console.error('Error al generar PDF:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error al generar el PDF',
+            confirmButtonText: 'Entendido'
+        });
         document.body.removeChild(pdfContent);
     });
 }

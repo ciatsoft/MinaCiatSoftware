@@ -320,6 +320,40 @@ namespace MinaTolWebApi.DAL
             return response;
         }
 
+        public ModelResponse TotalPlantaByFecha2(DateTime fecha2, DateTime fecha3)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var fechaSolo2 = fecha2.Date;
+                var fechaSolo3 = fecha3.Date;
+
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@Fecha2",    SqlDbType.Date)   { Value = fechaSolo2 },
+                    new SqlParameter("@Fecha3",    SqlDbType.Date)   { Value = fechaSolo3 }
+                };
+
+                // CORREGIDO: usar GetList para obtener varios registros
+                var result = GetList(
+                    "TotalPlantaByFecha2",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader => FillEntity<TotalPlanta>(reader)
+                );
+
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+
         public ModelResponse SearchClienteByRFID(string rfid)
         {
             var response = new ModelResponse();
