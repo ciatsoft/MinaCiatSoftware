@@ -309,6 +309,7 @@
     <Content Include="Views\Catalog\PartialPermisosRol.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\PartialDeducciones.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\VentaPorPlanta.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\PartialPrepago.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
