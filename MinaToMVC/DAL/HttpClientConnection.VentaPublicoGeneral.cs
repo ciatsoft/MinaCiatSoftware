@@ -1,4 +1,6 @@
 ﻿using MinaTolEntidades;
+using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.DtoVentaPublicoGeneral;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -23,6 +25,56 @@ namespace MinaToMVC.DAL
 
             return modelResponse;
 
+        }
+
+
+
+        //--------------PREPAGO---------------------//
+
+        public async Task<ModelResponse> SaveOrUpdatePrepago(Prepago u)
+        {
+            var result = await RequestAsync<object>("api/VentaPublicoGeneral/Prepago", HttpMethod.Post, u,
+           new Func<string, string>((responseString) =>
+           {
+               return responseString;
+           }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+
+        public async Task<ModelResponse> DeletePrepago(long Id)
+        {
+            var result = await RequestAsync($"api/VentaPublicoGeneral/Prepago/{Id}", HttpMethod.Delete, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+        }
+
+        public async Task<ModelResponse> GetAllPrepagos()
+        {
+
+            var result = await RequestAsync<object>("api/VentaPublicoGeneral/Prepago/List", HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+
+        public async Task<ModelResponse> GetAllPrepagosByRFID(long Id)
+        {
+            var result = await RequestAsync<object>($"api/VentaPublicoGeneral/Prepago/{Id}", HttpMethod.Get, null,
+               new Func<string, string>((responseString) =>
+               {
+                   return responseString;
+               }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
         }
     }
 }

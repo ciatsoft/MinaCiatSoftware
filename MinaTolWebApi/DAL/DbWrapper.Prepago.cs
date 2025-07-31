@@ -1,4 +1,5 @@
 ﻿using MinaTolEntidades;
+using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoVentaPublicoGeneral;
 using MinaTolEntidades.DtoVentas;
 using System;
@@ -50,5 +51,88 @@ namespace MinaTolWebApi.DAL
 
             return response;
         }
+
+        public ModelResponse DeletePrepago(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id",
+                    SqlDbType = System.Data.SqlDbType.Int
+                });
+
+                var result = ExecuteNonQuery("DeletePrepago", System.Data.CommandType.StoredProcedure, parameters);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+
+
+        public ModelResponse GetAllPrepagos()
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                var result = GetObjects("GetAllPrepagos", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, Prepago>((reader) =>
+                    {
+                        var r = FillEntity<Prepago>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+
+        public ModelResponse GetAllPrepagosByRFID(string rfid)
+        {
+            var modelResponse = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+
+            // Agregar parámetro correctamente
+            parameters.Add(new SqlParameter("@RFID", rfid));
+
+            try
+            {
+                var user = GetObject("SELECT * FROM Prepago where Rfid = @RFID", CommandType.Text, parameters,
+                   new Func<IDataReader, Prepago>((reader) =>
+                   {
+                       var r = FillEntity<Prepago>(reader);
+                       return r;
+                   }));
+
+                modelResponse.Response = user;
+                modelResponse.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Message = ex.Message;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return modelResponse;
+        }
+
+
     }
 }

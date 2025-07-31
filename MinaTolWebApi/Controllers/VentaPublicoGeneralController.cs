@@ -1,5 +1,6 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.DtoVentaPublicoGeneral;
 using MinaTolWebApi.DAL;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using System.Web.Http;
 
 namespace MinaTolWebApi.Controllers
 {
-    [Authorize]
+
     [RoutePrefix("api/VentaPublicoGeneral")]
     public class VentaPublicoGeneralController : ApiController
     {
@@ -25,10 +26,44 @@ namespace MinaTolWebApi.Controllers
         [HttpGet, Route("{id:long}/")]
         public ModelResponse GetMaterialUbicacionByUbicacion(int id)
         {
-            var result =  wrapper.GetMaterialUbicacionByUbicacion(id);
+            var result = wrapper.GetMaterialUbicacionByUbicacion(id);
             return result;
         }
         #endregion
+
+        #region
+        //---------------------------PREPAGO----------------
+
+        [HttpPost, Route("Prepago")]
+        public ModelResponse SaveOrUpdatePrepago(Prepago tm)
+        {
+            var result = wrapper.SaveOrUpdatePrepago(tm);
+            return result;
+        }
+
+        [HttpDelete, Route("Prepago/{id:long}")]
+        public IHttpActionResult DeletePrepago(long id)
+        {
+            var result = wrapper.DeletePrepago(id);
+            return Ok(result);
+        }
+
+        [Route("Prepago/List"), HttpGet]
+        public async Task<ModelResponse> GetAllPrepagos()
+        {
+            var result = wrapper.GetAllPrepagos();
+            return result;
+        }
+
+        [HttpGet, Route("Prepago/{rfid}")]
+        public async Task<ModelResponse> GetAllPrepagosByRFID(string rfid)
+        {
+            var result = wrapper.GetAllPrepagosByRFID(rfid);
+            return result;
+        }
+
+        #endregion
+
     }
 
 }
