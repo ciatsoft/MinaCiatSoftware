@@ -233,6 +233,11 @@ namespace MinaToMVC.Controllers
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
+        //public async Task<ActionResult> PartialPrepago()
+        //{
+
+        //}
+
         public async Task<ActionResult> PartialVehiculoClientesPublicoGeneral()
         {
             DtoClientesVehiculoPublicoGral vehiculoPG = new DtoClientesVehiculoPublicoGral();
@@ -324,6 +329,11 @@ namespace MinaToMVC.Controllers
         public async Task<string> TotalPlantaByFecha(DateTime fecha)
         {
             var result = await httpClientConnection.TotalPlantaByFecha(fecha);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> TotalPlantaByFecha2(DateTime fecha2, DateTime fecha3)
+        {
+            var result = await httpClientConnection.TotalPlantaByFecha2(fecha2, fecha3);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
