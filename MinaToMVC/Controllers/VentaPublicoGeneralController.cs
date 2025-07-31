@@ -241,7 +241,7 @@ namespace MinaToMVC.Controllers
         public async Task<ActionResult> PartialVehiculoClientesPublicoGeneral()
         {
             DtoClientesVehiculoPublicoGral vehiculoPG = new DtoClientesVehiculoPublicoGral();
-            
+
             var usuarioToken = SessionHelper.GetSessionUser();
             var usuario = new List<Usuario>()
             {
@@ -343,6 +343,36 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.SearchDeduccionesByDateAndUser(userName, fecha);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+
+
+
+        //----------------PREPAGO----------------------------------
+        public async Task<ActionResult> SaveOrUpdatePrepago(Prepago reporte)
+        {
+            var r = await httpClientConnection.SaveOrUpdatePrepago(reporte);
+            return Redirect("Index");
+        }
+
+        public async Task<string> DeletePrepago(long id)
+        {
+            var result = await httpClientConnection.DeletePrepago(id);
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetAllPrepagos()
+        {
+            var token = Helpers.SessionHelper.GetSessionUser();
+            var result = await httpClientConnection.GetAllPrepagos();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> GetAllPrepagosByRFID(long Id)
+        {
+            var result = await httpClientConnection.GetAllPrepagosByRFID(Id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
         #endregion
 
         #region Precios
@@ -461,7 +491,7 @@ namespace MinaToMVC.Controllers
         //Buscar filtrado 
         public async Task<string> SearchPV_VentasByDateAndUser(int usuarioId, DateTime fecha)
         {
-            var result = await httpClientConnection.SearchPV_VentasByDateAndUser(usuarioId ,fecha);
+            var result = await httpClientConnection.SearchPV_VentasByDateAndUser(usuarioId, fecha);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
@@ -484,14 +514,14 @@ namespace MinaToMVC.Controllers
         public async Task<ActionResult> Prestamos(long id = 0)
         {
             DtoCatalogoPrestamo prestamo = new DtoCatalogoPrestamo();
-            if (id != 0)    
+            if (id != 0)
             {
                 var result = await httpClientConnection.GetPrestamosById(id);
                 var lista = JsonConvert.DeserializeObject<List<DtoCatalogoPrestamo>>(result.Response.ToString());
 
                 if (lista != null && lista.Count > 0)
                 {
-                    prestamo = lista.FirstOrDefault(); 
+                    prestamo = lista.FirstOrDefault();
                 }
             }
             var usuarioToken = SessionHelper.GetSessionUser();
@@ -514,7 +544,7 @@ namespace MinaToMVC.Controllers
             ViewBag.Usuarios = usuarios;
             ViewBag.Trabajadores = trabajadores;
 
-            return View(prestamo); 
+            return View(prestamo);
         }
         public async Task<string> GetAllPrestamos()
         {
