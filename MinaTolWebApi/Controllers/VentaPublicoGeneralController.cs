@@ -31,7 +31,7 @@ namespace MinaTolWebApi.Controllers
         }
         #endregion
 
-        #region
+        #region Prepago
         //---------------------------PREPAGO----------------
 
         [HttpPost, Route("Prepago")]
@@ -59,6 +59,13 @@ namespace MinaTolWebApi.Controllers
         public async Task<ModelResponse> GetAllPrepagosByRFID(string rfid)
         {
             var result = wrapper.GetAllPrepagosByRFID(rfid);
+            return result;
+        }
+
+        [HttpGet, Route("Prepago/folio/{folio}")]
+        public async Task<ModelResponse> GetAllPrepagosByFolio(string folio)
+        {
+            var result = wrapper.GetAllPrepagosByFolio(folio);
             return result;
         }
 

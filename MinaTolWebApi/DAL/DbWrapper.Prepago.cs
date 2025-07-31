@@ -28,6 +28,9 @@ namespace MinaTolWebApi.DAL
                     new SqlParameter("@IdCliente", p.IdCliente),
                     new SqlParameter("@NombreCliente", p.NombreCliente),
                     new SqlParameter("@ImporteVenta", p.ImporteVenta),
+                    new SqlParameter("@UserName", p.UserName),
+                    new SqlParameter("@IdMaterial", p.IdMaterial),
+                    new SqlParameter("@NombreMaterial", p.NombreMaterial),
                     new SqlParameter("@Fecha", p.Fecha),
                     new SqlParameter("@Estatus", p.Estatus),
                     new SqlParameter("@CreatedBy", p.CreatedBy),
@@ -113,7 +116,37 @@ namespace MinaTolWebApi.DAL
 
             try
             {
-                var user = GetObject("SELECT * FROM Prepago where Rfid = @RFID", CommandType.Text, parameters,
+                var user = GetList("SELECT * FROM Prepago where Rfid = @RFID", CommandType.Text, parameters,
+                   new Func<IDataReader, Prepago>((reader) =>
+                   {
+                       var r = FillEntity<Prepago>(reader);
+                       return r;
+                   }));
+
+                modelResponse.Response = user;
+                modelResponse.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Message = ex.Message;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return modelResponse;
+        }
+
+        public ModelResponse GetAllPrepagosByFolio(string folio)
+        {
+            var modelResponse = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+
+            // Agregar parámetro correctamente
+            parameters.Add(new SqlParameter("@Folio", folio));
+
+            try
+            {
+                var user = GetList("SELECT * FROM Prepago where Folio = @Folio", CommandType.Text, parameters,
                    new Func<IDataReader, Prepago>((reader) =>
                    {
                        var r = FillEntity<Prepago>(reader);

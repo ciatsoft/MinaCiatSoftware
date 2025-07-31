@@ -367,10 +367,43 @@ namespace MinaToMVC.Controllers
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
-        public async Task<string> GetAllPrepagosByRFID(long Id)
+        public async Task<string> GetAllPrepagosByRFID(string rfid)
         {
-            var result = await httpClientConnection.GetAllPrepagosByRFID(Id);
+            var result = await httpClientConnection.GetAllPrepagosByRFID(rfid);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<ActionResult> PartialPrepago()
+        {
+            Prepago prepago = new Prepago();
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            var clientes = new List<ClientePublicoGral>();
+            var responseclientes = await httpClientConnection.GetAllClientePublicoGral();
+            // Deseriali  za la respuesta
+            clientes = JsonConvert.DeserializeObject<List<ClientePublicoGral>>(responseclientes.Response.ToString());
+
+            var materiales = new List<DtoTipoMaterialUbicacion>();
+            var responsemateriales = await httpClientConnection.GetAllTipoMaterialUbicacion();
+            materiales = JsonConvert.DeserializeObject<List<DtoTipoMaterialUbicacion>>(responseclientes.Response.ToString());
+
+            ViewBag.Materiales = materiales;
+            ViewBag.Clientes = clientes;
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            return PartialView(prepago);
         }
 
         #endregion

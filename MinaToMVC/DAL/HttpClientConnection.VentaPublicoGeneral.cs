@@ -65,10 +65,21 @@ namespace MinaToMVC.DAL
 
             return modelResponse;
         }
-
-        public async Task<ModelResponse> GetAllPrepagosByRFID(long Id)
+        
+        public async Task<ModelResponse> GetAllPrepagosByRFID(string rfid)
         {
-            var result = await RequestAsync<object>($"api/VentaPublicoGeneral/Prepago/{Id}", HttpMethod.Get, null,
+            var result = await RequestAsync<object>($"api/VentaPublicoGeneral/Prepago/{rfid}", HttpMethod.Get, null,
+               new Func<string, string>((responseString) =>
+               {
+                   return responseString;
+               }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+
+        public async Task<ModelResponse> GetAllPrepagosByFolio(string folio)
+        {
+            var result = await RequestAsync<object>($"api/VentaPublicoGeneral/Prepago/folio/{folio}", HttpMethod.Get, null,
                new Func<string, string>((responseString) =>
                {
                    return responseString;
