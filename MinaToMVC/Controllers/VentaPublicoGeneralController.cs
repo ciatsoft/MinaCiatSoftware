@@ -233,11 +233,6 @@ namespace MinaToMVC.Controllers
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
-        //public async Task<ActionResult> PartialPrepago()
-        //{
-
-        //}
-
         public async Task<ActionResult> PartialVehiculoClientesPublicoGeneral()
         {
             DtoClientesVehiculoPublicoGral vehiculoPG = new DtoClientesVehiculoPublicoGral();
@@ -394,11 +389,6 @@ namespace MinaToMVC.Controllers
             // Deseriali  za la respuesta
             clientes = JsonConvert.DeserializeObject<List<ClientePublicoGral>>(responseclientes.Response.ToString());
 
-            var materiales = new List<DtoTipoMaterialUbicacion>();
-            var responsemateriales = await httpClientConnection.GetAllTipoMaterialUbicacion();
-            materiales = JsonConvert.DeserializeObject<List<DtoTipoMaterialUbicacion>>(responseclientes.Response.ToString());
-
-            ViewBag.Materiales = materiales;
             ViewBag.Clientes = clientes;
             ViewBag.UserToken = usuarioAutenticado;
             ViewBag.Usuarios = usuarios;

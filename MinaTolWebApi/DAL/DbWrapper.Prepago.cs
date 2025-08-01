@@ -31,12 +31,16 @@ namespace MinaTolWebApi.DAL
                     new SqlParameter("@UserName", p.UserName),
                     new SqlParameter("@IdMaterial", p.IdMaterial),
                     new SqlParameter("@NombreMaterial", p.NombreMaterial),
+                    new SqlParameter("@CantidadM3", p.CantidadM3),
+                    new SqlParameter("@M3Faltantes", p.M3Faltantes),
+                    new SqlParameter("@PrecioUnidad", p.PrecioUnidad),
+                    new SqlParameter("@CantidadVales", p.CantidadVales),
                     new SqlParameter("@Fecha", p.Fecha),
                     new SqlParameter("@Estatus", p.Estatus),
                     new SqlParameter("@CreatedBy", p.CreatedBy),
                     new SqlParameter("@CreatedDt", p.CreatedDt),
                     new SqlParameter("@UpdatedBy", p.UpdatedBy),
-                    new SqlParameter("@UpdatedDt", p.UpdatedDt),
+                    new SqlParameter("@UpdatedDt", p.UpdatedDt)
                 };
 
                 var result = ExecuteScalar("SaveOrUpdatePrepago", CommandType.StoredProcedure, parameters);
