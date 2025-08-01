@@ -184,6 +184,22 @@ namespace MinaToMVC.Controllers
 
             return PartialView();
         }
+
+        public async Task<ActionResult> PartialCanjeo(long id = 0)
+        {
+            var materialUbicacionResponse = await httpClientConnection.GetMaterialUbicacionByUbicacion(id);
+            var materialUbicacion = JsonConvert.DeserializeObject<List<MaterialUbicacion>>(materialUbicacionResponse.Response.ToString());
+            var listadoMaterial = new List<DtoTipoMaterialUbicacion>();
+            foreach (var i in materialUbicacion)
+            {
+                listadoMaterial.Add(i.Material);
+            }
+            var materiales = MappingPropertiToDropDownList<DtoTipoMaterialUbicacion>(listadoMaterial, "Id", "NombreTipoMaterial");
+            ViewBag.Materiales = materiales;
+
+            return PartialView();
+        }
+
         #endregion
 
         #region Data Acces

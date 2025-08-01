@@ -1005,6 +1005,18 @@ function AbrirModalDeduccion(id = 0) {
     });
 }
 
+function AbrirModalCanjeo() {
+    // Limpiar completamente el modal antes de cargar nuevo contenido
+    $("#genericModal").removeData('b s.modal');
+    $("#boddyGeericModal").empty();
+
+    $("#titleGenerciModal").text("Canjear Vale de Prepago:");
+
+    $("#boddyGeericModal").load("/VentaPublicoGeneral/PartialCanjeo", function () {
+        $("#genericModal").modal("show");
+    });
+}
+
 function Cargar(id) {
     PostMVC('/VentaPublicoGeneral/UpdateCarga', { id: id }, function (r, textStatus, jqXHR) {
         location.reload();

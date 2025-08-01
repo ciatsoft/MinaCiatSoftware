@@ -125,23 +125,30 @@
                 <div class="row">
                     <div class="col-lg-12 d-flex justify-content-between">
                         <div>
-                            <input id="btnGuardar" type="submit" value="Guardar" class="btn btn-success" />
+                            <input id="btnGuardar" type="submit" value="Guardar" class="btn btn-success btn-lg-custom" />
                         </div>
-                        <a href="/VentaPublicoGeneral/Index" class="btn btn-custom-cancel">Cancelar</a>
+                        <a href="/VentaPublicoGeneral/Index" class="btn btn-custom-cancel btn-lg-custom">Cancelar</a>
                     </div>
                 </div>
-                <div class="col-lg-13 d-flex justify-content-between">
+
+                <div class="col-lg-13 d-flex justify-content-between mt-2">
                     <div>
-                        <input id="btnPrepago" type="submit" value="Generar Prepago" class="btn btn-success" 
-                           onclick="AbrirModalPrepago()"/>
+                        <input id="btnPrepago" type="submit" value="Generar Prepago" class="btn btn-success btn-lg-custom"
+                               onclick="AbrirModalPrepago()" />
                     </div>
-                    <input type="button" value="Agregar Vehiculo Nuevo" id="btnAsociar" class="btn btn-custom-clean"
+                    <input type="button" value="Agregar Vehiculo Nuevo" id="btnAsociar" class="btn btn-custom-clean btn-lg-custom"
                            onclick="AbrirModalVehiculoPublicoGeneral()" />
                 </div>
+
                 <div style="margin-top: 10px;" class="d-flex justify-content-end">
-                    <input type="button" value="Generar Gasto" id="btnAsociar" class="btn btn-custom-cancel"
+                    <input type="button" value="Generar Gasto" id="btnAsociar" class="btn btn-custom-cancel btn-lg-custom"
                            onclick="AbrirModalDeduccion(0)" />
                 </div>
+
+                <div style="text-align: left; margin-top: -15px">
+                    <input id="btnAsociar" type="submit" value="Canjear Vale" class="btn btn-success btn-lg-custom" onclick="AbrirModalCanjeo()"/>
+                </div>
+
             </div>
         </div>
     }
