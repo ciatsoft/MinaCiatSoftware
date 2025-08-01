@@ -1,1 +1,89 @@
-﻿
+﻿@model MinaTolEntidades.DtoVentaPublicoGeneral.Prepago
+@{
+    ViewBag.Title = "PartialPrepago";
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+@using (Html.BeginForm("SaveOrUpdatePrepago", "VentaPublicoGeneral", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmPrepago" }))
+{
+    @Html.HiddenFor(x => x.Id, new { @id = "id" })
+
+    @Html.HiddenFor(x => x.Estatus)
+    @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy" })
+    @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy" })
+    @Html.HiddenFor(x => x.CreatedDt, new { id = "CreatedDt" })
+    @Html.HiddenFor(x => x.UpdatedDt, new { id = "UpdatedDt" })
+
+
+
+    <div class="content">
+        <br />
+        <div class="tabla-consultas-roll">
+            <div class="rectangulos" style="width: 100%;">
+                <h2>Crear Valera de Prepago</h2>
+
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-lg-4">
+                        <label>Tipo de Material:</label>
+
+                    </div>
+
+                    <div class="col-lg-4">
+                        <label>Cantidad de M3 Totales:</label>
+                        @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control no-select", @type = "number", id = "cantidadRecibida" })
+                    </div>
+
+                    <div class="col-lg-4">
+                        <label>Precio Por Unidad:</label>
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>Total a Pagar:</label>
+
+                    </div>
+                    <div class="col-lg-4">
+                        <label>RFID:</label>
+
+                    </div>
+                    <div class="col-lg-4">
+                        <label>IdCliente:</label>
+
+                    </div>
+                    <div class="col-lg-4">
+                        <label>Cliente::</label>
+
+                    </div>
+                    <div class="col-lg-4">
+                        <label>Fecha:</label>
+
+                    </div>
+                    <div class="col-lg-4">
+                        <label>Usuario:</label>
+                        <input type="text" class="form-control" value="@usuarioToken.UserName" readonly />
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12">
+                        <input type="button" value="Guardar" onclick="SaveOrUpdateDeducciones()" class="btn btn-success" />
+                        <a href="/VentaPublicoGeneral/Index" class="btn btn-custom-cancel">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    // Declarar precioMaterial como variable global
+    var precioMaterial = 0;
+
+    $()
+</script>
