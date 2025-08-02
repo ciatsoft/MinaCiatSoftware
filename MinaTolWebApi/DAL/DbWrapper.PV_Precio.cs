@@ -119,12 +119,6 @@ namespace MinaTolWebApi.DAL
                         return r;
                     }));
 
-                //foreach (var i in result)
-                //{
-                //    i.Material = (PV_Material)GetPV_PrecioByMaterial(i.Id).Response;
-
-                //}
-
                 response.Response = result;
 
             }
