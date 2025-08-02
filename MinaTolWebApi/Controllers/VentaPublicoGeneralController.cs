@@ -9,6 +9,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Results;
+using System.Web.Services.Description;
 
 namespace MinaTolWebApi.Controllers
 {
@@ -66,6 +68,15 @@ namespace MinaTolWebApi.Controllers
         public async Task<ModelResponse> GetAllPrepagosByFolio(string folio)
         {
             var result = wrapper.GetAllPrepagosByFolio(folio);
+            return result;
+        }
+        //------------------------------Partial Canjeo--------------------------------------
+
+
+        [HttpGet, Route("Folio/{folio}")]
+        public ModelResponse ObtenerVentaPorFolio(string folio)
+        {
+            var result = wrapper.ObtenerVentaPorFolio(folio);
             return result;
         }
 

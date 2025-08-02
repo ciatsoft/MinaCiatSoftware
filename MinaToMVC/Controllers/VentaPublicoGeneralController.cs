@@ -187,17 +187,60 @@ namespace MinaToMVC.Controllers
 
         public async Task<ActionResult> PartialCanjeo(long id = 0)
         {
-            var materialUbicacionResponse = await httpClientConnection.GetMaterialUbicacionByUbicacion(id);
+
+            var venta = new PV_Ventas();
+
+            var ubicacionResponse = await httpClientConnection.GetAllUbicacion();
+            var ubicacion = JsonConvert.DeserializeObject<List<DtoUbicacion>>(ubicacionResponse.Response.ToString()).Where(x => x.EsInterna);
+            var ubicacionDdl = MappingPropertiToDropDownList<DtoUbicacion>(ubicacion, "Id", "NombreUbicacion");
+
+            var materialUbicacionResponse = await httpClientConnection.GetMaterialUbicacionByUbicacion(ubicacion.FirstOrDefault().Id);
             var materialUbicacion = JsonConvert.DeserializeObject<List<MaterialUbicacion>>(materialUbicacionResponse.Response.ToString());
             var listadoMaterial = new List<DtoTipoMaterialUbicacion>();
+
+            //Obtener precio del material
+            var mayoreomenudeoResponse = await httpClientConnection.GetPrecioByMaterialId(materialUbicacion.FirstOrDefault().Id);
+            var mayoreomenudeo = JsonConvert.DeserializeObject<List<PV_Precio>>(mayoreomenudeoResponse.Response.ToString());
+
             foreach (var i in materialUbicacion)
             {
                 listadoMaterial.Add(i.Material);
             }
             var materiales = MappingPropertiToDropDownList<DtoTipoMaterialUbicacion>(listadoMaterial, "Id", "NombreTipoMaterial");
-            ViewBag.Materiales = materiales;
 
-            return PartialView();
+
+            var formasPago = System.Configuration.ConfigurationManager.AppSettings["FormaPago"].ToString().Split('|').ToList();
+
+            var unidadMedidaResponse = await httpClientConnection.GetAllUnidadMedida();
+            var unidadMedidaJson = JsonConvert.DeserializeObject<List<UnidadMedida>>(unidadMedidaResponse.Response.ToString());
+            var unidadMedida = MappingPropertiToDropDownList<UnidadMedida>(unidadMedidaJson, "Id", "Nombre");
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            var foliadorResponse = await httpClientConnection.GetFoliadorByNombre("VentaPublicoGeneral");
+            var foliador = JsonConvert.DeserializeObject<DtoFoliador>(foliadorResponse.Response.ToString());
+            foliador.CalcualrConsecutivoString();
+            venta.Folio = foliador.ConsecutivoString;
+
+
+            ViewBag.Ubicaciones = ubicacionDdl;
+            ViewBag.Materiales = materiales;
+            ViewBag.FormasPago = formasPago;
+            ViewBag.UnidadMedida = unidadMedida;
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+            return PartialView(venta);
         }
 
         #endregion

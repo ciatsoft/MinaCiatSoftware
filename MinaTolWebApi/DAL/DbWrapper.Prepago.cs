@@ -169,7 +169,38 @@ namespace MinaTolWebApi.DAL
 
             return modelResponse;
         }
+        //---------------Canjeo----------------------
+        public ModelResponse ObtenerVentaPorFolio(string folio)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = folio,
+                    IsNullable = true,
+                    ParameterName = "@Folio",
+                    SqlDbType = System.Data.SqlDbType.NVarChar
+                });
 
+                var result = GetObject("ObtenerVentaPorFolio", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, Prepago>((reader) =>
+                    {
+                        var r = FillEntity<Prepago>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
 
     }
 }

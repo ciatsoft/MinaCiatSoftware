@@ -1,2 +1,191 @@
-﻿
-hello word
+﻿@model MinaTolEntidades.DtoVentas.PV_Ventas
+@{
+    ViewBag.Title = "PartialCanjeo";
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+    var formasPago = ViewBag.FormasPago as List<string>;
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+@using (Html.BeginForm("SaveOrUpdateVenta", "VentaPublicoGeneral", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmPrepago" }))
+{
+    @Html.HiddenFor(x => x.Id, new { @id = "id" })
+    @Html.HiddenFor(x => x.Estatus)
+    @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy" })
+    @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy" })
+    @Html.HiddenFor(x => x.CreatedDt, new { id = "CreatedDt" })
+    @Html.HiddenFor(x => x.UpdatedDt, new { id = "UpdatedDt" })
+
+    <br />
+    <h2>Canjear Vale de Prepago</h2>
+    <div class="tabla-consultas-empleados">
+        <div class="rectangulos" style="width: 100%;">
+            <div class="row">
+                <div class="col-lg-3">
+                    <label>Folio:</label>
+                    @Html.TextBoxFor(x => x.Folio, new { @class = "form-control", id = "folioModal", value = "" })
+                </div>
+                <div class="col-lg-3">
+                    <label>RFID:</label>
+                    @Html.TextBoxFor(x => x.RFID, new { @class = "form-control", id = "rfid" })
+                </div>
+                <div class="col-lg-3">
+                    <label>Nombre Cliente:</label>
+                    @Html.TextBoxFor(x => x.NombreCliente, new { @class = "form-control", id = "nombreCliente", @readonly = "readonly" })
+                </div>
+                <div class="col-lg-3">
+                    <label>Descripción del transporte:</label>
+                    @Html.HiddenFor(x => x.Transporte, new { @class = "form-control", id = "descripcionVehiculo" })
+                    <select id="vehiculosDropdown" class="form-control">
+                        <option value="">Seleccione un vehículo</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-lg-3">
+                    <label>Placa:</label>
+                    @Html.TextBoxFor(x => x.Placa, new { @class = "form-control", id = "placa", @readonly = "readonly" })
+                </div>
+                <div class="col-lg-3">
+                    <label>Capacidad en M3:</label>
+                    @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control", type = "number", id = "cantidadRecibida" })
+                </div>
+                <div class="col-lg-3">
+                    <label>Planta:</label>
+                    @Html.DropDownListFor(x => x.Ubicacion.Id, (IEnumerable<SelectListItem>)ViewBag.Ubicaciones, new { @class = "form-control", onchange = "CambioUbicacion()" })
+                </div>
+                <div class="col-lg-3">
+                    <label>Material:</label>
+                    @Html.DropDownListFor(x => x.TipoMaterial.Id, (IEnumerable<SelectListItem>)ViewBag.Materiales, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-lg-3">
+                    <label>Forma de pago:</label>
+                    <select id="formaPago" name="FormaDePago" class="form-control">
+                        @if (formasPago != null)
+                        {
+                            foreach (var formaPago in formasPago)
+                            {
+                                var splitFormaPago = formaPago.Split(':');
+                                <option value="@splitFormaPago[0]">@splitFormaPago[1]</option>
+                            }
+                        }
+                    </select>
+                </div>
+                @Html.HiddenFor(x => x.CantidadRecibida, new { id = "cantidadRecibida" })
+                <div class="col-lg-3">
+                    <label>Vendedor:</label>
+                    @Html.DropDownListFor(x => x.Usuario.Id, (IEnumerable<SelectListItem>)ViewBag.Usuarios, new { @class = "form-control" })
+                </div>
+                <div class="col-lg-3">
+                    <label>Fecha:</label>
+                    @{
+                        var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
+                    }
+                    <input class="form-control" type="text" id="fecha" readonly value="@fechaActual" />
+                    @Html.HiddenFor(x => x.Fecha)
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <button type="button" class="btn btn-success" onclick="guardarVenta()">Canjear Vale</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const now = new Date();
+        const fechaInput = document.getElementById('fecha');
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        fechaInput.value = `${year}-${month}-${day}`;
+    });
+
+    $(document).ready(function () {
+        $('#folioModal').on('input', function () {
+            const valorFolio = $(this).val().trim();
+            const $RFID = $('#rfid');
+            const $nombreCliente = $('#nombreCliente');
+            const $descripcionVehiculo = $('#descripcionVehiculo');
+            const $placa = $('#placa');
+            const $cantidadRecibida = $('#cantidadRecibida');
+            const $dropdown = $('#vehiculosDropdown');
+
+            if (!valorFolio) {
+                $RFID.val('');
+                $nombreCliente.val('');
+                $descripcionVehiculo.val('');
+                $placa.val('');
+                $cantidadRecibida.val('');
+                $dropdown.empty().append('<option value="">Seleccione un vehículo</option>');
+                return;
+            }
+        });
+        // También cuando cambia el tipo de material
+        $("#TipoMaterial_Id").on("change", function () {
+            ObtenerPrecioMaterial();
+        });
+
+        $('#folio').on('change blur', function () {
+            const folio = $(this).val().trim();
+            if (folio === '') return;
+
+            // 👇 Aquí se imprime en consola lo que se está enviando
+            console.log("Enviando petición con folio:", folio);
+
+            $.ajax({
+                url: '@Url.Action("ObtenerVentaPorFolio", "VentaPublicoGeneral")',
+                type: 'GET',
+                data: { folio: folio },
+                success: function (data) {
+                    // 👇 Aquí se imprime en consola la respuesta recibida
+                    console.log("Respuesta recibida:", data);
+
+                    if (data && data.isSuccess && data.response) {
+                        const venta = data.response;
+
+                        $('#rfid').val(venta.rfid);
+                        $('#nombreCliente').val(venta.nombreCliente);
+                        $('#placa').val(venta.placa || '');
+                        $('#cantidadRecibida').val(venta.cantidadM3 || '');
+                        $('#descripcionVehiculo').val(venta.transporte || '');
+                        $('#formaPago').val(venta.formaDePago || '');
+                        $('#fecha').val(new Date(venta.fecha).toISOString().split('T')[0]);
+
+                        $('#Ubicacion_Id').val(venta.pv_PlantaId || venta.idPlanta || '');
+                        $('#TipoMaterial_Id').val(venta.idMaterial || '');
+                        $('#Usuario_Id').val(venta.usuarioId || '');
+                    } else {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Folio no encontrado',
+                            text: 'No se encontró una venta con ese folio.'
+                        });
+                    }
+                },
+                error: function (err) {
+                    console.error("Error en la petición:", err);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error al buscar folio',
+                        text: 'Verifica tu conexión o consulta con el administrador.'
+                    });
+                }
+            });
+        });
+
+        $('#vehiculosDropdown').on('change', function () {
+            $('#descripcionVehiculo').val($(this).val());
+        });
+    });
+</script>
