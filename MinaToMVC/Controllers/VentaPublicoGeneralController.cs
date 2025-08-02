@@ -124,13 +124,13 @@ namespace MinaToMVC.Controllers
         {
             var usuarioToken = SessionHelper.GetSessionUser();
             var usuario = new List<Usuario>()
-    {
-        new Usuario()
-        {
-            Id = usuarioToken.UserID,
-            Nombre = usuarioToken.UserName
-        }
-    };
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
             var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
 
             var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
@@ -236,7 +236,7 @@ namespace MinaToMVC.Controllers
             var r = await httpClientConnection.SearchClienteByRFID(rfid);
             return JsonConvert.SerializeObject(r);
         }
-
+        
         public async Task<string> GetVehiculosPublicoGralByIdCliente(long id)
         {
             var result = await httpClientConnection.GetVehiculosPublicoGralByIdCliente(id);
@@ -292,13 +292,13 @@ namespace MinaToMVC.Controllers
 
             var usuarioToken = SessionHelper.GetSessionUser();
             var usuario = new List<Usuario>
-    {
-        new Usuario
-        {
-            Id = usuarioToken.UserID,
-            Nombre = usuarioToken.UserName
-        }
-    };
+            {
+                new Usuario
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
 
             var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
 
@@ -388,6 +388,9 @@ namespace MinaToMVC.Controllers
         {
             Prepago prepago = new Prepago();
 
+            var materialesResponse = await httpClientConnection.GetAllTipoMaterialUbicacion();
+            var materiales = JsonConvert.DeserializeObject<List<DtoTipoMaterialUbicacion>>(materialesResponse.Response.ToString());
+
             var usuarioToken = SessionHelper.GetSessionUser();
             var usuario = new List<Usuario>()
             {
@@ -405,15 +408,15 @@ namespace MinaToMVC.Controllers
             // Deseriali  za la respuesta
             clientes = JsonConvert.DeserializeObject<List<ClientePublicoGral>>(responseclientes.Response.ToString());
 
+            ViewBag.Materiales = materiales;
             ViewBag.Clientes = clientes;
             ViewBag.UserToken = usuarioAutenticado;
             ViewBag.Usuarios = usuarios;
 
             return PartialView(prepago);
         }
-
         #endregion
-
+        
         #region Precios
         public async Task<string> GetPreciosBymaterialId(long id)
         {

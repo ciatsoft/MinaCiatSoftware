@@ -2,6 +2,7 @@
 @{
     ViewBag.Title = "PartialPrepago";
     var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 }
 
 <link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
@@ -11,14 +12,11 @@
 @using (Html.BeginForm("SaveOrUpdatePrepago", "VentaPublicoGeneral", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmPrepago" }))
 {
     @Html.HiddenFor(x => x.Id, new { @id = "id" })
-
     @Html.HiddenFor(x => x.Estatus)
-    @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy" })
-    @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy" })
-    @Html.HiddenFor(x => x.CreatedDt, new { id = "CreatedDt" })
-    @Html.HiddenFor(x => x.UpdatedDt, new { id = "UpdatedDt" })
-
-
+    @Html.HiddenFor(x => x.CreatedBy, new { @Value = usuarioToken.UserName })
+    @Html.HiddenFor(x => x.UpdatedBy, new { @Value = usuarioToken.UserName })
+    @Html.HiddenFor(x => x.CreatedDt, new { @Value = fechaActual })
+    @Html.HiddenFor(x => x.UpdatedDt, new { @Value = fechaActual })
 
     <div class="content">
         <br />
@@ -26,44 +24,79 @@
             <div class="rectangulos" style="width: 100%;">
                 <h2>Crear Valera de Prepago</h2>
 
+                <!-- Sección de campos de auditoría visibles -->
+                <div class="row" style="margin-top: 20px; background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+                    <div class="col-lg-3">
+                        <label>Creado por:</label>
+                        <input type="text" class="form-control" value="@usuarioToken.UserName" readonly />
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Fecha creación:</label>
+                        <input type="text" class="form-control" value="@fechaActual" readonly />
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Actualizado por:</label>
+                        <input type="text" class="form-control" value="@usuarioToken.UserName" readonly />
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Fecha actualización:</label>
+                        <input type="text" class="form-control" value="@fechaActual" readonly />
+                    </div>
+                </div>
+
+                <!-- Campos del formulario -->
                 <div class="row" style="margin-top: 20px;">
+                    <!-- Primera fila -->
                     <div class="col-lg-4">
                         <label>Tipo de Material:</label>
-
+                        @Html.DropDownList("ddlMateriales",
+                            new SelectList(ViewBag.Materiales, "Id", "NombreTipoMaterial"),
+                            new { @class = "form-control" })
+                        @Html.HiddenFor(x => x.IdMaterial, new { id = "idMaterial" })
                     </div>
 
                     <div class="col-lg-4">
                         <label>Cantidad de M3 Totales:</label>
-                        @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control no-select", @type = "number", id = "cantidadRecibida" })
+                        @Html.TextBoxFor(x => x.CantidadM3, new { @class = "form-control no-select", @type = "number", id = "cantidadM3" })
                     </div>
 
                     <div class="col-lg-4">
                         <label>Precio Por Unidad:</label>
-
+                        @Html.TextBoxFor(x => x.PrecioUnidad, new { @class = "form-control no-select", @type = "number", id = "precioUnidad", @readonly = "readonly" })
                     </div>
                 </div>
 
                 <div class="row">
+                    <!-- Segunda fila -->
                     <div class="col-lg-4">
                         <label>Total a Pagar:</label>
-
+                        @Html.TextBoxFor(x => x.ImporteVenta, new { @class = "form-control", @readonly = "readonly", @id = "importeVenta" })
                     </div>
+
                     <div class="col-lg-4">
                         <label>RFID:</label>
-
+                        @Html.TextBoxFor(x => x.RFID, new { @class = "form-control no-select", id = "rfidModal" })
                     </div>
+
                     <div class="col-lg-4">
-                        <label>IdCliente:</label>
-
+                        <label>Cliente:</label>
+                        @Html.TextBoxFor(x => x.NombreCliente, new { @class = "form-control no-select", id = "nombreClienteModal", @readonly = "readonly" })
+                        @Html.HiddenFor(x => x.IdCliente, new { id = "idCliente" })
                     </div>
+                </div>
+
+                <div class="row">
+                    <!-- Tercera fila -->
                     <div class="col-lg-4">
-                        <label>Cliente::</label>
-
+                        <label>Cantidad de Vales:</label>
+                        @Html.TextBoxFor(x => x.CantidadVales, new { @class = "form-control no-select", @type = "number", id = "cantidadVales" })
                     </div>
+
                     <div class="col-lg-4">
                         <label>Fecha:</label>
-
+                        @Html.TextBoxFor(x => x.Fecha, new { @class = "form-control no-select", id = "fechaModal", @readonly = "readonly" })
                     </div>
+
                     <div class="col-lg-4">
                         <label>Usuario:</label>
                         <input type="text" class="form-control" value="@usuarioToken.UserName" readonly />
@@ -72,7 +105,7 @@
 
                 <div class="row" style="margin-top: 20px;">
                     <div class="col-md-12">
-                        <input type="button" value="Guardar" onclick="SaveOrUpdateDeducciones()" class="btn btn-success" />
+                        <input type="button" value="Guardar" onclick="SaveOrUpdatePrepago()" class="btn btn-success" />
                         <a href="/VentaPublicoGeneral/Index" class="btn btn-custom-cancel">Cancelar</a>
                     </div>
                 </div>
@@ -82,8 +115,216 @@
 }
 
 <script>
-    // Declarar precioMaterial como variable global
+$(document).ready(function() {
     var precioMaterial = 0;
 
-    $()
+    // 1. Establecer fecha actual al cargar
+    function establecerFechaActual() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        $('#fechaModal').val(formattedDate);
+        console.log("Fecha establecida:", formattedDate);
+    }
+    establecerFechaActual();
+
+    // 2. Configuración de eventos RFID
+    function configurarEventosRFID() {
+        var rfidTimeout;
+
+        $("#rfidModal").on('input', function() {
+            const valorRFID = $(this).val().trim();
+            console.log("RFID ingresado (input event):", valorRFID);
+
+            clearTimeout(rfidTimeout);
+
+            if(valorRFID.length >= 8) {
+                rfidTimeout = setTimeout(function() {
+                    buscarClientePorRFID(valorRFID);
+                }, 800);
+            }
+        });
+
+        $("#rfidModal").on('change', function() {
+            const valorRFID = $(this).val().trim();
+            console.log("RFID cambiado (change event):", valorRFID);
+            if(valorRFID.length >= 8) {
+                buscarClientePorRFID(valorRFID);
+            }
+        });
+    }
+    configurarEventosRFID();
+
+    // Función para buscar cliente por RFID
+    function buscarClientePorRFID(rfid) {
+        console.log("Iniciando búsqueda de cliente con RFID:", rfid);
+
+        const $idCliente = $('#idCliente');
+        const $nombreCliente = $('#nombreClienteModal');
+        const $rfidInput = $('#rfidModal');
+
+        $.ajax({
+            url: '@Url.Action("SearchClienteByRFID", "VentaPublicoGeneral")',
+            type: 'GET',
+            data: { rfid: rfid },
+            dataType: 'json',
+            success: function(respuesta) {
+                console.log("Respuesta del servidor (SearchClienteByRFID):", respuesta);
+
+                if (respuesta.IsSuccess && respuesta.Response) {
+                    const cliente = respuesta.Response;
+                    $idCliente.val(cliente.id || '');
+                    $nombreCliente.val(cliente.nombre || '');
+                    console.log("Cliente encontrado:", cliente.nombre);
+                } else {
+                    $idCliente.val('');
+                    $nombreCliente.val('');
+                    console.warn("No se encontró cliente con RFID:", rfid);
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Aviso',
+                        text: 'No se encontró un cliente con ese RFID',
+                        timer: 3000
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error en la solicitud AJAX:", {
+                    status: status,
+                    error: error,
+                    responseText: xhr.responseText
+                });
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al buscar el cliente. Intente nuevamente.',
+                    timer: 3000
+                });
+            }
+        });
+    }
+
+    // Resto del código original
+    $('#ddlMateriales').change(function() {
+        $('#idMaterial').val($(this).val());
+        ObtenerPrecioMaterial();
+    });
+
+    var initialValue = $('#idMaterial').val();
+    if (initialValue) {
+        $('#ddlMateriales').val(initialValue);
+    }
+
+    $("#cantidadM3").on("input", function() {
+        ObtenerPrecioMaterial();
+    });
+
+    $("#idMaterial").on("change", function() {
+        ObtenerPrecioMaterial();
+    });
+
+    function ObtenerPrecioMaterial() {
+        var materialSeleccionado = $("#idMaterial").val();
+        var cantidadM3 = parseFloat($("#cantidadM3").val()) || 0;
+
+        if (!materialSeleccionado) {
+            console.warn("No hay material seleccionado aún.");
+            $("#precioMaterial").val(0);
+            $("#precioUnidad").val(0);
+            actualizarTotal();
+            return;
+        }
+
+        GetMVC("/VentaPublicoGeneral/GetPreciosBymaterialId/" + materialSeleccionado, function(r) {
+            if (r.IsSuccess && Array.isArray(r.Response) && r.Response.length > 0) {
+                const preciosActivos = r.Response.filter(item => item.esPrecioActivo === true);
+
+                if (preciosActivos.length > 0) {
+                    var datos = preciosActivos[0];
+                    var cantidadMenudeo = parseFloat(datos.cantidad) || 0;
+
+                    precioMaterial = (cantidadM3 > cantidadMenudeo)
+                        ? parseFloat(datos.precioMayoreo) || 0
+                        : parseFloat(datos.precioMenudeo) || 0;
+
+                    $("#precioMaterial").val(precioMaterial);
+                    $("#precioUnidad").val(precioMaterial);
+                } else {
+                    console.warn("No hay precios activos.");
+                    precioMaterial = 0;
+                    $("#precioMaterial").val(0);
+                    $("#precioUnidad").val(0);
+                }
+
+                actualizarTotal();
+            } else {
+                console.error("Error al obtener precios:", r);
+                precioMaterial = 0;
+                $("#precioMaterial").val(0);
+                $("#precioUnidad").val(0);
+                actualizarTotal();
+            }
+        });
+    }
+
+    function actualizarTotal() {
+        var cantidad = parseFloat($("#cantidadM3").val()) || 0;
+        var total = parseFloat(precioMaterial) * cantidad;
+
+        if (!isNaN(total)) {
+            $("#importeVenta").val(total.toFixed(2));
+        } else {
+            $("#importeVenta").val("");
+        }
+    }
+
+    // Función para guardar
+    window.SaveOrUpdatePrepago = function() {
+        if (validarFormulario()) {
+            // Actualizar campos de auditoría antes de enviar
+            var now = new Date().toISOString();
+            $('[name="UpdatedDt"]').val(now);
+
+            $('#frmPrepago').submit();
+        }
+    }
+
+    function validarFormulario() {
+        let isValid = true;
+
+        if ($('#rfidModal').val().trim().length < 8) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'El RFID debe tener al menos 8 caracteres',
+                timer: 3000
+            });
+            isValid = false;
+        }
+
+        if (!$('#idMaterial').val()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Debe seleccionar un tipo de material',
+                timer: 3000
+            });
+            isValid = false;
+        }
+
+        if (parseFloat($('#cantidadM3').val()) <= 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'La cantidad debe ser mayor que cero',
+                timer: 3000
+            });
+            isValid = false;
+        }
+
+        return isValid;
+    }
+});
 </script>
