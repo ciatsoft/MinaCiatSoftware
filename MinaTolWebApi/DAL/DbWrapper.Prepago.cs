@@ -13,41 +13,47 @@ namespace MinaTolWebApi.DAL
 {
     partial class DbWrapper
     {
-        public ModelResponse SaveOrUpdatePrepago(Prepago p)
+        public ModelResponse SaveOrUpdatePrepago(List<Prepago> prepagos)
         {
             var response = new ModelResponse();
+            var resultados = new List<object>();
 
             try
             {
-                var parameters = new List<SqlParameter>
+                foreach (var p in prepagos)
                 {
-                    new SqlParameter("@Id", p.Id),
-                    new SqlParameter("@Folio", p.Folio),
-                    new SqlParameter("@NoVale", p.NoVale),
-                    new SqlParameter("@RFID", p.RFID),
-                    new SqlParameter("@IdCliente", p.IdCliente),
-                    new SqlParameter("@NombreCliente", p.NombreCliente),
-                    new SqlParameter("@ImporteVenta", p.ImporteVenta),
-                    new SqlParameter("@UserName", p.UserName),
-                    new SqlParameter("@IdMaterial", p.IdMaterial),
-                    new SqlParameter("@NombreMaterial", p.NombreMaterial),
-                    new SqlParameter("@CantidadM3", p.CantidadM3),
-                    new SqlParameter("@M3Faltantes", p.M3Faltantes),
-                    new SqlParameter("@PrecioUnidad", p.PrecioUnidad),
-                    new SqlParameter("@CantidadVales", p.CantidadVales),
-                    new SqlParameter("@Fecha", p.Fecha),
-                    new SqlParameter("@Estatus", p.Estatus),
-                    new SqlParameter("@CreatedBy", p.CreatedBy),
-                    new SqlParameter("@CreatedDt", p.CreatedDt),
-                    new SqlParameter("@UpdatedBy", p.UpdatedBy),
-                    new SqlParameter("@UpdatedDt", p.UpdatedDt)
-                };
+                    var parameters = new List<SqlParameter>
+                    {
+                        new SqlParameter("@Id", p.Id),
+                        new SqlParameter("@Folio", p.Folio),
+                        new SqlParameter("@NoVale", p.NoVale),
+                        new SqlParameter("@RFID", p.RFID),
+                        new SqlParameter("@IdCliente", p.IdCliente),
+                        new SqlParameter("@NombreCliente", p.NombreCliente),
+                        new SqlParameter("@ImporteVenta", p.ImporteVenta),
+                        new SqlParameter("@UserName", p.UserName),
+                        new SqlParameter("@IdMaterial", p.IdMaterial),
+                        new SqlParameter("@NombreMaterial", p.NombreMaterial),
+                        new SqlParameter("@CantidadM3", p.CantidadM3),
+                        new SqlParameter("@M3Faltantes", p.M3Faltantes),
+                        new SqlParameter("@PrecioUnidad", p.PrecioUnidad),
+                        new SqlParameter("@CantidadVales", p.CantidadVales),
+                        new SqlParameter("@Fecha", p.Fecha),
+                        new SqlParameter("@Estatus", p.Estatus),
+                        new SqlParameter("@CreatedBy", p.CreatedBy),
+                        new SqlParameter("@CreatedDt", p.CreatedDt),
+                        new SqlParameter("@UpdatedBy", p.UpdatedBy),
+                        new SqlParameter("@UpdatedDt", p.UpdatedDt)
+                    };
 
-                var result = ExecuteScalar("SaveOrUpdatePrepago", CommandType.StoredProcedure, parameters);
-                p.Id = Convert.ToInt64(result);
+                    var result = ExecuteScalar("SaveOrUpdatePrepago", CommandType.StoredProcedure, parameters);
+                    p.Id = Convert.ToInt64(result);
+                    resultados.Add(result);
+                }
 
                 response.IsSuccess = true;
-                response.Response = result;
+                response.Message = "Todos los prepagos fueron procesados correctamente.";
+                response.Response = resultados;
             }
             catch (Exception ex)
             {

@@ -13,10 +13,10 @@
 {
     @Html.HiddenFor(x => x.Id, new { @id = "id" })
     @Html.HiddenFor(x => x.Estatus)
-    @Html.HiddenFor(x => x.CreatedBy, new { @Value = usuarioToken.UserName })
-    @Html.HiddenFor(x => x.UpdatedBy, new { @Value = usuarioToken.UserName })
-    @Html.HiddenFor(x => x.CreatedDt, new { @Value = fechaActual })
-    @Html.HiddenFor(x => x.UpdatedDt, new { @Value = fechaActual })
+    @Html.HiddenFor(x => x.CreatedBy, new { @Value = usuarioToken.UserName, @id = "createdByModal" })
+    @Html.HiddenFor(x => x.UpdatedBy, new { @Value = usuarioToken.UserName, @id = "updatedByModal" })
+    @Html.HiddenFor(x => x.CreatedDt, new { @Value = fechaActual, @id = "createdDtModal" })
+    @Html.HiddenFor(x => x.UpdatedDt, new { @Value = fechaActual, @id = "updatedDtModal" })
 
     <div class="content">
         <br />
@@ -25,22 +25,10 @@
                 <h2>Crear Valera de Prepago</h2>
 
                 <!-- Sección de campos de auditoría visibles -->
-                <div class="row" style="margin-top: 20px; background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
-                    <div class="col-lg-3">
-                        <label>Creado por:</label>
-                        <input type="text" class="form-control" value="@usuarioToken.UserName" readonly />
-                    </div>
-                    <div class="col-lg-3">
-                        <label>Fecha creación:</label>
-                        <input type="text" class="form-control" value="@fechaActual" readonly />
-                    </div>
-                    <div class="col-lg-3">
-                        <label>Actualizado por:</label>
-                        <input type="text" class="form-control" value="@usuarioToken.UserName" readonly />
-                    </div>
-                    <div class="col-lg-3">
-                        <label>Fecha actualización:</label>
-                        <input type="text" class="form-control" value="@fechaActual" readonly />
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-lg-4">
+                        <label>Folio:</label>
+                        @Html.TextBoxFor(x => x.Folio, new { @class = "form-control no-select", @type = "number", id = "folioModal", @readonly = "readonly" })
                     </div>
                 </div>
 
@@ -49,10 +37,16 @@
                     <!-- Primera fila -->
                     <div class="col-lg-4">
                         <label>Tipo de Material:</label>
-                        @Html.DropDownList("ddlMateriales",
-                            new SelectList(ViewBag.Materiales, "Id", "NombreTipoMaterial"),
-                            new { @class = "form-control" })
-                        @Html.HiddenFor(x => x.IdMaterial, new { id = "idMaterial" })
+                        @{
+                            var materialesList = new SelectList(ViewBag.Materiales, "Id", "NombreTipoMaterial");
+                            var materialesWithDefault = new List<SelectListItem>();
+                            materialesWithDefault.Add(new SelectListItem { Text = "Selecciona un material", Value = ""});
+                            materialesWithDefault.AddRange(materialesList.Select(m => new SelectListItem { Text = m.Text, Value = m.Value }));
+                        }
+
+                        @Html.DropDownListFor(x => x.IdMaterial,
+                            materialesWithDefault,
+                            new { @class = "form-control", id = "idMaterial" })
                     </div>
 
                     <div class="col-lg-4">
@@ -105,7 +99,7 @@
 
                 <div class="row" style="margin-top: 20px;">
                     <div class="col-md-12">
-                        <input type="button" value="Guardar" onclick="SaveOrUpdatePrepago()" class="btn btn-success" />
+                        <input type="button" value="Guardar" id="btnGuardarPrepago" class="btn btn-success" />
                         <a href="/VentaPublicoGeneral/Index" class="btn btn-custom-cancel">Cancelar</a>
                     </div>
                 </div>
@@ -126,7 +120,6 @@ $(document).ready(function() {
         const day = String(now.getDate()).padStart(2, '0');
         const formattedDate = `${year}-${month}-${day}`;
         $('#fechaModal').val(formattedDate);
-        console.log("Fecha establecida:", formattedDate);
     }
     establecerFechaActual();
 
@@ -280,51 +273,247 @@ $(document).ready(function() {
         }
     }
 
-    // Función para guardar
-    window.SaveOrUpdatePrepago = function() {
-        if (validarFormulario()) {
-            // Actualizar campos de auditoría antes de enviar
-            var now = new Date().toISOString();
-            $('[name="UpdatedDt"]').val(now);
-
-            $('#frmPrepago').submit();
+    $("#btnGuardarPrepago").click(async function() {
+        // Validar cantidad de vales
+        var cantidadVales = parseInt($("#cantidadVales").val());
+        if (isNaN(cantidadVales) || cantidadVales <= 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Debe ingresar una cantidad válida de vales (mayor a 0)',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
         }
+
+        // Obtener el folio base
+        var folioBase = $("#folioModal").val();
+        var numeroFolio = parseInt(folioBase) || 0;
+
+        // Crear array para guardar todos los vales
+        var valesParaGuardar = [];
+
+        for (var i = 0; i < cantidadVales; i++) {
+            var vale = {
+                Id: $("#id").val(),
+                Estatus: $("#Estatus").val(),
+                CreatedBy: $("#createdByModal").val(),
+                UpdatedBy: $("#updatedByModal").val(),
+                CreatedDt: $("#createdDtModal").val(),
+                UpdatedDt: $("#updatedDtModal").val(),
+                Folio: (numeroFolio + i).toString().padStart(5, '0'),
+                IdMaterial: $("#idMaterial").val(),
+                CantidadM3: $("#cantidadM3").val(),
+                M3Faltantes: $("#cantidadM3").val(),
+                PrecioUnidad: $("#precioUnidad").val(),
+                ImporteVenta: $("#importeVenta").val(),
+                RFID: $("#rfidModal").val(),
+                IdCliente: $("#idCliente").val(),
+                NombreCliente: $("#nombreClienteModal").val(),
+                CantidadVales: cantidadVales.toString(),
+                Fecha: $("#fechaModal").val(),
+                NoVale: (i + 1),
+                NombreMaterial: $("#idMaterial option:selected").text(),
+                UserName: "@usuarioToken.UserName"
+            };
+            valesParaGuardar.push(vale);
+        }
+
+        // Deshabilitar botón
+        $("#btnGuardarPrepago").prop("disabled", true).text("Guardando...");
+
+        try {
+            // Enviar TODOS los vales en un solo arreglo
+            const response = await enviarVales(valesParaGuardar);
+
+            if (!response.success) {
+                throw new Error(response.message || "Error al guardar vales");
+            }
+
+            // Si se guardó correctamente, generar el PDF
+            generarPDF(valesParaGuardar);
+
+            // Redirigir después de generar el PDF
+            window.location.href = '/VentaPublicoGeneral/Index';
+
+        } catch (error) {
+            console.error("Error:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error: ' + error.message,
+                confirmButtonText: 'Aceptar'
+            });
+        } finally {
+            $("#btnGuardarPrepago").prop("disabled", false).text("Guardar");
+        }
+    });
+
+    // Función para enviar todos los vales en un arreglo
+    function enviarVales(vales) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/VentaPublicoGeneral/SaveOrUpdatePrepagos',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ prepagos: vales }),
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: response.message,
+                            confirmButtonText: 'Aceptar'
+                        }).then(() => {
+                            window.location.href = '/VentaPublicoGeneral/Index';
+                        });
+                        resolve(response);
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message,
+                            confirmButtonText: 'Aceptar'
+                        });
+                        reject(response);
+                    }
+                },
+                error: function (xhr) {
+                    var errorMsg = xhr.responseText || "Error en la solicitud AJAX";
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: "Error: " + errorMsg,
+                        confirmButtonText: 'Aceptar'
+                    });
+                    reject({
+                        success: false,
+                        message: errorMsg
+                    });
+                }
+            });
+        });
     }
 
-    function validarFormulario() {
-        let isValid = true;
+    function generarPDF(vales) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+        });
 
-        if ($('#rfidModal').val().trim().length < 8) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'El RFID debe tener al menos 8 caracteres',
-                timer: 3000
-            });
-            isValid = false;
-        }
+        // Configuración de estilo
+        const primaryColor = [128, 128, 128]; // Gris
+        const secondaryColor = [76, 175, 80]; // Verde
 
-        if (!$('#idMaterial').val()) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Debe seleccionar un tipo de material',
-                timer: 3000
-            });
-            isValid = false;
-        }
+        // Margen superior e izquierdo
+        const marginLeft = 10;
+        const marginTop = 10;
 
-        if (parseFloat($('#cantidadM3').val()) <= 0) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'La cantidad debe ser mayor que cero',
-                timer: 3000
-            });
-            isValid = false;
-        }
+        // Tamaño de cada vale
+        const valeWidth = 190;
+        const valeHeight = 90; // Aumenté la altura para acomodar la leyenda
 
-        return isValid;
+        // Espacio entre vales
+        const spaceBetween = 10;
+
+        // Cargar imagen del logo
+        const logoPath = '/MinaToMVC/Assets/img/Logo.ico';
+        const logoWidth = 15;
+        const logoHeight = 15;
+
+        // Obtener fecha actual formateada
+        const fechaActual = new Date();
+        const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
+        const fechaFormateada = fechaActual.toLocaleDateString('es-MX', opcionesFecha);
+        const leyendaFecha = `Calimaya, Estado de México a: ______________`;
+
+        let valesEnPagina = 0;
+
+        vales.forEach((vale, index) => {
+            if (valesEnPagina >= 3) {
+                doc.addPage();
+                valesEnPagina = 0;
+            }
+
+            const yPos = marginTop + (valesEnPagina * (valeHeight + spaceBetween));
+
+            // Encabezado con color gris
+            doc.setFillColor(...primaryColor);
+            doc.rect(marginLeft, yPos, valeWidth, 15, 'F');
+
+            // Posicionamiento del título y logos
+            const centerX = marginLeft + valeWidth / 2;
+            const logoLeftX = centerX - 30;
+            const logoRightX = centerX + 15;
+            const titleY = yPos + 8;
+
+            try {
+                doc.addImage(logoPath, 'ICO', logoLeftX, yPos + 2, logoWidth, logoHeight);
+                doc.addImage(logoPath, 'ICO', logoRightX, yPos + 2, logoWidth, logoHeight);
+            } catch (e) {
+                console.error("Error al cargar el logo:", e);
+            }
+
+            // Título
+            doc.setFontSize(13);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(255, 255, 255);
+            doc.text('PLANTA PROCESADORA DE MATERIALES PETREOS SAN MIGUEL, S.A. DE C.V.', centerX, titleY, { align: 'center' });
+
+            // Número de vale
+            doc.setFontSize(8);
+            doc.text(`VALE No. ${vale.NoVale} de ${vale.CantidadVales}`, centerX, yPos + 13, { align: 'center' });
+
+            // Restaurar color de texto
+            doc.setTextColor(0, 0, 0);
+
+            // Cuerpo del vale
+            const labelStart = marginLeft + 30;
+            const valueStart = marginLeft + 70;
+
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('FOLIO:', labelStart, yPos + 25);
+            doc.text('FECHA:', labelStart, yPos + 32);
+            doc.text('CLIENTE:', labelStart, yPos + 39);
+            doc.text('MATERIAL:', labelStart, yPos + 46);
+            doc.text('CANTIDAD M3:', labelStart, yPos + 53);
+            doc.text('PRECIO UNITARIO:', labelStart, yPos + 60);
+            doc.text('IMPORTE TOTAL:', labelStart, yPos + 67);
+
+            // Valores
+            doc.setFont('helvetica', 'normal');
+            doc.text(vale.Folio, valueStart, yPos + 25);
+            doc.text(vale.Fecha, valueStart, yPos + 32);
+            doc.text(vale.NombreCliente, valueStart, yPos + 39);
+            doc.text(vale.NombreMaterial, valueStart, yPos + 46);
+            doc.text(vale.CantidadM3, valueStart, yPos + 53);
+            doc.text(`$${parseFloat(vale.PrecioUnidad).toFixed(2)}`, valueStart, yPos + 60);
+            doc.text(`$${parseFloat(vale.ImporteVenta).toFixed(2)}`, valueStart, yPos + 67);
+
+            // Sección de firma
+            doc.setDrawColor(...secondaryColor);
+            doc.setLineWidth(0.5);
+            doc.line(valueStart + 50, yPos + 75, valueStart + 100, yPos + 75);
+            doc.setFontSize(8);
+            doc.text('FIRMA Y SELLO', valueStart + 75, yPos + 80, { align: 'center' });
+
+            // Leyenda de fecha (cursiva, debajo de la firma)
+            doc.setFont('helvetica', 'italic');
+            doc.setFontSize(10);
+            doc.text(leyendaFecha, valueStart + 75, yPos + 85, { align: 'center' });
+
+            // Borde del vale
+            doc.setDrawColor(0, 0, 0);
+            doc.rect(marginLeft, yPos, valeWidth, valeHeight);
+
+            valesEnPagina++;
+        });
+
+        // Guardar el PDF
+        doc.save(`vales_${vales[0].Folio}_a_${vales[vales.length - 1].Folio}.pdf`);
     }
 });
 </script>
