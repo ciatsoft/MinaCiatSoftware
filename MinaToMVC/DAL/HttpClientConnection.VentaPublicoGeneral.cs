@@ -31,13 +31,13 @@ namespace MinaToMVC.DAL
 
         //--------------PREPAGO---------------------//
 
-        public async Task<ModelResponse> SaveOrUpdatePrepago(Prepago u)
+        public async Task<ModelResponse> SaveOrUpdatePrepago(List<Prepago> prepagos)
         {
-            var result = await RequestAsync<object>("api/VentaPublicoGeneral/Prepago", HttpMethod.Post, u,
-           new Func<string, string>((responseString) =>
-           {
-               return responseString;
-           }));
+            var result = await RequestAsync<object>("api/VentaPublicoGeneral/Prepagos", HttpMethod.Post, prepagos,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }));
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
             return modelResponse;
         }

@@ -401,10 +401,17 @@ namespace MinaToMVC.Controllers
 
 
         //----------------PREPAGO----------------------------------
-        public async Task<ActionResult> SaveOrUpdatePrepago(Prepago reporte)
+        public async Task<ActionResult> SaveOrUpdatePrepagos(List<Prepago> prepagos)
         {
-            var r = await httpClientConnection.SaveOrUpdatePrepago(reporte);
-            return Redirect("Index");
+            try
+            {
+                var r = await httpClientConnection.SaveOrUpdatePrepago(prepagos);
+                return Json(new { success = true, message = "Valera creada exitosamente" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
         }
 
         public async Task<string> DeletePrepago(long id)
@@ -450,6 +457,11 @@ namespace MinaToMVC.Controllers
             var responseclientes = await httpClientConnection.GetAllClientePublicoGral();
             // Deseriali  za la respuesta
             clientes = JsonConvert.DeserializeObject<List<ClientePublicoGral>>(responseclientes.Response.ToString());
+
+            var foliadorResponse = await httpClientConnection.GetFoliadorByNombre("Prepago");
+            var foliador = JsonConvert.DeserializeObject<DtoFoliador>(foliadorResponse.Response.ToString());
+            foliador.CalcualrConsecutivoString();
+            prepago.Folio = foliador.ConsecutivoString;
 
             ViewBag.Materiales = materiales;
             ViewBag.Clientes = clientes;

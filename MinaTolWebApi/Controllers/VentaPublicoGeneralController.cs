@@ -36,10 +36,10 @@ namespace MinaTolWebApi.Controllers
         #region Prepago
         //---------------------------PREPAGO----------------
 
-        [HttpPost, Route("Prepago")]
-        public ModelResponse SaveOrUpdatePrepago(Prepago tm)
+        [HttpPost, Route("Prepagos")]
+        public ModelResponse SaveOrUpdatePrepagos([FromBody] List<Prepago> prepagos)
         {
-            var result = wrapper.SaveOrUpdatePrepago(tm);
+            var result = wrapper.SaveOrUpdatePrepago(prepagos);
             return result;
         }
 
