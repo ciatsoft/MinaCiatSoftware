@@ -1,0 +1,356 @@
+﻿
+@{
+    ViewBag.Title = "Empleados";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+<!-- En el head de tu HTML -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<div class="content">
+    <form method="post" action="/RecursosH/SaveOrUpdateEmpleado" enctype="multipart/form-data" name="frmEmpleadoCrud" id="frmEmpleadoCrud">
+        <!-- Campos ocultos -->
+        <input type="hidden" name="Id" />
+        <input type="hidden" name="Estatus" />
+        <input type="hidden" name="CreatedDt" />
+        <input type="hidden" name="CreatedBy" />
+        <input type="hidden" name="UpdatedBy" />
+        <input type="hidden" name="UpdatedDt" />
+        <input type="hidden" name="NumeroEmpleado" />
+
+        <br />
+        <center><h1>Registro de Empleado</h1></center>
+
+        <div class="tabla-consultas-empleados">
+            <div class="rectangulos" style="width: 100%;">
+                <!-- Datos Personales -->
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label>Nombre Completo:</label>
+                        <input type="text" name="NombreCompleto" class="form-control" required />
+                    </div>
+                    <div class="col-lg-3">
+                        <label>CURP:</label>
+                        <input type="text" name="CURP" class="form-control"
+                               maxlength="18"
+                               pattern="[A-Za-z0-9]{18}"
+                               required />
+
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Fecha de Nacimiento:</label>
+                        <input type="date" name="FechaNacimiento" class="form-control" required />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Nacionalidad:</label>
+                        <select name="Nacionalidad" class="form-control" required>
+                            <option value="">Seleccione...</option>
+                            <option value="Mexicana">Mexicana</option>
+                            <option value="Extranjera">Extranjera</option>
+
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Estado Civil:</label>
+                        <select name="EstadoCivil" class="form-control" required>
+                            <option value="">Seleccione...</option>
+                            <option value="Soltero">Soltero</option>
+                            <option value="Casado">Casado</option>
+                            <option value="Divorciado">Divorciado</option>
+                            <option value="Viudo">Viudo</option>
+                            <option value="Unión Libre">Unión Libre</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-6">
+                        <label>Nombre del Cónyuge:</label>
+                        <input type="text" name="NombreConyuge" class="form-control" />
+                    </div>
+                </div>
+
+                <!-- Dirección y Contacto -->
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label>Dirección:</label>
+                        <input type="text" name="Direccion" class="form-control" required />
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Localidad:</label>
+                        <input type="text" name="Localidad" class="form-control" required />
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Municipio:</label>
+                        <input type="text" name="Municipio" class="form-control" required />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Teléfono Fijo:</label>
+                        <input type="number" name="TelefonoFijo" class="form-control" />
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Teléfono Celular:</label>
+                        <input type="number" name="TelefonoCelular" class="form-control" required />
+                    </div>
+                    <div class="col-lg-6">
+                        <label>Correo Electrónico:</label>
+                        <input type="email" name="EmailPersonal" class="form-control" />
+                    </div>
+                </div>
+
+                <!-- Contactos de Emergencia -->
+                <style>
+                    /* Estilos generales */
+                    .modal-toggle {
+                        display: none;
+                    }
+
+                    .modal {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.6);
+                        display: none;
+                        align-items: center;
+                        justify-content: center;
+                    }
+
+                    .modal-content {
+                        background: white;
+                        padding: 20px;
+                        border-radius: 8px;
+                        width: 500px;
+                        max-width: 90%;
+                    }
+
+                    .modal-toggle:checked + .modal {
+                        display: flex;
+                    }
+
+                    .modal-content h5 {
+                        margin-top: 0;
+                    }
+
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-top: 10px;
+                    }
+
+                    th, td {
+                        padding: 6px;
+                        border: 1px solid #ccc;
+                    }
+
+                    th {
+                        background-color: #eee;
+                        text-align: center;
+                    }
+
+                    .close-btn {
+                        margin-top: 10px;
+                        background-color: #d9534f;
+                        color: white;
+                        border: none;
+                        padding: 6px 12px;
+                        border-radius: 4px;
+                        cursor: pointer;
+                    }
+
+                    .save-btn {
+                        margin-top: 10px;
+                        background-color: #80db55;
+                        color: white;
+                        border: none;
+                        padding: 6px 12px;
+                        border-radius: 4px;
+                        cursor: pointer;
+                    }
+
+                    .btn-primary {
+                        background-color: #0275d8;
+                        color: white;
+                        border: none;
+                        padding: 6px 12px;
+                        border-radius: 4px;
+                        cursor: pointer;
+                    }
+                </style>
+
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h4>Contactos para comunicaciones en caso de emergencia:</h4>
+                        <div id="contactosEmergenciaContainer">
+                            <!-- Aquí se agregarían los datos después -->
+                        </div>
+
+                        <!-- Activador del modal -->
+                        <label for="modalToggle" class="btn-primary">Agregar Contacto</label>
+                        <input type="checkbox" id="modalToggle" class="modal-toggle" />
+
+                        <!-- Modal -->
+                        <div class="modal">
+                            <div class="modal-content">
+                                <h5>Agregar Contactos de Emergencia</h5>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Teléfono fijo</th>
+                                            <th>Celular</th>
+                                            <th>Parentesco</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><input type="text" placeholder="Nombre contacto 1" class="form-control" /></td>
+                                            <td><input type="number" placeholder="Fijo" class="form-control" /></td>
+                                            <td><input type="number" placeholder="Celular" class="form-control" /></td>
+                                            <td><input type="text" placeholder="Parentesco" class="form-control" /></td>
+
+                                        </tr>
+                                        <tr>
+                                            <td><input type="text" placeholder="Nombre contacto 2" class="form-control" /></td>
+                                            <td><input type="number" placeholder="Fijo" class="form-control" /></td>
+                                            <td><input type="number" placeholder="Celular" class="form-control" /></td>
+                                            <td><input type="text" placeholder="Parentesco" class="form-control" /></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <!-- Botón para cerrar -->
+                                <label for="modalToggle" class="close-btn">Cerrar</label>
+                                <!--Botón para Guardar-->
+                                <label for="modalToggle" class="save-btn">Guardar</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Familiares en la empresa -->
+                <style>
+                    .familiares-container {
+                        display: none;
+                        margin-top: 15px;
+                        border: 1px solid #ccc;
+                        padding: 10px;
+                        border-radius: 6px;
+                        background-color: #f9f9f9;
+                    }
+
+                    input[type="radio"]:checked + label + .familiares-container {
+                        display: block;
+                    }
+
+                    .form-check-inline {
+                        margin-right: 15px;
+                        display: block;
+                    }
+
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-top: 10px;
+                    }
+
+                    th, td {
+                        padding: 8px;
+                        border: 1px solid #ccc;
+                    }
+
+                    th {
+                        background-color: #eee;
+                        text-align: center;
+                    }
+                </style>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h4>Tiene familiar(es) dentro de la empresa:</h4>
+
+                        <!-- Opción SÍ -->
+                        <div class="form-check-inline">
+                            <input type="radio" name="TieneFamiliaresEmpresa" id="tieneFamiliaresSi" />
+                            <label for="tieneFamiliaresSi">SÍ</label>
+                            <div class="familiares-container">
+                                <h5>Familiar(es):</h5>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Parentesco</th>
+                                            <th>Puesto</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><input type="text" class="form-control" placeholder="Nombre completo" /></td>
+                                            <td><input type="text" class="form-control" placeholder="Parentesco" /></td>
+                                            <td><input type="text" class="form-control" placeholder="Puesto" /></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Opción NO -->
+                        <div class="form-check-inline">
+                            <input type="radio" name="TieneFamiliaresEmpresa" id="tieneFamiliaresNo" />
+                            <label for="tieneFamiliaresNo">NO</label>
+                        </div>
+                    </div>
+                </div>
+
+                <h4>DOCUMENTOS QUE ADJUNTAR POR TRABAJADOR</h4>
+
+                <table>
+                    <tr>
+                        <th>Documento</th>
+                        <td>Acta de nacimiento</td>
+                        <td>CURP</td>
+                        <td>INE</td>
+                        <td>Certificado de antecedentes no penales</td>
+                        <td>Certificado Médico</td>
+                        <td>Constancia de Situación Fiscal</td>
+                        <td>Comprobante de Domicilio</td>
+                        <td>Carta de Recomendación</td>
+                        <td>Solicitud de Empleo Elaborada</td>
+                        <td>Licencia de Conducir</td>
+                    </tr>
+                    <tr>
+                        <th>Entregó</th>
+                        <td><input type="checkbox" checked /></td>
+                        <td><input type="checkbox" checked /></td>
+                        <td><input type="checkbox" checked /></td>
+                        <td><input type="checkbox" checked /></td>
+                        <td><input type="checkbox" checked /></td>
+                        <td><input type="checkbox" checked /></td>
+                        <td><input type="checkbox" checked /></td>
+                        <td><input type="checkbox" checked /></td>
+                        <td><input type="checkbox" checked /></td>
+                        <td><input type="checkbox" checked /></td>
+                    </tr>
+                </table>
+
+                <!-- Botones -->
+                <div class="row">
+                    <div class="col-lg-12 d-flex justify-content-between">
+                        <input id="btnGuardar" type="submit" value="Guardar" class="btn btn-success" />
+                        <a href="/RecursosH/Index" class="btn btn-custom-cancel">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

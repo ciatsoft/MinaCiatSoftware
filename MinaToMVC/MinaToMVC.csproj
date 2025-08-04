@@ -311,6 +311,7 @@
     <Content Include="Views\VentaPublicoGeneral\VentaPorPlanta.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\PartialPrepago.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\PartialCanjeo.cshtml" />
+    <Content Include="Views\RH\Empleados.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -80,6 +80,13 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
+        [HttpGet, Route("Ubicaciones/{id:long}")]
+        public ModelResponse GetUbicacionesByMaterial(long id)
+        {
+            var result = wrapper.GetUbicacionesByMaterial(id);
+            return result;
+        }
+
         #endregion
 
     }

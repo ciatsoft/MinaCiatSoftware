@@ -129,7 +129,6 @@ $(document).ready(function() {
 
         $("#rfidModal").on('input', function() {
             const valorRFID = $(this).val().trim();
-            console.log("RFID ingresado (input event):", valorRFID);
 
             clearTimeout(rfidTimeout);
 
@@ -142,7 +141,6 @@ $(document).ready(function() {
 
         $("#rfidModal").on('change', function() {
             const valorRFID = $(this).val().trim();
-            console.log("RFID cambiado (change event):", valorRFID);
             if(valorRFID.length >= 8) {
                 buscarClientePorRFID(valorRFID);
             }
@@ -152,7 +150,6 @@ $(document).ready(function() {
 
     // Función para buscar cliente por RFID
     function buscarClientePorRFID(rfid) {
-        console.log("Iniciando búsqueda de cliente con RFID:", rfid);
 
         const $idCliente = $('#idCliente');
         const $nombreCliente = $('#nombreClienteModal');
@@ -170,7 +167,6 @@ $(document).ready(function() {
                     const cliente = respuesta.Response;
                     $idCliente.val(cliente.id || '');
                     $nombreCliente.val(cliente.nombre || '');
-                    console.log("Cliente encontrado:", cliente.nombre);
                 } else {
                     $idCliente.val('');
                     $nombreCliente.val('');
