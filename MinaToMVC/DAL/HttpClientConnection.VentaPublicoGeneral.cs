@@ -87,5 +87,18 @@ namespace MinaToMVC.DAL
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
             return modelResponse;
         }
+
+
+        // ---------------- Canjeo Vale ----------------
+        public async Task<ModelResponse> ObtenerVentaPorFolio(string folio)
+        {
+            var result = await RequestAsync<object>($"api/VentaPublicoGeneral/Folio/{folio}", HttpMethod.Get, null,
+               new Func<string, string>((responseString) =>
+               {
+                   return responseString;
+               }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
     }
 }

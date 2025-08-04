@@ -15,8 +15,8 @@ namespace MinaToMVC.Controllers
     public class RHController : BaseController
     {
         #region View
-        [Autenticated]
-        public ActionResult Index()
+        
+        public ActionResult Empleados()
         {
             return View();
         }

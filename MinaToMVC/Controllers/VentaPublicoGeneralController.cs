@@ -208,9 +208,6 @@ namespace MinaToMVC.Controllers
             }
             var materiales = MappingPropertiToDropDownList<DtoTipoMaterialUbicacion>(listadoMaterial, "Id", "NombreTipoMaterial");
 
-
-            var formasPago = System.Configuration.ConfigurationManager.AppSettings["FormaPago"].ToString().Split('|').ToList();
-
             var unidadMedidaResponse = await httpClientConnection.GetAllUnidadMedida();
             var unidadMedidaJson = JsonConvert.DeserializeObject<List<UnidadMedida>>(unidadMedidaResponse.Response.ToString());
             var unidadMedida = MappingPropertiToDropDownList<UnidadMedida>(unidadMedidaJson, "Id", "Nombre");
@@ -228,21 +225,14 @@ namespace MinaToMVC.Controllers
 
             var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
 
-            var foliadorResponse = await httpClientConnection.GetFoliadorByNombre("VentaPublicoGeneral");
-            var foliador = JsonConvert.DeserializeObject<DtoFoliador>(foliadorResponse.Response.ToString());
-            foliador.CalcualrConsecutivoString();
-            venta.Folio = foliador.ConsecutivoString;
-
-
             ViewBag.Ubicaciones = ubicacionDdl;
             ViewBag.Materiales = materiales;
-            ViewBag.FormasPago = formasPago;
             ViewBag.UnidadMedida = unidadMedida;
             ViewBag.UserToken = usuarioAutenticado;
             ViewBag.Usuarios = usuarios;
             return PartialView(venta);
         }
-
+        
         #endregion
 
         #region Data Acces
@@ -269,6 +259,12 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetMaterialUbicacionByUbicacion(id);
             return JsonConvert.SerializeObject(result);
         }
+        public async Task<string> GetUbicacionesByMaterial(long id)
+        {
+            var result = await httpClientConnection.GetUbicacionesByMaterial(id);
+            return JsonConvert.SerializeObject(result);
+        }
+
         public async Task<ActionResult> SaveOrUpdateReporte_Venta(Reporte_Venta reporte)
         {
             var r = await httpClientConnection.SaveOrUpdateReporte_Venta(reporte);
@@ -470,8 +466,15 @@ namespace MinaToMVC.Controllers
 
             return PartialView(prepago);
         }
+
+        //----------------CAJEO DE VALE----------------------------------
+        public async Task<string> ObtenerVentaPorFolio(string folio)
+        {
+            var result = await httpClientConnection.ObtenerVentaPorFolio(folio);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
         #endregion
-        
+
         #region Precios
         public async Task<string> GetPreciosBymaterialId(long id)
         {
