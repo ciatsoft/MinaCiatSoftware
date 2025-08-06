@@ -1,6 +1,7 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoVentaPublicoGeneral;
+using MinaTolEntidades.DtoVentas;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -97,6 +98,16 @@ namespace MinaToMVC.DAL
                {
                    return responseString;
                }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        public async Task<ModelResponse> ProcesarCanjeo(Canjeo canjeo)
+        {
+            var result = await RequestAsync<object>("api/VentaPublicoGeneral/Prepago/Canjeo", HttpMethod.Post, canjeo,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }));
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
             return modelResponse;
         }
