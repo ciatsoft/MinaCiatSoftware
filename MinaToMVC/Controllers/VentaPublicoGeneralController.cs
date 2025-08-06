@@ -1,22 +1,25 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.DtoSucursales;
-using MinaTolEntidades.DtoVentas;
 using MinaTolEntidades.DtoVentaPublicoGeneral;
+using MinaTolEntidades.DtoVentas;
+using MinaTolEntidades.DtoViajes;
 using MinaTolEntidades.Security;
+using MinaToMVC.DAL;
 using MinaToMVC.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Security.Cryptography;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using static MinaToMVC.Controllers.Filters.FiltersHelper;
-using System.Security.Cryptography;
-using MinaTolEntidades.DtoViajes;
-using System.Security.Policy;
-using MinaTolEntidades.DtoClientes;
 
 namespace MinaToMVC.Controllers
 {
@@ -473,6 +476,13 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.ObtenerVentaPorFolio(folio);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+
+        public async Task<ActionResult>ProcesarCanjeo(Canjeo canjeo)
+        {
+            var r = await httpClientConnection.ProcesarCanjeo(canjeo);
+            return Json(r);
+        }
+
         #endregion
 
         #region Precios

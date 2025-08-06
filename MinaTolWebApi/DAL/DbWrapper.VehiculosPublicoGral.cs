@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using MinaTolEntidades.DtoClientes;
-using MinaTolEntidades;
-using System.Data.SqlClient;
-using System.Data;
+﻿using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.DtoSucursales;
 using MinaTolEntidades.DtoVentaPublicoGeneral;
+using MinaTolEntidades.DtoVentas;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Web;
 
 namespace MinaTolWebApi.DAL
 {
@@ -152,15 +153,16 @@ namespace MinaTolWebApi.DAL
             {
                 response.IsSuccess = true;
                 var parameters = new List<SqlParameter>();
-                parameters.Add(new SqlParameter()
-                {
-                    Value = id,
-                    IsNullable = true,
-                    ParameterName = "@Id",
-                    SqlDbType = System.Data.SqlDbType.Int
-                });
+                // Agregar el parámetro requerido
+                parameters.Add(new SqlParameter("@Id", id));
 
-                var result = ExecuteNonQuery("GetUbicacionesByMaterial", System.Data.CommandType.StoredProcedure, parameters);
+                var result = GetObjects("GetUbicacionesByMaterial", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, UbicacionesMaterial>((reader) =>
+                    {
+                        var r = FillEntity<UbicacionesMaterial>(reader);
+                        return r;
+                    }));
+                response.Response = result;
             }
             catch (Exception ex)
             {
@@ -169,6 +171,36 @@ namespace MinaTolWebApi.DAL
                 response.Enum = Enumeration.ErrorNoControlado;
             }
             return response;
+        }
+
+        public ModelResponse ProcesarCanjeo(Dictionary<string, object> parametros)
+        {
+            var modelResponse = new ModelResponse();
+
+            try
+            {
+                var sqlParameters = parametros.Select(param =>
+                    new SqlParameter($"@{param.Key}", param.Value ?? DBNull.Value)
+                ).ToArray();
+
+                var result = ExecuteScalar("CanjeoValePrepago", CommandType.StoredProcedure, sqlParameters);
+
+                modelResponse.IsSuccess = true;
+                modelResponse.Response = result;
+            }
+            catch (SqlException ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Message = $"Error SQL: {ex.Message}";
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = $"Error general: {ex.Message}";
+            }
+
+            return modelResponse;
         }
     }
 }
