@@ -93,6 +93,16 @@
                     @Html.HiddenFor(x => x.Fecha)
                 </div>
             </div>
+            <div class="row mt-3">
+                <div class="col-lg-3">
+                    <label>Folio de Inicio:</label>
+                    <input class="form-control" type="number" id="folioInicioModelCanjeo" readonly />
+                </div>
+                <div class="col-lg-3">
+                    <label>Folio de Inicio:</label>
+                    <input class="form-control" type="number" id="folioFinalModelCanjeo" readonly />
+                </div>
+            </div>
 
             <div style="margin-top: 15px;">
                 <!-- Texto "M3 disponibles" -->
@@ -104,6 +114,7 @@
             <div style="margin-top: 35px;">
                 <!-- Botón con margen inferior de 30px -->
                 <button id="btnCanjearVale" style="margin-top: -25px; margin-bottom: 30px;" type="button" class="btn btn-success" onclick="canjearVale()">Canjear Vale</button>
+                <a style="margin-top:-55px" href="/VentaPublicoGeneral/Index" class="btn btn-custom-cancel">Cancelar</a>
                 <div id="mensajeEstadoVale" style="color:red; font-weight:bold; margin-top:10px; display:none;"></div>
             </div>
         </div>
@@ -248,6 +259,10 @@
                             $("#folioModalCanjeo").val(venta.folio || '');
                             $("#montoFaltanteModelCanjeo").val(venta.m3Faltantes);
 
+                            // Nuevos campos para el rango de folios
+                            $("#folioInicioModelCanjeo").val(venta.folioInicio || venta.folio || '');
+                            $("#folioFinalModelCanjeo").val(venta.folioFinal || venta.folio || '');
+
                             const rfid = venta.rfId || venta.rfid;
                             if (rfid) {
                                 $("#rfidModelCanjeo").val(rfid).trigger('change');
@@ -276,7 +291,7 @@
                             // Control del botón y mensaje según Estado
                             if (venta.estado === 'C') {
                                 $("#btnCanjearVale").prop('disabled', true);
-                                $("#mensajeEstadoVale").text("Este vale ya fue canjeado, checar historial").show();
+                                $("#mensajeEstadoVale").text("Este vale ya fue canjeado, revisa el historial").show();
                             } else {
                                 $("#btnCanjearVale").prop('disabled', false);
                                 $("#mensajeEstadoVale").hide();
@@ -285,7 +300,11 @@
                             console.log("La respuesta no fue exitosa o no contiene datos:", message);
                             Swal.fire('Error', message || 'No se encontró el vale con ese folio', 'error');
 
-                            // Limpiar campos y resetear botón y mensaje
+                            // Limpiar campos incluyendo los nuevos inputs
+                            $("#folioModalCanjeo").val('');
+                            $("#montoFaltanteModelCanjeo").val('');
+                            $("#folioInicioModelCanjeo").val('');
+                            $("#folioFinalModelCanjeo").val('');
                             $("#rfidModelCanjeo").val('');
                             $("#nombreClienteModelCanjeo").val('');
                             $("#btnCanjearVale").prop('disabled', false);
@@ -295,7 +314,13 @@
                         console.error("Error al procesar respuesta:", e);
                         Swal.fire('Error', 'Error al procesar la respuesta del servidor', 'error');
 
-                        // Reset botón y mensaje en caso de error
+                        // Limpiar campos en caso de error
+                        $("#folioModalCanjeo").val('');
+                        $("#montoFaltanteModelCanjeo").val('');
+                        $("#folioInicioModelCanjeo").val('');
+                        $("#folioFinalModelCanjeo").val('');
+                        $("#rfidModelCanjeo").val('');
+                        $("#nombreClienteModelCanjeo").val('');
                         $("#btnCanjearVale").prop('disabled', false);
                         $("#mensajeEstadoVale").hide();
                     }
@@ -308,17 +333,18 @@
                     });
                     Swal.fire('Error', 'Error al buscar el vale: ' + (xhr.responseText || error), 'error');
 
-                    // Reset botón y mensaje en caso de error
-                    $("#btnCanjearVale").prop('disabled', false);
-                    $("#mensajeEstadoVale").hide();
-
-                    // Limpiar campos
+                    // Limpiar todos los campos incluyendo los nuevos
+                    $("#folioModalCanjeo").val('');
+                    $("#montoFaltanteModelCanjeo").val('');
+                    $("#folioInicioModelCanjeo").val('');
+                    $("#folioFinalModelCanjeo").val('');
                     $("#rfidModelCanjeo").val('');
                     $("#nombreClienteModelCanjeo").val('');
+                    $("#btnCanjearVale").prop('disabled', false);
+                    $("#mensajeEstadoVale").hide();
                 }
             });
         }
-
 
         // Función para buscar cliente por RFID
         function buscarClientePorRFID(rfid) {
@@ -440,6 +466,16 @@
             return element ? element.value : '';
         }
 
+        // Obtener valores numéricos para comparación
+        const montoFaltante = parseFloat(getValue('montoFaltanteModelCanjeo')) || 0;
+        const cantidadIngresada = parseFloat(getValue('cantidadM3ModelCanjeo')) || 0;
+
+        // Validar que la cantidad ingresada no supere el monto faltante
+        if (cantidadIngresada > montoFaltante) {
+            Swal.fire('Error', `No puedes cargar ${cantidadIngresada} M3 porque el monto faltante es de ${montoFaltante} M3`, 'error');
+            return;
+        }
+
         // Construir objeto con parámetros para el SP
         const ventaParams = {
             Id: getValue('id') || 0,
@@ -448,7 +484,7 @@
             NombreCliente: getValue('nombreClienteModelCanjeo'),
             Transporte: getValue('descripcionVehiculoModelCanjeo'),
             Placa: getValue('placaModelCanjeo'),
-            Cantidad: parseFloat(getValue('cantidadM3ModelCanjeo')) || 0,
+            Cantidad: cantidadIngresada,
             PV_PlantaId: getValue('Ubicacion_IdModalCanjeo'),
             PV_MaterialId: getValue('TipoMaterial_IdModalCanjeo'),
             FormaDePago: getValue('formaPagoHidden'),
@@ -463,10 +499,12 @@
             EstatusVenta: 'E',
             UnidadMedida: 8,
             TotalPago: 0,
-            PrecioUnidad: 0
+            PrecioUnidad: 0,
+            FolioInicio: getValue('folioInicioModelCanjeo') || 0,
+            FolioFinal: getValue('folioFinalModelCanjeo') || 0
         };
 
-        // Validaciones
+        // Validaciones adicionales
         if (!ventaParams.Folio || !ventaParams.PV_PlantaId || !ventaParams.PV_MaterialId || ventaParams.Cantidad <= 0) {
             Swal.fire('Error', 'Complete todos los campos requeridos con valores válidos', 'error');
             return;
@@ -475,7 +513,7 @@
         // Confirmación
         Swal.fire({
             title: 'Confirmar Canje',
-            html: `¿Desea canjear <b>${ventaParams.Cantidad} M3</b> del vale ${ventaParams.Folio}?`,
+            html: `¿Desea canjear <b>${ventaParams.Cantidad} M3</b> del vale ${ventaParams.Folio}?<br>Monto faltante: ${montoFaltante} M3`,
             icon: 'question',
             showCancelButton: true
         }).then((result) => {
@@ -491,16 +529,15 @@
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(datos),
-            success: function(response) {
+            success: function (response) {
                 if (response.IsSuccess) {
-                    Swal.fire('Éxito', response.Message, 'success')
+                    Swal.fire('Éxito', response.Message || 'Operación realizada con éxito', 'success')
                         .then(() => window.location.reload());
                 } else {
-                    Swal.fire('Éxito', response.Message, 'success')
-                        .then(() => window.location.reload());
+                    Swal.fire('Error', response.Message || 'Ocurrió un error', 'error');
                 }
             },
-            error: function(xhr) {
+            error: function (xhr) {
                 Swal.fire('Error', xhr.responseJSON?.Message || 'Error en el servidor', 'error');
             }
         });
