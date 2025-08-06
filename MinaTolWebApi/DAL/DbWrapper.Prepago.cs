@@ -39,6 +39,8 @@ namespace MinaTolWebApi.DAL
                         new SqlParameter("@PrecioUnidad", p.PrecioUnidad),
                         new SqlParameter("@CantidadVales", p.CantidadVales),
                         new SqlParameter("@Fecha", p.Fecha),
+                        new SqlParameter("@FolioInicio", p.FolioInicio),
+                        new SqlParameter("@FolioFinal", p.FolioFinal),
                         new SqlParameter("@Estatus", p.Estatus),
                         new SqlParameter("@CreatedBy", p.CreatedBy),
                         new SqlParameter("@CreatedDt", p.CreatedDt),

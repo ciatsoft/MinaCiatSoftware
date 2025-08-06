@@ -286,6 +286,10 @@ $(document).ready(function() {
         var folioBase = $("#folioModal").val();
         var numeroFolio = parseInt(folioBase) || 0;
 
+        // Calcular folio inicial y final
+        var folioInicio = numeroFolio.toString().padStart(5, '0');
+        var folioFinal = (numeroFolio + cantidadVales - 1).toString().padStart(5, '0');
+
         // Crear array para guardar todos los vales
         var valesParaGuardar = [];
 
@@ -310,7 +314,10 @@ $(document).ready(function() {
                 Fecha: $("#fechaModal").val(),
                 NoVale: (i + 1),
                 NombreMaterial: $("#idMaterial option:selected").text(),
-                UserName: "@usuarioToken.UserName"
+                UserName: "@usuarioToken.UserName",
+                // Agregamos los nuevos campos de auditoría
+                FolioInicio: folioInicio,
+                FolioFinal: folioFinal
             };
             valesParaGuardar.push(vale);
         }

@@ -115,14 +115,17 @@ namespace MinaTolWebApi.Controllers
                 { "EstatusVenta", canjeo.EstatusVenta },
                 { "UnidadMedida", canjeo.UnidadMedida },
                 { "TotalPago", canjeo.TotalPago },
-                { "PrecioUnidad", canjeo.PrecioUnidad }
+                { "PrecioUnidad", canjeo.PrecioUnidad },
+                { "FolioInicio", canjeo.FolioInicio },
+                { "FolioFinal", canjeo.FolioFinal },
             };
 
             var resultado = wrapper.ProcesarCanjeo(parametros);
 
-            // Convierte ModelResponse a HttpResponseMessage
             if (resultado.IsSuccess)
             {
+                // Asegúrate de que resultado.Message tenga contenido
+                resultado.Message = resultado.Message ?? "Canjeo procesado exitosamente";
                 return Request.CreateResponse(HttpStatusCode.OK, resultado);
             }
             else

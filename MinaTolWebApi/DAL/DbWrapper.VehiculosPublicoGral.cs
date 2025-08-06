@@ -186,6 +186,7 @@ namespace MinaTolWebApi.DAL
                 var result = ExecuteScalar("CanjeoValePrepago", CommandType.StoredProcedure, sqlParameters);
 
                 modelResponse.IsSuccess = true;
+                modelResponse.Message = "Operación completada con éxito"; // Añade este mensaje
                 modelResponse.Response = result;
             }
             catch (SqlException ex)

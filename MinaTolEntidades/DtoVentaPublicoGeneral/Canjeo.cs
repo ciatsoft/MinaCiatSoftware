@@ -24,6 +24,8 @@ namespace MinaTolEntidades.DtoVentaPublicoGeneral
         public long UnidadMedida { get; set; }
         public decimal TotalPago { get; set; }
         public decimal PrecioUnidad { get; set; }
+        public int FolioInicio { get; set; }
+        public int FolioFinal { get; set; }
     }
 
 }
