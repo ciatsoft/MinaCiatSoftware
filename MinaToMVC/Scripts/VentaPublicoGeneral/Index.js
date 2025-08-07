@@ -124,7 +124,7 @@ $(document).ready(function () {
             { data: "nombreUbicacion", title: "Planta" },
             {
                 data: "formaDePago",
-                "visible": false,
+                "visible": true,
                 title: "Forma de Pago",
                 render: function (data, type, row) {
                     if (data === "E") {
@@ -132,6 +132,9 @@ $(document).ready(function () {
                     }
                     else if (data == "T") {
                         return "Transferencia";
+                    }
+                    else if (data == "P") {
+                        return "Prepago";
                     } else {
                         return "Vale";
                     }
@@ -373,6 +376,9 @@ $(function () {
 
     $("#frmVentaCrud").validate({
         rules: {
+            "RFID": {
+                required: true
+            },
             "Ubicacion_Id": {
                 required: true
             },
@@ -383,6 +389,12 @@ $(function () {
                 required: true
             },
             "Placa": {
+                required: true
+            },
+            "Cantidad": {
+                required: true
+            },
+            "CantidadRecibida": {
                 required: true
             }
         }
@@ -525,8 +537,10 @@ function actualizarCambio() {
     // Mostrar el cambio o advertencia por fondos insuficientes
     if (cambio < 0) {
         $("#cambio").text("Cambio: Fondos insuficientes").css("color", "red");
+        $("#btnGuardar").prop("disabled", true); // Bloquear el botón
     } else {
         $("#cambio").text("Cambio: " + formatMoney(cambio)).css("color", "green");
+        $("#btnGuardar").prop("disabled", false); // Asegurarse que el botón esté habilitado
     }
 }
 
@@ -719,10 +733,10 @@ function SearchPV_VentasByDate(fecha) {
                     { data: "nombreUbicacion", title: "Planta" },
                     {
                         data: "formaDePago",
-                        visible: false,
+                        visible: true,
                         title: "Forma de Pago",
                         render: function (data) {
-                            const tiposPago = { "E": "Efectivo", "T": "Transferencia" };
+                            const tiposPago = { "E": "Efectivo", "T": "Transferencia", "P": "Prepago" };
                             return tiposPago[data] || "Vale";
                         }
                     },
