@@ -10,6 +10,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
+using System.Web.UI;
 
 namespace MinaTolWebApi.DAL
 {
@@ -202,6 +203,37 @@ namespace MinaTolWebApi.DAL
             }
 
             return modelResponse;
+        }
+
+        public ModelResponse VentasDiariasPrepago (DateTime fecha)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var fechaSolo = fecha.Date;
+
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@Fecha", SqlDbType.Date) { Value = fechaSolo }
+                };
+
+                var result = GetList(
+                    "VentasDiariasPrepago",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader => FillEntity<Prepago>(reader)
+                );
+
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
         }
     }
 }

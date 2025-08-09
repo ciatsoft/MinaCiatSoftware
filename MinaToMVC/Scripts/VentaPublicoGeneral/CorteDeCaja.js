@@ -212,15 +212,16 @@ $(document).ready(function () {
     $('#tblPrepago').DataTable({
         data: [],
         columns: [
-            { data: "folio", title: "Folio" },
-            { data: "noVale", title: "No. Vale" },
-            { data: "rfid", title: "RFID" },
+            { data: "folioInicio", title: "Folio Inicio" },
+            { data: "folioFinal", title: "Folio Final" },
+            { data: "nombreMaterial", title: "Material" },
+            { data: "cantidadM3", title: "Cantidad de M3" },
+            { data: "precioUnidad", title: "Precio Unidad" },
+            { data: "importeVenta", title: "Importe Venta", render: $.fn.dataTable.render.number(',', '.', 2, '$') },
+            { data: "rfid", title: "RFID", visible: false },
             { data: "idCliente", title: "ID Cliente" ,visible: false},
             { data: "nombreCliente", title: "Nombre Cliente" },
-            { data: "userName", title: "Usuario", visible: false },
-            { data: "importeVenta", title: "Importe Venta", render: $.fn.dataTable.render.number(',', '.', 2, '$') },
-            { data: "idMaterial", title: "ID Material", visible: false },
-            { data: "nombreMaterial", title: "Nombre Material" },
+            { data: "cantidadVales", title: "Cantidad Vales" },
             {
                 data: "fecha",
                 title: "Fecha",
@@ -336,6 +337,11 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                         data: 'totalPago',
                         title: 'Total Pago',
                         render: function (data) {
+                            // Verificar si el totalPago es 0
+                            if (parseFloat(data) === 0) {
+                                return '<span class="prepago-text">Esta venta se registra como canjeo de vale para prepago</span>';
+                            }
+                            // Si no es 0, mostrar el valor formateado normalmente
                             return `$${parseFloat(data).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`;
                         }
                     },
@@ -345,6 +351,7 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                         render: function (data) {
                             if (data === "E") return "Efectivo";
                             if (data === "T") return "Transferencia";
+                            if (data === "P") return "Prepago";
                             return "Vale";
                         }
                     },
@@ -358,10 +365,12 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                         }
                     },
                     {
-                        data: 'fecha',
-                        title: 'Fecha',
+                        data: "fecha",
+                        title: "Fecha",
                         render: function (data) {
-                            return new Date(data).toLocaleString('es-MX');
+                            // Opción 1: Formato básico dd/mm/aaaa
+                            const date = new Date(data);
+                            return date.toLocaleDateString('es-MX');
                         }
                     },
                     {
@@ -624,6 +633,81 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                             }
                         });
 
+                        PostMVC('/VentaPublicoGeneral/VentasDiariasPrepago', { fecha }, function (r) {
+                            if (r.IsSuccess && Array.isArray(r.Response)) {
+                                const ventasPrepago = r.Response;
+
+                                resultados.totalPrepago = ventasPrepago.reduce((total, item) => {
+                                    return total + parseFloat(item.importeVenta || 0); // Asegura parseo y manejo de undefined
+                                }, 0);
+
+                                // Corregido: Cambiar toLocaleDateString por toLocaleString
+                                $('#valesPrepago').val(resultados.totalPrepago.toLocaleString('es-MX', {
+                                    style: 'currency',
+                                    currency: 'MXN'
+                                }));
+
+                                calcularTotal();
+
+                                if ($.fn.DataTable.isDataTable('#tblPrepago')) {
+                                    $('#tblPrepago').DataTable().clear().destroy();
+                                }
+
+                                $('#tblPrepago').DataTable({
+                                    data: ventasPrepago,
+                                    columns: [
+                                        { data: "folioInicio", title: "Folio Inicio" },
+                                        { data: "folioFinal", title: "Folio Final" },
+                                        { data: "nombreMaterial", title: "Material" },
+                                        { data: "cantidadM3", title: "Cantidad de M3" },
+                                        {
+                                            data: "precioUnidad",
+                                            title: "Precio Unidad",
+                                            render: $.fn.dataTable.render.number(',', '.', 2, '$')
+                                        },
+                                        { data: "importeVenta", title: "Importe Venta", render: $.fn.dataTable.render.number(',', '.', 2, '$') },
+                                        { data: "rfid", title: "RFID", visible: false },
+                                        { data: "idCliente", title: "ID Cliente", visible: false },
+                                        { data: "nombreCliente", title: "Nombre Cliente" },
+                                        { data: "cantidadVales", title: "Cantidad Vales" },
+                                        {
+                                            data: "fecha",
+                                            title: "Fecha",
+                                            render: function (data) {
+                                                // Opción 1: Formato básico dd/mm/aaaa
+                                                const date = new Date(data);
+                                                return date.toLocaleDateString('es-MX');
+                                            }
+                                        }
+                                    ],
+                                    language: {
+                                        "decimal": ",",
+                                        "thousands": ".",
+                                        "processing": "Procesando...",
+                                        "lengthMenu": "Mostrar _MENU_ entradas",
+                                        "zeroRecords": "No se encontraron resultados",
+                                        "emptyTable": "Ningún dato disponible en esta tabla",
+                                        "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                                        "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                                        "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+                                        "search": "Buscar:",
+                                        "loadingRecords": "Cargando...",
+                                        "paginate": {
+                                            "first": "Primero",
+                                            "last": "Último",
+                                            "next": "Siguiente",
+                                            "previous": "Anterior"
+                                        },
+                                        "aria": {
+                                            "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                                            "sortDescending": ": activar para ordenar la columna de manera descendente"
+                                        }
+                                    }
+                                });
+                                $('#ingreso, #caja, #deduccion, #valesPrepago').on('change', calcularTotal);
+                            }
+                        })
+
                         PostMVC('/VentaPublicoGeneral/SearchPV_CajaChicaByDateAndUserAndCorteId', { userName, fecha }, function (r) {
                             if (r.IsSuccess && Array.isArray(r.Response)) {
                                 const cajaChicaData = r.Response;
@@ -696,7 +780,7 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                                         }
                                     }
                                 });
-                                $('#ingreso, #caja, #deduccion').on('change', calcularTotal);
+                                $('#ingreso, #caja, #deduccion, #valesPrepago').on('change', calcularTotal);
                             }
                         });
                     }
@@ -710,13 +794,14 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
 }
 
 function calcularTotal() {
-    // Obtener valores numéricos de los inputs
-    const ingreso = parseFloat($('#ingreso').val().replace(/[^0-9.-]+/g, "")) || 0;
-    const caja = parseFloat($('#caja').val().replace(/[^0-9.-]+/g, "")) || 0;
-    const deduccion = parseFloat($('#deduccion').val().replace(/[^0-9.-]+/g, "")) || 0;
+    // Obtener valores numéricos de los inputs con manejo seguro de valores nulos/undefined
+    const ingreso = parseFloat($('#ingreso').val()?.replace(/[^0-9.-]+/g, "") || 0);
+    const caja = parseFloat($('#caja').val()?.replace(/[^0-9.-]+/g, "") || 0);
+    const deduccion = parseFloat($('#deduccion').val()?.replace(/[^0-9.-]+/g, "") || 0);
+    const valePrepago = parseFloat($('#valesPrepago').val()?.replace(/[^0-9.-]+/g, "") || 0);
 
-    // Calcular el total (ingreso + caja - deduccion)
-    const total = ingreso - (caja + deduccion);
+    // Calcular el total (ingreso + valePrepago) - ( caja + deduccion)
+    const total = (ingreso + valePrepago) - (caja + deduccion);
 
     // Actualizar el campo total
     $('#total').val(total.toLocaleString('es-MX', {
@@ -730,6 +815,7 @@ function limpiarCalculos() {
     $('#caja').val();
     $('#deduccion').val();
     $('#total').val();
+    $('#valesPrepago').val();
 }
 
 // Evento del botón Generar PDF
