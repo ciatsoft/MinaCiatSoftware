@@ -89,6 +89,19 @@ namespace MinaToMVC.DAL
             return modelResponse;
         }
 
+        public async Task<ModelResponse> VentasDiariasPrepago(DateTime fecha)
+        {
+            string url = $"api/VentaPublicoGeneral/Prepago/VentasDiarias/{fecha.ToString("yyyy-MM-dd")}";
+
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+
 
         // ---------------- Canjeo Vale ----------------
         public async Task<ModelResponse> ObtenerVentaPorFolio(string folio)

@@ -72,6 +72,13 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetAllPrepagosByFolio(folio);
             return result;
         }
+
+        [HttpGet, Route("Prepago/VentasDiarias/{fecha}")]
+        public async Task<ModelResponse> VentasDiariasPrepago(DateTime fecha)
+        {
+            var result = wrapper.VentasDiariasPrepago(fecha);
+            return result;
+        }
         //------------------------------Canjeo--------------------------------------
 
 

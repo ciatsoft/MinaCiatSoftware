@@ -412,27 +412,23 @@ namespace MinaToMVC.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
-
         public async Task<string> DeletePrepago(long id)
         {
             var result = await httpClientConnection.DeletePrepago(id);
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-
         public async Task<string> GetAllPrepagos()
         {
             var token = Helpers.SessionHelper.GetSessionUser();
             var result = await httpClientConnection.GetAllPrepagos();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-
         public async Task<string> GetAllPrepagosByRFID(string rfid)
         {
             var result = await httpClientConnection.GetAllPrepagosByRFID(rfid);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-
         public async Task<ActionResult> PartialPrepago()
         {
             Prepago prepago = new Prepago();
@@ -468,6 +464,11 @@ namespace MinaToMVC.Controllers
             ViewBag.Usuarios = usuarios;
 
             return PartialView(prepago);
+        }
+        public async Task<string> VentasDiariasPrepago(DateTime fecha)
+        {
+            var result = await httpClientConnection.VentasDiariasPrepago(fecha);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
         //----------------CAJEO DE VALE----------------------------------
