@@ -25,5 +25,6 @@ namespace MinaTolEntidades.DtoVentaPublicoGeneral
         public string Estado { get; set; }
         public int FolioInicio { get; set; }
         public int FolioFinal { get; set; }
+        public int Corte_Id { get; set; }
     }
 }

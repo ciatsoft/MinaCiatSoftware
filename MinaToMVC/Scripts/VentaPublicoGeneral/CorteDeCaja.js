@@ -228,7 +228,8 @@ $(document).ready(function () {
                 render: function (data) {
                     return new Date(data).toLocaleString('es-MX');
                 }
-            }
+            },
+            { data: 'corte_Id', title: 'ID Corte', visible: false },
         ],
         language: {
             "decimal": ",",
@@ -653,6 +654,9 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                                     $('#tblPrepago').DataTable().clear().destroy();
                                 }
 
+                                // Evaluar si existe al menos un corte_Id > 0
+                                const mostrarCorteId = ventasPrepago.some(item => item.corte_Id > 0);
+
                                 $('#tblPrepago').DataTable({
                                     data: ventasPrepago,
                                     columns: [
@@ -665,7 +669,11 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                                             title: "Precio Unidad",
                                             render: $.fn.dataTable.render.number(',', '.', 2, '$')
                                         },
-                                        { data: "importeVenta", title: "Importe Venta", render: $.fn.dataTable.render.number(',', '.', 2, '$') },
+                                        {
+                                            data: "importeVenta",
+                                            title: "Importe Venta",
+                                            render: $.fn.dataTable.render.number(',', '.', 2, '$')
+                                        },
                                         { data: "rfid", title: "RFID", visible: false },
                                         { data: "idCliente", title: "ID Cliente", visible: false },
                                         { data: "nombreCliente", title: "Nombre Cliente" },
@@ -674,10 +682,17 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                                             data: "fecha",
                                             title: "Fecha",
                                             render: function (data) {
-                                                // Opción 1: Formato básico dd/mm/aaaa
                                                 const date = new Date(data);
                                                 return date.toLocaleDateString('es-MX');
                                             }
+                                        },
+                                        {
+                                            data: "corte_Id",
+                                            title: "ID Corte",
+                                            render: function (data) {
+                                                return data > 0 ? data : '';
+                                            },
+                                            visible: mostrarCorteId
                                         }
                                     ],
                                     language: {
@@ -706,7 +721,7 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                                 });
                                 $('#ingreso, #caja, #deduccion, #valesPrepago').on('change', calcularTotal);
                             }
-                        })
+                        });
 
                         PostMVC('/VentaPublicoGeneral/SearchPV_CajaChicaByDateAndUserAndCorteId', { userName, fecha }, function (r) {
                             if (r.IsSuccess && Array.isArray(r.Response)) {
@@ -865,6 +880,7 @@ function generarReportePDF() {
     const datosCajaChica = $('#tblCajaChica').DataTable().rows().data().toArray();
     const datosDeducciones = $('#tblDeducciones').DataTable().rows().data().toArray();
     const datosEnCaja = $('#tblEn_Caja').DataTable().rows().data().toArray();
+    const datosPrepagos = $('#tblPrepago').DataTable().rows().data().toArray();
 
     // Función para validar si existen Corte_Id
     function tieneCorteId(datos) {
@@ -880,7 +896,8 @@ function generarReportePDF() {
         tieneCorteId(datosVentas) ||
         tieneCorteId(datosCajaChica) ||
         tieneCorteId(datosDeducciones) ||
-        tieneCorteId(datosEnCaja)
+        tieneCorteId(datosEnCaja) ||
+        tieneCorteId(datosPrepagos)
     );
 
     // Si NO hay Corte_Id, ejecuta InfoReporte()
@@ -935,6 +952,7 @@ function generarReportePDF() {
         { id: 'tblVentas_Aprobadas', title: 'Resumen de Ventas Aprobadas' },
         { id: 'tblEn_Caja', title: 'Dinero en Caja' },
         { id: 'tblDeducciones', title: 'Deducciones' },
+        { id: 'tblPrepago', title: 'Prepagos Realizados' },
         { id: 'tblCajaChica', title: 'Movimientos de Caja Chica' }
     ];
 
@@ -943,7 +961,7 @@ function generarReportePDF() {
         if (tableElement) {
             // Verificar si la tabla tiene datos (excepto para Deducciones)
             const dataTable = $(`#${tabla.id}`).DataTable();
-            if (tabla.id !== 'tblDeducciones' && dataTable.data().count() === 0) {
+            if (tabla.id !== 'tblDeducciones' && dataTable.data().count() === 0 && tabla.id !== 'tblPrepago' && dataTable.data().count() === 0 ) {
                 return; // Saltar esta tabla (excepto Deducciones)
             }
 
@@ -989,6 +1007,7 @@ function generarReportePDF() {
         <p style="margin: 10px 0;"><strong>Ingresos:</strong> ${document.getElementById('ingreso').value}</p>
         <p style="margin: 10px 0;"><strong>Caja:</strong> ${document.getElementById('caja').value}</p>
         <p style="margin: 10px 0;"><strong>Deducciones:</strong> ${document.getElementById('deduccion').value}</p>
+        <p style="margin: 10px 0;"><strong>Prepagos:</strong> ${document.getElementById('valesPrepago').value}</p>
         <p style="margin: 10px 0; font-weight: bold; font-size: 18px;"><strong>Total Utilidad:</strong> ${document.getElementById('total').value}</p>
     `;
 
