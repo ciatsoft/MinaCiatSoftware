@@ -2,6 +2,7 @@
 using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.DtoSucursales;
+using MinaTolEntidades.DtoTaller;
 using MinaTolEntidades.Security;
 using MinaToMVC.Helpers;
 using Newtonsoft.Json;
@@ -15,7 +16,7 @@ using static MinaToMVC.Controllers.Filters.FiltersHelper;
 
 namespace MinaToMVC.Controllers
 {
-    [Autenticated]
+
     public class TallerController : BaseController
     {
         #region View
@@ -59,9 +60,57 @@ namespace MinaToMVC.Controllers
 
             return View(v);
         }
-        public ActionResult Inventario_Taller()
+        public async Task<ActionResult> Inventario_Taller(long id = 0)
         {
-            return View();
+            Inventario inventario = new Inventario();
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            var categoriasInventarioResponse = await httpClientConnection.GetAllCategoriaInventario();
+            var categoriaInventario = JsonConvert.DeserializeObject<List<CategoriaInventario>>(categoriasInventarioResponse.Response.ToString());
+            var categoriaInventarioDdl = MappingPropertiToDropDownList<CategoriaInventario>(categoriaInventario, "Id", "Nombre");
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+            ViewBag.CategoriaInventario = categoriaInventarioDdl;
+
+            return View(inventario);
+        }
+        public async Task<ActionResult> CategoriaInventario(long id = 0)
+        {
+            CategoriaInventario categoriaInventario = new CategoriaInventario();
+
+            if (id != 0)
+            {
+                var result = await httpClientConnection.GetCategoriaInventarioById(id);
+                categoriaInventario = JsonConvert.DeserializeObject<CategoriaInventario>(result.Response.ToString());
+            }
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            return View(categoriaInventario);
         }
         public ActionResult ReportesCStock()
         {
@@ -71,10 +120,43 @@ namespace MinaToMVC.Controllers
         {
             return View();
         }
-        
+
         #endregion
 
         #region Data Acces
+
+        #region Inventario
+
+        public async Task<ActionResult> SaveOrUpdateInventario(Inventario inventario)
+        {
+            var r = await httpClientConnection.SaveOrUpdateInventario(inventario);
+            return Redirect("Inventario_Taller");
+        }
+
+        #endregion
+
+        #region CategoriaInventario
+
+        public async Task<ActionResult> SaveOrUpdateCategoriaInventario(CategoriaInventario ci)
+        {
+            var r = await httpClientConnection.SaveOrUpdateCategoriaInventario(ci);
+            return Redirect("CategoriaInventario");
+        }
+        public async Task<string> GetAllCategoriaInventario()
+        {
+            var result = await httpClientConnection.GetAllCategoriaInventario();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<ActionResult> DeleteCategoriaInventarioById(long id)
+        {
+            var r = await httpClientConnection.DeleteCategoriaInventarioById(id);
+            return Redirect("CategoriaInventario");
+        }
+
+
+        #endregion
+
+
         [HttpPost]
         public async Task<string> FirstAutentication(string user, string pass)
         {
