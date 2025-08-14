@@ -1,0 +1,229 @@
+﻿using MinaTolEntidades;
+using MinaTolEntidades.DtoTaller;
+using MinaTolEntidades.DtoVentaPublicoGeneral;
+using MinaTolEntidades.DtoVentas;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Web;
+
+namespace MinaTolWebApi.DAL
+{
+    public partial class DbWrapper
+    {
+        #region Inventario
+        public ModelResponse SaveOrUpdateInventario(Inventario u)
+        {
+            var modelResponse = new ModelResponse();
+
+            try
+            {
+                var userID = ExecuteScalar($"SaveOrUpdateInventario", CommandType.StoredProcedure, GenerateSQLParameters(u));
+                u.Id = Convert.ToInt64(userID);
+
+                modelResponse.Response = u;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
+
+        public ModelResponse GetAllInventario()
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                var result = GetObjects("GetAllInventario", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, Inventario>((reader) =>
+                    {
+                        var r = FillEntity<Inventario>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+
+        }
+        public ModelResponse GetInventarioById(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id",
+                    SqlDbType = System.Data.SqlDbType.Int
+                });
+
+                var result = GetObject("GetInventarioById", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, Inventario>((reader) =>
+                    {
+                        var r = FillEntity<Inventario>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+
+        }
+        public ModelResponse DeleteInventarioById(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id"
+                });
+
+                var result = ExecuteNonQuery("DeleteInventarioById", System.Data.CommandType.StoredProcedure, parameters);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
+        #endregion
+        #region CategoriaInventario
+        public ModelResponse SaveOrUpdateCategoriaInventario(CategoriaInventario u)
+        {
+            var modelResponse = new ModelResponse();
+
+            try
+            {
+                var userID = ExecuteScalar($"SaveOrUpdateCategoriaInventario", CommandType.StoredProcedure, GenerateSQLParameters(u));
+                u.Id = Convert.ToInt64(userID);
+
+                modelResponse.Response = u;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
+
+        public ModelResponse GetAllCategoriaInventario()
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                var result = GetObjects("GetAllCategoriaInventario", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, CategoriaInventario>((reader) =>
+                    {
+                        var r = FillEntity<CategoriaInventario>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+
+        }
+        public ModelResponse GetCategoriaInventarioById(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id",
+                    SqlDbType = System.Data.SqlDbType.Int
+                });
+
+                var result = GetObject("GetCategoriaInventarioById", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, CategoriaInventario>((reader) =>
+                    {
+                        var r = FillEntity<CategoriaInventario>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+
+        }
+        public ModelResponse DeleteCategoriaInventarioById(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id"
+                });
+
+                var result = ExecuteNonQuery("DeleteCategoriaInventarioById", System.Data.CommandType.StoredProcedure, parameters);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
+        #endregion
+    }
+}

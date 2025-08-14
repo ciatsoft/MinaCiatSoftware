@@ -150,6 +150,7 @@
     <Compile Include="Controllers\Reporte_VentaController.cs" />
     <Compile Include="Controllers\RfIdController.cs" />
     <Compile Include="Controllers\RollController.cs" />
+    <Compile Include="Controllers\TallerController.cs" />
     <Compile Include="Controllers\TipoMaterialUbicacionController.cs" />
     <Compile Include="Controllers\TrabajadorController.cs" />
     <Compile Include="Controllers\TipoVehiculoController.cs" />
@@ -168,6 +169,7 @@
     <Compile Include="DAL\DbWrapper.ClienteTipoMaterial.cs" />
     <Compile Include="DAL\DbWrapper.cs" />
     <Compile Include="DAL\DbWrapper.Foliador.cs" />
+    <Compile Include="DAL\DbWrapper.Inventario.cs" />
     <Compile Include="DAL\DbWrapper.MaterialUbicacion.cs" />
     <Compile Include="DAL\DbWrapper.MetodoPago.cs" />
     <Compile Include="DAL\DbWrapper.Prepago.cs" />
