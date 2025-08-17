@@ -64,6 +64,12 @@ namespace MinaToMVC.Controllers
         {
             Inventario inventario = new Inventario();
 
+            if( id != 0)
+            {
+                var result = await httpClientConnection.GetInventarioById(id);
+                inventario = JsonConvert.DeserializeObject<Inventario>(result.Response.ToString());
+            }
+
             var usuarioToken = SessionHelper.GetSessionUser();
             var usuario = new List<Usuario>()
             {
@@ -123,6 +129,41 @@ namespace MinaToMVC.Controllers
 
         #endregion
 
+        #region PartialViews
+
+        public async Task<ActionResult> PartialComponenteVehiculo(long id)
+        {
+            ComponenteVehiculo componenteVehiculo = new ComponenteVehiculo();
+
+            var inventarioResponse = await httpClientConnection.GetInventarioById(id);
+            var inventario = JsonConvert.DeserializeObject<Inventario>(inventarioResponse.Response.ToString());
+
+            var vehiculosResponse = await httpClientConnection.GetAllVehiculo();
+            var vehiculos = JsonConvert.DeserializeObject<Vehiculo>(vehiculosResponse.Response.ToString());
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.Inventario = inventario;
+            ViewBag.Vehiculos = vehiculos;
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            return PartialView(componenteVehiculo);
+        }
+
+        #endregion
+
         #region Data Acces
 
         #region Inventario
@@ -132,7 +173,16 @@ namespace MinaToMVC.Controllers
             var r = await httpClientConnection.SaveOrUpdateInventario(inventario);
             return Redirect("Inventario_Taller");
         }
-
+        public async Task<string> GetAllInventario()
+        {
+            var result = await httpClientConnection.GetAllInventario();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<ActionResult> DeleteInventarioById(long id)
+        {
+            var r = await httpClientConnection.DeleteInventarioById(id);
+            return Redirect("Inventario_Taller");
+        }
         #endregion
 
         #region CategoriaInventario

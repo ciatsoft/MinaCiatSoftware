@@ -10,6 +10,7 @@ namespace MinaTolEntidades.DtoTaller
     {
         public string Nombre { get; set; }
         public long IdCategoria { get; set; }
+        public string NombreCategoria { get; set; }
         public string Marca { get; set; }
         public long CodigoFabricante { get; set; }
         public int CantidadExistente { get; set; }

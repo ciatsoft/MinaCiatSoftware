@@ -47,7 +47,7 @@ function GetAllVehiculo() {
         } else {
             Swal.fire({
                 title: 'Error',
-                text: 'Error al cargar los vehículos: ' + r.ErrorMessage,
+                text: 'Error al cargar las Categorias del Inventario: ' + r.ErrorMessage,
                 icon: 'error',
                 confirmButtonText: 'Aceptar'
             });

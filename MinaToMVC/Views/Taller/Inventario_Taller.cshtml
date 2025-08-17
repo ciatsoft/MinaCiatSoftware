@@ -1,8 +1,9 @@
 ﻿@model MinaTolEntidades.DtoTaller.Inventario
 @{
-    ViewBag.Title = "Inventario_Taller"; // Establece el título de la vista.
+    ViewBag.Title = "Inventario_Taller";
+    Layout = "~/Views/Shared/_Layout.cshtml";
     var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
-    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
 }
 <link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -12,11 +13,11 @@
     @using (Html.BeginForm("SaveOrUpdateInventario", "Taller", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmInventario", @id = "frmInventario" }))
     {
         @Html.HiddenFor(x => x.Id)
-        @Html.HiddenFor(x => x.Estatus)
-        @Html.HiddenFor(x => x.CreatedDt)
-        @Html.HiddenFor(x => x.CreatedBy)
-        @Html.HiddenFor(x => x.UpdatedBy)
-        @Html.HiddenFor(x => x.UpdatedDt)
+        @Html.HiddenFor(x => x.Estatus, new { id = "estatus" })
+        @Html.HiddenFor(x => x.CreatedDt, new { id = "createdDt", @Value = fechaActual })
+        @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy", @Value = usuarioToken.UserName })
+        @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy", @Value = usuarioToken.UserName })
+        @Html.HiddenFor(x => x.UpdatedDt, new { id = "updatedDt", @Value = fechaActual })
 
         <br />
         <center><h1>Inventario de Taller</h1></center>
@@ -29,8 +30,12 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Categoria:</label>
-                        @Html.DropDownList("ddlCategoriaInventario", (IEnumerable<SelectListItem>)ViewBag.CategoriaInventario, new { @class = "form-control"} )
+                        @Html.DropDownListFor(x => x.IdCategoria,
+                            new SelectList((IEnumerable<SelectListItem>)ViewBag.CategoriaInventario, "Value", "Text"),
+                            "Selecciona una categoria",
+                            new { @class = "form-control", id = "ddlCategoriaInventario" })
                     </div>
+                    @Html.HiddenFor(x => x.NombreCategoria, new { id = "nombreCategoria" })
                     <div class="col-lg-3">
                         <label>Marca:</label>
                         @Html.TextBoxFor(x => x.Marca, new { @class = "form-control", @type = "text", id = "marca" })
@@ -75,4 +80,7 @@
             </div>
         </div>
     }
+    <br />
+    <table id="tblInventario" class="table table-bordered table-striped" style="width: 100%;"></table>
 </div>
+<script src="@(Url.StaticFile("Scripts/Taller/InventarioTaller.js"))"></script>
