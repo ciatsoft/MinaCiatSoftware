@@ -176,6 +176,7 @@
     <Content Include="Scripts\RFID\RFID.js" />
     <Content Include="Scripts\Seguridad\Usuario.js" />
     <Content Include="Scripts\Taller\CatalogoInventario.js" />
+    <Content Include="Scripts\Taller\InventarioTaller.js" />
     <Content Include="Scripts\Trabajador\AltaEdicion.js" />
     <Content Include="Scripts\Vehiculo\Vehiculo.js" />
     <Content Include="Scripts\VentaPublicoGeneral\CajaChica.js" />
@@ -315,6 +316,7 @@
     <Content Include="Views\VentaPublicoGeneral\PartialCanjeo.cshtml" />
     <Content Include="Views\RH\Empleados.cshtml" />
     <Content Include="Views\Taller\CategoriaInventario.cshtml" />
+    <Content Include="Views\Taller\PartialComponenteVehiculo.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

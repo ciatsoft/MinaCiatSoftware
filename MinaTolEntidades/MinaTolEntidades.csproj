@@ -69,6 +69,7 @@
     <Compile Include="DtoSucursales\Producto.cs" />
     <Compile Include="DtoSucursales\UnidadMedida.cs" />
     <Compile Include="DtoTaller\CategoriaInventario.cs" />
+    <Compile Include="DtoTaller\ComponenteVehiculo.cs" />
     <Compile Include="DtoTaller\Inventario.cs" />
     <Compile Include="DtoVentaPublicoGeneral\Canjeo.cs" />
     <Compile Include="DtoVentaPublicoGeneral\ClientePublicoGral.cs" />
