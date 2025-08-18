@@ -118,14 +118,14 @@ namespace MinaToMVC.Controllers
 
             return View(categoriaInventario);
         }
-        public ActionResult ReportesCStock()
-        {
-            return View();
-        }
-        public ActionResult Reportes_SStock()
-        {
-            return View();
-        }
+        //public ActionResult ReportesCStock()
+        //{
+        //    return View();
+        //}
+        //public ActionResult Reportes_SStock()
+        //{
+        //    return View();
+        //}
 
         #endregion
 
@@ -139,7 +139,7 @@ namespace MinaToMVC.Controllers
             var inventario = JsonConvert.DeserializeObject<Inventario>(inventarioResponse.Response.ToString());
 
             var vehiculosResponse = await httpClientConnection.GetAllVehiculo();
-            var vehiculos = JsonConvert.DeserializeObject<Vehiculo>(vehiculosResponse.Response.ToString());
+            var vehiculos = JsonConvert.DeserializeObject<List<Vehiculo>>(vehiculosResponse.Response.ToString());
 
             var usuarioToken = SessionHelper.GetSessionUser();
             var usuario = new List<Usuario>()
@@ -153,6 +153,14 @@ namespace MinaToMVC.Controllers
 
             var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
             var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            // Asignar valores al modelo principal
+            componenteVehiculo.IdInventario = inventario.Id;
+            componenteVehiculo.NombreInventario = inventario.Nombre;
+            componenteVehiculo.CreatedBy = usuarioToken.UserName;
+            componenteVehiculo.UpdatedBy = usuarioToken.UserName;
+            componenteVehiculo.CreatedDt = DateTime.Now;
+            componenteVehiculo.UpdatedDt = DateTime.Now;
 
             ViewBag.Inventario = inventario;
             ViewBag.Vehiculos = vehiculos;
@@ -204,6 +212,24 @@ namespace MinaToMVC.Controllers
         }
 
 
+        #endregion
+
+        #region ComponenteVehiculo
+        public async Task<ActionResult> SaveOrUpdateComponenteVehiculo(ComponenteVehiculo ci)
+        {
+            var r = await httpClientConnection.SaveOrUpdateComponenteVehiculo(ci);
+            return Redirect("Inventario_Taller");
+        }
+        public async Task<string> GetAllComponenteVehiculo()
+        {
+            var result = await httpClientConnection.GetAllComponenteVehiculo();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<ActionResult> DeleteComponenteVehiculoById(long id)
+        {
+            var r = await httpClientConnection.DeleteComponenteVehiculoById(id);
+            return Redirect("Inventario_Taller");
+        }
         #endregion
 
 

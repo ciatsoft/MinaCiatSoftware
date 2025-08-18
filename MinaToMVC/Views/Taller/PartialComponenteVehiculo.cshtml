@@ -2,8 +2,93 @@
 @{
     ViewBag.Title = "PartialComponenteVehiculo";
     var vehiculos = (List<MinaTolEntidades.DtoClientes.Vehiculo>)ViewBag.Vehiculos;
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+    var inventario = (MinaTolEntidades.DtoTaller.Inventario)ViewBag.Inventario;
 }
 
 <link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+@using (Html.BeginForm("SaveOrUpdateComponenteVehiculo", "Taller", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmComponenteInventario" }))
+{
+    @Html.HiddenFor(x => x.Id, new { @id = "idModal" })
+    @Html.HiddenFor(x => x.Estatus, new { @id = "estatusModal" })
+    @Html.HiddenFor(x => x.CreatedBy, new { @id = "createdByModal" })
+    @Html.HiddenFor(x => x.UpdatedBy, new { @id = "updatedByModal" })
+    @Html.HiddenFor(x => x.CreatedDt, new { @id = "createdDtModal" })
+    @Html.HiddenFor(x => x.UpdatedDt, new { @id = "updatedDtModal" })
+
+    <br />
+    <h2>Asignar pieza a Vehiculo</h2>
+    <div class="tabla-consultas-empleados">
+        <div class="rectangulos" style="width: 100%;">
+            <div class="row">
+                @Html.HiddenFor(x => x.IdInventario, new { @class = "form-control", @id = "idInventario", @readonly = "readonly" })
+                <div class="col-lg-4">
+                    <label>Nombre de la Pieza:</label>
+                    @Html.TextBoxFor(x => x.NombreInventario, new { @class = "form-control", @id = "nombreInventario", @readonly = "readonly" })
+                </div>
+                <div class="col-lg-4">
+                    <label>Cantidad de Piezas a Usar:</label>
+                    @Html.TextBoxFor(x => x.CantidadComponente, new { @class = "form-control", @id = "cantidadComponente", type = "number", min = "1" })
+                </div>
+                <div class="col-lg-4">
+                    <label>Placas del Vehículo:</label>
+                    @Html.DropDownListFor(x => x.IdVehiculo,
+                        new SelectList(vehiculos, "Id", "Placa"),
+                        "Seleccione un vehículo",
+                        new { @class = "form-control", @required = "required" })
+                    @Html.HiddenFor(x => x.Placa, new { @class = "form-control", @id = "placa" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4">
+                    <label>Cantidad en existencia:</label>
+                    <input class="form-control" id="cantidadExistente" value="@inventario.CantidadExistente" readonly />
+                </div>
+            </div>
+
+            <div style="margin-top: 35px;">
+                <button id="btnCanjearVale" style="margin-top: -25px; margin-bottom: 30px;" type="button" class="btn btn-success" onclick="GenerarConsumo()">Generar Consumo</button>
+                <a href="/Taller/Inventario_Taller" class="btn btn-custom-cancel">Cancelar</a>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        // Bloquear la primera opción del dropdown (Seleccione un vehículo)
+        $('#IdVehiculo option:first').prop('disabled', true);
+
+        // Resetear la selección si queda en la opción bloqueada
+        if ($('#IdVehiculo').val() == "") {
+            $('#IdVehiculo').val("");
+            $('#placa').val("");
+        }
+
+        // Escuchar cambios en el dropdown de vehículos
+        $('#IdVehiculo').change(function () {
+            var selectedOption = $(this).find('option:selected');
+
+            // Verificar que no sea la opción bloqueada
+            if (selectedOption.val() !== "") {
+                // Obtener el texto seleccionado (que es la placa según tu SelectList)
+                var selectedPlaca = selectedOption.text();
+
+                // Actualizar el campo de placa
+                $('#placa').val(selectedPlaca);
+            } else {
+                // Limpiar el campo si se selecciona la opción bloqueada
+                $('#placa').val("");
+                $(this).val(""); // Forzar deselección
+            }
+        });
+
+        // Disparar el evento change si ya hay un valor seleccionado al cargar
+        if ($('#IdVehiculo').val() && $('#IdVehiculo').val() !== "") {
+            $('#IdVehiculo').trigger('change');
+        }
+    });
+</script>

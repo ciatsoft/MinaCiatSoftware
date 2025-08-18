@@ -81,5 +81,36 @@ namespace MinaTolWebApi.Controllers
         }
 
         #endregion
+        #region ComponenteVehiculo
+
+        [HttpPost, Route("ComponenteVehiculo/")]
+        public ModelResponse SaveOrUpdateComponenteVehiculo(ComponenteVehiculo ci)
+        {
+            var result = wrapper.SaveOrUpdateComponenteVehiculo(ci);
+            return result;
+        }
+
+        [HttpGet, Route("ComponenteVehiculo/List")]
+        public ModelResponse GetAllComponenteVehiculo()
+        {
+            var result = wrapper.GetAllComponenteVehiculo();
+            return result;
+        }
+
+        [HttpGet, Route("ComponenteVehiculo/{id:long}")]
+        public ModelResponse GetComponenteVehiculoById(long id)
+        {
+            var result = wrapper.GetComponenteVehiculoById(id);
+            return result;
+        }
+
+        [HttpDelete, Route("ComponenteVehiculo/{id:long}")]
+        public ModelResponse DeleteComponenteVehiculoById(long id)
+        {
+            var result = wrapper.DeleteComponenteVehiculoById(id);
+            return result;
+        }
+
+        #endregion
     }
 }
