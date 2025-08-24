@@ -55,7 +55,16 @@ $(document).ready(function () {
                 }
             },
             { data: 'cantidadExistente', title: 'Cantidad Existente' },
-            { data: 'precioCompra', title: 'Precio' },
+            {
+                data: 'precioCompra',
+                title: 'Precio',
+                render: function (data) {
+                    return new Intl.NumberFormat('es-MX', {
+                        style: 'currency',
+                        currency: 'MXN'
+                    }).format(data);
+                }
+            },
             { data: 'ubicacionAlmacen', title: 'Ubicacion en Almacen' },
             { data: 'proveedor', title: 'Proveedor' },
             {
@@ -322,6 +331,70 @@ function AbrirModalComponente(id) {
 }
 
 document.getElementById("btnGenerarPDF").addEventListener("click", function () {
-    console.log("Boton de Reporte");
     generarReportePDF();
 });
+
+// Función para generar el reporte PDF
+function generarReportePDF() {
+    var table = $('#tblInventario').DataTable();
+    var datos = table.data().toArray();
+
+    // Crear tabla HTML manualmente
+    var tablaHTML = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
+
+    // Encabezados (excluyendo columnas ocultas y de acciones)
+    tablaHTML += '<thead><tr>';
+    tablaHTML += '<th>Nombre</th>';
+    tablaHTML += '<th>Categoria</th>';
+    tablaHTML += '<th>Marca</th>';
+    tablaHTML += '<th>Codigo del Fabricante</th>';
+    tablaHTML += '<th>Estado Inventario</th>';
+    tablaHTML += '<th>Cantidad Existente</th>';
+    tablaHTML += '<th>Precio</th>';
+    tablaHTML += '<th>Ubicacion en Almacen</th>';
+    tablaHTML += '<th>Proveedor</th>';
+    tablaHTML += '</tr></thead>';
+
+    // Datos
+    tablaHTML += '<tbody>';
+    datos.forEach(function (item) {
+        tablaHTML += '<tr>';
+        tablaHTML += '<td>' + (item.nombre || '') + '</td>';
+        tablaHTML += '<td>' + (item.nombreCategoria || '') + '</td>';
+        tablaHTML += '<td>' + (item.marca || '') + '</td>';
+        tablaHTML += '<td>' + (item.codigoFabricante || '') + '</td>';
+        tablaHTML += '<td>' + obtenerEstadoTexto(item.cantidadExistente) + '</td>';
+        tablaHTML += '<td>' + (item.cantidadExistente || '') + '</td>';
+        tablaHTML += '<td>' + (item.precioCompra ?
+            new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN'
+            }).format(item.precioCompra) : '') + '</td>';
+        tablaHTML += '<td>' + (item.ubicacionAlmacen || '') + '</td>';
+        tablaHTML += '<td>' + (item.proveedor || '') + '</td>';
+        tablaHTML += '</tr>';
+    });
+    tablaHTML += '</tbody></table>';
+
+    // Crear formulario y enviar
+    var form = $('<form>', {
+        method: 'POST',
+        action: '/Pdf/GenerarReporteInventario'
+    });
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'tablaHTML',
+        value: tablaHTML
+    }).appendTo(form);
+
+    form.appendTo('body').submit().remove();
+}
+
+// Función auxiliar para convertir el estado a texto
+function obtenerEstadoTexto(cantidad) {
+    if (cantidad === 0) return 'Sin Piezas Disponibles';
+    if (cantidad < 10) return 'Pocas Piezas';
+    if (cantidad < 25) return 'Moderado';
+    return 'Stock Suficiente';
+}
