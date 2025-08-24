@@ -23,10 +23,37 @@ $(document).ready(function () {
         columns: [
             { data: 'id', title: 'ID' },
             { data: 'nombre', title: 'Nombre' },
-            { data: 'idCategoria', title: 'IdCategoria', visable: false },
+            { data: 'idCategoria', title: 'IdCategoria', visible: false },
             { data: 'nombreCategoria', title: 'Categoria' },
             { data: 'marca', title: 'Marca' },
             { data: 'codigoFabricante', title: 'Codigo del Fabricante' },
+            {
+                data: 'cantidadExistente',
+                title: 'Estado Inventario',
+                render: function (data, type, row) {
+                    if (data === 0) {
+                        return '<div style="display: flex; align-items: center; gap: 8px;">' +
+                            '<div style="width: 12px; height: 12px; border-radius: 50%; background-color: #000000;"></div>' +
+                            '<span>Sin Piezas Disponibles</span>' +
+                            '</div>';
+                    } else if (data < 10) {
+                        return '<div style="display: flex; align-items: center; gap: 8px;">' +
+                            '<div style="width: 12px; height: 12px; border-radius: 50%; background-color: #dc3545;"></div>' +
+                            '<span>Pocas Piezas</span>' +
+                            '</div>';
+                    } else if (data < 25) {
+                        return '<div style="display: flex; align-items: center; gap: 8px;">' +
+                            '<div style="width: 12px; height: 12px; border-radius: 50%; background-color: #ffc107;"></div>' +
+                            '<span>Moderado</span>' +
+                            '</div>';
+                    } else {
+                        return '<div style="display: flex; align-items: center; gap: 8px;">' +
+                            '<div style="width: 12px; height: 12px; border-radius: 50%; background-color: #28a745;"></div>' +
+                            '<span>Stock Suficiente</span>' +
+                            '</div>';
+                    }
+                }
+            },
             { data: 'cantidadExistente', title: 'Cantidad Existente' },
             { data: 'precioCompra', title: 'Precio' },
             { data: 'ubicacionAlmacen', title: 'Ubicacion en Almacen' },
@@ -42,6 +69,46 @@ $(document).ready(function () {
                     return '<input type="button" value="Usar Componente" class="btn btn-success btn-lg-custom" onclick="AbrirModalComponente(' + data + ')" />';
                 }
             }
+        ],
+        language: {
+            "decimal": ",",
+            "thousands": ".",
+            "processing": "Procesando...",
+            "lengthMenu": "Mostrar _MENU_ entradas",
+            "zeroRecords": "No se encontraron resultados",
+            "emptyTable": "Ningun dato disponible en esta tabla",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+            "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+            "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+            "search": "Buscar:",
+            "loadingRecords": "Cargando...",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                "sortDescending": ": activar para ordenar la columna de manera descendente"
+            }
+        }
+    });
+
+    $("#tblComponenteVehiculo").DataTable({
+        data: [],
+        columns: [
+            { data: 'id', title: 'ID' },
+            //{ data: 'idInventario', title: 'Id Inventario', visable: false },
+            { data: 'nombreInventario', title: 'Nombre de Pieza' },
+            { data: 'cantidadComponente', title: 'Cantidad Usado' },
+            //{ data: 'idVehiculo', title: 'Id Vehiculo' },
+            { data: 'placa', title: 'Placa del Vehiculo' },
+            {
+                data: "id", title: "Acciones", render: function (data) {
+                    return ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarComponenteInventario(' + data + ')"/>';
+                }
+            },
         ],
         language: {
             "decimal": ",",
@@ -93,6 +160,7 @@ $(document).ready(function () {
     });
 
     GetAllInventario();
+    GetAllComponenteVehiculo();
 });
 
 function GetAllInventario() {
@@ -103,6 +171,21 @@ function GetAllInventario() {
             Swal.fire({
                 title: 'Error',
                 text: 'Error al cargar el Inventario: ' + r.ErrorMessage,
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
+}
+
+function GetAllComponenteVehiculo() {
+    GetMVC("/Taller/GetAllComponenteVehiculo", function (r) {
+        if (r.IsSuccess) {
+            MapingPropertiesDataTable("tblComponenteVehiculo", r.Response);
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al cargar el Historial de Componentes: ' + r.ErrorMessage,
                 icon: 'error',
                 confirmButtonText: 'Aceptar'
             });
@@ -200,6 +283,33 @@ function EliminarInventario(id) {
     });
 }
 
+function EliminarComponenteInventario(id) {
+    Swal.fire({
+        title: '¿Estas seguro?',
+        text: "¿Desea eliminar el siguiente registro?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var parametro = { Id: id };
+
+            PostMVC('/Taller/DeleteComponenteVehiculoById', parametro, function (r) {
+                if (r.IsSuccess) {
+                    Swal.fire('Eliminado', 'El Componente usado ha sido eliminado.', 'success')
+                        .then(() => { window.location.reload(); });
+                } else {
+                    Swal.fire('Eliminado', 'El Componente usado ha sido eliminado.', 'success')
+                        .then(() => { window.location.reload(); });
+                }
+            });
+        }
+    });
+}
+
 function AbrirModalComponente(id) {
     // Limpiar completamente el modal antes de cargar nuevo contenido
     $("#genericModal").removeData('b s.modal');
@@ -210,3 +320,8 @@ function AbrirModalComponente(id) {
         $("#genericModal").modal("show");
     });
 }
+
+document.getElementById("btnGenerarPDF").addEventListener("click", function () {
+    console.log("Boton de Reporte");
+    generarReportePDF();
+});
