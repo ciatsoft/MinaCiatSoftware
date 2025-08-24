@@ -29,7 +29,7 @@ $(document).ready(function () {
             "processing": "Procesando...",
             "lengthMenu": "Mostrar _MENU_ entradas",
             "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningún dato disponible en esta tabla",
+            "emptyTable": "Ningun dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -77,7 +77,7 @@ $(document).ready(function () {
             "processing": "Procesando...",
             "lengthMenu": "Mostrar _MENU_ entradas",
             "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningún dato disponible en esta tabla",
+            "emptyTable": "Ningun dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -280,21 +280,10 @@ document.getElementById("btnGenerarPDF").addEventListener("click", function () {
 });
 
 function generarReportePDF() {
-    // Verificar si las librerías están cargadas
-    if (typeof window.jspdf === 'undefined' || typeof html2canvas === 'undefined') {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Las bibliotecas necesarias no están cargadas correctamente',
-            confirmButtonText: 'Entendido'
-        });
-        return;
-    }
-
-    const { jsPDF } = window.jspdf;
-
     // Verificar si hay datos
-    const tabla = $('#tableVentaPlanta2').DataTable();
+    var tabla = $('#tableVentaPlanta2').DataTable();
+    var datos = tabla.data().toArray();
+
     if (tabla.data().count() === 0) {
         Swal.fire({
             icon: 'warning',
@@ -305,143 +294,233 @@ function generarReportePDF() {
         return;
     }
 
+    // Swalfire de generando reporte
     Swal.fire({
         title: "Generando reporte...",
         text: "Por favor espere mientras se genera el PDF",
         allowOutsideClick: false,
         didOpen: () => {
             Swal.showLoading();
+
+            // Cerrar automáticamente después de 8 segundos
+            setTimeout(() => {
+                Swal.close();
+
+                // Mostrar mensaje de éxito después de cerrar
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Reporte generado!',
+                    text: 'El PDF se ha creado correctamente',
+                    timer: 3000, // Opcional: cerrar después de 3 segundos
+                    showConfirmButton: false
+                });
+            }, 4000); // 4000 ms = 4 segundos
         }
     });
 
-    // Crear elemento temporal para el reporte con un ancho más adecuado para vertical
-    const pdfContent = document.createElement('div');
-    Object.assign(pdfContent.style, {
-        padding: '20px',
-        width: '800px', // Reducido para mejor ajuste en vertical
-        backgroundColor: 'white',
-        boxShadow: '0 0 10px rgba(0,0,0,0.1)',
-        fontFamily: 'Arial, sans-serif'
+    // Crear tabla HTML manualmente
+    var tablaHTML = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
+
+    // Encabezados (excluyendo columnas ocultas y de acciones)
+    tablaHTML += '<thead><tr>';
+    tablaHTML += '<th>Folio</th>';
+    tablaHTML += '<th>Planta</th>';
+    tablaHTML += '<th>Total Vendido en M3</th>';
+    tablaHTML += '</tr></thead>';
+
+    // Datos
+    tablaHTML += '<tbody>';
+    datos.forEach(function (item) {
+        tablaHTML += '<tr>';
+        tablaHTML += '<td>' + (item.pV_PlantaId || '') + '</td>';
+        tablaHTML += '<td>' + (item.nombreUbicacion || '') + '</td>';
+        tablaHTML += '<td>' + (item.totalVendido ?
+            new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN'
+            }).format(item.totalVendido) : '') + '</td>';
+        tablaHTML += '</tr>';
+    });
+    tablaHTML += '</tbody></table>';
+
+    // Crear formulario y enviar
+    var form = $('<form>', {
+        method: 'POST',
+        action: '/Pdf/GenerarReporteVentaPorPlanta'
     });
 
-    // Obtener fechas y datos
-    const fechaInicio = $("#fechaFiltro2").val();
-    const fechaFin = $("#fechaFiltro3").val();
-    const now = new Date();
-    const fechaGeneracion = now.toLocaleDateString('es-MX') + ' ' + now.toLocaleTimeString('es-MX');
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'tablaHTML',
+        value: tablaHTML
+    }).appendTo(form);
 
-    // Crear encabezado del reporte
-    pdfContent.innerHTML = `
-        <h1 style="text-align: center; margin-bottom: 20px; font-size: 22px; color: #333;">Reporte de Ventas por Planta</h1>
-        <div style="margin-bottom: 20px; font-size: 14px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-            <p style="margin: 5px 0;"><strong>Fecha de reporte:</strong> ${fechaInicio} a ${fechaFin}</p>
-            <p style="margin: 5px 0;"><strong>Generado el:</strong> ${fechaGeneracion}</p>
-        </div>
-    `;
-
-    // Clonar la tabla y aplicar estilos
-    const tableElement = document.getElementById('tableVentaPlanta2').cloneNode(true);
-    Object.assign(tableElement.style, {
-        width: '100%',
-        marginBottom: '30px',
-        fontSize: '10px', // Tamaño de fuente más pequeño para vertical
-        borderCollapse: 'collapse'
-    });
-
-    // Aplicar estilos a las celdas
-    const cells = tableElement.querySelectorAll('td, th');
-    cells.forEach(cell => {
-        Object.assign(cell.style, {
-            padding: '6px',
-            border: '1px solid #ddd',
-            fontSize: '10px' // Tamaño consistente para todas las celdas
-        });
-    });
-
-    // Aplicar estilos a los encabezados
-    const headers = tableElement.querySelectorAll('th');
-    headers.forEach(header => {
-        Object.assign(header.style, {
-            backgroundColor: '#f2f2f2',
-            fontWeight: 'bold',
-            fontSize: '11px' // Un poco más grande para headers
-        });
-    });
-
-    // Añadir título de la tabla
-    const titleElement = document.createElement('h2');
-    titleElement.textContent = 'Ventas por Planta';
-    Object.assign(titleElement.style, {
-        margin: '15px 0 8px 0',
-        fontSize: '16px',
-        borderBottom: '2px solid #ddd',
-        paddingBottom: '4px'
-    });
-
-    pdfContent.appendChild(titleElement);
-    pdfContent.appendChild(tableElement);
-    document.body.appendChild(pdfContent);
-
-    // Generar el PDF
-    html2canvas(pdfContent, {
-        scale: 2,
-        logging: false,
-        useCORS: true,
-        scrollX: 0,
-        scrollY: 0,
-        windowWidth: pdfContent.scrollWidth,
-        windowHeight: pdfContent.scrollHeight
-    }).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF({
-            orientation: 'portrait', // Cambiado a vertical
-            unit: 'mm',
-            format: 'letter' // Tamaño carta
-        });
-
-        // Ajustar dimensiones para tamaño carta vertical
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
-
-        const imgWidth = pageWidth - 20; // Margen izquierdo y derecho
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-        let heightLeft = imgHeight;
-        let position = 10; // Margen superior
-
-        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-
-        // Agregar páginas adicionales si es necesario
-        while (heightLeft >= 0) {
-            position = heightLeft - imgHeight;
-            pdf.addPage();
-            pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
-        }
-
-        // Guardar el PDF
-        const fileName = `Reporte_Ventas_Planta_${fechaInicio}_a_${fechaFin}.pdf`;
-        pdf.save(fileName);
-
-        // Limpiar y mostrar confirmación
-        document.body.removeChild(pdfContent);
-        Swal.fire({
-            title: "Reporte Generado!",
-            text: "El reporte ha sido generado exitosamente.",
-            icon: "success",
-            confirmButtonText: 'OK'
-        }).then(() => {
-            window.location.reload();
-        });
-    }).catch(error => {
-        console.error('Error al generar PDF:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error al generar el PDF',
-            confirmButtonText: 'Entendido'
-        });
-        document.body.removeChild(pdfContent);
-    });
+    form.appendTo('body').submit().remove();
 }
+
+//function generarReportePDF2() {
+//    // Verificar si las librerías están cargadas
+//    if (typeof window.jspdf === 'undefined' || typeof html2canvas === 'undefined') {
+//        Swal.fire({
+//            icon: 'error',
+//            title: 'Error',
+//            text: 'Las bibliotecas necesarias no están cargadas correctamente',
+//            confirmButtonText: 'Entendido'
+//        });
+//        return;
+//    }
+
+//    const { jsPDF } = window.jspdf;
+
+//    // Verificar si hay datos
+//    const tabla = $('#tableVentaPlanta2').DataTable();
+//    if (tabla.data().count() === 0) {
+//        Swal.fire({
+//            icon: 'warning',
+//            title: 'Sin datos',
+//            text: 'No hay datos para exportar',
+//            confirmButtonText: 'Entendido'
+//        });
+//        return;
+//    }
+
+//    Swal.fire({
+//        title: "Generando reporte...",
+//        text: "Por favor espere mientras se genera el PDF",
+//        allowOutsideClick: false,
+//        didOpen: () => {
+//            Swal.showLoading();
+//        }
+//    });
+
+//    // Crear elemento temporal para el reporte con un ancho más adecuado para vertical
+//    const pdfContent = document.createElement('div');
+//    Object.assign(pdfContent.style, {
+//        padding: '20px',
+//        width: '800px', // Reducido para mejor ajuste en vertical
+//        backgroundColor: 'white',
+//        boxShadow: '0 0 10px rgba(0,0,0,0.1)',
+//        fontFamily: 'Arial, sans-serif'
+//    });
+
+//    // Obtener fechas y datos
+//    const fechaInicio = $("#fechaFiltro2").val();
+//    const fechaFin = $("#fechaFiltro3").val();
+//    const now = new Date();
+//    const fechaGeneracion = now.toLocaleDateString('es-MX') + ' ' + now.toLocaleTimeString('es-MX');
+
+//    // Crear encabezado del reporte
+//    pdfContent.innerHTML = `
+//        <h1 style="text-align: center; margin-bottom: 20px; font-size: 22px; color: #333;">Reporte de Ventas por Planta</h1>
+//        <div style="margin-bottom: 20px; font-size: 14px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+//            <p style="margin: 5px 0;"><strong>Fecha de reporte:</strong> ${fechaInicio} a ${fechaFin}</p>
+//            <p style="margin: 5px 0;"><strong>Generado el:</strong> ${fechaGeneracion}</p>
+//        </div>
+//    `;
+
+//    // Clonar la tabla y aplicar estilos
+//    const tableElement = document.getElementById('tableVentaPlanta2').cloneNode(true);
+//    Object.assign(tableElement.style, {
+//        width: '100%',
+//        marginBottom: '30px',
+//        fontSize: '10px', // Tamaño de fuente más pequeño para vertical
+//        borderCollapse: 'collapse'
+//    });
+
+//    // Aplicar estilos a las celdas
+//    const cells = tableElement.querySelectorAll('td, th');
+//    cells.forEach(cell => {
+//        Object.assign(cell.style, {
+//            padding: '6px',
+//            border: '1px solid #ddd',
+//            fontSize: '10px' // Tamaño consistente para todas las celdas
+//        });
+//    });
+
+//    // Aplicar estilos a los encabezados
+//    const headers = tableElement.querySelectorAll('th');
+//    headers.forEach(header => {
+//        Object.assign(header.style, {
+//            backgroundColor: '#f2f2f2',
+//            fontWeight: 'bold',
+//            fontSize: '11px' // Un poco más grande para headers
+//        });
+//    });
+
+//    // Añadir título de la tabla
+//    const titleElement = document.createElement('h2');
+//    titleElement.textContent = 'Ventas por Planta';
+//    Object.assign(titleElement.style, {
+//        margin: '15px 0 8px 0',
+//        fontSize: '16px',
+//        borderBottom: '2px solid #ddd',
+//        paddingBottom: '4px'
+//    });
+
+//    pdfContent.appendChild(titleElement);
+//    pdfContent.appendChild(tableElement);
+//    document.body.appendChild(pdfContent);
+
+//    // Generar el PDF
+//    html2canvas(pdfContent, {
+//        scale: 2,
+//        logging: false,
+//        useCORS: true,
+//        scrollX: 0,
+//        scrollY: 0,
+//        windowWidth: pdfContent.scrollWidth,
+//        windowHeight: pdfContent.scrollHeight
+//    }).then(canvas => {
+//        const imgData = canvas.toDataURL('image/png');
+//        const pdf = new jsPDF({
+//            orientation: 'portrait', // Cambiado a vertical
+//            unit: 'mm',
+//            format: 'letter' // Tamaño carta
+//        });
+
+//        // Ajustar dimensiones para tamaño carta vertical
+//        const pageWidth = pdf.internal.pageSize.getWidth();
+//        const pageHeight = pdf.internal.pageSize.getHeight();
+
+//        const imgWidth = pageWidth - 20; // Margen izquierdo y derecho
+//        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+//        let heightLeft = imgHeight;
+//        let position = 10; // Margen superior
+
+//        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+//        heightLeft -= pageHeight;
+
+//        // Agregar páginas adicionales si es necesario
+//        while (heightLeft >= 0) {
+//            position = heightLeft - imgHeight;
+//            pdf.addPage();
+//            pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+//            heightLeft -= pageHeight;
+//        }
+
+//        // Guardar el PDF
+//        const fileName = `Reporte_Ventas_Planta_${fechaInicio}_a_${fechaFin}.pdf`;
+//        pdf.save(fileName);
+
+//        // Limpiar y mostrar confirmación
+//        document.body.removeChild(pdfContent);
+//        Swal.fire({
+//            title: "Reporte Generado!",
+//            text: "El reporte ha sido generado exitosamente.",
+//            icon: "success",
+//            confirmButtonText: 'OK'
+//        }).then(() => {
+//            window.location.reload();
+//        });
+//    }).catch(error => {
+//        console.error('Error al generar PDF:', error);
+//        Swal.fire({
+//            icon: 'error',
+//            title: 'Error',
+//            text: 'Ocurrió un error al generar el PDF',
+//            confirmButtonText: 'Entendido'
+//        });
+//        document.body.removeChild(pdfContent);
+//    });
+//}

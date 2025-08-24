@@ -13,7 +13,7 @@ $(document).ready(function () {
             "processing": "Procesando...",
             "lengthMenu": "Mostrar _MENU_ entradas",
             "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningún dato disponible en esta tabla",
+            "emptyTable": "Ningun dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -61,7 +61,7 @@ $(document).ready(function () {
             "processing": "Procesando...",
             "lengthMenu": "Mostrar _MENU_ entradas",
             "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningún dato disponible en esta tabla",
+            "emptyTable": "Ningun dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -140,7 +140,7 @@ $(document).ready(function () {
             "processing": "Procesando...",
             "lengthMenu": "Mostrar _MENU_ entradas",
             "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningún dato disponible en esta tabla",
+            "emptyTable": "Ningun dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -188,7 +188,7 @@ $(document).ready(function () {
             "processing": "Procesando...",
             "lengthMenu": "Mostrar _MENU_ entradas",
             "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningún dato disponible en esta tabla",
+            "emptyTable": "Ningun dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -237,7 +237,7 @@ $(document).ready(function () {
             "processing": "Procesando...",
             "lengthMenu": "Mostrar _MENU_ entradas",
             "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningún dato disponible en esta tabla",
+            "emptyTable": "Ningun dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -280,7 +280,7 @@ $(document).ready(function () {
             "processing": "Procesando...",
             "lengthMenu": "Mostrar _MENU_ entradas",
             "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningún dato disponible en esta tabla",
+            "emptyTable": "Ningun dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -389,7 +389,7 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                     "processing": "Procesando...",
                     "lengthMenu": "Mostrar _MENU_ entradas",
                     "zeroRecords": "No se encontraron resultados",
-                    "emptyTable": "Ningún dato disponible en esta tabla",
+                    "emptyTable": "Ningun dato disponible en esta tabla",
                     "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
                     "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
                     "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -447,7 +447,7 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                     "processing": "Procesando...",
                     "lengthMenu": "Mostrar _MENU_ entradas",
                     "zeroRecords": "No se encontraron resultados",
-                    "emptyTable": "Ningún dato disponible en esta tabla",
+                    "emptyTable": "Ningun dato disponible en esta tabla",
                     "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
                     "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
                     "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -540,7 +540,7 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                         "processing": "Procesando...",
                         "lengthMenu": "Mostrar _MENU_ entradas",
                         "zeroRecords": "No se encontraron resultados",
-                        "emptyTable": "Ningún dato disponible en esta tabla",
+                        "emptyTable": "Ningun dato disponible en esta tabla",
                         "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
                         "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
                         "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -701,7 +701,7 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                                         "processing": "Procesando...",
                                         "lengthMenu": "Mostrar _MENU_ entradas",
                                         "zeroRecords": "No se encontraron resultados",
-                                        "emptyTable": "Ningún dato disponible en esta tabla",
+                                        "emptyTable": "Ningun dato disponible en esta tabla",
                                         "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
                                         "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
                                         "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -777,7 +777,7 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
                                         "processing": "Procesando...",
                                         "lengthMenu": "Mostrar _MENU_ entradas",
                                         "zeroRecords": "No se encontraron resultados",
-                                        "emptyTable": "Ningún dato disponible en esta tabla",
+                                        "emptyTable": "Ningun dato disponible en esta tabla",
                                         "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
                                         "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
                                         "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -839,22 +839,6 @@ document.getElementById("btnGenerarPDF").addEventListener("click", function () {
 });
 
 function generarReportePDF() {
-    if (typeof window.jspdf === 'undefined') {
-        alert('Error: La biblioteca jsPDF no está cargada correctamente.');
-        return;
-    }
-
-    const { jsPDF } = window.jspdf;
-
-    // Mostrar animación de carga
-    Swal.fire({
-        title: "Generando reporte...",
-        text: "Por favor espere mientras se genera el PDF",
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
 
     // Validar si las tablas están vacías (excepto Deducciones)
     const tablasRequeridas = [
@@ -868,14 +852,14 @@ function generarReportePDF() {
             Swal.fire({
                 icon: 'warning',
                 title: 'Sin datos',
-                text: `La tabla "${tabla.nombre}" está vacía.`,
+                text: `La tabla "${tabla.nombre}" esta vacia.`,
                 confirmButtonText: 'Entendido'
             });
             return;
         }
     }
 
-    // Obtener datos de tablas (incluyendo Deducciones aunque esté vacía)
+    // Obtener datos de tablas
     const datosVentas = $('#tblVentas_Realizadas').DataTable().rows().data().toArray();
     const datosCajaChica = $('#tblCajaChica').DataTable().rows().data().toArray();
     const datosDeducciones = $('#tblDeducciones').DataTable().rows().data().toArray();
@@ -914,39 +898,104 @@ function generarReportePDF() {
         InfoReporte(usuarioId, usuarioName, fechaFiltro, estatus, createdBy, createdDt, updatedBy, updatedDt);
     }
 
-    // Comienza la generación del PDF
-    const pdfContent = document.createElement('div');
-    pdfContent.style.padding = '20px';
-    pdfContent.style.width = '1000px';
-    pdfContent.style.fontSize = '14px';
-
+    // Construir el contenido HTML para el PDF
     const fecha = $("#fechaFiltro").val();
     const userName = $("#userName").val();
     const now = new Date();
     const fechaGeneracion = now.toLocaleDateString('es-MX') + ', ' + now.toLocaleTimeString('es-MX');
 
-    pdfContent.innerHTML = `
-        <h1 style="text-align: center; margin-bottom: 20px; font-size: 24px;">Reporte de Utilidades Diarias</h1>
-        <div style="margin-bottom: 30px; font-size: 16px;">
-            <p><strong>Fecha de Reporte:</strong> ${fecha}</p>
-            <p><strong>Usuario:</strong> ${userName}</p>
-            <p><strong>Fecha de Generacion:</strong> ${fechaGeneracion}</p>
-        </div>
+    let htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Reporte de Utilidades Diarias</title>
+            <style>
+                body { 
+                    font-family: Arial, sans-serif; 
+                    padding: 20px; 
+                    font-size: 14px; 
+                }
+                h1 { 
+                    text-align: center; 
+                    margin-bottom: 20px; 
+                    font-size: 24px; 
+                    color: #2c3e50;
+                }
+                .header-info { 
+                    margin-bottom: 30px; 
+                    font-size: 16px; 
+                    border-bottom: 2px solid #ddd; 
+                    padding-bottom: 15px;
+                }
+                .leyenda-existente { 
+                    margin: 30px 0; 
+                    padding: 15px; 
+                    border: 2px dashed red; 
+                    color: red; 
+                    font-weight: bold; 
+                    font-size: 16px; 
+                }
+                .tabla-contenedor { 
+                    margin-bottom: 40px; 
+                }
+                .tabla-titulo { 
+                    margin: 20px 0 10px 0; 
+                    font-size: 18px; 
+                    border-bottom: 2px solid #ddd; 
+                    padding-bottom: 5px; 
+                }
+                table { 
+                    width: 100%; 
+                    border-collapse: collapse; 
+                    margin-bottom: 20px;
+                    font-size: 12px;
+                }
+                th, td { 
+                    padding: 8px; 
+                    border: 1px solid #ddd; 
+                    text-align: left;
+                }
+                th { 
+                    background-color: #34495e; 
+                    color: white; 
+                    font-weight: bold; 
+                    text-align: center;
+                }
+                tr:nth-child(even) { 
+                    background-color: #f9f9f9; 
+                }
+                .resumen-utilidades { 
+                    margin-top: 40px; 
+                    padding: 20px; 
+                    border: 2px solid #ddd; 
+                    border-radius: 8px; 
+                    background-color: #f9f9f9; 
+                    font-size: 16px; 
+                }
+                .resumen-titulo { 
+                    margin-top: 0; 
+                    border-bottom: 2px solid #ddd; 
+                    padding-bottom: 8px; 
+                    font-size: 20px; 
+                }
+            </style>
+        </head>
+        <body>
+            <h1>Reporte de Utilidades Diarias</h1>
+            <div class="header-info">
+                <p><strong>Fecha de Reporte:</strong> ${fecha}</p>
+                <p><strong>Usuario:</strong> ${userName}</p>
+                <p><strong>Fecha de Generacion:</strong> ${fechaGeneracion}</p>
+            </div>
     `;
 
     // Si ya existe un Corte_Id, agregar leyenda
     if (existeCorteId) {
-        const leyenda = document.createElement('div');
-        leyenda.style.margin = '30px 0';
-        leyenda.style.padding = '15px';
-        leyenda.style.border = '2px dashed red';
-        leyenda.style.color = 'red'; 
-        leyenda.style.fontWeight = 'bold';
-        leyenda.style.fontSize = '16px';
-        leyenda.textContent = 'Este reporte ya ha sido generado anteriormente.';
-        pdfContent.appendChild(leyenda);
+        htmlContent += `<div class="leyenda-existente">Este reporte ya ha sido generado anteriormente.</div>`;
     }
 
+    // Generar HTML para cada tabla
     const tablasAExportar = [
         { id: 'tblVentas_Realizadas', title: 'Ventas Realizadas' },
         { id: 'tblVentas_Aprobadas', title: 'Resumen de Ventas Aprobadas' },
@@ -961,117 +1010,97 @@ function generarReportePDF() {
         if (tableElement) {
             // Verificar si la tabla tiene datos (excepto para Deducciones)
             const dataTable = $(`#${tabla.id}`).DataTable();
-            if (tabla.id !== 'tblDeducciones' && dataTable.data().count() === 0 && tabla.id !== 'tblPrepago' && dataTable.data().count() === 0 ) {
-                return; // Saltar esta tabla (excepto Deducciones)
+            if (tabla.id !== 'tblDeducciones' && dataTable.data().count() === 0 &&
+                tabla.id !== 'tblPrepago' && dataTable.data().count() === 0) {
+                return; // Saltar esta tabla
             }
 
-            const tableClone = tableElement.cloneNode(true);
-            tableClone.style.width = '100%';
-            tableClone.style.marginBottom = '40px';
-            tableClone.style.fontSize = '12px';
-
-            const cells = tableClone.querySelectorAll('td, th');
-            cells.forEach(cell => {
-                cell.style.padding = '8px';
-                cell.style.border = '1px solid #ddd';
-            });
-
-            const headers = tableClone.querySelectorAll('th');
-            headers.forEach(header => {
-                header.style.backgroundColor = '#f2f2f2';
-                header.style.fontWeight = 'bold';
-            });
-
-            const titleElement = document.createElement('h2');
-            titleElement.textContent = tabla.title;
-            titleElement.style.margin = '20px 0 10px 0';
-            titleElement.style.fontSize = '18px';
-            titleElement.style.borderBottom = '2px solid #ddd';
-            titleElement.style.paddingBottom = '5px';
-
-            pdfContent.appendChild(titleElement);
-            pdfContent.appendChild(tableClone);
+            htmlContent += `
+                <div class="tabla-contenedor">
+                    <h2 class="tabla-titulo">${tabla.title}</h2>
+                    ${tableElement.outerHTML}
+                </div>
+            `;
         }
     });
 
-    const utilidadesDiv = document.createElement('div');
-    utilidadesDiv.style.marginTop = '40px';
-    utilidadesDiv.style.padding = '20px';
-    utilidadesDiv.style.border = '2px solid #ddd';
-    utilidadesDiv.style.borderRadius = '8px';
-    utilidadesDiv.style.backgroundColor = '#f9f9f9';
-    utilidadesDiv.style.fontSize = '16px';
-
-    utilidadesDiv.innerHTML = `
-        <h2 style="margin-top: 0; border-bottom: 2px solid #ddd; padding-bottom: 8px; font-size: 20px;">Resumen de Utilidades</h2>
-        <p style="margin: 10px 0;"><strong>Ingresos:</strong> ${document.getElementById('ingreso').value}</p>
-        <p style="margin: 10px 0;"><strong>Caja:</strong> ${document.getElementById('caja').value}</p>
-        <p style="margin: 10px 0;"><strong>Deducciones:</strong> ${document.getElementById('deduccion').value}</p>
-        <p style="margin: 10px 0;"><strong>Prepagos:</strong> ${document.getElementById('valesPrepago').value}</p>
-        <p style="margin: 10px 0; font-weight: bold; font-size: 18px;"><strong>Total Utilidad:</strong> ${document.getElementById('total').value}</p>
+    // Agregar resumen de utilidades
+    htmlContent += `
+        <div class="resumen-utilidades">
+            <h2 class="resumen-titulo">Resumen de Utilidades</h2>
+            <p style="margin: 10px 0;"><strong>Ingresos:</strong> ${document.getElementById('ingreso').value}</p>
+            <p style="margin: 10px 0;"><strong>Caja:</strong> ${document.getElementById('caja').value}</p>
+            <p style="margin: 10px 0;"><strong>Deducciones:</strong> ${document.getElementById('deduccion').value}</p>
+            <p style="margin: 10px 0;"><strong>Prepagos:</strong> ${document.getElementById('valesPrepago').value}</p>
+            <p style="margin: 10px 0; font-weight: bold; font-size: 18px;"><strong>Total Utilidad:</strong> ${document.getElementById('total').value}</p>
+        </div>
     `;
 
-    pdfContent.appendChild(utilidadesDiv);
-    document.body.appendChild(pdfContent);
+    htmlContent += `</body></html>`;
 
-    html2canvas(pdfContent, {
-        scale: 3,
-        logging: false,
-        useCORS: true,
-        scrollX: 0,
-        scrollY: 0,
-        windowWidth: pdfContent.scrollWidth,
-        windowHeight: pdfContent.scrollHeight
-    }).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF({
-            orientation: 'portrait',
-            unit: 'mm',
-            format: 'a4'
-        });
+    // Enviar el HTML al servidor para generar el PDF
+    enviarHTMLParaPDF(htmlContent, fecha, userName, existeCorteId);
 
-        const imgWidth = 190;
-        const pageHeight = 277;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    // Swalfire de generando reporte
+    Swal.fire({
+        title: "Generando reporte...",
+        text: "Por favor espere mientras se genera el PDF",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
 
-        let heightLeft = imgHeight;
-        let position = 10;
+            // Cerrar automáticamente después de 8 segundos
+            setTimeout(() => {
+                Swal.close();
 
-        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-
-        while (heightLeft >= 0) {
-            pdf.addPage();
-            position = heightLeft - imgHeight;
-            pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
+                // Mostrar mensaje de éxito después de cerrar
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Reporte generado!',
+                    text: 'El PDF se ha creado correctamente',
+                    timer: 3000, // Opcional: cerrar después de 3 segundos
+                    showConfirmButton: false
+                });
+            }, 4000); // 4000 ms = 4 segundos
         }
-
-        const fileName = `Reporte_Utilidades_${fecha.replace(/\//g, '-')}_${userName}.pdf`;
-        pdf.save(fileName);
-
-        document.body.removeChild(pdfContent);
-
-        Swal.fire({
-            title: "Reporte Generado!",
-            text: "El reporte ha sido generado exitosamente.",
-            icon: "success",
-            confirmButtonText: 'OK'
-        }).then(() => {
-            if (existeCorteId) {
-                window.location.reload();
-            }
-        });
-    }).catch(error => {
-        console.error('Error al generar PDF:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error al generar el PDF',
-            confirmButtonText: 'Entendido'
-        });
-        document.body.removeChild(pdfContent);
     });
+}
+
+function enviarHTMLParaPDF(htmlContent, fecha, userName, existeCorteId) {
+    // Crear formulario para enviar los datos al servidor
+    var form = $('<form>', {
+        method: 'POST',
+        action: '/Pdf/GenerarReporteUtilidades'
+    });
+
+    // Agregar el HTML como campo oculto
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'htmlContent',
+        value: htmlContent
+    }).appendTo(form);
+
+    // Agregar información adicional
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'fecha',
+        value: fecha
+    }).appendTo(form);
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'userName',
+        value: userName
+    }).appendTo(form);
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'existeCorteId',
+        value: existeCorteId
+    }).appendTo(form);
+
+    // Agregar el formulario al cuerpo y enviarlo
+    form.appendTo('body').submit().remove();
 }
 
 function InfoReporte(usuarioId, usuarioName, fechaFiltro, estatus, createdBy, createdDt, updatedBy, updatedDt) {
