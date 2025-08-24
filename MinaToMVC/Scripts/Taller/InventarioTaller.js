@@ -339,6 +339,30 @@ function generarReportePDF() {
     var table = $('#tblInventario').DataTable();
     var datos = table.data().toArray();
 
+    // Swalfire de generando reporte
+    Swal.fire({
+        title: "Generando reporte...",
+        text: "Por favor espere mientras se genera el PDF",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+
+            // Cerrar automáticamente después de 8 segundos
+            setTimeout(() => {
+                Swal.close();
+
+                // Mostrar mensaje de éxito después de cerrar
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Reporte generado!',
+                    text: 'El PDF se ha creado correctamente',
+                    timer: 3000, // Opcional: cerrar después de 3 segundos
+                    showConfirmButton: false
+                });
+            }, 4000); // 4000 ms = 4 segundos
+        }
+    });
+
     // Crear tabla HTML manualmente
     var tablaHTML = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
 
