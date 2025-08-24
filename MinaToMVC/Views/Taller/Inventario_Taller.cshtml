@@ -26,7 +26,7 @@
                 <div class="row">
                     <div class="col-lg-3">
                         <label>Nombre:</label>
-                        @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control", @type = "text", id = "nombre" })
+                        @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control", @type = "text", id = "nombre", required = "required" })
                     </div>
                     <div class="col-lg-3">
                         <label>Categoria:</label>
@@ -38,30 +38,30 @@
                     @Html.HiddenFor(x => x.NombreCategoria, new { id = "nombreCategoria" })
                     <div class="col-lg-3">
                         <label>Marca:</label>
-                        @Html.TextBoxFor(x => x.Marca, new { @class = "form-control", @type = "text", id = "marca" })
+                        @Html.TextBoxFor(x => x.Marca, new { @class = "form-control", @type = "text", id = "marca", required = "required" })
                     </div>
                     <div class="col-lg-3">
                         <label>Codigo del Fabricante:</label>
-                        @Html.TextBoxFor(x => x.CodigoFabricante, new { @class = "form-control", @type = "number", id = "codigoFabricante" })
+                        @Html.TextBoxFor(x => x.CodigoFabricante, new { @class = "form-control", @type = "number", id = "codigoFabricante", required = "required" })
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-3">
                         <label>Cantidad en Existencia:</label>
-                        @Html.TextBoxFor(x => x.CantidadExistente, new { @class = "form-control", @type = "number", id = "cantidadExistencia" })
+                        @Html.TextBoxFor(x => x.CantidadExistente, new { @class = "form-control", @type = "number", id = "cantidadExistencia", required = "required" })
                     </div>
                     <div class="col-lg-3">
                         <label>Precio de Compra:</label>
-                        @Html.TextBoxFor(x => x.PrecioCompra, new { @class = "form-control", @type = "number", id = "precioCompra" })
+                        @Html.TextBoxFor(x => x.PrecioCompra, new { @class = "form-control", @type = "number", id = "precioCompra", required = "required" })
                     </div>
 
                     <div class="col-lg-3">
                         <label>Ubicacion en Almacen:</label>
-                        @Html.TextBoxFor(x => x.UbicacionAlmacen, new { @class = "form-control", @type = "text", id = "ubicacionAlmacen" })
+                        @Html.TextBoxFor(x => x.UbicacionAlmacen, new { @class = "form-control", @type = "text", id = "ubicacionAlmacen", required = "required" })
                     </div>
                     <div class="col-lg-3">
                         <label>Proveedor:</label>
-                        @Html.TextBoxFor(x => x.Proveedor, new { @class = "form-control", @type = "text", id = "proveedor" })
+                        @Html.TextBoxFor(x => x.Proveedor, new { @class = "form-control", @type = "text", id = "proveedor", required = "required" })
                     </div>
 
                     <div class="col-lg-3">
@@ -82,5 +82,14 @@
     }
     <br />
     <table id="tblInventario" class="table table-bordered table-striped" style="width: 100%;"></table>
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+        <div class="mb-2" style="text-align: right;">
+            <button id="btnGenerarPDF" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
+                Generar Reporte PDF
+            </button>
+        </div>
+    </div>
+    <center><h1>Historial de Inventario asignado a Vehiculos</h1></center>
+    <table id="tblComponenteVehiculo" class="table table-bordered table-striped" style="width: 100%;"></table>
 </div>
 <script src="@(Url.StaticFile("Scripts/Taller/InventarioTaller.js"))"></script>

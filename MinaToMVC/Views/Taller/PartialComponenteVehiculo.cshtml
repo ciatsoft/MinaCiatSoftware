@@ -13,7 +13,7 @@
 
 @using (Html.BeginForm("SaveOrUpdateComponenteVehiculo", "Taller", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmComponenteInventario" }))
 {
-    @Html.HiddenFor(x => x.Id, new { @id = "idModal" })
+    @Html.HiddenFor(x => x.Id, new { @id = "idModal", @Value = 0 })
     @Html.HiddenFor(x => x.Estatus, new { @id = "estatusModal" })
     @Html.HiddenFor(x => x.CreatedBy, new { @id = "createdByModal" })
     @Html.HiddenFor(x => x.UpdatedBy, new { @id = "updatedByModal" })
@@ -51,8 +51,8 @@
             </div>
 
             <div style="margin-top: 35px;">
-                <button id="btnCanjearVale" style="margin-top: -25px; margin-bottom: 30px;" type="button" class="btn btn-success" onclick="GenerarConsumo()">Generar Consumo</button>
-                <a href="/Taller/Inventario_Taller" class="btn btn-custom-cancel">Cancelar</a>
+                <button id="btnCanjearVale" style="margin-bottom: 30px;" type="button" class="btn btn-success" onclick="GenerarConsumo()">Generar Consumo</button>
+                <a href="/Taller/Inventario_Taller" style="margin-top: -30px" class="btn btn-custom-cancel">Cancelar</a>
             </div>
         </div>
     </div>
@@ -91,4 +91,53 @@
             $('#IdVehiculo').trigger('change');
         }
     });
+
+    function GenerarConsumo() {
+        var cantidadComponente = parseInt($("#cantidadComponente").val()) || 0;
+        var cantidadExistente = parseInt($("#cantidadExistente").val()) || 0;
+        var idVehiculo = $("#IdVehiculo").val();
+
+        // Validaciones
+        if (!idVehiculo || idVehiculo === "") {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Vehículo requerido',
+                text: 'Por favor selecciona un vehículo antes de continuar.'
+            });
+            return;
+        }
+
+        if (cantidadComponente <= 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Cantidad inválida',
+                text: 'Debes ingresar una cantidad mayor a 0.'
+            });
+            return;
+        }
+
+        if (cantidadComponente > cantidadExistente) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Stock insuficiente',
+                text: 'La cantidad a usar no puede ser mayor a la cantidad en existencia.'
+            });
+            return;
+        }
+
+        // Confirmación
+        Swal.fire({
+            title: '¿Confirmar consumo?',
+            text: 'Se descontarán ' + cantidadComponente + ' piezas del inventario.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, generar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Enviar el formulario
+                $("#frmComponenteInventario").submit();
+            }
+        });
+    }
 </script>
