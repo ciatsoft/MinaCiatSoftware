@@ -283,7 +283,7 @@ $(document).ready(function () {
             "processing": "Procesando...",
             "lengthMenu": "Mostrar _MENU_ entradas",
             "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningún dato disponible en esta tabla",
+            "emptyTable": "Ningun dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -311,7 +311,7 @@ $(document).ready(function () {
         columns: [
             { data: "id", visible: true, title: "Id" },
             { data: "nombreGasto", title: "Tipo Gasto" },
-            { data: "descripcion", title: "Descripción de la Deducción" },
+            { data: "descripcion", title: "Descripcion de la Deduccion" },
             { data: "usuarioName", title: "Encargado" },
             {
                 data: "monto",
@@ -346,7 +346,7 @@ $(document).ready(function () {
             processing: "Procesando...",
             lengthMenu: "Mostrar _MENU_ entradas",
             zeroRecords: "No se encontraron resultados",
-            emptyTable: "Ningún dato disponible en esta tabla",
+            emptyTable: "Ningun dato disponible en esta tabla",
             info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             infoEmpty: "Mostrando 0 a 0 de 0 entradas",
             infoFiltered: "(filtrado de un total de _MAX_ entradas)",
@@ -633,7 +633,7 @@ function SearchDeduccionesFecha(fechaDeducciones) {
                 columns: [
                     { data: "id", title: "Id" },
                     { data: "nombreGasto", title: "Tipo Gasto" },
-                    { data: "descripcion", title: "Descripción de la Deducción" },
+                    { data: "descripcion", title: "Descripcion de la Deduccion" },
                     { data: "usuarioName", title: "Encargado" },
                     {
                         data: "monto",
@@ -670,7 +670,7 @@ function SearchDeduccionesFecha(fechaDeducciones) {
                     processing: "Procesando...",
                     lengthMenu: "Mostrar _MENU_ entradas",
                     zeroRecords: "No se encontraron resultados",
-                    emptyTable: "Ningún dato disponible en esta tabla",
+                    emptyTable: "Ningun dato disponible en esta tabla",
                     info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
                     infoEmpty: "Mostrando 0 a 0 de 0 entradas",
                     infoFiltered: "(filtrado de un total de _MAX_ entradas)",
@@ -1059,18 +1059,31 @@ async function ImprimirDeduccion(id) {
     const table = $("#tableDeducciones").DataTable();
     const data = table.rows().data().toArray().find(d => d.id === id);
 
-    if (!data) {
-        alert("No se encontró la deducción.");
-        return;
-    }
+    // Swalfire de generando reporte
+    Swal.fire({
+        title: "Generando reporte...",
+        text: "Por favor espere mientras se genera el PDF",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
 
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "letter"
+            // Cerrar automáticamente después de 8 segundos
+            setTimeout(() => {
+                Swal.close();
+
+                // Mostrar mensaje de éxito después de cerrar
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Reporte generado!',
+                    text: 'El PDF se ha creado correctamente',
+                    timer: 3000, // Opcional: cerrar después de 3 segundos
+                    showConfirmButton: false
+                });
+            }, 4000); // 4000 ms = 4 segundos
+        }
     });
 
+    // Formatear datos
     const empresa = "PLANTA PROCESADORA DE MATERIALES PETREOS SAN MIGUEL, S.A. DE C.V.";
     const ubicacion = "Calimaya, Estado de Mexico";
     const folio = String(data.id).padStart(6, '0');
@@ -1082,77 +1095,174 @@ async function ImprimirDeduccion(id) {
         day: '2-digit', month: 'long', year: 'numeric'
     });
 
-    // Definir límites de contenido para el rectángulo
-    const margenX = 17.5;
-    let topY = 20;
-    let bottomY = 150;
+    // Crear contenido HTML manteniendo la estructura exacta de tu diseño
+    const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Recibo de Deducción ${folio}</title>
+            <style>
+                @page {
+                    margin: 0;
+                    size: letter portrait;
+                }
+                body {
+                    font-family: 'Times New Roman', Times, serif;
+                    margin: 0;
+                    padding: 20mm;
+                    font-size: 12pt;
+                    position: relative;
+                    width: 216mm;
+                    height: 279mm;
+                }
+                .border-rectangle {
+                    position: absolute;
+                    top: 20mm;
+                    left: 17.5mm;
+                    width: 235mm;
+                    height: 130mm;
+                    border: 0.35mm solid #000000;
+                    box-sizing: border-box;
+                }
+                .header {
+                    text-align: center;
+                    margin-top: 10mm;
+                    margin-bottom: 15mm;
+                }
+                .header h1 {
+                    font-family: 'Times New Roman', Times, serif;
+                    font-size: 25pt;
+                    font-weight: bold;
+                    margin: 0;
+                }
+                .folio {
+                    position: absolute;
+                    top: 30mm;
+                    left: 20mm;
+                    font-size: 16pt;
+                    font-family: 'Times New Roman', Times, serif;
+                    font-style: normal;
+                }
+                .monto {
+                    position: absolute;
+                    top: 30mm;
+                    right: 20mm;
+                    font-size: 12pt;
+                    font-family: 'Times New Roman', Times, serif;
+                    font-style: normal;
+                    text-align: right;
+                }
+                .content-line {
+                    position: absolute;
+                    left: 20mm;
+                    font-family: 'Times New Roman', Times, serif;
+                }
+                .label-bold {
+                    font-weight: bold;
+                }
+                .firma-line {
+                    position: absolute;
+                    height: 0.5mm;
+                    background-color: #000000;
+                }
+                .firma-text {
+                    position: absolute;
+                    font-family: 'Times New Roman', Times, serif;
+                    font-style: italic;
+                    font-size: 10pt;
+                    text-align: center;
+                }
+                .fecha-text {
+                    position: absolute;
+                    font-family: 'Times New Roman', Times, serif;
+                    font-style: italic;
+                    font-size: 12pt;
+                }
+            </style>
+        </head>
+        <body>
+            <!-- Rectángulo de borde -->
+            <div class="border-rectangle"></div>
 
-    // Dibujar encabezado y contenido
-    let y = 30;
-    pdf.setFont("times", "bold");
-    pdf.setFontSize(16);
-    pdf.text("RECIBO DE DINERO", 105, y, { align: "center" });
+            <!-- Encabezado -->
+            <div class="header">
+                <h1>RECIBO DE DINERO</h1>
+            </div>
 
-    y += 15;
-    pdf.setFontSize(12);
-    pdf.setFont("times", "normal");
-    pdf.text(`Recibo No. ${folio}`, 20, y);
-    pdf.text(`Bueno por: $${monto}`, 160, y);
+            <!-- Folio y Monto -->
+            <div class="folio">Recibo No. ${folio}</div>
 
-    y += 10;
-    pdf.setFont("times", "bold");
-    pdf.text("Recibi de:", 20, y);
-    pdf.setFont("times", "normal");
-    pdf.text(empresa, 40, y);
+            <!-- Contenido -->
+            <div class="content-line" style="top: 60mm;">
+                <span class="label-bold">Recibi de:</span> ${empresa}
+            </div>
 
-    y += 10;
-    pdf.setFont("times", "bold");
-    pdf.text("La cantidad de:", 20, y);
-    pdf.setFont("times", "normal");
-    pdf.text(`$${parseFloat(monto).toLocaleString('es-MX', { minimumFractionDigits: 2 })} M.N.`, 50, y);
+            <div class="content-line" style="top: 70mm;">
+                <span class="label-bold">La cantidad de:</span> $${parseFloat(monto).toLocaleString('es-MX', { minimumFractionDigits: 2 })} M.N.
+            </div>
 
+            <div class="content-line" style="top: 80mm;">
+                <span class="label-bold">Tipo de gasto:</span> ${tipoGasto}
+            </div>
 
-    y += 10;
-    pdf.setFont("times", "bold");
-    pdf.text("Tipo de gasto:", 20, y);
-    pdf.setFont("times", "normal");
-    pdf.text(tipoGasto, 47, y);
+            <div class="content-line" style="top: 90mm;">
+                <span class="label-bold">Por concepto de:</span> ${concepto}
+            </div>
 
-    y += 10;
-    pdf.setFont("times", "bold");
-    pdf.text("Por concepto de:", 20, y);
-    pdf.setFont("times", "normal");
-    pdf.text(concepto, 52, y);
+            <!-- Fecha -->
+            <div class="fecha-text" style="top: 100mm; left: 20mm;">
+                ${ubicacion} a: ${fechaFormateada}
+            </div>
 
-    y += 10;
-    pdf.setFont("times", "italic");
-    pdf.text(`${ubicacion} a: ${fechaFormateada}`, 20, y);
+            <!-- Líneas de firma -->
+            <div class="firma-line" style="top: 125mm; left: 50mm; width: 50mm;"></div>
+            <div class="firma-line" style="top: 125mm; left: 170mm; width: 50mm;"></div>
 
-    // Calcular altura real del contenido
-    bottomY = y + 35;
+            <!-- Textos de firma -->
+            <div class="firma-text" style="top: 130mm; left: 70mm;">Nombre</div>
+            <div class="firma-text" style="top: 130mm; left: 180mm;">Firma de quien recibe</div>
+        </body>
+        </html>
+    `;
 
-    // Dibujar el rectángulo con borde alrededor del contenido y firmas
-    pdf.setLineWidth(0.35);
-    pdf.setDrawColor(0, 0, 0);
-    pdf.rect(margenX, topY, 180, bottomY - topY);
+    // Enviar al servidor para generar PDF
+    try {
+        const formData = new FormData();
+        formData.append('htmlContent', htmlContent);
+        formData.append('fileName', `ReciboDeduccion_${folio}.pdf`);
 
-    // Firmas
-    pdf.setLineWidth(0.5);
-    y += 25;
-    pdf.line(30, y, 80, y); // línea firma nombre
-    pdf.line(130, y, 180, y); // línea firma quien recibe
+        const response = await fetch('/Pdf/GenerarReciboDeduccion', {
+            method: 'POST',
+            body: formData
+        });
 
-    y += 5;
-    pdf.setFontSize(10);
-    pdf.setFont("times", "italic");
-    pdf.text("Nombre", 50, y);
-    pdf.text("Firma de quien recibe", 140, y);
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ReciboDeduccion_${folio}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
 
-    // Guardar PDF
-    pdf.save(`ReciboDeduccion_${folio}.pdf`);
+        } else {
+            throw new Error('Error en la generación del PDF');
+        }
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error al generar el recibo',
+            confirmButtonText: 'Entendido'
+        });
+    }
+}
 
-    // Redirigir después
-    setTimeout(() => {
-        window.location.href = '/VentaPublicoGeneral/Index';
-    }, 500);
+// Función auxiliar para formatear tipo de gasto
+function formatearTipoGasto(tipo) {
+    // Mantén tu lógica actual de formateo
+    return tipo.charAt(0).toUpperCase() + tipo.slice(1).toLowerCase();
 }

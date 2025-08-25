@@ -1,9 +1,11 @@
-﻿using System;
+﻿using MinaTolEntidades.DtoVentaPublicoGeneral;
+using NReco.PdfGenerator;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
-using NReco.PdfGenerator;
 
 namespace MinaToMVC.Controllers
 {
@@ -275,6 +277,217 @@ namespace MinaToMVC.Controllers
                     message = "Error al generar el reporte PDF. Por favor, intente nuevamente."
                 });
             }
+        }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult GenerarReciboDeduccion(string htmlContent, string fileName)
+        {
+            try
+            {
+                // Configurar el convertidor HTML a PDF
+                var htmlToPdf = new HtmlToPdfConverter();
+                htmlToPdf.Orientation = PageOrientation.Default;
+                htmlToPdf.Size = PageSize.Letter;
+
+                // Configurar márgenes para coincidir con el diseño
+                htmlToPdf.Margins = new PageMargins
+                {
+                    Top = 0,
+                    Bottom = 0,
+                    Left = 0,
+                    Right = 0
+                };
+
+                htmlToPdf.LowQuality = false;
+                htmlToPdf.Quiet = true;
+
+                // Generar el PDF
+                var pdfBytes = htmlToPdf.GeneratePdf(htmlContent);
+
+                // Devolver el PDF
+                return File(pdfBytes, "application/pdf", fileName);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error al generar recibo: {ex.Message}");
+                return new HttpStatusCodeResult(500, "Error al generar el recibo");
+            }
+        }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public JsonResult GenerarValesPrepago(List<Prepago> vales, string fileName)
+        {
+            try
+            {
+                // Validar que recibimos datos
+                if (vales == null || vales.Count == 0)
+                {
+                    return Json(new { success = false, message = "No se recibieron vales para generar" });
+                }
+
+                // Generar el HTML en el backend
+                string htmlContent = GenerarHTMLVales(vales);
+
+                // Convertir HTML a PDF usando NReco
+                var htmlToPdf = new HtmlToPdfConverter();
+                htmlToPdf.Orientation = PageOrientation.Portrait;
+                htmlToPdf.Size = PageSize.A4;
+                htmlToPdf.Margins = new PageMargins { Top = 10, Bottom = 10, Left = 10, Right = 10 };
+
+                // Generar PDF
+                var pdfBytes = htmlToPdf.GeneratePdf(htmlContent);
+
+                // Convertir a base64 para enviar al frontend
+                string pdfBase64 = Convert.ToBase64String(pdfBytes);
+
+                return Json(new
+                {
+                    success = true,
+                    pdfBase64 = pdfBase64,
+                    fileName = fileName
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error al generar vales de prepago: {ex.Message}");
+                return Json(new { success = false, message = "Error al generar PDF: " + ex.Message });
+            }
+        }
+
+        private string GenerarHTMLVales(List<Prepago> vales)
+        {
+            const string primaryColor = "#2c3e50";
+            const string secondaryColor = "#3498db";
+            const string accentColor = "#e74c3c";
+            const string leyendaFecha = "Calimaya, Estado de México a: ______________";
+
+            var html = new StringBuilder();
+            html.AppendLine("<!DOCTYPE html>");
+            html.AppendLine("<html>");
+            html.AppendLine("<head>");
+            html.AppendLine("    <meta charset=\"UTF-8\">");
+            html.AppendLine("    <title>Vales de Prepago</title>");
+            html.AppendLine("    <style>");
+            html.AppendLine("        @@page { margin: 3mm; size: A4 portrait; }");
+            html.AppendLine("        body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; font-size: 9pt; background-color: white; }");
+            html.AppendLine("        .page-container { width: 100%; height: 284mm; }");
+            html.AppendLine("        .vale-table { width: 100%; height: 100%; border-collapse: collapse; }");
+            html.AppendLine("        .vale-cell { width: 50%; height: 50%; padding: 2mm; vertical-align: top; }");
+            html.AppendLine("        .vale { width: 98mm; height: 138mm; background: white; border: 1.5px solid " + primaryColor + "; border-radius: 5px; padding: 3mm; box-sizing: border-box; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }");
+            html.AppendLine("        .header { background: linear-gradient(135deg, " + primaryColor + ", #34495e); color: white; padding: 2mm; border-radius: 4px 4px 0 0; margin: -3mm -3mm 2mm -3mm; text-align: center; position: relative; }");
+            html.AppendLine("        .header h1 { font-size: 9pt; font-weight: bold; margin: 0; line-height: 1.2; }");
+            html.AppendLine("        .vale-number { background: " + accentColor + "; color: white; padding: 1mm 2mm; border-radius: 3px; font-size: 8pt; font-weight: bold; position: absolute; top: -2mm; right: 3mm; }");
+            html.AppendLine("        .content { padding: 2mm; height: 95mm; }");
+            html.AppendLine("        .row { display: flex; margin-bottom: 2mm; align-items: center; }");
+            html.AppendLine("        .label { width: 25mm; font-weight: bold; color: " + primaryColor + "; font-size: 8pt; flex-shrink: 0; }");
+            html.AppendLine("        .value { width: 63mm; font-size: 8pt; color: #2c3e50; font-weight: normal; }");
+            html.AppendLine("        .amount-row { background-color: #f8f9fa; padding: 2mm; border-radius: 4px; margin: 3mm -2mm; border-left: 3px solid " + secondaryColor + "; }");
+            html.AppendLine("        .amount-label { font-weight: bold; color: " + accentColor + "; font-size: 9pt; width: 25mm; }");
+            html.AppendLine("        .amount-value { font-weight: bold; color: " + primaryColor + "; font-size: 9pt; }");
+            html.AppendLine("        .signature-area { position: absolute; bottom: 15mm; width: calc(100% - 6mm); text-align: center; border-top: 1px solid #ccc; padding-top: 1mm; margin-top: 2mm; }");
+            html.AppendLine("        .signature-text { font-size: 7pt; color: #7f8c8d; font-style: italic; font-weight: bold; }");
+            html.AppendLine("        .date-legend { position: absolute; bottom: 5mm; width: 100%; text-align: center; font-size: 7pt; color: #7f8c8d; font-style: italic; }");
+            html.AppendLine("        .company-info { text-align: center; margin-bottom: 1mm; font-size: 7pt; color: #7f8c8d; font-weight: bold; }");
+            html.AppendLine("        .folio-badge { background: " + secondaryColor + "; color: white; padding: 1mm 2mm; border-radius: 3px; font-size: 9pt; font-weight: bold; display: block; text-align: center; margin-bottom: 2mm; }");
+            html.AppendLine("        .page-break { page-break-after: always; }");
+            html.AppendLine("        .important { font-weight: bold; color: " + accentColor + "; }");
+            html.AppendLine("        .material-info { background-color: #e8f4f8; padding: 2mm; border-radius: 3px; margin: 2mm 0; }");
+            html.AppendLine("    </style>");
+            html.AppendLine("</head>");
+            html.AppendLine("<body>");
+
+            for (int i = 0; i < vales.Count; i += 4)
+            {
+                if (i > 0)
+                {
+                    html.AppendLine("    <div class=\"page-break\"></div>");
+                }
+
+                html.AppendLine("    <div class=\"page-container\">");
+                html.AppendLine("        <table class=\"vale-table\">");
+
+                // Primera fila (2 vales)
+                html.AppendLine("            <tr>");
+                for (int j = 0; j < 2; j++)
+                {
+                    int index = i + j;
+                    html.AppendLine("                <td class=\"vale-cell\">");
+                    if (index < vales.Count)
+                    {
+                        html.Append(GenerateValeHtml(vales[index], primaryColor, secondaryColor, accentColor, leyendaFecha));
+                    }
+                    html.AppendLine("                </td>");
+                }
+                html.AppendLine("            </tr>");
+
+                // Segunda fila (2 vales)
+                html.AppendLine("            <tr>");
+                for (int j = 2; j < 4; j++)
+                {
+                    int index = i + j;
+                    html.AppendLine("                <td class=\"vale-cell\">");
+                    if (index < vales.Count)
+                    {
+                        html.Append(GenerateValeHtml(vales[index], primaryColor, secondaryColor, accentColor, leyendaFecha));
+                    }
+                    html.AppendLine("                </td>");
+                }
+                html.AppendLine("            </tr>");
+
+                html.AppendLine("        </table>");
+                html.AppendLine("    </div>");
+            }
+
+            html.AppendLine("</body>");
+            html.AppendLine("</html>");
+
+            return html.ToString();
+        }
+
+        private string GenerateValeHtml(Prepago vale, string primaryColor, string secondaryColor, string accentColor, string leyendaFecha)
+        {
+            var html = new StringBuilder();
+
+            html.AppendLine("                    <div class=\"vale\">");
+            html.AppendLine("                        <div class=\"header\">");
+            html.AppendLine($"                            <div class=\"vale-number\">VALE {vale.NoVale}/{vale.CantidadVales}</div>");
+            html.AppendLine("                            ");
+            html.AppendLine("                        </div>");
+            html.AppendLine("                        <div class=\"company-info\">");
+            html.AppendLine("                            PLANTA PROCESADORA DE MATERIALES PÉTREOS MINA SAN MIGUEL");
+            html.AppendLine("                        </div>");
+            html.AppendLine($"                        <div class=\"folio-badge\">FOLIO: {vale.Folio}</div>");
+            html.AppendLine("                        <div class=\"content\">");
+
+            // Información principal
+            html.AppendLine($"                            <div class=\"row\"><div class=\"label\">FECHA:</div><div class=\"value\">{(vale.Fecha)}</div></div>");
+            html.AppendLine($"                            <div class=\"row\"><div class=\"label\">CLIENTE:</div><div class=\"value important\">{vale.NombreCliente}</div></div>");
+
+            // Información del material con fondo destacado
+            html.AppendLine("                            <div class=\"material-info\">");
+            html.AppendLine($"                                <div class=\"row\"><div class=\"label\">MATERIAL:</div><div class=\"value important\">{vale.NombreMaterial}</div></div>");
+            html.AppendLine($"                                <div class=\"row\"><div class=\"label\">CANTIDAD:</div><div class=\"value important\">{vale.CantidadM3} m³</div></div>");
+            html.AppendLine("                            </div>");
+
+            // Información de precios
+            html.AppendLine("                            <div class=\"amount-row\">");
+            html.AppendLine($"                                <div class=\"row\"><div class=\"amount-label\">PRECIO UNITARIO:</div><div class=\"amount-value\">${vale.PrecioUnidad:F2}</div></div>");
+            html.AppendLine($"                                <div class=\"row\"><div class=\"amount-label\">IMPORTE TOTAL:</div><div class=\"amount-value\">${vale.ImporteVenta:F2}</div></div>");
+            html.AppendLine("                            </div>");
+
+            html.AppendLine($"                            <div class=\"row\"><div class=\"label\">USUARIO:</div><div class=\"value\">{vale.UserName}</div></div>");
+            html.AppendLine("                        </div>");
+
+            // Área de firma más grande
+            html.AppendLine("                        <div class=\"signature-area\">");
+            html.AppendLine("                            <div class=\"signature-text\">FIRMA Y SELLO DE AUTORIZACIÓN</div>");
+            html.AppendLine("                        </div>");
+            html.AppendLine($"                        <div class=\"date-legend\">{leyendaFecha}</div>");
+            html.AppendLine("                    </div>");
+
+            return html.ToString();
         }
     }
 }

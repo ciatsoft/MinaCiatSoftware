@@ -268,7 +268,6 @@ $(document).ready(function() {
             $("#importeVenta").val("");
         }
     }
-
     $("#btnGuardarPrepago").click(async function() {
         // Validar cantidad de vales
         var cantidadVales = parseInt($("#cantidadVales").val());
@@ -334,10 +333,35 @@ $(document).ready(function() {
             }
 
             // Si se guardó correctamente, generar el PDF
-            generarPDF(valesParaGuardar);
+            await generarPDF(valesParaGuardar);
 
-            // Redirigir después de generar el PDF
-            window.location.href = '/VentaPublicoGeneral/Index';
+            // Swalfire de generando reporte
+            Swal.fire({
+                title: "Generando reporte...",
+                text: "Por favor espere mientras se genera el PDF",
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+
+                    // Cerrar automáticamente después de 8 segundos
+                    setTimeout(() => {
+                        Swal.close();
+
+                        // Mostrar mensaje de éxito después de cerrar
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Reporte generado!',
+                            text: 'El PDF se ha creado correctamente',
+                            timer: 3000,
+                            showConfirmButton: false,
+                            willClose: () => {
+                                // Redirigir después de cerrar el mensaje de éxito
+                                window.location.href = '/VentaPublicoGeneral/Index';
+                            }
+                        });
+                    }, 4000); // 4000 ms = 4 segundos
+                }
+            });
 
         } catch (error) {
             console.error("Error:", error);
@@ -362,33 +386,13 @@ $(document).ready(function() {
                 data: JSON.stringify({ prepagos: vales }),
                 success: function (response) {
                     if (response.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Éxito',
-                            text: response.message,
-                            confirmButtonText: 'Aceptar'
-                        }).then(() => {
-                            window.location.href = '/VentaPublicoGeneral/Index';
-                        });
                         resolve(response);
                     } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: response.message,
-                            confirmButtonText: 'Aceptar'
-                        });
                         reject(response);
                     }
                 },
                 error: function (xhr) {
                     var errorMsg = xhr.responseText || "Error en la solicitud AJAX";
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: "Error: " + errorMsg,
-                        confirmButtonText: 'Aceptar'
-                    });
                     reject({
                         success: false,
                         message: errorMsg
@@ -398,125 +402,49 @@ $(document).ready(function() {
         });
     }
 
+    // Función para generar PDF
     function generarPDF(vales) {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({
-            orientation: 'portrait',
-            unit: 'mm',
-            format: 'a4'
+        return new Promise((resolve, reject) => {
+            const fileName = "vales_prepago_" + new Date().getTime() + ".pdf";
+
+            // Enviar al controlador para convertir a PDF
+            $.ajax({
+                url: '/Pdf/GenerarValesPrepago',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    vales: vales,
+                    fileName: fileName
+                }),
+                success: function (response) {
+                    if (response.success) {
+                        // Crear enlace para descargar el PDF
+                        const byteCharacters = atob(response.pdfBase64);
+                        const byteNumbers = new Array(byteCharacters.length);
+                        for (let i = 0; i < byteCharacters.length; i++) {
+                            byteNumbers[i] = byteCharacters.charCodeAt(i);
+                        }
+                        const byteArray = new Uint8Array(byteNumbers);
+                        const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+                        const link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = fileName;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+
+                        resolve();
+                    } else {
+                        reject(new Error(response.message || "Error al generar PDF"));
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al generar PDF:', error);
+                    reject(error);
+                }
+            });
         });
-
-        // Configuración de estilo
-        const primaryColor = [128, 128, 128]; // Gris
-        const secondaryColor = [76, 175, 80]; // Verde
-
-        // Margen superior e izquierdo
-        const marginLeft = 10;
-        const marginTop = 10;
-
-        // Tamaño de cada vale
-        const valeWidth = 190;
-        const valeHeight = 88; // Aumenté la altura para acomodar la leyenda
-
-        // Espacio entre vales
-        const spaceBetween = 10;
-
-        // Cargar imagen del logo
-        const logoPath = '/MinaToMVC/Assets/img/Logo.ico';
-        const logoWidth = 15;
-        const logoHeight = 15;
-
-        // Obtener fecha actual formateada
-        const fechaActual = new Date();
-        const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
-        const fechaFormateada = fechaActual.toLocaleDateString('es-MX', opcionesFecha);
-        const leyendaFecha = `Calimaya, Estado de México a: ______________`;
-
-        let valesEnPagina = 0;
-
-        vales.forEach((vale, index) => {
-            if (valesEnPagina >= 3) {
-                doc.addPage();
-                valesEnPagina = 0;
-            }
-
-            const yPos = marginTop + (valesEnPagina * (valeHeight + spaceBetween));
-
-            // Encabezado con color gris
-            doc.setFillColor(...primaryColor);
-            doc.rect(marginLeft, yPos, valeWidth, 15, 'F');
-
-            // Posicionamiento del título y logos
-            const centerX = marginLeft + valeWidth / 2;
-            const logoLeftX = centerX - 30;
-            const logoRightX = centerX + 15;
-            const titleY = yPos + 8;
-
-            try {
-                doc.addImage(logoPath, 'ICO', logoLeftX, yPos + 2, logoWidth, logoHeight);
-                doc.addImage(logoPath, 'ICO', logoRightX, yPos + 2, logoWidth, logoHeight);
-            } catch (e) {
-                console.error("Error al cargar el logo:", e);
-            }
-
-            // Título
-            doc.setFontSize(13);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(255, 255, 255);
-            doc.text('PLANTA PROCESADORA DE MATERIALES PETREOS SAN MIGUEL, S.A. DE C.V.', centerX, titleY, { align: 'center' });
-
-            // Número de vale
-            doc.setFontSize(8);
-            doc.text(`VALE No. ${vale.NoVale} de ${vale.CantidadVales}`, centerX, yPos + 13, { align: 'center' });
-
-            // Restaurar color de texto
-            doc.setTextColor(0, 0, 0);
-
-            // Cuerpo del vale
-            const labelStart = marginLeft + 30;
-            const valueStart = marginLeft + 70;
-
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'bold');
-            doc.text('FOLIO:', labelStart, yPos + 25);
-            doc.text('FECHA:', labelStart, yPos + 32);
-            doc.text('CLIENTE:', labelStart, yPos + 39);
-            doc.text('MATERIAL:', labelStart, yPos + 46);
-            doc.text('CANTIDAD M3:', labelStart, yPos + 53);
-            doc.text('PRECIO UNITARIO:', labelStart, yPos + 60);
-            doc.text('IMPORTE TOTAL:', labelStart, yPos + 67);
-
-            // Valores
-            doc.setFont('helvetica', 'normal');
-            doc.text(vale.Folio, valueStart, yPos + 25);
-            doc.text(vale.Fecha, valueStart, yPos + 32);
-            doc.text(vale.NombreCliente, valueStart, yPos + 39);
-            doc.text(vale.NombreMaterial, valueStart, yPos + 46);
-            doc.text(vale.CantidadM3, valueStart, yPos + 53);
-            doc.text(`$${parseFloat(vale.PrecioUnidad).toFixed(2)}`, valueStart, yPos + 60);
-            doc.text(`$${parseFloat(vale.ImporteVenta).toFixed(2)}`, valueStart, yPos + 67);
-
-            // Sección de firma
-            doc.setDrawColor(...secondaryColor);
-            doc.setLineWidth(0.5);
-            doc.line(valueStart + 50, yPos + 75, valueStart + 100, yPos + 75);
-            doc.setFontSize(8);
-            doc.text('FIRMA Y SELLO', valueStart + 75, yPos + 80, { align: 'center' });
-
-            // Leyenda de fecha (cursiva, debajo de la firma)
-            doc.setFont('helvetica', 'italic');
-            doc.setFontSize(10);
-            doc.text(leyendaFecha, valueStart + 75, yPos + 85, { align: 'center' });
-
-            // Borde del vale
-            doc.setDrawColor(0, 0, 0);
-            doc.rect(marginLeft, yPos, valeWidth, valeHeight);
-
-            valesEnPagina++;
-        });
-
-        // Guardar el PDF
-        doc.save(`vales_${vales[0].Folio}_a_${vales[vales.length - 1].Folio}.pdf`);
     }
 });
 </script>
