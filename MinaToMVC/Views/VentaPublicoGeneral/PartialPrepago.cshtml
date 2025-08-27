@@ -28,7 +28,7 @@
                 <div class="row" style="margin-top: 20px;">
                     <div class="col-lg-4">
                         <label>Folio:</label>
-                        @Html.TextBoxFor(x => x.Folio, new { @class = "form-control no-select", @type = "number", id = "folioModal", @readonly = "readonly" })
+                        @Html.TextBoxFor(x => x.Folio, new { @class = "form-control no-select", @type = "number", id = "folioModal", @readonly = "readonly", @Value = "" })
                     </div>
                 </div>
 
@@ -446,5 +446,46 @@ $(document).ready(function() {
             });
         });
     }
+
+    // Función para obtener el último FOLIO registrado en la base de datos
+    function obtenerUltimoFolio() {
+        $.ajax({
+            url: '/VentaPublicoGeneral/GetUltimoFolio',
+            type: 'GET',
+            dataType: 'json',
+            success: function (response) {
+
+                var ultimoFolio = null;
+
+                if (response.IsSuccess && Array.isArray(response.Response) && response.Response.length > 0) {
+                    // Tomar el primer elemento del array (que debería ser el último registro)
+                    var ultimoRegistro = response.Response[0];
+
+                    // Extraer el folio del objeto y convertirlo a número
+                    if (ultimoRegistro.folio) {
+                        // Convertir a número, sumar 1, y luego formatear con ceros a la izquierda
+                        var folioNumerico = parseInt(ultimoRegistro.folio) || 0;
+                        ultimoFolio = (folioNumerico + 1).toString().padStart(5, '0');
+                    }
+                }
+
+                // Solo actualizar si se obtuvo un valor válido
+                if (ultimoFolio !== null) {
+                    $('#folioModal').val(ultimoFolio);
+                } else {
+                    console.warn("No se pudo obtener un folio válido de la respuesta:", response);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error al obtener último folio:", error);
+            }
+        });
+    }
+
+    // Configurar el intervalo para ejecutar cada 2 segundos
+    var intervaloFolio = setInterval(obtenerUltimoFolio, 2000);
+
+    // Ejecutar inmediatamente al cargar la página
+    obtenerUltimoFolio();
 });
 </script>

@@ -118,6 +118,30 @@ namespace MinaTolWebApi.DAL
             return response;
         }
 
+        public ModelResponse GetUltimoFolio()
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                var result = GetObjects("GetUltimoFolio", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, Prepago>((reader) =>
+                    {
+                        var r = FillEntity<Prepago>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+
         public ModelResponse GetAllPrepagosByRFID(string rfid)
         {
             var modelResponse = new ModelResponse();

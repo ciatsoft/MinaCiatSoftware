@@ -424,6 +424,11 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllPrepagos();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+        public async Task<string> GetUltimoFolio()
+        {
+            var result = await httpClientConnection.GetUltimoFolio();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
         public async Task<string> GetAllPrepagosByRFID(string rfid)
         {
             var result = await httpClientConnection.GetAllPrepagosByRFID(rfid);
