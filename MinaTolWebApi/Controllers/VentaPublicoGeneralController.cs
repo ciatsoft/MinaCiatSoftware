@@ -79,6 +79,13 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.VentasDiariasPrepago(fecha);
             return result;
         }
+
+        [HttpGet, Route("Prepago/UltimoFolio")]
+        public async Task<ModelResponse> GetUltimoFolio()
+        {
+            var result = wrapper.GetUltimoFolio();
+            return result;
+        }
         //------------------------------Canjeo--------------------------------------
 
 
