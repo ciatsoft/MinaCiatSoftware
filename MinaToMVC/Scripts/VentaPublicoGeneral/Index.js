@@ -1,9 +1,3 @@
-// Declarar precioMaterial como variable global
-
-// Declarar precioMaterial como variable global
-
-// Declarar precioMaterial como variable global
-
 var precioMaterial = 0;
 
 $(document).ready(function () {

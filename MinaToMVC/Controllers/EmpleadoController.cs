@@ -58,7 +58,7 @@ namespace MinaToMVC.Controllers
         }
         #endregion
 
-         #region Acceso a Datos
+        #region Acceso a Datos
 
         #region Trabajador
         public async Task<string> GetAllTrabajadores()
