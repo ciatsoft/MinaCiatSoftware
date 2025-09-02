@@ -118,15 +118,6 @@ namespace MinaToMVC.Controllers
 
             return View(categoriaInventario);
         }
-        //public ActionResult ReportesCStock()
-        //{
-        //    return View();
-        //}
-        //public ActionResult Reportes_SStock()
-        //{
-        //    return View();
-        //}
-
         #endregion
 
         #region PartialViews
