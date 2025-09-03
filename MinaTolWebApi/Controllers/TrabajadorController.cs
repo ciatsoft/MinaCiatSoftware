@@ -35,15 +35,15 @@ namespace MinaTolWebApi.Controllers
         }
 
         [HttpPost, Route("")]
-        public ModelResponse SaveOrupdateTrabajador(DtoTrabajador t)
+        public ModelResponse SaveOrupdateEmpleado(Empleado t)
         {
-            var result = wrapper.SaveOrupdateTrabajador(t);
+            var result = wrapper.SaveOrupdateEmpleado(t);
             return result;
         }
-        [HttpGet, Route("")]
-        public ModelResponse GetAllTrabajador()
+        [HttpGet, Route("List")]
+        public ModelResponse GetAllEmpleados()
         {
-            var result = wrapper.GetAllTrabajador();
+            var result = wrapper.GetAllEmpleados();
             return result;
         }
 
@@ -51,6 +51,12 @@ namespace MinaTolWebApi.Controllers
         public ModelResponse GetTrabajadorById(long id)
         {
             var result = wrapper.GetTrabajadorById(id);
+            return result;
+        }
+        [HttpDelete, Route("{id:long}")]
+        public ModelResponse DeleteEmpleadoById(long id)
+        {
+            var result = wrapper.DeleteEmpleadoById(id);
             return result;
         }
     }

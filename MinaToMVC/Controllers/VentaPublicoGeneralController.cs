@@ -653,7 +653,7 @@ namespace MinaToMVC.Controllers
             var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
 
             var trabajadores = new List<DtoTrabajador>();
-            var responsetrabajadores = await httpClientConnection.GetAllTrabajador();
+            var responsetrabajadores = await httpClientConnection.GetAllEmpleados();
             trabajadores = JsonConvert.DeserializeObject<List<DtoTrabajador>>(responsetrabajadores.Response.ToString());
 
             ViewBag.UserToken = usuarioAutenticado;

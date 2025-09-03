@@ -48,6 +48,7 @@
     <Compile Include="DtoCatalogos\Permisos.cs" />
     <Compile Include="DtoCatalogos\RolPermiso.cs" />
     <Compile Include="DtoClientes\DtoClientesVehiculoPublicoGral.cs" />
+    <Compile Include="DtoEmpleados\Empleado.cs" />
     <Compile Include="DtoIngresosRfid\IngresosRfid.cs" />
     <Compile Include="DtoRfid\DtoRfid.cs" />
     <Compile Include="DtoCatalogos\DtoAreaTrabajo.cs" />
