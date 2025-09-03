@@ -14,7 +14,7 @@ namespace MinaToMVC.DAL
 {
     public partial class HttpClientConnection
     {
-        public async Task<ModelResponse> SaveOrupdateTrabajador(DtoTrabajador t)
+        public async Task<ModelResponse> SaveOrupdateEmpleado(Empleado t)
         {
             var result = await RequestAsync<object>("api/Trabajador", HttpMethod.Post, t,
             new Func<string, string>((responseString) =>
@@ -27,9 +27,9 @@ namespace MinaToMVC.DAL
 
         }
 
-        public async Task<ModelResponse> GetAllTrabajador()
+        public async Task<ModelResponse> GetAllEmpleados()
         {
-            var result = await RequestAsync<object>("api/Trabajador", HttpMethod.Get, null,
+            var result = await RequestAsync<object>("api/Trabajador/List", HttpMethod.Get, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
@@ -51,6 +51,15 @@ namespace MinaToMVC.DAL
 
             return modelResponse;
 
+        }
+        public async Task<ModelResponse> DeleteEmpleadoById(long Id)
+        {
+            var result = await RequestAsync($"api/Trabajador/{Id}", HttpMethod.Delete, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
         }
 
         public async Task<ModelResponse> GetSalarioByTrabajador(long id)

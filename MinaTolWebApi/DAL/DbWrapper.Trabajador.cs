@@ -13,20 +13,16 @@ namespace MinaTolWebApi.DAL
 {
     public partial class DbWrapper
     {
-        public ModelResponse GetAllTrabajador()
+        public ModelResponse GetAllEmpleados()
         {
             var modelResponse = new ModelResponse();
             var parameters = new List<SqlParameter>();
             try
             {
                 var user = GetObjects($"GetAllTrabajador", System.Data.CommandType.StoredProcedure, parameters,
-                    new Func<IDataReader, DtoTrabajador>((reader) =>
+                    new Func<IDataReader, Empleado>((reader) =>
                     {
-                        var r = FillEntity<DtoTrabajador>(reader);
-                        
-                        r.AreadeTrabajo.Nombre = MappingProperties<string>(reader["AreaTrabajo"]);
-                        r.Roles.Nombre = MappingProperties<string>(reader["RolTrabajador"]);
-
+                        var r = FillEntity<Empleado>(reader);
                         return r;
                     }));
 
@@ -48,19 +44,9 @@ namespace MinaTolWebApi.DAL
             try
             {
                 var user = GetObject($"SELECT * FROM TRABAJADOR where id = {id}", CommandType.Text, parameters,
-                    new Func<IDataReader, DtoTrabajador>((reader) =>
+                    new Func<IDataReader, Empleado>((reader) =>
                     {
-                        var r = FillEntity<DtoTrabajador>(reader);
-
-                        r.AreadeTrabajo = new MinaTolEntidades.DtoCatalogos.DtoAreaTrabajo()
-                        {
-                            Id = MappingProperties<long>(reader["AreaTrabajoID"])
-                        };
-                        r.Roles = new MinaTolEntidades.DtoCatalogos.DtoRoll()
-                        {
-                            Id = MappingProperties<long>(reader["RollId"])
-                        };
-
+                        var r = FillEntity<Empleado>(reader);
                         return r;
                     }));
 
@@ -75,7 +61,7 @@ namespace MinaTolWebApi.DAL
 
             return modelResponse;
         }
-        public ModelResponse SaveOrupdateTrabajador(DtoTrabajador t)
+        public ModelResponse SaveOrupdateEmpleado(Empleado t)
         {
             var response = new ModelResponse();
             try
@@ -95,6 +81,32 @@ namespace MinaTolWebApi.DAL
             }
             return response;
 
+        }
+        public ModelResponse DeleteEmpleadoById(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id"
+                });
+
+                var result = ExecuteNonQuery("DeleteEmpleadoById", System.Data.CommandType.StoredProcedure, parameters);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
         }
     }
 }

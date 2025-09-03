@@ -57,7 +57,7 @@ namespace MinaToMVC.Controllers
             var responseTipoMaterial = await httpClientConnection.GetTipoMaterialByCliente(clientes.FirstOrDefault().Id);
             tipoMateriales = JsonConvert.DeserializeObject<List<DtoTipoMaterialUbicacion>>(responseTipoMaterial.Response.ToString());
 
-            var responsetrabajadores = await httpClientConnection.GetAllTrabajador();
+            var responsetrabajadores = await httpClientConnection.GetAllEmpleados();
             trabajadores = JsonConvert.DeserializeObject<List<DtoTrabajador>>(responsetrabajadores.Response.ToString());
 
 
@@ -121,7 +121,7 @@ namespace MinaToMVC.Controllers
             var responseTipoMaterial = await httpClientConnection.GetTipoMaterialByCliente(clientes.FirstOrDefault().Id);
             tipoMateriales = JsonConvert.DeserializeObject<List<ClienteTipoMaterial>>(responseTipoMaterial.Response.ToString());
 
-            var responsetrabajadores = await httpClientConnection.GetAllTrabajador();
+            var responsetrabajadores = await httpClientConnection.GetAllEmpleados();
             trabajadores = JsonConvert.DeserializeObject<List<DtoTrabajador>>(responsetrabajadores.Response.ToString());
 
             var responseunidadmedida = await httpClientConnection.GetAllUnidadMedida();

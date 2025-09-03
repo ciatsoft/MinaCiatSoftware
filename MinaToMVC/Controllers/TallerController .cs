@@ -47,7 +47,7 @@ namespace MinaToMVC.Controllers
             vehiculos = JsonConvert.DeserializeObject<List<TipoVehiculo>>(responseVehiculo.Response.ToString());
             var tipovehiculos = MappingPropertiToDropDownList(vehiculos, "Id", "Nombre");
 
-            var responsetrabajadores = await httpClientConnection.GetAllTrabajador();
+            var responsetrabajadores = await httpClientConnection.GetAllEmpleados();
             trabajadores = JsonConvert.DeserializeObject<List<DtoTrabajador>>(responsetrabajadores.Response.ToString());
 
             var token = Helpers.SessionHelper.GetSessionUser();

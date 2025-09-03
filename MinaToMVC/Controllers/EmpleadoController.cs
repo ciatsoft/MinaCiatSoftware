@@ -2,10 +2,14 @@
 using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.DtoEmpleados;
 using MinaTolEntidades.DtoSucursales;
+using MinaTolEntidades.DtoTaller;
+using MinaTolEntidades.Security;
 using MinaToMVC.DAL;
+using MinaToMVC.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -25,29 +29,52 @@ namespace MinaToMVC.Controllers
         }
         public async Task<ActionResult> AltaEdicion(long id = 0)
         {
-            var token = Helpers.SessionHelper.GetSessionUser();
-            var result = await httpClientConnection.GetAllAreaTrabajo();
-            var areasDeTrabajo = JsonConvert.DeserializeObject<List<DtoAreaTrabajo>>(result.Response.ToString());
 
-            DtoTrabajador trabajador;
+            Empleado empleado = new Empleado();
 
-            if (id != 0)
+            if(id != 0)
             {
                 var response = await httpClientConnection.GetTrabajadorById(id);
-                trabajador = JsonConvert.DeserializeObject<DtoTrabajador>(response.Response.ToString());
+                empleado = JsonConvert.DeserializeObject<Empleado>(response.Response.ToString());
             }
-            else
-                trabajador = new DtoTrabajador();
 
-            var roles = new List<DtoRoll>();
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
 
-            var responseroles = await httpClientConnection.GetAllRoll();
-            roles = JsonConvert.DeserializeObject<List<DtoRoll>>(responseroles.Response.ToString());
+            var departamentosResponse = await httpClientConnection.GetAllAreaTrabajo();
+            var departamento = JsonConvert.DeserializeObject<List<DtoAreaTrabajo>>(departamentosResponse.Response.ToString());
+            var departamentoDdl = MappingPropertiToDropDownList<DtoAreaTrabajo>(departamento, "Id", "Nombre");
 
-            ViewBag.AreasDeTrabajo = areasDeTrabajo;
-            ViewBag.Roles = roles;
+            // Obtener el valor del Web.Config
+            string diaNominaValue = ConfigurationManager.AppSettings["DiaNomina"];
 
-            return View(trabajador);
+            // Parsear las opciones (asumiendo el formato "V:Viernes|S:Sabado")
+            var opciones = diaNominaValue.Split('|')
+                .Select(opt =>
+                {
+                    var parts = opt.Split(':');
+                    return new SelectListItem
+                    {
+                        Value = parts[0],
+                        Text = parts[1]
+                    };
+                }).ToList();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+            ViewBag.DiaNominaOptions = opciones;
+            ViewBag.Departamentos = departamentoDdl;
+
+            return View(empleado);
         }
         #endregion
 
@@ -61,18 +88,21 @@ namespace MinaToMVC.Controllers
         #region Acceso a Datos
 
         #region Trabajador
-        public async Task<string> GetAllTrabajadores()
+        public async Task<string> GetAllEmpleados()
         {
-            var result = await httpClientConnection.GetAllTrabajador();
-
+            var result = await httpClientConnection.GetAllEmpleados();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
-        public async Task<string> SaveOrupdateTrabajador(DtoTrabajador t)
+        public async Task<ActionResult> SaveOrupdateEmpleado(Empleado t)
         {
-            //t.FechaContratacion = DateTime.Now;
-            var result = await httpClientConnection.SaveOrupdateTrabajador(t);
-            return JsonConvert.SerializeObject(result);
+            var result = await httpClientConnection.SaveOrupdateEmpleado(t);
+            return Redirect("AltaEdicion");
+        }
+        public async Task<ActionResult> DeleteEmpleadoById(long id)
+        {
+            var r = await httpClientConnection.DeleteEmpleadoById(id);
+            return Redirect("AltaEdicion");
         }
         #endregion
 
