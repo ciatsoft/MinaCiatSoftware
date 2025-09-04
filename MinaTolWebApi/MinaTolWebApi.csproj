@@ -135,6 +135,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\CatalogosController.cs" />
     <Compile Include="Controllers\ClientePublicoGralController.cs" />
+    <Compile Include="Controllers\DocumentosController.cs" />
     <Compile Include="Controllers\PV_CorteCajaController.cs" />
     <Compile Include="Controllers\DireccionCliente.cs" />
     <Compile Include="Controllers\AreaTrabajoController.cs" />
@@ -168,6 +169,7 @@
     <Compile Include="DAL\DbWrapper.Cliente.cs" />
     <Compile Include="DAL\DbWrapper.ClienteTipoMaterial.cs" />
     <Compile Include="DAL\DbWrapper.cs" />
+    <Compile Include="DAL\DbWrapper.Documentos.cs" />
     <Compile Include="DAL\DbWrapper.Foliador.cs" />
     <Compile Include="DAL\DbWrapper.Inventario.cs" />
     <Compile Include="DAL\DbWrapper.MaterialUbicacion.cs" />
