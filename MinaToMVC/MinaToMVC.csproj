@@ -181,6 +181,7 @@
     <Content Include="Scripts\Taller\CatalogoInventario.js" />
     <Content Include="Scripts\Taller\InventarioTaller.js" />
     <Content Include="Scripts\Trabajador\AltaEdicion.js" />
+    <Content Include="Scripts\Trabajador\Documento.js" />
     <Content Include="Scripts\Vehiculo\Vehiculo.js" />
     <Content Include="Scripts\VentaPublicoGeneral\CajaChica.js" />
     <Content Include="Scripts\VentaPublicoGeneral\ClientePublicoGral.js" />
@@ -294,6 +295,9 @@
     <Content Include="Views\Administracion\PartialCrudMaterial.cshtml" />
     <Content Include="Views\Administracion\Clientes.cshtml" />
     <Content Include="Views\Administracion\PartialConfiguracionCostosCliente.cshtml" />
+    <Compile Include="DAL\HttpClientConnection.Documentos.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <None Include="packages.config" />
     <Content Include="Views\Vehiculo\Index.cshtml" />
     <Content Include="Views\Administracion\PartialdireccionesClientes.cshtml" />
@@ -321,6 +325,7 @@
     <Content Include="Views\RH\Empleados.cshtml" />
     <Content Include="Views\Taller\CategoriaInventario.cshtml" />
     <Content Include="Views\Taller\PartialComponenteVehiculo.cshtml" />
+    <Content Include="Views\Empleado\ListaDocumentos.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
