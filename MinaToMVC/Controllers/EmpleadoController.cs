@@ -74,6 +74,8 @@ namespace MinaToMVC.Controllers
             ViewBag.DiaNominaOptions = opciones;
             ViewBag.Departamentos = departamentoDdl;
 
+            ViewBag.EsEdicion = (id != 0);
+
             return View(empleado);
         }
         #endregion
@@ -84,6 +86,8 @@ namespace MinaToMVC.Controllers
             ViewBag.TrabajadorId = id;
             return PartialView();
         }
+
+
         #endregion
 
         #region Acceso a Datos
