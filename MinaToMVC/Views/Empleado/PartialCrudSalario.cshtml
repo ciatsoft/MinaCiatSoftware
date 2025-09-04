@@ -1,4 +1,9 @@
-﻿<div class="row">
+﻿@{ 
+    var trabajadorId = (long)ViewBag.TrabajadorId;
+}
+
+@Html.Hidden("txtTrabajadorId", trabajadorId)
+<div class="row">
     <div class="col-lg-12"></div>
 </div>
 <div class="row">

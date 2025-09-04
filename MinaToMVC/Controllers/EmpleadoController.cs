@@ -79,8 +79,9 @@ namespace MinaToMVC.Controllers
         #endregion
 
         #region Vistas Parciales
-        public ActionResult PartialCrudSalario()
+        public ActionResult PartialCrudSalario(long id = 0)
         {
+            ViewBag.TrabajadorId = id;
             return PartialView();
         }
         #endregion
