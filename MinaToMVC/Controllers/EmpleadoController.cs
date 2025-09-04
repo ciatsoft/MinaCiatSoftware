@@ -32,7 +32,7 @@ namespace MinaToMVC.Controllers
 
             Empleado empleado = new Empleado();
 
-            if(id != 0)
+            if (id != 0)
             {
                 var response = await httpClientConnection.GetTrabajadorById(id);
                 empleado = JsonConvert.DeserializeObject<Empleado>(response.Response.ToString());
@@ -75,7 +75,13 @@ namespace MinaToMVC.Controllers
             ViewBag.Departamentos = departamentoDdl;
 
             return View(empleado);
+
         }
+        public ActionResult ListaDocumentos()
+        {
+            return View();
+        }
+
         #endregion
 
         #region Vistas Parciales
@@ -126,6 +132,29 @@ namespace MinaToMVC.Controllers
 
         #endregion
 
+        #region Documentos
+        public async Task<ActionResult> SaveOrUpdateDocumento(Documentos t)
+        {
+            var result = await httpClientConnection.SaveOrUpdateDocumento(t);
+            return Redirect("AltaEdicion");
+        }
+
+        public async Task<string> GetAllDocumentos()
+        {
+            var result = await httpClientConnection.GetAllDocumentos();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetDocumentoById(long id)
+        {
+            var result = await httpClientConnection.GetDocumentoById(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> DeleteDocumentoById(long id)
+        {
+            var result = await httpClientConnection.DeleteDocumentoById(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        #endregion
 
     }
 }
