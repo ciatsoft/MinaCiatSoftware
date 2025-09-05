@@ -116,6 +116,11 @@ namespace MinaToMVC.Controllers
             return PartialView();
         }
 
+        public ActionResult PartialDocumentosEmpleado(long id = 0)
+        {
+            return PartialView();
+        }
+
 
         #endregion
 

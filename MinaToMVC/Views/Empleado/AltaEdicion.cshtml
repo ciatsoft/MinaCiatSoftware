@@ -14,7 +14,7 @@
 <div class="content">
     @using (Html.BeginForm("SaveOrUpdateEmpleado", "Empleado", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmEmpleado", @id = "frmEmpleado" }))
     {
-        @Html.HiddenFor(x => x.Id)
+        @Html.HiddenFor(x => x.Id, new { id = "id" })
         @Html.HiddenFor(x => x.Estatus, new { id = "estatus" })
         @Html.HiddenFor(x => x.CreatedDt, new { id = "createdDt", @Value = fechaActual })
         @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy", @Value = usuarioToken.UserName })
@@ -91,6 +91,11 @@
             </div>
         </div>
     }
+    @if (ViewBag.EsEdicion == true)
+    {
+        <input id="btnDocumentosEmpleado" type="submit" value="Documentacion" class="btn btn-custom-clean" />
+    }
+    <br />
     <br />
     <table id="tblEmpleados" class="table table-bordered table-striped" style="width: 100%;"></table>
     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
