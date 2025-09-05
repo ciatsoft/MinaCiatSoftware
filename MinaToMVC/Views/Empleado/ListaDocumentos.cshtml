@@ -9,19 +9,24 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 <div class="content">
-    @using (Html.BeginForm("SaveOrUpdateDocumento", "Empleado   ", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmDocumento", @id = "frmDocumento" }))
+    @using (Html.BeginForm("SaveOrUpdateDocumento", "Empleado", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmDocumento", @id = "frmDocumento" }))
     {
-   
+        @Html.HiddenFor(x => x.Id, new { @id = "id" })
+        @Html.HiddenFor(x => x.Estatus)
+        @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy" })
+        @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy" })
+        @Html.HiddenFor(x => x.CreatedDt, new { id = "CreatedDt" })
+        @Html.HiddenFor(x => x.UpdatedDt, new { id = "UpdatedDt" })
         <br />
         <center><h1>Documentos</h1></center>
         <div class="tabla-consultas-empleados">
-             <div class="rectangulos" style="width: 100%;">
+            <div class="rectangulos" style="width: 100%;">
                 <div class="row">
                     <div class="col-lg-3">
                         <label>Nombre:</label>
                         @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control", @type = "text", id = "nombre", required = "required" })
                     </div>
-                   
+
                     @Html.HiddenFor(x => x.Nombre, new { id = "nombre" })
                     <div class="col-lg-3">
                         <label>Descripcion:</label>

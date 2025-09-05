@@ -76,38 +76,44 @@ function GetAllDocumentos() {
 
 
 function SaveOrUpdateDocumento() {
-    if ($("#frmDocumento").valid()) {
-        var fechaActual = new Date().toISOString().split("T")[0];
-
+    if ($("#frmDocumentos").valid()) {
         var parametro = {
             Id: $("#id").val(),
-            Nombre: $("#nombre").val(),
-            Descripcion: $("#descripcion").val(),
+            nombre: $("#nombre").val(),
+            descripcion: $("#descripcion").val(),
+            CreatedBy: $("#encargado").val(),
+            CreatedDt: $("#fecha").val(),
+            UpdatedBy: $("#encargado").val(),
+            UpdatedDt: $("#fecha").val()
         };
 
-        PostMVC('/Documento/SaveOrUpdateDocumento', parametro, function (r) {
-            if (r.IsSuccess) {
-                LimpiarDocumento();
-                Swal.fire({
-                    title: "Registro guardado!",
-                    text: "El registro se ha guardado correctamente.",
-                    icon: "success",
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    window.location.reload();
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error al guardar : ' + r.ErrorMessage,
-                    confirmButtonText: 'Aceptar'
+        var isUpdating = parametro.Id && parametro.Id != 0;
+        Swal.fire({
+            title: isUpdating ? '¿Desea actualizar el registro?' : '¿Desea guardar el nuevo registro?',
+            html: `<strong>Id:</strong> ${parametro.Id}<br/>
+                   <strong>Nombre:</strong> ${parametro.nombre}<br/> 
+                   <strong>Descripción:</strong> ${parametro.descripcion}<br/>
+                   <strong>Encargado:</strong> ${parametro.UsuarioName}`,
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: isUpdating ? 'Actualizar' : 'Guardar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                PostMVC("/Empleado/SaveOrUpdateDocumento", parametro, function (success, response) {
+                    if (success) {
+                        Swal.fire('Éxito', isUpdating ? 'Datos actualizados exitosamente.' : 'Datos guardados exitosamente.', 'success')
+                            .then(() => window.location.href = '/Empleado/SaveOrUpdateDocumento');
+                    } else {
+                        Swal.fire('Error', 'Error al guardar los datos: ' + response.ErrorMessage, 'error');
+                    }
                 });
             }
         });
+    } else {
+        Swal.fire('Advertencia', 'Por favor, complete todos los campos obligatorios.', 'warning');
     }
 }
-
 function LimpiarFormulario() {
     $("#frmDocumento")[0].reset();
 }
