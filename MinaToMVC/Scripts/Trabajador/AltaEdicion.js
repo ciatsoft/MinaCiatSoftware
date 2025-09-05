@@ -390,8 +390,6 @@ document.getElementById("btnDocumentosEmpleado").addEventListener("click", funct
 });
 
 function AbrirModalDocumentosEmpleado(id) {
-    alert(id);
-
     $("#genericModal").removeData('b s.modal');
     $("#boddyGeericModal").empty();
 
