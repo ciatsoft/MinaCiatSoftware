@@ -185,7 +185,7 @@ namespace MinaToMVC.Controllers
         public async Task<ActionResult> SaveOrUpdateDocumento(Documentos t)
         {
             var result = await httpClientConnection.SaveOrUpdateDocumento(t);
-            return Redirect("AltaEdicion");
+            return Redirect("ListaDocumentos");
         }
 
         public async Task<string> GetAllDocumentos()
