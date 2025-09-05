@@ -9,7 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 <div class="content">
-    @using (Html.BeginForm("SaveOrUpdateDocumento", "Documento", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmDocumento", @id = "frmDocumento" }))
+    @using (Html.BeginForm("SaveOrUpdateDocumento", "Empleado   ", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmDocumento", @id = "frmDocumento" }))
     {
    
         <br />
@@ -38,23 +38,14 @@
                         <div>
                             <input id="btnGuardar" type="submit" value="Guardar" class="btn btn-success btn-lg-custom" />
                         </div>
-                        <a href="/Taller/Inventario_Taller" class="btn btn-custom-cancel btn-lg-custom">Cancelar</a>
+                        <a href="/Empleado/ListaDocumentos" class="btn btn-custom-cancel btn-lg-custom">Cancelar</a>
                     </div>
                 </div>
             </div>
         </div>
     }
-    @*<br />
-    <table id="tblInventario" class="table table-bordered table-striped" style="width: 100%;"></table>
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
-        <div class="mb-2" style="text-align: right;">
-            <button id="btnGenerarPDF" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
-                Generar Reporte PDF
-            </button>
-        </div>
-    </div>
-    <center><h1>Historial de Inventario asignado a Vehiculos</h1></center>
-    <table id="tblComponenteVehiculo" class="table table-bordered table-striped" style="width: 100%;"></table>
-</div>*@
+    <br />
+    <table id="tblDocumentos" class="table table-bordered table-striped" style="width: 100%;"></table>
+</div>
 
 <script src="@(Url.StaticFile("Scripts/Trabajador/Documento.js"))"></script>

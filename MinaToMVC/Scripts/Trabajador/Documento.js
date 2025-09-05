@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
     // Configuración de DataTable
-    $("#tblInventario").DataTable({
+    $("#tblDocumentos").DataTable({
         data: [],
         columns: [
             { data: 'id', title: 'ID' },
@@ -10,8 +10,8 @@ $(document).ready(function () {
 
             {
                 data: "id", title: "Acciones", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarInventario(' + data + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarInventario(' + data + ')"/>';
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarDocumento(' + data + ')" />' +
+                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarDocumento(' + data + ')"/>';
                 }
             },
             
@@ -43,40 +43,30 @@ $(document).ready(function () {
 
 
     // Configuración de validación del formulario
-    $("#frmInventario").validate({
+    $("#frmListado").validate({
         rules: {
             nombre: "required",
-            IdCategoria: "required",  // Asegúrate de que coincida con el nombre de la propiedad
-            marca: "required",
-            codigoFabricante: "required",
-            cantidadExistencia: "required",
-            precioCompra: "required",
-            ubicacionAlmacen: "required",
-            proveedor: "required"
+            descripcion: "required",  // Asegúrate de que coincida con el nombre de la propiedad
+            
         },
         messages: {
             nombre: "Por favor ingrese el nombre",
-            IdCategoria: "Por favor seleccione una categoría",
-            marca: "Por favor ingrese la marca",
-            codigoFabricante: "Por favor ingrese el código del fabricante",
-            cantidadExistencia: "Por favor ingrese la cantidad existente",
-            precioCompra: "Por favor ingrese el precio de compra",
-            ubicacionAlmacen: "Por favor ingrese la ubicación en almacén",
-            proveedor: "Por favor ingrese el proveedor"
+            descripcion: "Por favor ingrese la descripción",
+            
         }
     });
 
-    GetAllInventario();
+    GetAllDocumentos();
 });
 
-function GetAllInventario() {
-    GetMVC("/Taller/GetAllInventario", function (r) {
+function GetAllDocumentos() {
+    GetMVC("/Empleado/GetAllDocumentos", function (r) {
         if (r.IsSuccess) {
-            MapingPropertiesDataTable("tblInventario", r.Response);
+            MapingPropertiesDataTable("tblDocumentos", r.Response);
         } else {
             Swal.fire({
                 title: 'Error',
-                text: 'Error al cargar el Inventario: ' + r.ErrorMessage,
+                text: 'Error al cargar Documentos: ' + r.ErrorMessage,
                 icon: 'error',
                 confirmButtonText: 'Aceptar'
             });
@@ -85,30 +75,19 @@ function GetAllInventario() {
 }
 
 
-function SaveOrUpdateInventario() {
-    if ($("#frmInventario").valid()) {
+function SaveOrUpdateDocumento() {
+    if ($("#frmDocumento").valid()) {
+        var fechaActual = new Date().toISOString().split("T")[0];
 
         var parametro = {
             Id: $("#id").val(),
             Nombre: $("#nombre").val(),
-            IdCategoria: $("#ddlCategoriaInventario").val(),
-            NombreCategoria: $("#nombreCategoria").val(),
-            Marca: $("#marca").val(),
-            CodigoFabricante: $("#codigoFabricante").val(),
-            CantidadExistente: $("#cantidadExistencia").val(),
-            PrecioCompra: $("#precioCompra").val(),
-            UbicacionAlmacen: $("#ubicacionAlmacen").val(),
-            Proveedor: $("#proveedor").val(),
-            Estatus: $("#estatus").val(),
-            CreatedBy: $("#createdBy").val(),
-            CreatedDt: $("#createdDt").val(),
-            UpdatedBy: $("#updatedBy").val(),
-            UpdatedDt: $("#updatedDt").val(),
+            Descripcion: $("#descripcion").val(),
         };
 
-        PostMVC('/Taller/SaveOrUpdateInventario', parametro, function (r) {
+        PostMVC('/Documento/SaveOrUpdateDocumento', parametro, function (r) {
             if (r.IsSuccess) {
-                LimpiarFormulario();
+                LimpiarDocumento();
                 Swal.fire({
                     title: "Registro guardado!",
                     text: "El registro se ha guardado correctamente.",
@@ -121,7 +100,7 @@ function SaveOrUpdateInventario() {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Error al guardar los datos: ' + r.ErrorMessage,
+                    text: 'Error al guardar : ' + r.ErrorMessage,
                     confirmButtonText: 'Aceptar'
                 });
             }
@@ -130,15 +109,14 @@ function SaveOrUpdateInventario() {
 }
 
 function LimpiarFormulario() {
-    $("#frmInventario")[0].reset();
-    $("#ddlCategoriaInventario").val("").trigger("change");
+    $("#frmDocumento")[0].reset();
 }
 
-function EditarInventario(id) {
-    location.href = "/Taller/Inventario_Taller/" + id;
+function EditarDocumento(id) {
+    location.href = "/Empleado/ListaDocumentos/" + id;
 }
 
-function EliminarInventario(id) {
+function EliminarDocumento(id) {
     Swal.fire({
         title: '¿Estas seguro?',
         text: "¿Desea eliminar el siguiente registro?",
@@ -152,12 +130,12 @@ function EliminarInventario(id) {
         if (result.isConfirmed) {
             var parametro = { Id: id };
 
-            PostMVC('/Taller/DeleteInventarioById', parametro, function (r) {
+            PostMVC('/Empleado/DeleteDocumentoById', parametro, function (r) {
                 if (r.IsSuccess) {
-                    Swal.fire('Eliminado', 'El Inventario de este registro ha sido eliminado.', 'success')
+                    Swal.fire('Eliminado', 'El Documento de este registro ha sido eliminado.', 'success')
                         .then(() => { window.location.reload(); });
                 } else {
-                    Swal.fire('Eliminado', 'El Inventario de este registro ha sido eliminado.', 'success')
+                    Swal.fire('Eliminado', 'El Documento de este registro ha sido eliminado.', 'success')
                         .then(() => { window.location.reload(); });
                 }
             });
