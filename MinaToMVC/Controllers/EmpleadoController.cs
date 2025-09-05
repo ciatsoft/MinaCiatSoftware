@@ -77,9 +77,32 @@ namespace MinaToMVC.Controllers
             return View(empleado);
 
         }
-        public ActionResult ListaDocumentos()
+        public async Task<ActionResult> ListaDocumentos(long id = 0)
         {
-            return View();
+            Documentos documentos = new Documentos();
+
+            if (id != 0)
+            {
+                var result = await httpClientConnection.GetDocumentoById(id);
+                documentos = JsonConvert.DeserializeObject<Documentos>(result.Response.ToString());
+            }
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            return View(documentos);
         }
 
         #endregion
@@ -142,11 +165,6 @@ namespace MinaToMVC.Controllers
         public async Task<string> GetAllDocumentos()
         {
             var result = await httpClientConnection.GetAllDocumentos();
-            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
-        }
-        public async Task<string> GetDocumentoById(long id)
-        {
-            var result = await httpClientConnection.GetDocumentoById(id);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
         public async Task<string> DeleteDocumentoById(long id)
