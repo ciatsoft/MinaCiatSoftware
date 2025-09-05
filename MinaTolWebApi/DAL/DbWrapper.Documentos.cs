@@ -104,5 +104,36 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
+
+        public ModelResponse GetAllDocumentosEmpleadoByIdTrabajador(long id)
+        {
+            var modelResponse = new ModelResponse();
+
+            try
+            {
+                // Crear el parámetro correctamente
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@Id", id)
+                };
+
+                // Usar CommandType.StoredProcedure y NO concatenar el id al nombre
+                var documentos = GetList($"GetAllDocumentosEmpleadoByIdTrabajador", CommandType.StoredProcedure, parameters,
+                    new Func<IDataReader, DocumentosEmpleado>((reader) =>
+                    {
+                        var r = FillEntity<DocumentosEmpleado>(reader);
+                        return r;
+                    }));
+
+                modelResponse.Response = documentos;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+            return modelResponse;
+        }
     }
 }
