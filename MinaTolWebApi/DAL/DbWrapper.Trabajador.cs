@@ -112,7 +112,7 @@ namespace MinaTolWebApi.DAL
         #endregion
 
         #region DocumentosEmpleados
-        public ModelResponse SaveOrUpdateDocumentosEmpleado(DocumentosEmpleados s)
+        public ModelResponse SaveOrUpdateDocumentosEmpleado(DocumentosEmpleado s)
         {
             var modelResponse = new ModelResponse();
 
@@ -168,9 +168,9 @@ namespace MinaTolWebApi.DAL
             try
             {
                 var result = GetObjects($"GetAllDocumentosEmpleado", CommandType.Text, parameters,
-                    new Func<IDataReader, DocumentosEmpleados>((reader) =>
+                    new Func<IDataReader, DocumentosEmpleado>((reader) =>
                     {
-                        var r = FillEntity<DocumentosEmpleados>(reader);
+                        var r = FillEntity<DocumentosEmpleado>(reader);
 
                         return r;
                     }));
@@ -204,7 +204,7 @@ namespace MinaTolWebApi.DAL
         };
 
                 var result = GetObject("GetDocumentoEmpleadoById", CommandType.StoredProcedure,
-                    parameters, reader => FillEntity<DocumentosEmpleados>(reader));
+                    parameters, reader => FillEntity<DocumentosEmpleado>(reader));
 
                 response.IsSuccess = true;
                 response.Response = result;

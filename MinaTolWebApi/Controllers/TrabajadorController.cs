@@ -66,7 +66,7 @@ namespace MinaTolWebApi.Controllers
 
         #region DocumentosEmpleados
         [HttpPost, Route("DocumentosTrabajador/")]
-        public ModelResponse SaveOrUpdateDocumentosEmpleado(DocumentosEmpleados s)
+        public ModelResponse SaveOrUpdateDocumentosEmpleado(DocumentosEmpleado s)
         {
             var result = wrapper.SaveOrUpdateDocumentosEmpleado(s);
             return result;

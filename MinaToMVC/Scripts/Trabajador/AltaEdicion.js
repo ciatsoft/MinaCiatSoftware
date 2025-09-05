@@ -383,3 +383,21 @@ function GetSalarioByTrabajador() {
         }
     });
 }
+
+document.getElementById("btnDocumentosEmpleado").addEventListener("click", function () {
+    var id = $("#id").val();
+    AbrirModalDocumentosEmpleado(id);
+});
+
+function AbrirModalDocumentosEmpleado(id) {
+    alert(id);
+
+    $("#genericModal").removeData('b s.modal');
+    $("#boddyGeericModal").empty();
+
+    $("#titleGenerciModal").text("Lista de Documentos");
+
+    $("#boddyGeericModal").load("/Empleado/PartialDocumentosEmpleado/" + id, function () {
+        $("#genericModal").modal("show");
+    });
+}
