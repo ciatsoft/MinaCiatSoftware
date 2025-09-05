@@ -21,6 +21,7 @@ namespace MinaTolWebApi.Controllers
         {
             wrapper = new DbWrapper();
         }
+        #region Salario
         [HttpGet, Route("Salario/Trabajador/{id:long}")]
         public ModelResponse GetSalarioByTrabajador(int id)
         {
@@ -33,7 +34,9 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.SaveOrUpdateSalario(s);
             return result;
         }
+        #endregion
 
+        #region Empleado
         [HttpPost, Route("")]
         public ModelResponse SaveOrupdateEmpleado(Empleado t)
         {
@@ -59,6 +62,38 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.DeleteEmpleadoById(id);
             return result;
         }
+        #endregion
+
+        #region DocumentosEmpleados
+        [HttpPost, Route("DocumentosTrabajador/")]
+        public ModelResponse SaveOrUpdateDocumentosEmpleado(DocumentosEmpleado s)
+        {
+            var result = wrapper.SaveOrUpdateDocumentosEmpleado(s);
+            return result;
+        }
+
+        [HttpDelete, Route("DocumentosTrabajador/{id:long}")]
+        public ModelResponse DeleteDocuentoEmpleadoById(long id)
+        {
+            var result = wrapper.DeleteDocumentoEmpleadoById(id);
+            return result;
+        }
+
+        [HttpGet, Route("DocumentosTrabajador/List")]
+        public ModelResponse GetAllDocumentosEmpleado()
+        {
+            var result = wrapper.GetAllDocumentosEmpleado();
+            return result;
+        }
+
+
+        [HttpGet, Route("DocumentosTrabajador/{id:long}")]
+        public ModelResponse GetDocumentoEmpleadoById(long id)
+        {
+            var result = wrapper.GetDocumentoEmpleadoById(id);
+            return result;
+        }
     }
 
+    #endregion
 }

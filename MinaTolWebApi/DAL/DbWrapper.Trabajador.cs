@@ -13,6 +13,7 @@ namespace MinaTolWebApi.DAL
 {
     public partial class DbWrapper
     {
+        #region Empleados
         public ModelResponse GetAllEmpleados()
         {
             var modelResponse = new ModelResponse();
@@ -108,5 +109,115 @@ namespace MinaTolWebApi.DAL
 
             return response;
         }
+        #endregion
+
+        #region DocumentosEmpleados
+        public ModelResponse SaveOrUpdateDocumentosEmpleado(DocumentosEmpleado s)
+        {
+            var modelResponse = new ModelResponse();
+
+            try
+            {
+                var salarioId = ExecuteScalar($"SaveOrUpdateDocumentosEmpleado", CommandType.StoredProcedure, GenerateSQLParameters(s));
+                s.Id = Convert.ToInt64(salarioId);
+
+                modelResponse.Response = s;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
+
+        public ModelResponse DeleteDocumentoEmpleadoById(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id"
+                });
+
+                var result = ExecuteNonQuery("DeleteDocumentoEmpleadoById", System.Data.CommandType.StoredProcedure, parameters);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
+
+        public ModelResponse GetAllDocumentosEmpleado()
+        {
+            var modelResponse = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+
+            try
+            {
+                var result = GetObjects($"GetAllDocumentosEmpleado", CommandType.Text, parameters,
+                    new Func<IDataReader, DocumentosEmpleado>((reader) =>
+                    {
+                        var r = FillEntity<DocumentosEmpleado>(reader);
+
+                        return r;
+                    }));
+                modelResponse.Response = result;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+            return modelResponse;
+
+        }
+
+        public ModelResponse GetDocumentoEmpleadoById(long id)
+        {
+            var response = new ModelResponse();
+
+            try
+            {
+                var parameters = new List<SqlParameter>
+        {
+            new SqlParameter
+            {
+                Value = id,
+                ParameterName = "@Id",
+                SqlDbType = SqlDbType.Int
+            }
+
+        };
+
+                var result = GetObject("GetDocumentoEmpleadoById", CommandType.StoredProcedure,
+                    parameters, reader => FillEntity<DocumentosEmpleado>(reader));
+
+                response.IsSuccess = true;
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
+        #endregion
     }
 }

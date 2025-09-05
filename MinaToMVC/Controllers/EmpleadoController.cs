@@ -32,7 +32,7 @@ namespace MinaToMVC.Controllers
 
             Empleado empleado = new Empleado();
 
-            if(id != 0)
+            if (id != 0)
             {
                 var response = await httpClientConnection.GetTrabajadorById(id);
                 empleado = JsonConvert.DeserializeObject<Empleado>(response.Response.ToString());
@@ -74,8 +74,39 @@ namespace MinaToMVC.Controllers
             ViewBag.DiaNominaOptions = opciones;
             ViewBag.Departamentos = departamentoDdl;
 
+            ViewBag.EsEdicion = (id != 0);
+
             return View(empleado);
+
         }
+        public async Task<ActionResult> ListaDocumentos(long id = 0)
+        {
+            Documentos documentos = new Documentos();
+
+            if (id != 0)
+            {
+                var result = await httpClientConnection.GetDocumentoById(id);
+                documentos = JsonConvert.DeserializeObject<Documentos>(result.Response.ToString());
+            }
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            return View(documentos);
+        }
+
         #endregion
 
         #region Vistas Parciales
@@ -84,6 +115,13 @@ namespace MinaToMVC.Controllers
             ViewBag.TrabajadorId = id;
             return PartialView();
         }
+
+        public ActionResult PartialDocumentosEmpleado(long id = 0)
+        {
+            return PartialView();
+        }
+
+
         #endregion
 
         #region Acceso a Datos
@@ -126,6 +164,24 @@ namespace MinaToMVC.Controllers
 
         #endregion
 
+        #region Documentos
+        public async Task<ActionResult> SaveOrUpdateDocumento(Documentos t)
+        {
+            var result = await httpClientConnection.SaveOrUpdateDocumento(t);
+            return Redirect("AltaEdicion");
+        }
+
+        public async Task<string> GetAllDocumentos()
+        {
+            var result = await httpClientConnection.GetAllDocumentos();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> DeleteDocumentoById(long id)
+        {
+            var result = await httpClientConnection.DeleteDocumentoById(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        #endregion
 
     }
 }

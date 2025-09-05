@@ -1,0 +1,51 @@
+﻿@model MinaTolEntidades.DtoEmpleados.Documentos
+@{
+    ViewBag.Title = "ListaDocumentos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
+}
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<div class="content">
+    @using (Html.BeginForm("SaveOrUpdateDocumento", "Empleado   ", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmDocumento", @id = "frmDocumento" }))
+    {
+   
+        <br />
+        <center><h1>Documentos</h1></center>
+        <div class="tabla-consultas-empleados">
+             <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Nombre:</label>
+                        @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control", @type = "text", id = "nombre", required = "required" })
+                    </div>
+                   
+                    @Html.HiddenFor(x => x.Nombre, new { id = "nombre" })
+                    <div class="col-lg-3">
+                        <label>Descripcion:</label>
+                        @Html.TextBoxFor(x => x.Descripcion, new { @class = "form-control", @type = "text", id = "descripcion", required = "required" })
+                    </div>
+
+                    <div class="col-lg-3">
+                        <label>Fecha:</label>
+                        <input class="form-control" type="text" id="fecha" value="@fechaActual" readonly />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 d-flex justify-content-between">
+                        <div>
+                            <input id="btnGuardar" type="submit" value="Guardar" class="btn btn-success btn-lg-custom" />
+                        </div>
+                        <a href="/Empleado/ListaDocumentos" class="btn btn-custom-cancel btn-lg-custom">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <br />
+    <table id="tblDocumentos" class="table table-bordered table-striped" style="width: 100%;"></table>
+</div>
+
+<script src="@(Url.StaticFile("Scripts/Trabajador/Documento.js"))"></script>
