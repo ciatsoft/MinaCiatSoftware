@@ -1,13 +1,14 @@
-﻿using MinaTolEntidades.DtoSucursales;
-using MinaTolEntidades;
+﻿using MinaTolEntidades;
+using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.DtoEmpleados;
+using MinaTolEntidades.DtoSucursales;
+using MinaTolEntidades.DtoTaller;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
-using MinaTolEntidades.DtoEmpleados;
-using MinaTolEntidades.DtoCatalogos;
-using System.Data.SqlClient;
-using System.Data;
 
 namespace MinaTolWebApi.DAL
 {
@@ -112,16 +113,16 @@ namespace MinaTolWebApi.DAL
         #endregion
 
         #region DocumentosEmpleados
-        public ModelResponse SaveOrUpdateDocumentosEmpleado(DocumentosEmpleado s)
+        public ModelResponse SaveOrUpdateDocumentosEmpleado(DocumentosEmpleado u)
         {
             var modelResponse = new ModelResponse();
 
             try
             {
-                var salarioId = ExecuteScalar($"SaveOrUpdateDocumentosEmpleado", CommandType.StoredProcedure, GenerateSQLParameters(s));
-                s.Id = Convert.ToInt64(salarioId);
+                var userID = ExecuteScalar($"SaveOrUpdateDocumentosEmpleado", CommandType.StoredProcedure, GenerateSQLParameters(u));
+                u.Id = Convert.ToInt64(userID);
 
-                modelResponse.Response = s;
+                modelResponse.Response = u;
             }
             catch (Exception ex)
             {
