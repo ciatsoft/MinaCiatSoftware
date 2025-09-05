@@ -51,5 +51,13 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.DeleteDocumentoById(id);
             return result;
         }
+
+        // Obtener Documentos del Empleado
+        [HttpGet, Route("DocumentosEmpleado/{id:long}")]
+        public ModelResponse GetAllDocumentosEmpleadoByIdTrabajador(long id)
+        {
+            var result = wrapper.GetAllDocumentosEmpleadoByIdTrabajador(id);
+            return result;
+        }
     }
 }

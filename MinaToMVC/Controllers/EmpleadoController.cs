@@ -179,8 +179,6 @@ namespace MinaToMVC.Controllers
         }
         #endregion
 
-        #endregion
-
         #region Documentos
         public async Task<ActionResult> SaveOrUpdateDocumento(Documentos t)
         {
@@ -200,5 +198,14 @@ namespace MinaToMVC.Controllers
         }
         #endregion
 
+        #region DocumentosEmpleados
+
+        #endregion
+        public async Task<string> GetAllDocumentosEmpleadoByIdTrabajador(long id)
+        {
+            var result = await httpClientConnection.GetAllDocumentosEmpleadoByIdTrabajador(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        #endregion
     }
 }

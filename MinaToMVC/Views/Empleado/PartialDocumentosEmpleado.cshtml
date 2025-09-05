@@ -65,7 +65,46 @@
             }
         });
 
-         GetAllDocumentos();
+        $("#tblCargarDocumentos").DataTable({
+            data: [],
+            columns: [
+                { data: 'id', title: 'ID' },
+                { data: 'idTrabajador', title: 'ID Trabajador', visible: false },
+                { data: 'nombreDocumento', title: 'NombreDocumento' },
+                //{
+                //    data: "id", title: "Acciones", render: function (data) {
+                //        return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarDocumento(' + data + ')" />' +
+                //            ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarDocumento(' + data + ')"/>';
+                //    }
+                //},
+            ],
+            language: {
+                "decimal": ",",
+                "thousands": ".",
+                "processing": "Procesando...",
+                "lengthMenu": "Mostrar _MENU_ entradas",
+                "zeroRecords": "No se encontraron resultados",
+                "emptyTable": "Ningun dato disponible en esta tabla",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+                "search": "Buscar:",
+                "loadingRecords": "Cargando...",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                    "sortDescending": ": activar para ordenar la columna de manera descendente"
+                }
+            }
+        });
+
+        GetAllDocumentos();
+        GetAllDocumentosEmpleado(@trabajadorId);
     });
 
     // 1. Obtener Lista de Documentos
@@ -73,6 +112,21 @@
         GetMVC("/Empleado/GetAllDocumentos", function (r) {
             if (r.IsSuccess) {
                 MapingPropertiesDataTable("tblListaDocumentos", r.Response);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar Documentos: ' + r.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+
+    function GetAllDocumentosEmpleado(id) {
+        GetMVC("/Empleado/GetAllDocumentosEmpleadoByIdTrabajador?id=" + id, function (r) {
+            if (r.IsSuccess) {
+                MapingPropertiesDataTable("tblCargarDocumentos", r.Response);
             } else {
                 Swal.fire({
                     title: 'Error',

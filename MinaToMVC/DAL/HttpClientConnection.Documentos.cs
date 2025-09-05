@@ -61,5 +61,19 @@ namespace MinaToMVC.DAL
 			return modelResponse;
 
 		}
-	}
+
+        // Documentos del Empleado
+        public async Task<ModelResponse> GetAllDocumentosEmpleadoByIdTrabajador(long id)
+        {
+            var result = await RequestAsync<object>($"api/Documento/DocumentosEmpleado/{id}", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
+    }
 }
