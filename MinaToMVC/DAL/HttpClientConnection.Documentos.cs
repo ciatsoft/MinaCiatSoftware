@@ -75,5 +75,30 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
+
+        public async Task<ModelResponse> DeleteDocumentoEmpleadoById(long id)
+        {
+            var result = await RequestAsync<object>($"api/Documento/DocumentosEmpleado/{id}", HttpMethod.Delete, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
+
+        public async Task<ModelResponse> SaveOrUpdateDocumentosEmpleado(DocumentosEmpleado d)
+        {
+            MappingColumSecurity(d);
+            var result = await RequestAsync<object>("api/Documento/DocumentosEmpleado/", HttpMethod.Post, d,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
     }
 }
