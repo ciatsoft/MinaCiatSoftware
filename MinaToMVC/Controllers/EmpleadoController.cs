@@ -206,6 +206,18 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllDocumentosEmpleadoByIdTrabajador(id);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+
+        public async Task<string> DeleteDocumentoEmpleadoById(long id)
+        {
+            var result = await httpClientConnection.DeleteDocumentoEmpleadoById(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> SaveOrUpdateDocumentosEmpleado(DocumentosEmpleado d)
+        {
+            var result = await httpClientConnection.SaveOrUpdateDocumentosEmpleado(d);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
         #endregion
     }
 }
