@@ -1,5 +1,6 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.Security;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -218,6 +219,44 @@ namespace MinaTolWebApi.DAL
                 response.Enum = Enumeration.ErrorNoControlado;
             }
             return response;
+        }
+
+        public ModelResponse GetPermisosByUsuarioId(long userID)
+        {
+            var modelResponse = new ModelResponse();
+
+            try
+            {
+                var permisos = GetObjects($"GetPermisosByUsuarioId", CommandType.StoredProcedure,
+                    new[] {
+                    new SqlParameter("@UsuarioId", userID)
+                    },
+                    new Func<IDataReader, Permisos>((reader) =>
+                    {
+                        var r = FillEntity<Permisos>(reader);
+
+                        if (!string.IsNullOrEmpty(reader["PermisoPadreId"].ToString()))
+                        {
+                            r.PermisoPadre = new Permisos()
+                            {
+                                Id = Convert.ToInt64(reader["PermisoPadreId"]),
+                                Nombre = reader["PermisoPadreNombre"].ToString()
+                            };
+                        }
+
+                        return r;
+                    }));
+
+                modelResponse.Response = permisos;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
         }
     }
 }

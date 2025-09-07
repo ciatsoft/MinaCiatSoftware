@@ -142,7 +142,6 @@ namespace MinaTolWebApi.DAL
 
             return modelResponse;
         }
-
         public ModelResponse DeleteUsuario(long id)
         {
             var response = new ModelResponse();
@@ -168,5 +167,6 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
+
     }
 }

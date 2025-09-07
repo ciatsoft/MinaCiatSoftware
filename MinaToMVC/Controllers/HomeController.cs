@@ -1,4 +1,5 @@
 ﻿using MinaTolEntidades;
+using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.Security;
 using MinaToMVC.Helpers;
 using Newtonsoft.Json;
@@ -74,6 +75,16 @@ namespace MinaToMVC.Controllers
         public ActionResult SolicitudesProcesadas()
         {
             return View();
+        }
+        #endregion
+
+        #region Partial View
+        public async Task<ActionResult> PartialMenus()
+        {
+            var permisosResponse = await httpClientConnection.GetPermisosUsuarioByUsuarioid(SessionHelper.GetSessionUser().UserID);
+            var permisos = JsonConvert.DeserializeObject<List<Permisos>>(permisosResponse.Response.ToString());
+
+            return PartialView(permisos);
         }
         #endregion
 

@@ -62,6 +62,5 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-
     }
 }

@@ -327,6 +327,7 @@
     <Content Include="Views\Taller\PartialComponenteVehiculo.cshtml" />
     <Content Include="Views\Empleado\ListaDocumentos.cshtml" />
     <Content Include="Views\Empleado\PartialDocumentosEmpleado.cshtml" />
+    <Content Include="Views\Home\PartialMenus.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
