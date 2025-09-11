@@ -890,15 +890,18 @@ function SearchPV_VentasByDate(fecha) {
 }
 
 // Generar Tickets
-function printItem(rowIndex) {
+async function printItem(rowIndex) {
     var table = $('#tablePuntoVenta').DataTable();
     var rowData = table.row(rowIndex).data();
 
+    // Datos comunes del ticket
     var folio = rowData.folio;
-    var nombrePlana = rowData.nombreUbicacion;
+    var nombrePlanta = rowData.nombreUbicacion;
     var nombreMaterial = rowData.nombreTipoMaterial;
-    var formaPago = rowData.formaDePago;
-    //var cantidadRecibida = parseFloat(rowData.cantidadRecibida).toFixed(2);
+    var formaPago = rowData.formaDePago === 'T' ? 'Transferencia'
+        : rowData.formaDePago === 'E' ? 'Efectivo'
+            : rowData.formaDePago === 'P' ? 'Prepago'
+                : 'Vale';
     var totalPago = parseFloat(rowData.totalPago).toFixed(2);
     var transporte = rowData.transporte;
     var placa = rowData.placa;
@@ -907,79 +910,55 @@ function printItem(rowIndex) {
     var vendedor = rowData.userName;
     var RFID = rowData.rfid;
     var nombreCliente = rowData.nombreCliente;
+    var fecha = new Date(rowData.fecha).toLocaleString("es-MX");
 
-    var fechaOriginal = new Date(rowData.fecha);
-    var fechaFormateada =
-        String(fechaOriginal.getDate()).padStart(2, '0') + '/' +
-        String(fechaOriginal.getMonth() + 1).padStart(2, '0') + '/' +
-        fechaOriginal.getFullYear() + ' ' +
-        String(fechaOriginal.getHours()).padStart(2, '0') + ':' +
-        String(fechaOriginal.getMinutes()).padStart(2, '0');
-
-    var formatoPagoFinal = formaPago === 'T' ? 'Transferencia'
-        : formaPago === 'E' ? 'Efectivo'
-            : 'Vale';
-
-    const { jsPDF } = window.jspdf;
-
-    const generarTicket = (tituloSecundario, nombreArchivo) => {
-        const pdf = new jsPDF({
-            unit: 'mm',
-            format: [80, 150],
-            orientation: 'portrait'
-        });
-
-        let y = 10;
-        pdf.setFontSize(12);
-        pdf.setFont("calibri", "bold");
-        pdf.text("Ticket de Venta", 40, y, { align: 'center' });
-
-        y += 6;
-        pdf.text(tituloSecundario, 40, y, { align: 'center' });
-
-        y += 6;
-        pdf.setFontSize(8);
-        pdf.setFont("calibri", "normal");
-        pdf.text(`Fecha: ${fechaFormateada}`, 40, y, { align: 'center' });
-
-        y += 4;
-        pdf.line(10, y, 70, y); // línea separadora
-
-        const addRow = (label, value) => {
-            y += 5;
-            pdf.setFont("calibri", "bold");
-            pdf.text(`${label}:`, 10, y);
-            pdf.setFont("calibri", "normal");
-            pdf.text(String(value), 70, y, { align: 'right' });
+    // Función para enviar datos a Python
+    async function enviarAPython(tituloSecundario) {
+        const ticketData = {
+            Folio: folio,
+            NombrePlanta: nombrePlanta,
+            NombreMaterial: nombreMaterial,
+            FormaPago: formaPago,
+            TotalPago: totalPago,
+            Transporte: transporte,
+            Placa: placa,
+            Cantidad: cantidad,
+            PrecioUnidad: precioUnidad,
+            Vendedor: vendedor,
+            RFID: RFID,
+            NombreCliente: nombreCliente,
+            Fecha: fecha,
+            TituloSecundario: tituloSecundario
         };
 
-        addRow("Folio", folio);
-        addRow("Planta", nombrePlana);
-        addRow("Material", nombreMaterial);
-        addRow("Cantidad", `${cantidad}`);
-        addRow("Precio/Unidad", `$${precioUnidad}`);
-        addRow("Total a Pagar", `$${totalPago}`);
-        //addRow("Recibido", `$${cantidadRecibida}`);
-        addRow("Forma de Pago", formatoPagoFinal);
-        addRow("Transporte", transporte);
-        addRow("Placa", placa);
-        addRow("Vendedor", vendedor);
-        addRow("RFID", RFID);
-        addRow("Cliente", nombreCliente);
+        const ipLocal = window.location.hostname; // o IP fija si sabes cual es
+        // Enviar a endpoint de Python
+        const response = await fetch(`http://${ipLocal}:5000/imprimir-ticket`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(ticketData)
+        });
 
-        y += 6;
-        pdf.line(10, y, 70, y); // línea final
-        y += 6;
-        pdf.setFont("calibri", "italic");
-        pdf.text("Gracias por su compra", 40, y, { align: 'center' });
+        if (!response.ok) {
+            throw new Error('Error, Porfavor Verifica la configuracion de la Impresora Termica ');
+        }
 
-        pdf.save(nombreArchivo);
-    };
+        console.log(`Ticket "${tituloSecundario}" enviado a Python`);
+    }
 
-    // Generar dos PDFs independientes
-    generarTicket("Vale de Carga en Planta", `ticket_folio_${folio}_carga.pdf`);
-    generarTicket("Vale de Salida", `ticket_folio_${folio}_vale_salida.pdf`);
+    try {
+        // Enviar los 2 tickets
+        await enviarAPython("Vale de Carga en Planta");
+        await enviarAPython("Vale de Salida");
+    } catch (err) {
+        console.error("Error al enviar a Python:", err);
+        alert("Error al imprimir: " + err.message);
+    }
 }
+
+
+
+
 
 // Asociar Vehiculos CLiente
 function AbrirModalVehiculoPublicoGeneral() {
