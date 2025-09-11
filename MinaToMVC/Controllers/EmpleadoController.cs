@@ -10,9 +10,11 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Web.Security;
 using static MinaToMVC.Controllers.Filters.FiltersHelper;
@@ -152,8 +154,60 @@ namespace MinaToMVC.Controllers
 
         public async Task<ActionResult> SaveOrupdateEmpleado(Empleado t)
         {
-            var result = await httpClientConnection.SaveOrupdateEmpleado(t);
-            return Redirect("AltaEdicion");
+            try
+            {
+                bool esNuevoRegistro = t.Id == 0;
+
+                // Guardar el empleado
+                var result = await httpClientConnection.SaveOrupdateEmpleado(t);
+
+                if (result != null && result.IsSuccess)
+                {
+                    // Convertir el Response a Empleado para obtener el ID
+                    var empleadoResponse = JsonConvert.DeserializeObject<Empleado>(result.Response.ToString());
+                    long nuevoId = empleadoResponse.Id;
+
+                    // 1. Obtener la ruta raíz del proyecto MVC (C:\MinaCiat\MinaToMVC)
+                    string projectRootPath = HostingEnvironment.ApplicationPhysicalPath;
+
+                    // 2. Crear la ruta completa para la carpeta Attachment
+                    string baseAttachmentPath = Path.Combine(projectRootPath, "Attachment");
+
+                    // 3. Verificar y crear carpeta Attachment si no existe
+                    if (!Directory.Exists(baseAttachmentPath))
+                    {
+                        Directory.CreateDirectory(baseAttachmentPath);
+                    }
+
+                    // 4. Crear subcarpeta solo si es un NUEVO registro (el ID original era 0)
+                    if (t.Id == 0 && nuevoId > 0)
+                    {
+                        string empleadoFolderPath = Path.Combine(baseAttachmentPath, $"Empleado_{nuevoId}");
+
+                        if (!Directory.Exists(empleadoFolderPath))
+                        {
+                            Directory.CreateDirectory(empleadoFolderPath);
+
+                            // Opcional: Crear subcarpetas dentro del directorio del empleado
+                            string[] subCarpetas = { "Documentos" };
+                            foreach (var carpeta in subCarpetas)
+                            {
+                                string subCarpetaPath = Path.Combine(empleadoFolderPath, carpeta);
+                                if (!Directory.Exists(subCarpetaPath))
+                                {
+                                    Directory.CreateDirectory(subCarpetaPath);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return Redirect("AltaEdicion");
+            }
+            catch (Exception ex)
+            {
+                return Redirect("AltaEdicion");
+            }
         }
         public async Task<ActionResult> DeleteEmpleadoById(long id)
         {
