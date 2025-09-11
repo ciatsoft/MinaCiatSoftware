@@ -82,6 +82,7 @@
     <Compile Include="DtoVentaPublicoGeneral\PV_CajaChica.cs" />
     <Compile Include="DtoVentaPublicoGeneral\PV_CorteCaja.cs" />
     <Compile Include="DtoVentaPublicoGeneral\Reporte_Venta.cs" />
+    <Compile Include="DtoVentaPublicoGeneral\TicketModel.cs" />
     <Compile Include="DtoVentaPublicoGeneral\TotalPlanta.cs" />
     <Compile Include="DtoVentaPublicoGeneral\UbicacionesMaterial.cs" />
     <Compile Include="DtoVentas\MaterialUbicacion.cs" />
