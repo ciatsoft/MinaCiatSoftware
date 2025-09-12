@@ -10,20 +10,21 @@
 </div>
 
 <div class="row">
+
+    <div class="col-md-6">
+        <h2>PERMISOS GLOBALES</h2>
+        <div class="row">
+            <div class="col-lg-12">
+                <table class="table table-bordered table-striped" id="tablePermisos" style="width: 100%;"></table>
+            </div>
+        </div>
+    </div>
     <div class="col-md-6">
         <h2>PERMISOS ASOCIADOS</h2>
         <div class="row">
             <div class="col-lg-12">
                 <table class="table table-bordered table-striped" id="tablePermisosRelacionados" style="width: 100%;"></table>
 
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <h2>PERMISOS GLOBALES</h2>
-        <div class="row">
-            <div class="col-lg-12">
-                <table class="table table-bordered table-striped" id="tablePermisos" style="width: 100%;"></table>
             </div>
         </div>
     </div>
@@ -127,7 +128,6 @@
             data: permisosAsociados,
             destroy: true,
             columns: [
-                { title: "ID", data: "id" },
                 { title: "ID Rol", visible: false, data: "idRol" },
                 { title: "Permiso", data: "nombrePermiso" },
                 {
@@ -156,7 +156,6 @@
             data: permisosDisponibles,
             destroy: true,
             columns: [
-                { title: "ID", data: "id" },
                 { title: "Nombre", data: "nombre" },
                 {
                     data: "id", title: "Agregar", render: function (data) {

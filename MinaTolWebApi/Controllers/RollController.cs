@@ -71,6 +71,12 @@ namespace MinaTolWebApi.Controllers
             var resul = wrapper.DeletePermiso(id);
             return resul;
         }
-    }
 
+        [HttpGet, Route("PermisosUsuario/{id:long}")]
+        public ModelResponse GetPermisosUsuarioByUsuarioid(long id)
+        {
+            var response = wrapper.GetPermisosByUsuarioId(id);
+            return response;
+        }
+    }
 }

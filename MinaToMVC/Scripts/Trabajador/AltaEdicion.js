@@ -399,3 +399,4 @@ function AbrirModalDocumentosEmpleado(id) {
         $("#genericModal").modal("show");
     });
 }
+

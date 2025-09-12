@@ -202,7 +202,6 @@
     <Compile Include="Controllers\EmpleadoController.cs" />
     <Compile Include="Controllers\Filters\FiltersHelper.cs" />
     <Compile Include="Controllers\AdministracionController.cs" />
-    <Compile Include="Controllers\FirmaController.cs" />
     <Compile Include="Controllers\IngresosRfidController.cs" />
     <Compile Include="Controllers\PdfController.cs" />
     <Compile Include="Controllers\RFIDController.cs" />
@@ -328,6 +327,8 @@
     <Content Include="Views\Taller\PartialComponenteVehiculo.cshtml" />
     <Content Include="Views\Empleado\ListaDocumentos.cshtml" />
     <Content Include="Views\Empleado\PartialDocumentosEmpleado.cshtml" />
+    <Content Include="Views\Home\PartialMenus.cshtml" />
+    <Content Include="Views\Empleado\DescargarDocumento.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

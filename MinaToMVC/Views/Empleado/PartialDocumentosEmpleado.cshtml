@@ -93,7 +93,7 @@
                 {
                     data: "id", title: "Acciones", render: function (data, type, row) {
                         return ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarDocumento(' + data + ', ' + row.idTipoDocumento + ')" /> ' +
-                               ' <input type="button" value="Descargar" class="btn btn-custom-clean" onclick="DescargarDocumento(' + data + ')" />';
+                               ' <input type="button" value="Descargar" class="btn btn-custom-clean" onclick="BuscarDocumento(' + data + ')" />';
                     }
                 },
             ],
@@ -169,37 +169,84 @@
 
     // 3. Función para Cargar Documento
     function CargarDocumento(idTipoDocumento, nombre) {
-        // Aquí va tu lógica para cargar el documento
-        var parametro = {
-            IdTrabajador: $("#trabajadorInput").val(),
-            IdTipoDocumento: idTipoDocumento,
-            NombreDocumento: nombre,
-            Fecha: $("#FechaActual").val(),
-            Estatus: 1,
-            CreatedBy: $("#CreatedBy").val(),
-            CreatedDt: $("#CreatedDt").val(),
-            UpdatedBy: $("#UpdatedBy").val(),
-            UpdatedDt: $("#UpdatedDt").val(),
+        // Crear un input de tipo file dinámicamente
+        var fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = '.pdf,.doc,.docx,.jpg,.jpeg,.png'; // Formatos aceptados
+
+        // Cuando se seleccione un archivo
+        fileInput.onchange = function (e) {
+            var file = e.target.files[0];
+            if (!file) return;
+
+            // Crear FormData para enviar el archivo
+            var formData = new FormData();
+            formData.append('archivo', file);
+            formData.append('IdTrabajador', $("#trabajadorInput").val());
+            formData.append('IdTipoDocumento', idTipoDocumento);
+            formData.append('NombreDocumento', nombre);
+            formData.append('Fecha', $("#FechaActual").val());
+            formData.append('Estatus', 1);
+            formData.append('CreatedBy', $("#CreatedBy").val());
+            formData.append('CreatedDt', $("#CreatedDt").val());
+            formData.append('UpdatedBy', $("#UpdatedBy").val());
+            formData.append('UpdatedDt', $("#UpdatedDt").val());
+
+            // Mostrar indicador de carga
+            Swal.fire({
+                title: 'Subiendo documento',
+                text: 'Por favor espere...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Enviar el archivo al servidor
+            $.ajax({
+                url: '/Empleado/SaveOrUpdateDocumentosEmpleado',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    Swal.close();
+
+                    // Parsear la respuesta si es una cadena JSON
+                    var r = typeof response === 'string' ? JSON.parse(response) : response;
+
+                    if (r.IsSuccess) {
+                        // Agregar a documentos cargados y actualizar
+                        documentosCargados.push(idTipoDocumento);
+                        actualizarEstadoDocumentos();
+
+                        // Recargar documentos del empleado
+                        GetAllDocumentosEmpleado($("#trabajadorInput").val());
+
+                        Swal.fire('Éxito', 'Documento guardado exitosamente.', 'success');
+                    } else {
+                        // Manejar el caso donde ErrorMessage podría ser undefined
+                        var errorMsg = r.ErrorMessage || 'Error desconocido al guardar el documento';
+                        Swal.fire(
+                            'Error!',
+                            'Error al guardar el documento: ' + errorMsg,
+                            'error'
+                        );
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.close();
+                    Swal.fire(
+                        'Error!',
+                        'Error al subir el documento: ' + (error || 'Error de conexión'),
+                        'error'
+                    );
+                }
+            });
         };
 
-        PostMVC("/Empleado/SaveOrUpdateDocumentosEmpleado", parametro, function(r) {
-            if (r.IsSuccess) {
-                // Agregar a documentos cargados y actualizar
-                documentosCargados.push(idTipoDocumento);
-                actualizarEstadoDocumentos();
-
-                // Recargar documentos del empleado
-                GetAllDocumentosEmpleado(@trabajadorId);
-
-                Swal.fire('Éxito', 'Documento guardado exitosamente.', 'success');
-            } else {
-                Swal.fire(
-                    'Error!',
-                    'Error al guardar el documento: ' + r.ErrorMessage,
-                    'error'
-                );
-            }
-        });
+        // Disparar el click en el input file
+        fileInput.click();
     }
 
     // 4. Función para Eliminar Documento
@@ -245,10 +292,42 @@
         });
     }
 
-    // 5. Función para Descargar Documento
-    function DescargarDocumento(idDocumento) {
-        // Aquí va tu lógica para descargar el documento
-        window.location.href = "/Empleado/DescargarDocumento?id=" + idDocumento;
+    // 5. Función para Abrir Documento
+    function BuscarDocumento(idDocumento) {
+        $.ajax({
+            url: '/Empleado/GetDocumentoEmpleadoById?id=' + idDocumento,
+            type: 'GET',
+            success: function (response) {
+                try {
+                    // Siemparseamos la respuesta porque viene como string
+                    const parsedResponse = JSON.parse(response);
+
+                    if (parsedResponse.IsSuccess) {
+                        const datos = parsedResponse.Response;
+
+                        // ⭐ CORRECCIÓN: Usar el endpoint de descarga en lugar de la ruta física
+                        const urlDescarga = '/Empleado/DescargarDocumento?' +
+                            'rutaArchivo=' + encodeURIComponent(datos.rutaArchivo) +
+                            '&nombreArchivo=' + encodeURIComponent(datos.gitDocumento);
+
+                        console.log('URL de descarga: ', urlDescarga);
+
+                        // Abrir el documento en una nueva ventana
+                        window.open(urlDescarga, '_blank');
+                    } else {
+                        console.error('Error del servidor:', parsedResponse.Message);
+                        alert('Error: ' + parsedResponse.Message);
+                    }
+                } catch (error) {
+                    console.error('Error parsing JSON:', error);
+                    alert('Error al procesar la respuesta');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error en la solicitud:', error);
+                alert('Error de conexión');
+            }
+        });
     }
 
     // 6. Función para actualizar el estado de los documentos

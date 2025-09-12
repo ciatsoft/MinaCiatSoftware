@@ -1,0 +1,37 @@
+﻿@model List<MinaTolEntidades.DtoCatalogos.Permisos>
+
+@{
+    var permisosUnicos = Model.Where(x => x.TipoMenu.Equals("MenuUnico")).ToList();
+    var permisosPadres = Model.Where(x => x.TipoMenu.Equals("Menu")).ToList();
+    var permisosHijos = Model.Where(x => x.TipoMenu.Equals("SubMenu")).ToList();
+}
+
+<ul class="navbar-nav">
+
+
+    @foreach (var permiso in permisosUnicos)
+    {
+        <li class="nav-item">
+            <a class="nav-link" data-title="Index" href="@permiso.URLVentana">@permiso.Nombre</a>
+        </li>
+    }
+
+    @foreach (var permisoPadre in permisosPadres)
+    {
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                @permisoPadre.Nombre
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                @foreach (var permisoHijo in permisosHijos)
+                {
+                    if (permisoHijo.PermisoPadre.Id == permisoPadre.Id)
+                    {
+                        <a class="dropdown-item" data-title="@permisoHijo.Nombre" href="@permisoHijo.URLVentana">@permisoHijo.Nombre</a>
+                    }
+                }
+            </div>
+        </li>
+    }
+
+</ul>

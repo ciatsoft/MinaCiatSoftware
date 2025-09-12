@@ -940,10 +940,21 @@ async function printItem(rowIndex) {
         });
 
         if (!response.ok) {
-            throw new Error('Error, Porfavor Verifica la configuracion de la Impresora Termica ');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Error de Configuracion',
+                text: 'Por favor verifica la configuracion de la Impresora Termica',
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#f27474',
+                showCancelButton: false,
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Opcional: puedes agregar alguna acción después de que el usuario haga clic
+                    // console.log('Usuario confirmó el error de configuración');
+                }
+            });
         }
-
-        console.log(`Ticket "${tituloSecundario}" enviado a Python`);
     }
 
     try {
@@ -952,7 +963,12 @@ async function printItem(rowIndex) {
         await enviarAPython("Vale de Salida");
     } catch (err) {
         console.error("Error al enviar a Python:", err);
-        alert("Error al imprimir: " + err.message);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error al imprimir',
+            text: 'El aplicativo de Impresora no esta ejecutandose.',
+            confirmButtonText: 'Aceptar'
+        })
     }
 }
 
