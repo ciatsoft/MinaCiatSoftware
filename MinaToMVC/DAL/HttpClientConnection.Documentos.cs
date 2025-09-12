@@ -76,6 +76,19 @@ namespace MinaToMVC.DAL
 
         }
 
+        public async Task<ModelResponse> GetDocumentoEmpleadoById(long id)
+        {
+            var result = await RequestAsync<object>($"api/Trabajador/DocumentosTrabajador/{id}", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
+
         public async Task<ModelResponse> DeleteDocumentoEmpleadoById(long id)
         {
             var result = await RequestAsync<object>($"api/Documento/DocumentosEmpleado/{id}", HttpMethod.Delete, null,

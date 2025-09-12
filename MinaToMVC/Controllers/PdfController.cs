@@ -603,5 +603,58 @@ namespace MinaToMVC.Controllers
 
             return html.ToString();
         }
+
+        [HttpPost]
+        public ActionResult GenerarTicket(TicketModel model)
+        {
+            var htmlContent = $@"
+                <html>
+                <head>
+                    <style>
+                        body {{ font-family: Arial, sans-serif; font-size: 10px; text-align: center; }}
+                        h1 {{ font-size: 14px; margin: 0; }}
+                        h2 {{ font-size: 12px; margin: 5px 0; }}
+                        table {{ width: 100%; margin-top: 5px; border-collapse: collapse; }}
+                        td {{ text-align: left; padding: 2px; }}
+                        .label {{ font-weight: bold; }}
+                        hr {{ border: 0; border-top: 1px dashed #000; margin: 5px 0; }}
+                        .footer {{ margin-top: 10px; font-style: italic; }}
+                    </style>
+                </head>
+                <body>
+                    <h1>Ticket de Venta</h1>
+                    <h2>{model.TituloSecundario}</h2>
+                    <p>Fecha: {model.Fecha}</p>
+                    <hr/>
+                    <table>
+                        <tr><td class='label'>Folio:</td><td>{model.Folio}</td></tr>
+                        <tr><td class='label'>Planta:</td><td>{model.NombrePlanta}</td></tr>
+                        <tr><td class='label'>Material:</td><td>{model.NombreMaterial}</td></tr>
+                        <tr><td class='label'>Cantidad:</td><td>{model.Cantidad}</td></tr>
+                        <tr><td class='label'>Precio/Unidad:</td><td>${model.PrecioUnidad}</td></tr>
+                        <tr><td class='label'>Total:</td><td><b>${model.TotalPago}</b></td></tr>
+                        <tr><td class='label'>Forma de Pago:</td><td>{model.FormaPago}</td></tr>
+                        <tr><td class='label'>Transporte:</td><td>{model.Transporte}</td></tr>
+                        <tr><td class='label'>Placa:</td><td>{model.Placa}</td></tr>
+                        <tr><td class='label'>Vendedor:</td><td>{model.Vendedor}</td></tr>
+                        <tr><td class='label'>RFID:</td><td>{model.RFID}</td></tr>
+                        <tr><td class='label'>Cliente:</td><td>{model.NombreCliente}</td></tr>
+                    </table>
+                    <hr/>
+                    <p class='footer'>¡Gracias por su compra!</p>
+                </body>
+                </html>";
+
+            var pdfGenerator = new HtmlToPdfConverter
+            {
+                Size = PageSize.A4,
+                CustomWkHtmlArgs = "--page-width 80mm --page-height 150mm --no-pdf-compression"
+            };
+
+            var pdfBytes = pdfGenerator.GeneratePdf(htmlContent);
+            var pdfBase64 = Convert.ToBase64String(pdfBytes);
+
+            return Json(new { pdf = pdfBase64 });
+        }
     }
 }

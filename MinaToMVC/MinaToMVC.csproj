@@ -328,6 +328,7 @@
     <Content Include="Views\Empleado\ListaDocumentos.cshtml" />
     <Content Include="Views\Empleado\PartialDocumentosEmpleado.cshtml" />
     <Content Include="Views\Home\PartialMenus.cshtml" />
+    <Content Include="Views\Empleado\DescargarDocumento.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -337,8 +338,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Certificado\" />
     <Folder Include="Models\" />
     <Folder Include="Views\Default\" />
+    <Folder Include="Views\Firma\" />
     <Folder Include="Views\Pdf\" />
     <Folder Include="Views\Reporte_Venta\" />
   </ItemGroup>
