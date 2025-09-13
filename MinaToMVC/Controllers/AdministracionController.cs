@@ -1,6 +1,7 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoClientes;
+using MinaTolEntidades.DtoSeguridad;
 using MinaTolEntidades.DtoSucursales;
 using MinaTolEntidades.DtoViajes;
 using MinaTolEntidades.Security;
@@ -186,6 +187,8 @@ namespace MinaToMVC.Controllers
             var usuariosDropdown = MappingPropertiToDropDownList<Usuario>(usuariosList, "Id", "Nombre");
             var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
 
+            ViewBag.EsEdicion = (id != 0);
+
             ViewBag.UserToken = usuarioAutenticado;
             ViewBag.Usuarios = usuariosDropdown;
 
@@ -247,6 +250,27 @@ namespace MinaToMVC.Controllers
 
         }
 
+        public ActionResult AbrirModalPermisosUsuario(long id = 0)
+        {
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+            ViewBag.UsuarioModalId = id;
+
+            return PartialView();
+        }
         #endregion
 
         #region Data Acces
@@ -296,6 +320,27 @@ namespace MinaToMVC.Controllers
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+
+        public async Task<string> GetAllUsuarioRolByUsuarioId(long id)
+        {
+            var result = await httpClientConnection.GetAllUsuarioRolByUsuarioId(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        #region Usuario Rol
+        public async Task<string> SaveOrUpdateUsuarioRol(UsuarioRol u)
+        {
+            var result = await httpClientConnection.SaveOrUpdateUsuarioRol(u);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        public async Task<string> DeleteUsuarioRolById(long id)
+        {
+            var result = await httpClientConnection.DeleteUsuarioRolById(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+
+        #endregion
         #endregion
     }
 }
