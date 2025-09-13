@@ -1,5 +1,6 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.DtoSeguridad;
 using MinaTolWebApi.DAL;
 using System;
 using System.Collections.Generic;
@@ -76,6 +77,27 @@ namespace MinaTolWebApi.Controllers
         public ModelResponse GetPermisosUsuarioByUsuarioid(long id)
         {
             var response = wrapper.GetPermisosByUsuarioId(id);
+            return response;
+        }
+
+        [HttpGet, Route("UsuarioRolByUsuarioId/{id:long}")]
+        public ModelResponse GetAllUsuarioRolByUsuarioId(long id)
+        {
+            var response = wrapper.GetAllUsuarioRolByUsuarioId(id);
+            return response;
+        }
+
+        [HttpPost, Route("AgregarRolUsuario")]
+        public ModelResponse SaveOrUpdateUsuarioRol(UsuarioRol u)
+        {
+            var response = wrapper.SaveOrUpdateUsuarioRol(u);
+            return response;
+        }
+
+        [HttpDelete, Route("QuitarRolUsuario/{id:long}")]
+        public ModelResponse DeleteUsuarioRolById(long id)
+        {
+            var response = wrapper.DeleteUsuarioRolById(id);
             return response;
         }
     }

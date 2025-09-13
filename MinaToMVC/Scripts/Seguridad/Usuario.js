@@ -157,3 +157,19 @@ function LimpiarFormulario() {
     $("#chbEstatus").prop('checked', false);
 }
 
+document.getElementById("btnPermisos").addEventListener("click", function () {
+    var id = $("#id").val();
+    AbrirModalPermisosUsuario(id);
+});
+
+function AbrirModalPermisosUsuario(id) {
+    $("#genericModal").removeData('b s.modal');
+    $("#boddyGeericModal").empty();
+
+    $("#titleGenerciModal").text("Roles para Usuario");
+
+    $("#boddyGeericModal").load("/Administracion/AbrirModalPermisosUsuario/" + id, function () {
+        $("#genericModal").modal("show");
+    });
+}
+
