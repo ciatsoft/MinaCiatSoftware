@@ -69,6 +69,7 @@
     <Compile Include="DtoEmpleados\DtoSalario.cs" />
     <Compile Include="DtoRfid\IngresosRfid.cs" />
     <Compile Include="DtoSeguridad\Seguridad.cs" />
+    <Compile Include="DtoSeguridad\UsuarioRol.cs" />
     <Compile Include="DtoSucursales\Precio.cs" />
     <Compile Include="DtoSucursales\Producto.cs" />
     <Compile Include="DtoSucursales\UnidadMedida.cs" />

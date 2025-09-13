@@ -254,7 +254,6 @@ namespace MinaToMVC.Controllers
 
         #region DocumentosEmpleados
 
-        #endregion
         public async Task<string> GetAllDocumentosEmpleadoByIdTrabajador(long id)
         {
             var result = await httpClientConnection.GetAllDocumentosEmpleadoByIdTrabajador(id);
@@ -453,6 +452,7 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetDocumentoEmpleadoById(id);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+        #endregion
         #endregion
     }
 }

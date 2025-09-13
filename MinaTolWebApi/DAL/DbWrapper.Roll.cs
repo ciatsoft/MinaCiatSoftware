@@ -1,5 +1,6 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.DtoSeguridad;
 using MinaTolEntidades.Security;
 using System;
 using System.Collections.Generic;
@@ -257,6 +258,87 @@ namespace MinaTolWebApi.DAL
             }
 
             return modelResponse;
+        }
+
+        public ModelResponse GetAllUsuarioRolByUsuarioId(long userID)
+        {
+            var modelResponse = new ModelResponse();
+
+            try
+            {
+                var permisos = GetObjects($"GetAllUsuarioRolByUsuarioId", CommandType.StoredProcedure,
+                    new[] {
+                    new SqlParameter("@Id", userID)
+                    },
+                    new Func<IDataReader, UsuarioRol>((reader) =>
+                    {
+                        var r = FillEntity<UsuarioRol>(reader);
+                        return r;
+                    }));
+
+                modelResponse.Response = permisos;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
+
+        public ModelResponse SaveOrUpdateUsuarioRol(UsuarioRol u)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = GenerateSQLParameters(u);
+                var result = GetObject("SaveOrUpdateUsuarioRol", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, UsuarioRol>((reader) =>
+                    {
+                        var r = FillEntity<UsuarioRol>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+
+            }
+            return response;
+        }
+
+        public ModelResponse DeleteUsuarioRolById(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id"
+                });
+
+                var result = ExecuteNonQuery("DeleteUsuarioRolById", System.Data.CommandType.StoredProcedure, parameters);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
         }
     }
 }
