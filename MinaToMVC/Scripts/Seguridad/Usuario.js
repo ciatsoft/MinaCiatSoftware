@@ -17,7 +17,7 @@
         columns: [
             { data: "id", "visible": false, title: "Id" },
             { data: "userName", title: "UserName" },
-            { data: "password", title: "Contraseña" },
+            { data: "password", title: "Contraseña", "visible": false },
             { data: "nombre", title: "Nombre" },
             { data: "email", title: "Correo" },
             {
