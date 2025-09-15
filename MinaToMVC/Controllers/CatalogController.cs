@@ -263,10 +263,10 @@ namespace MinaToMVC.Controllers
             return JsonConvert.SerializeObject(result);
         }
 
-        public string DeletePermiso(long id)
+        public string DeletePermiso(long id, long idRol)
         {
-            var result = httpClientConnection.DeletePermiso(id);
-            return JsonConvert.SerializeObject(result);
+            var result = httpClientConnection.DeletePermiso(id, idRol);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
         #region PartialViewUbicacion

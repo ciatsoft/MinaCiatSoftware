@@ -66,10 +66,10 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-        [HttpPost, Route("QuitarPermiso/{id:long}")]
-        public async Task<ModelResponse> DeletePermiso(long id)
+        [HttpPost, Route("QuitarPermiso/{id:long}/{idRol:long}")]
+        public ModelResponse DeletePermiso(long id, long idRol)
         {
-            var resul = wrapper.DeletePermiso(id);
+            var resul = wrapper.DeletePermiso(id, idRol);
             return resul;
         }
 

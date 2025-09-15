@@ -101,9 +101,9 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
-        public async Task<ModelResponse> DeletePermiso(long id)
+        public async Task<ModelResponse> DeletePermiso(long id, long idRol)
         {
-            var result = await RequestAsync<object>($"api/Roll/QuitarPermiso/{id}", HttpMethod.Post, null,
+            var result = await RequestAsync<object>($"api/Roll/QuitarPermiso/{id}/{idRol}", HttpMethod.Post, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
