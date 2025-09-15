@@ -10,6 +10,7 @@ namespace MinaTolEntidades.DtoCatalogos
     {
         public long IdRol {  get; set; }
         public long PermisoId { get; set; }
+        public string TipoMenu { get; set; }
 
     }
 }
