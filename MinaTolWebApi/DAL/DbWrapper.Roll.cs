@@ -213,21 +213,22 @@ namespace MinaTolWebApi.DAL
         public ModelResponse DeletePermiso(long id, long idRol)
         {
             var response = new ModelResponse();
-            var parameters = new List<SqlParameter>();
-            parameters.Add(new SqlParameter("@Id", id));
-            parameters.Add(new SqlParameter("@IdRol", idRol));
-
             try
             {
-                var result = GetList(
-                    "DeletePermiso",
-                    CommandType.StoredProcedure,
-                    parameters,
-                    reader => FillEntity<RolPermiso>(reader)
-                );
+                response.IsSuccess = true;
 
-                response.Response = result;
-                response.IsSuccess = true; // <-- asegúrate de marcarlo como exitoso
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter("@Id", id));
+                parameters.Add(new SqlParameter("@IdRol", idRol));
+
+                var result = ExecuteNonQuery("DeletePermiso", System.Data.CommandType.StoredProcedure, parameters);
+
+                // Considera agregar validación del resultado
+                if (result <= 0)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "No se pudo eliminar el permiso";
+                }
             }
             catch (Exception ex)
             {

@@ -1,6 +1,4 @@
-﻿@model MinaTolEntidades.DtoCatalogos.DtoRoll
-
-<h3>Asociar Permisos para el Rol: <span id="lblNombreRol">@Model.Nombre</span></h3>
+﻿<h3>Asociar Permisos para el Rol: <span id="lblNombreRol">@Model.Nombre</span></h3>
 <div class="form-group">
     <input type="hidden" id="ModalidRoll" value="@Model.Id" class="form-control" readonly />
     <input type="hidden" id="CreatedBy" value="@ViewBag.UserToken.UserName" />
@@ -33,9 +31,9 @@
         $("#tablePermisos").DataTable({
             data: [],
             columns: [
-                { data: 'id', title: 'ID', visible: true },
+                { data: 'id', title: 'ID', visible: false },
                 { data: 'nombre', title: 'Nombre' },
-                { data: 'tipoMenu', title: 'TipoMenu' },
+                { data: 'tipoMenu', title: 'TipoMenu', visible: false },
                 {
                     data: "id",
                     title: "Acciones",
@@ -58,7 +56,7 @@
             columns: [
                 { data: 'id', title: 'ID', visible: false },
                 { data: 'idRol', title: 'IdRol', visible: false },
-                { data: 'permisoId', title: 'PermisoId', visible: true },
+                { data: 'permisoId', title: 'PermisoId', visible: false },
                 { data: 'tipoMenu', title: 'TipoMenu', visible: false },
                 { data: 'nombre', title: 'Nombre' },
                 {
@@ -112,45 +110,23 @@
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
+                Swal.fire(
+                    '¡Eliminado!',
+                    'El permiso ha sido eliminado correctamente.',
+                    'success'
+                ).then(() => {
+                    location.reload();
+                });
+                // Petición al backend
                 GetMVC("/Catalog/DeletePermiso?id=" + permisoId + "&idRol=" + idRol, function (r) {
-                    if (r.IsSuccess) {
-                        // Remover del arreglo global permisosCargados
-                        var table = $("#tablePermisosRelacionados").DataTable();
-                        var row = table.rows().data().toArray().find(x => x.id === permisoId);
-
-                        if (row) {
-                            // Remover el permisoId del array de roles cargados
-                            permisosCargados = permisosCargados.filter(function(id) {
-                                return id !== row.permisoId;
-                            });
-                        }
-
-                        // Recargar permisos relacionados y todos los permisos
-                        actualizarEstadoPermisos();
-                        GetPermisosByIdRol(idRol);
-                        GetAllPermisos(); 
-
-                        Swal.fire(
-                            'Eliminado!',
-                            'El permiso ha sido eliminado.',
-                            'success'
-                        );
-                    } else {
-                        Swal.fire(
-                            'Error!',
-                            'Error al eliminar el permiso: ' + r.ErrorMessage,
-                            'error'
-                        );
-                    }
                 });
             }
         });
     }
 
-
     // Agregar permiso
     function AgregarPermiso(idPermiso, Nombre, TipoMenu) {
-        var rolId = $("#ModalidRoll").val(); // tomarlo actualizado
+        var rolId = $("#ModalidRoll").val();
         var data = {
             PermisoId: idPermiso,
             IdRol: rolId,
@@ -164,7 +140,7 @@
         };
 
         Swal.fire({
-            title: 'Asignando rol...',
+            title: 'Asignando permiso...',
             allowOutsideClick: false,
             didOpen: () => Swal.showLoading()
         });
@@ -178,10 +154,10 @@
                 var r = typeof response === "string" ? JSON.parse(response) : response;
 
                 if (r.IsSuccess) {
-                    permisosCargados.push(idPermiso);
+                    permisosCargados.push(parseInt(idPermiso));
                     actualizarEstadoPermisos();
                     GetPermisosByIdRol(rolId);
-                    Swal.fire("Éxito", "Permiso asignado exitosamente.", "success");
+                    Swal.fire("¡Éxito!", "Permiso asignado exitosamente.", "success");
                 } else {
                     Swal.fire("Error", r.ErrorMessage || "Error al asignar el permiso.", "error");
                 }
@@ -196,12 +172,39 @@
     // Refrescar estado de botones en tabla de permisos
     function actualizarEstadoPermisos() {
         var table = $("#tablePermisos").DataTable();
-        table.rows().invalidate().draw();
+        table.rows().every(function () {
+            var rowData = this.data();
+            var node = this.node();
+            var accionesCell = $(node).find('td:eq(3)'); // Asumiendo que la columna de acciones es la cuarta (índice 3)
+
+            if (permisosCargados.includes(rowData.id)) {
+                accionesCell.html('<span class="text-success fw-bold">Permiso ya asignado</span>');
+            } else {
+                var nombreEscapado = rowData.nombre.replace(/'/g, "\\'").replace(/"/g, '\\"');
+                var tipoMenu = rowData.tipoMenu.replace(/'/g, "\\'").replace(/"/g, '\\"');
+                accionesCell.html('<input type="button" class="btn btn-custom-clean" value="Agregar Rol" onclick="AgregarPermiso(' + rowData.id + ', \'' + nombreEscapado + '\', \'' + tipoMenu + '\')" />');
+            }
+        });
     }
 
     function MapingPropertiesDataTable(tableId, data) {
         var table = $("#" + tableId).DataTable();
         table.clear();
         table.rows.add(data).draw();
+    }
+
+    // Función GetMVC (asumiendo que existe)
+    function GetMVC(url, callback) {
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function (response) {
+                var r = typeof response === "string" ? JSON.parse(response) : response;
+                callback(r);
+            },
+            error: function (xhr, status, error) {
+                callback({ IsSuccess: false, ErrorMessage: error });
+            }
+        });
     }
 </script>
