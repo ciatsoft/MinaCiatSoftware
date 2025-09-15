@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "DescargarDocumento";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="alert alert-warning" role="alert">
+                <h4 class="alert-heading">⚠️ Archivo No Encontrado</h4>
+                <p>Lo sentimos, el archivo que intentas descargar no está disponible.</p>
+                <hr>
+                <p class="mb-0">
+                    <strong>Nombre del archivo:</strong> @ViewBag.NombreArchivo<br>
+                    <strong>Ruta:</strong> @ViewBag.RutaArchivo
+                </p>
+            </div>
+
+            <div class="mt-4">
+                <button class="btn btn-primary"
+                        style="padding: 20px 40px; font-size: 20px; font-weight: bold;"
+                        onclick="window.close()">
+                    Volver al Inicio
+                </button>
+            </div>
+        </div>
+    </div>
+    <div style="margin-block:225px">
+
+    </div>
+</div>

@@ -328,6 +328,8 @@
     <Content Include="Views\Empleado\ListaDocumentos.cshtml" />
     <Content Include="Views\Empleado\PartialDocumentosEmpleado.cshtml" />
     <Content Include="Views\Home\PartialMenus.cshtml" />
+    <Content Include="Views\Empleado\DescargarDocumento.cshtml" />
+    <Content Include="Views\Administracion\AbrirModalPermisosUsuario.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
