@@ -177,35 +177,22 @@ namespace MinaTolWebApi.DAL
             try
             {
                 response.IsSuccess = true;
-                var parameters = GenerateSQLParameters(rp);
-                var result = GetObject("SaveOrUpdatePermisosRol", System.Data.CommandType.StoredProcedure,
-                    parameters, new Func<System.Data.IDataReader, RolPermiso>((reader) =>
-                    {
-                        var r = FillEntity<RolPermiso>(reader);
-                        return r;
-                    }));
-                response.Response = result;
 
-            }
-            catch (Exception ex)
-            {
-                response.IsSuccess = false;
-                response.Message = ex.Message;
-                response.Enum = Enumeration.ErrorNoControlado;
+                // Armamos manualmente los parámetros que tu SP requiere
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@Id", rp.Id),
+                    new SqlParameter("@IdRol", rp.IdRol),
+                    new SqlParameter("@PermisoId", rp.PermisoId),
+                    new SqlParameter("@Estatus", rp.Estatus),
+                    new SqlParameter("@CreatedBy", rp.CreatedBy),
+                    new SqlParameter("@CreatedDt", rp.CreatedDt),
+                    new SqlParameter("@UpdatedBy", rp.UpdatedBy),
+                    new SqlParameter("@UpdatedDt", rp.UpdatedDt)
+                };
 
-            }
-            return response;
-        }
-
-        public ModelResponse DeletePermiso(long id)
-        {
-            var response = new ModelResponse();
-            var parameters = new List<SqlParameter>();
-            parameters.Add(new SqlParameter("@Id", id));
-            try
-            {
-                var result = GetList(
-                    "DeletePermiso",
+                var result = GetObject(
+                    "SaveOrUpdatePermisosRol",
                     CommandType.StoredProcedure,
                     parameters,
                     reader => FillEntity<RolPermiso>(reader)
@@ -219,6 +206,36 @@ namespace MinaTolWebApi.DAL
                 response.Message = ex.Message;
                 response.Enum = Enumeration.ErrorNoControlado;
             }
+
+            return response;
+        }
+
+        public ModelResponse DeletePermiso(long id, long idRol)
+        {
+            var response = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("@Id", id));
+            parameters.Add(new SqlParameter("@IdRol", idRol));
+
+            try
+            {
+                var result = GetList(
+                    "DeletePermiso",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader => FillEntity<RolPermiso>(reader)
+                );
+
+                response.Response = result;
+                response.IsSuccess = true; // <-- asegúrate de marcarlo como exitoso
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
             return response;
         }
 

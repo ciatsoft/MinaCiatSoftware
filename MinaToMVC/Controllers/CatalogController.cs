@@ -263,9 +263,9 @@ namespace MinaToMVC.Controllers
             return JsonConvert.SerializeObject(result);
         }
 
-        public string DeletePermiso(long id)
+        public string DeletePermiso(long id, long idRol)
         {
-            var result = httpClientConnection.DeletePermiso(id);
+            var result = httpClientConnection.DeletePermiso(id, idRol);
             return JsonConvert.SerializeObject(result);
         }
 

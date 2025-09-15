@@ -10,228 +10,198 @@
 </div>
 
 <div class="row">
-
     <div class="col-md-6">
-        <h2>PERMISOS GLOBALES</h2>
+        <h3>PERMISOS GLOBALES</h3>
         <div class="row">
-            <div class="col-lg-12">
-                <table class="table table-bordered table-striped" id="tablePermisos" style="width: 100%;"></table>
-            </div>
+            <table class="table table-bordered table-striped" id="tablePermisos" style="width: 100%;"></table>
         </div>
     </div>
     <div class="col-md-6">
-        <h2>PERMISOS ASOCIADOS</h2>
+        <h3>PERMISOS ASOCIADOS</h3>
         <div class="row">
-            <div class="col-lg-12">
-                <table class="table table-bordered table-striped" id="tablePermisosRelacionados" style="width: 100%;"></table>
-
-            </div>
+            <table class="table table-bordered table-striped" id="tablePermisosRelacionados" style="width: 100%;"></table>
         </div>
     </div>
-</div>
-
-<!-- Spinner de carga -->
-<div id="spinnerCarga" style="display: none; position: fixed; top: 50%; left: 50%; z-index: 9999; transform: translate(-50%, -50%);">
-    <div class="spinner-border text-primary" role="status" style="width: 4rem; height: 4rem;"></div>
 </div>
 
 <script>
-    let permisosCatalogo = [];         // Todos los permisos
-    let permisosAsociados = [];        // Los asociados al rol actual
+    // Arreglo para almacenar los permisos asociados (Ids)
+    var permisosCargados = [];
 
-
-    function mostrarCargando() {
-        $("#spinnerCarga").show();
-    }
-
-    function ocultarCargando() {
-        $("#spinnerCarga").hide();
-    }
-
-    function inicializarTablas(idRol) {
-        mostrarCargando();
-
-        if ($.fn.DataTable.isDataTable("#tablePermisos")) {
-            $("#tablePermisos").DataTable().destroy();
-        }
-        if ($.fn.DataTable.isDataTable("#tablePermisosRelacionados")) {
-            $("#tablePermisosRelacionados").DataTable().destroy();
-        }
-
-        // 1. Obtener todos los permisos
-        GetAllPermisos(function () {
-            // 2. Obtener permisos asociados al rol
-            GetPermisosByIdRol(idRol);
-        });
-    }
-    // 1. Obtener permisos globales y guardarlos
-    function GetAllPermisos(callback) {
-        const url2 = "/Catalog/GetAllPermisos";
-        GetMVC(url2, function (r) {
-            if (r && r.IsSuccess) {
-                permisosCatalogo = r.Response;
-                ocultarCargando();
-                if (callback) callback();
-            } else {
-                const errorMsg = r && r.ErrorMessage ? r.ErrorMessage : "No se pudo cargar la información.";
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Error al cargar los Permisos: ' + errorMsg,
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
-                });
-            }
-        });
-    }
-
-    // 2. Obtener permisos asociados al rol y renderizar ambas tablas
-    function GetPermisosByIdRol(idRol) {
-        const url = "/Catalog/GetPermisosByIdRol?idRol=" + idRol;
-        GetMVC(url, function (r) {
-            if (r && r.IsSuccess) {
-                // Mapear permisoId a nombre
-                permisosAsociados = r.Response.map(item => {
-                    const permiso = permisosCatalogo.find(p => p.id === item.permisoId);
-                    return {
-                        ...item,
-                        nombrePermiso: permiso ? permiso.nombre : 'Desconocido'
-                    };
-                });
-
-                // Renderizar tabla asociados (izquierda)
-                renderTablaAsociados();
-
-                // Renderizar tabla disponibles (derecha) excluyendo los asociados
-                renderTablaDisponibles();
-
-                ocultarCargando();
-            } else {
-                const errorMsg = r && r.ErrorMessage ? r.ErrorMessage : "No se pudo cargar la información.";
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Error al cargar los Permisos Asociados: ' + errorMsg,
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
-                });
-                ocultarCargando();
-            }
-        });
-    }
-
-    // 3. Renderizar tabla de permisos asociados (izquierda)
-    function renderTablaAsociados() {
-        if ($.fn.DataTable.isDataTable("#tablePermisosRelacionados")) {
-            $("#tablePermisosRelacionados").DataTable().destroy();
-        }
-
-        $("#tablePermisosRelacionados").DataTable({
-            data: permisosAsociados,
-            destroy: true,
-            columns: [
-                { title: "ID Rol", visible: false, data: "idRol" },
-                { title: "Permiso", data: "nombrePermiso" },
-                {
-                    data: "id", title: "Quitar", render: function (data) {
-                        return `<button class="btn btn-custom-cancel" onclick="QuitarPermiso(${data})">Quitar</button>`;
-                    }
-                }
-            ],
-            language: {
-                url: "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
-            }
-        });
-    }
-
-    // 4. Renderizar tabla de permisos disponibles (derecha)
-    function renderTablaDisponibles() {
-        if ($.fn.DataTable.isDataTable("#tablePermisos")) {
-            $("#tablePermisos").DataTable().destroy();
-        }
-
-        // Filtrar permisos que ya están asociados
-        const idsAsociados = permisosAsociados.map(p => p.permisoId);
-        const permisosDisponibles = permisosCatalogo.filter(p => !idsAsociados.includes(p.id));
-
+    $(document).ready(function () {
+        // Primera tabla
         $("#tablePermisos").DataTable({
-            data: permisosDisponibles,
-            destroy: true,
+            data: [],
             columns: [
-                { title: "Nombre", data: "nombre" },
+                { data: 'id', title: 'ID', visible: true },
+                { data: 'nombre', title: 'Nombre' },
+                { data: 'tipoMenu', title: 'TipoMenu' },
                 {
-                    data: "id", title: "Agregar", render: function (data) {
-                        return `<button class="btn btn-custom-clean" onclick="AgregarPremiso(${data})">Añadir</button>`;
+                    data: "id",
+                    title: "Acciones",
+                    render: function (data, type, row) {
+                        if (permisosCargados.includes(row.id)) {
+                            return '<span class="text-success fw-bold">Permiso ya asignado</span>';
+                        } else {
+                            var nombreEscapado = row.nombre.replace(/'/g, "\\'").replace(/"/g, '\\"');
+                            var tipoMenu = row.tipoMenu.replace(/'/g, "\\'").replace(/"/g, '\\"');
+                            return '<input type="button" class="btn btn-custom-clean" value="Agregar Rol" onclick="AgregarPermiso(' + data + ', \'' + nombreEscapado + '\', \'' + tipoMenu + '\')" />';
+                        }
                     }
                 }
-            ],
-            language: {
-                url: "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
+            ]
+        });
+
+        // Segunda tabla (Permisos ya Relacionados)
+        $("#tablePermisosRelacionados").DataTable({
+            data: [],
+            columns: [
+                { data: 'id', title: 'ID', visible: false },
+                { data: 'idRol', title: 'IdRol', visible: false },
+                { data: 'permisoId', title: 'PermisoId', visible: true },
+                { data: 'tipoMenu', title: 'TipoMenu', visible: false },
+                { data: 'nombre', title: 'Nombre' },
+                {
+                    data: "permisoId",
+                    title: "Acciones",
+                    render: function (data, type, row) {
+                        return '<input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarPermiso(' + row.permisoId + ',' + row.idRol + ')" />';
+                    }
+                }
+            ]
+        });
+
+        // Cargar permisos del rol actual
+        var rolId = $("#ModalidRoll").val();
+        GetPermisosByIdRol(rolId);
+    });
+
+    // Obtener todos los permisos
+    function GetAllPermisos() {
+        GetMVC("/Catalog/GetAllPermisos", function (r) {
+            if (r.IsSuccess) {
+                MapingPropertiesDataTable("tablePermisos", r.Response);
+                actualizarEstadoPermisos();
+            } else {
+                Swal.fire("Error", "Error al cargar los Roles: " + r.ErrorMessage, "error");
             }
         });
     }
 
-    function AgregarPremiso(permisoId) {
-        mostrarCargando()
+    // Obtener permisos asignados a un rol
+    function GetPermisosByIdRol(rolId) {
+        GetMVC("/Catalog/GetPermisosByIdRol?idRol=" + rolId, function (r) {
+            if (r.IsSuccess) {
+                permisosCargados = r.Response.map(function (doc) { return doc.permisoId; });
+                MapingPropertiesDataTable("tablePermisosRelacionados", r.Response);
+                GetAllPermisos();
+            } else {
+                Swal.fire("Error", "Error al cargar los Permisos del Rol: " + r.ErrorMessage, "error");
+            }
+        });
+    }
 
-        const idRol = $("#ModalidRoll").val();
+    // Eliminar permiso
+    function EliminarPermiso(permisoId, idRol) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¿Quieres eliminar este permiso?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                GetMVC("/Catalog/DeletePermiso?id=" + permisoId + "&idRol=" + idRol, function (r) {
+                    if (r.IsSuccess) {
+                        // Remover del arreglo global permisosCargados
+                        var table = $("#tablePermisosRelacionados").DataTable();
+                        var row = table.rows().data().toArray().find(x => x.id === permisoId);
 
-        const data = {
-            idRol: idRol,
-            permisoId: permisoId,
+                        if (row) {
+                            // Remover el permisoId del array de roles cargados
+                            permisosCargados = permisosCargados.filter(function(id) {
+                                return id !== row.permisoId;
+                            });
+                        }
+
+                        // Recargar permisos relacionados y todos los permisos
+                        actualizarEstadoPermisos();
+                        GetPermisosByIdRol(idRol);
+                        GetAllPermisos(); 
+
+                        Swal.fire(
+                            'Eliminado!',
+                            'El permiso ha sido eliminado.',
+                            'success'
+                        );
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            'Error al eliminar el permiso: ' + r.ErrorMessage,
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }
+
+
+    // Agregar permiso
+    function AgregarPermiso(idPermiso, Nombre, TipoMenu) {
+        var rolId = $("#ModalidRoll").val(); // tomarlo actualizado
+        var data = {
+            PermisoId: idPermiso,
+            IdRol: rolId,
+            TipoMenu: TipoMenu,
+            Nombre: Nombre,
+            Estatus: 1,
             CreatedBy: $("#CreatedBy").val(),
             CreatedDt: $("#CreatedDt").val(),
             UpdatedBy: $("#UpdatedBy").val(),
             UpdatedDt: $("#UpdatedDt").val()
-        }
+        };
 
-        PostMVC('/Catalog/SaveOrUpdatePermisosRol', data, function (resultado) {
-            if (resultado.IsSuccess) {
-                location.reload(); // reload después del post
-            } else {
-                ocultarCargando();
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Error al agregar Permiso para el Rol: ' + resultado.ErrorMessage,
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
-                });
-            }
+        Swal.fire({
+            title: 'Asignando rol...',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
         });
-        location.reload(); // reload después del post
-    }
 
-    function QuitarPermiso(id) {
-        mostrarCargando();
+        $.ajax({
+            url: '/Catalog/SaveOrUpdatePermisosRol',
+            type: 'POST',
+            data: data,
+            success: function (response) {
+                Swal.close();
+                var r = typeof response === "string" ? JSON.parse(response) : response;
 
-        const idRol = $("#ModalidRoll").val();
-        const data = { Id: id };
-
-        PostMVC('/Catalog/DeletePermiso', data, function (resultado) {
-            if (resultado.IsSuccess) {
-                // Recargar solo si es exitoso
-                location.reload();
-            } else {
-                ocultarCargando(); // Primero ocultar el spinner
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Error al quitar Permiso al Rol: ' + resultado.ErrorMessage,
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
-                }).then(() => {
-                    // Opcional: recargar incluso después del error si es necesario
-                    location.reload();
-                });
+                if (r.IsSuccess) {
+                    permisosCargados.push(idPermiso);
+                    actualizarEstadoPermisos();
+                    GetPermisosByIdRol(rolId);
+                    Swal.fire("Éxito", "Permiso asignado exitosamente.", "success");
+                } else {
+                    Swal.fire("Error", r.ErrorMessage || "Error al asignar el permiso.", "error");
+                }
+            },
+            error: function (xhr, status, error) {
+                Swal.close();
+                Swal.fire("Error", "Error de conexión: " + error, "error");
             }
         });
     }
 
-    // Ejecutar al cargar la vista
-    $(function () {
-        const idRol = $("#ModalidRoll").val();
-        if (idRol) {
+    // Refrescar estado de botones en tabla de permisos
+    function actualizarEstadoPermisos() {
+        var table = $("#tablePermisos").DataTable();
+        table.rows().invalidate().draw();
+    }
 
-            inicializarTablas(idRol);
-        } else {
-            console.warn("ID del rol no encontrado.");
-        }
-    });
+    function MapingPropertiesDataTable(tableId, data) {
+        var table = $("#" + tableId).DataTable();
+        table.clear();
+        table.rows.add(data).draw();
+    }
 </script>
