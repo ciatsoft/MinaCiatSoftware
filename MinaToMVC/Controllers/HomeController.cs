@@ -99,6 +99,15 @@ namespace MinaToMVC.Controllers
             if (token != null)
             {
                 var responseAutenticated = await httpClientConnection.ValidateUserName(user, token.access_token);
+
+                // Verificar si responseAutenticated es null (cuenta eliminada)
+                if (responseAutenticated.Response == null)
+                {
+                    mr.IsSuccess = false;
+                    mr.Message = "Cuenta Eliminada";
+                    return JsonConvert.SerializeObject(mr);
+                }
+
                 var userAutenticated = JsonConvert.DeserializeObject<Usuario>(responseAutenticated.Response.ToString());
                 token.ExpirationDate = DateTime.Now.AddSeconds(token.expires_in);
                 var tokenCookie = new TokenCookie()
@@ -109,6 +118,14 @@ namespace MinaToMVC.Controllers
                 };
 
                 SessionHelper.CreateSession(JsonConvert.SerializeObject(tokenCookie));
+
+                mr.IsSuccess = true;
+                mr.Message = "Autenticación exitosa";
+            }
+            else
+            {
+                mr.IsSuccess = false;
+                mr.Message = "Usuario o Contraseña incorrecto";
             }
 
             return JsonConvert.SerializeObject(mr);

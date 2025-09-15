@@ -203,6 +203,14 @@ namespace MinaToMVC.Controllers
 
         public async Task<ActionResult> SaveOrUpdateUsuario(Usuario u)
         {
+            // Extraer y encriptar el password
+            string passwordOld = u.Password;
+            string passwordEncrypted = Cryptography.Encrypt(passwordOld);
+
+            // Actualizar el valor en el objeto Usuario
+            u.Password = passwordEncrypted;
+
+            // Ahora el objeto u tiene el password encriptado
             var r = await httpClientConnection.SaveOrUpdateUsuario(u);
             return Redirect("Usuarios");
         }
