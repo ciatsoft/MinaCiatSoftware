@@ -7,7 +7,7 @@ $(document).ready(function () {
         ObtenerPrecioMaterial();
     });
 
-    // También cuando cambia el tipo de material
+    // TambiÃ©n cuando cambia el tipo de material
     $("#TipoMaterial_Id").on("change", function () {
         ObtenerPrecioMaterial();
     });
@@ -27,7 +27,7 @@ $(document).ready(function () {
             $descripcionVehiculo.val('');
             $placa.val('');
             $cantidadRecibida.val('');
-            $dropdown.empty().append('<option value="">Seleccione un vehículo</option>');
+            $dropdown.empty().append('<option value="">Seleccione un vehÃ­culo</option>');
             return;
         }
 
@@ -41,7 +41,7 @@ $(document).ready(function () {
                     const cliente = respuesta.Response;
                     $nombreCliente.val(cliente.nombre || '');
 
-                    // Solo si encontramos cliente, buscamos vehículos
+                    // Solo si encontramos cliente, buscamos vehÃ­culos
                     $.ajax({
                         url: '/VentaPublicoGeneral/GetVehiculosPublicoGralByIdCliente',
                         type: 'GET',
@@ -82,16 +82,16 @@ $(document).ready(function () {
                                     }
                                 } else {
                                     $dropdown.append('<option value="">No hay vehiculos</option>');
-                                    // No limpiamos otros campos si no hay vehículos pero sí cliente
+                                    // No limpiamos otros campos si no hay vehÃ­culos pero sÃ­ cliente
                                 }
                             } else {
                                 $dropdown.append('<option value="">Error al cargar</option>');
-                                // No limpiamos otros campos si hay error pero sí cliente encontrado
+                                // No limpiamos otros campos si hay error pero sÃ­ cliente encontrado
                             }
                         },
                         error: function () {
                             $dropdown.append('<option value="">Error al cargar</option>');
-                            // No limpiamos campos existentes en error de vehículos
+                            // No limpiamos campos existentes en error de vehÃ­culos
                         }
                     });
                 } else {
@@ -104,7 +104,7 @@ $(document).ready(function () {
                 }
             },
             error: function () {
-                // No limpiamos campos en error de conexión (podría ser temporal)
+                // No limpiamos campos en error de conexiÃ³n (podrÃ­a ser temporal)
                 console.error("Error en la solicitud AJAX");
             }
         });
@@ -224,7 +224,7 @@ $(document).ready(function () {
             {
                 data: "id",
                 render: function (data, type, row) {
-                    // row contiene toda la fila, así que podemos acceder a corte_Id
+                    // row contiene toda la fila, asÃ­ que podemos acceder a corte_Id
                     if (row.corte_Id > 0) {
                         return '<label>Ya en corte<label/>'; // No se muestran los botones si corte_Id > 0
                     }
@@ -249,9 +249,9 @@ $(document).ready(function () {
                 }
             },
             {
-                data: "carga",  // Esta es la columna que define si está cargado o no (0 o 1)
+                data: "carga",  // Esta es la columna que define si estÃ¡ cargado o no (0 o 1)
                 title: "Carga",
-                render: function (data, type, row) {  // Añade 'row' para acceder a todas las propiedades de la fila
+                render: function (data, type, row) {  // AÃ±ade 'row' para acceder a todas las propiedades de la fila
                     if (data == 0) {
                         return `
                             <input type="button" value="Cargar" class="btn btn-success" onclick="Cargar(${row.id})" />
@@ -290,7 +290,7 @@ $(document).ready(function () {
             "loadingRecords": "Cargando...",
             "paginate": {
                 "first": "Primero",
-                "last": "Último",
+                "last": "Ãšltimo",
                 "next": "Siguiente",
                 "previous": "Anterior"
             },
@@ -353,7 +353,7 @@ $(document).ready(function () {
             loadingRecords: "Cargando...",
             paginate: {
                 first: "Primero",
-                last: "Último",
+                last: "Ãšltimo",
                 next: "Siguiente",
                 previous: "Anterior"
             },
@@ -402,7 +402,7 @@ $(function () {
     // Variables globales
     var precioMaterial = 0;
 
-    // Al cambiar la ubicación, carga los materiales disponibles
+    // Al cambiar la ubicaciÃ³n, carga los materiales disponibles
     $("#Ubicacion_Id").on("change", function () {
         CambioUbicacion();
     });
@@ -422,7 +422,7 @@ $(function () {
         actualizarCambio();
     });
 
-    // Inicializar al cargar la página si hay valores seleccionados
+    // Inicializar al cargar la pÃ¡gina si hay valores seleccionados
     if ($("#Ubicacion_Id").val()) {
         CambioUbicacion();
     }
@@ -432,7 +432,7 @@ function CambioUbicacion() {
     var ubicacionSeleccionada = $("#Ubicacion_Id").val();
 
     if (!ubicacionSeleccionada) {
-        $("#TipoMaterial_Id").empty().append('<option value="">Selecciona una opción</option>');
+        $("#TipoMaterial_Id").empty().append('<option value="">Selecciona una opciÃ³n</option>');
         $("#precioMaterial").val(0);
         precioMaterial = 0;
         actualizarTotal();
@@ -447,29 +447,29 @@ function CambioUbicacion() {
                 $("#TipoMaterial_Id").append(templateoption);
             });
 
-            // Si solo hay un material, seleccionarlo automáticamente
+            // Si solo hay un material, seleccionarlo automÃ¡ticamente
             if (r.Response.length === 1) {
                 $("#TipoMaterial_Id").val(r.Response[0].material.id).trigger('change');
             } else {
-                // Limpiar precios si hay múltiples opciones
+                // Limpiar precios si hay mÃºltiples opciones
                 $("#precioMaterial").val(0);
                 precioMaterial = 0;
                 actualizarTotal();
             }
         } else {
             console.log(r.response.ErrorMessage);
-            window.Swal.fire('Error', 'No es posible obtener los materiales de esta ubicación: ', 'error');
+            window.Swal.fire('Error', 'No es posible obtener los materiales de esta ubicaciÃ³n: ', 'error');
         }
     });
 }
 
-// Función para obtener y asignar el precio dependiendo de la cantidad
+// FunciÃ³n para obtener y asignar el precio dependiendo de la cantidad
 function ObtenerPrecioMaterial() {
     var materialSeleccionado = $("#TipoMaterial_Id").val();
     var cantidadFormulario = parseFloat($("#cantidadRecibida").val()) || 0;
 
     if (!materialSeleccionado) {
-        console.warn("No hay material seleccionado aún.");
+        console.warn("No hay material seleccionado aÃºn.");
         $("#precioMaterial").val(0);
         precioMaterial = 0;
         actualizarTotal();
@@ -510,7 +510,7 @@ function ObtenerPrecioMaterial() {
     });
 }
 
-// Función para calcular y actualizar el total a pagar
+// FunciÃ³n para calcular y actualizar el total a pagar
 function actualizarTotal() {
     var cantidad = parseFloat($("#cantidadRecibida").val()) || 0;
     var total = cantidad * precioMaterial;
@@ -518,7 +518,7 @@ function actualizarTotal() {
     $("#totalPagar").text("Total a Pagar: " + formatMoney(total));
     $("#TotalPagoInput").val(total);
 
-    actualizarCambio(); // Asegúrate de tener esta función definida
+    actualizarCambio(); // AsegÃºrate de tener esta funciÃ³n definida
 }
 
 function actualizarCambio() {
@@ -536,10 +536,10 @@ function actualizarCambio() {
     // Mostrar el cambio o advertencia por fondos insuficientes
     if (cambio < 0) {
         $("#cambio").text("Cambio: Fondos insuficientes").css("color", "red");
-        $("#btnGuardar").prop("disabled", true); // Bloquear el botón
+        $("#btnGuardar").prop("disabled", true); // Bloquear el botÃ³n
     } else {
         $("#cambio").text("Cambio: " + formatMoney(cambio)).css("color", "green");
-        $("#btnGuardar").prop("disabled", false); // Asegurarse que el botón esté habilitado
+        $("#btnGuardar").prop("disabled", false); // Asegurarse que el botÃ³n estÃ© habilitado
     }
 }
 
@@ -569,12 +569,12 @@ function ActualizarVenta(idVenta, tipoAccion) {
         if (r.IsSuccess) {
             location.href = '/VentaPublicoGeneral/Index';
         } else {
-            alert("Error al actualizar la venta. Ver consola para más detalles.");
+            alert("Error al actualizar la venta. Ver consola para mÃ¡s detalles.");
         }
     });
 }
 
-// Evento del botón Filtrado
+// Evento del botÃ³n Filtrado
 document.getElementById("btnFiltrar").addEventListener("click", function () {
 
     var usuarioId = $("#userId").val();
@@ -582,27 +582,27 @@ document.getElementById("btnFiltrar").addEventListener("click", function () {
     var userName = $("#userName").val();
 
     if (!usuarioId || !fecha || !userName) {
-        alert("Por favor, seleccione un usuario y una fecha válida.");
+        alert("Por favor, seleccione un usuario y una fecha vÃ¡lida.");
         return;
     }
 
     SearchPV_VentasByDate(fecha);
 });
-// Escucha del botón
+// Escucha del botÃ³n
 document.getElementById("btnDeducciones").addEventListener("click", function () {
     var usuarioIdDeducciones = $("#userIdDeducciones").val();
     var fechaDeducciones = $("#fechaDeducciones").val();
     var userNameDeducciones = $("#userNameDeducciones").val();
 
     if (!usuarioIdDeducciones || !fechaDeducciones || !userNameDeducciones) {
-        alert("Por favor, seleccione un usuario y una fecha válida.");
+        alert("Por favor, seleccione un usuario y una fecha vÃ¡lida.");
         return;
     }
 
     SearchDeduccionesFecha(fechaDeducciones);
 });
 
-// Función principal
+// FunciÃ³n principal
 function SearchDeduccionesFecha(fechaDeducciones) {
     PostMVC('/VentaPublicoGeneral/SearchDeduccionesByDate', { fechaDeducciones }, function (r) {
         if (r.IsSuccess && Array.isArray(r.Response)) {
@@ -615,7 +615,7 @@ function SearchDeduccionesFecha(fechaDeducciones) {
                 table.empty();
             }
 
-            // Asegurar estructura básica
+            // Asegurar estructura bÃ¡sica
             if (table.find('thead').length === 0) {
                 table.append('<thead><tr></tr></thead>');
             }
@@ -677,7 +677,7 @@ function SearchDeduccionesFecha(fechaDeducciones) {
                     loadingRecords: "Cargando...",
                     paginate: {
                         first: "Primero",
-                        last: "Último",
+                        last: "Ãšltimo",
                         next: "Siguiente",
                         previous: "Anterior"
                     },
@@ -689,7 +689,7 @@ function SearchDeduccionesFecha(fechaDeducciones) {
             });
 
         } else {
-            console.warn("No se recibieron datos válidos o la respuesta no fue exitosa:", r);
+            console.warn("No se recibieron datos vÃ¡lidos o la respuesta no fue exitosa:", r);
             $('#tableDeducciones').html('<div class="alert alert-warning">No se encontraron registros para los criterios seleccionados</div>');
         }
     }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -718,7 +718,7 @@ function SearchPV_VentasByDate(fecha) {
                 table.append('<tbody></tbody>');
             }
 
-            // Configuración de DataTable
+            // ConfiguraciÃ³n de DataTable
             table.DataTable({
                 processing: true,
                 paging: true,
@@ -798,7 +798,7 @@ function SearchPV_VentasByDate(fecha) {
                     {
                         data: "id",
                         render: function (data, type, row) {
-                            // row contiene toda la fila, así que podemos acceder a corte_Id
+                            // row contiene toda la fila, asÃ­ que podemos acceder a corte_Id
                             if (row.corte_Id > 0) {
                                 return '<label>Ya en corte<label/>'; // No se muestran los botones si corte_Id > 0
                             }
@@ -825,7 +825,7 @@ function SearchPV_VentasByDate(fecha) {
                     {
                         data: "carga",
                         title: "Carga",
-                        render: function (data, type, row) {  // Añade 'row' para acceder a todas las propiedades de la fila
+                        render: function (data, type, row) {  // AÃ±ade 'row' para acceder a todas las propiedades de la fila
                             if (data == 0) {
                                 return `
                             <input type="button" value="Cargar" class="btn btn-success" onclick="Cargar(${row.id})" />
@@ -865,7 +865,7 @@ function SearchPV_VentasByDate(fecha) {
                     loadingRecords: "Cargando...",
                     paginate: {
                         first: "Primero",
-                        last: "Último",
+                        last: "Ãšltimo",
                         next: "Siguiente <i class='fas fa-chevron-right'></i>",
                         previous: "<i class='fas fa-chevron-left'></i> Anterior"
                     }
@@ -873,13 +873,13 @@ function SearchPV_VentasByDate(fecha) {
                 responsive: true,
                 dom: '<"top"lf>rt<"bottom"ip><"clear">',
                 initComplete: function () {
-                    // Añadir clases CSS a los elementos de la tabla
+                    // AÃ±adir clases CSS a los elementos de la tabla
                     $('.dataTables_filter input').addClass('form-control');
                     $('.dataTables_length select').addClass('form-select');
                 }
             });
         } else {
-            console.warn("No se recibieron datos válidos o la respuesta no fue exitosa:", r);
+            console.warn("No se recibieron datos vÃ¡lidos o la respuesta no fue exitosa:", r);
             // Mostrar mensaje al usuario
             $('#tablePuntoVenta').html('<div class="alert alert-warning">No se encontraron registros para los criterios seleccionados</div>');
         }
@@ -912,7 +912,7 @@ async function printItem(rowIndex) {
     var nombreCliente = rowData.nombreCliente;
     var fecha = new Date(rowData.fecha).toLocaleString("es-MX");
 
-    // Función para enviar datos a Python
+    // FunciÃ³n para enviar datos a Python
     async function enviarAPython(tituloSecundario) {
         const ticketData = {
             Folio: folio,
@@ -940,21 +940,21 @@ async function printItem(rowIndex) {
         });
 
         if (!response.ok) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Error de Configuracion',
-                text: 'Por favor verifica la configuracion de la Impresora Termica',
-                confirmButtonText: 'Entendido',
-                confirmButtonColor: '#f27474',
-                showCancelButton: false,
-                allowOutsideClick: false
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Opcional: puedes agregar alguna acción después de que el usuario haga clic
-                    // console.log('Usuario confirmó el error de configuración');
-                }
-            });
-        }
+          Swal.fire({
+              icon: 'warning',
+              title: 'Error de Configuracion',
+              text: 'Por favor verifica la configuracion de la Impresora Termica',
+              confirmButtonText: 'Entendido',
+              confirmButtonColor: '#f27474',
+              showCancelButton: false,
+              allowOutsideClick: false
+          }).then((result) => {
+              if (result.isConfirmed) {
+                  // Opcional: puedes agregar alguna acciÃ³n despuÃ©s de que el usuario haga clic
+                  // console.log('Usuario confirmÃ³ el error de configuraciÃ³n');
+              }
+          });
+      }
     }
 
     try {
@@ -1003,7 +1003,7 @@ function AbrirModalPrepago() {
 }
 
 function AbrirModalDeduccion(id = 0) {
-    const titulo = id !== 0 ? "Editar Deducción" : "Nueva Deducción";
+    const titulo = id !== 0 ? "Editar DeducciÃ³n" : "Nueva DeducciÃ³n";
     $("#titleGenerciModal").text(titulo);
     $("#boddyGeericModal").html('<p class="text-center">Cargando...</p>');
 
@@ -1036,7 +1036,7 @@ function EliminarDeduccion(id) {
         location.reload();
     });
 }
-// Función para capitalizar el tipo de gasto
+// FunciÃ³n para capitalizar el tipo de gasto
 function formatearTipoGasto(nombreGasto) {
     if (!nombreGasto || typeof nombreGasto !== 'string' || nombreGasto.trim() === '') {
         return "Tipo de gasto no especificado";
@@ -1061,16 +1061,16 @@ async function ImprimirDeduccion(id) {
         didOpen: () => {
             Swal.showLoading();
 
-            // Cerrar automáticamente después de 8 segundos
+            // Cerrar automÃ¡ticamente despuÃ©s de 8 segundos
             setTimeout(() => {
                 Swal.close();
 
-                // Mostrar mensaje de éxito después de cerrar
+                // Mostrar mensaje de Ã©xito despuÃ©s de cerrar
                 Swal.fire({
                     icon: 'success',
-                    title: '¡Reporte generado!',
+                    title: 'Â¡Reporte generado!',
                     text: 'El PDF se ha creado correctamente',
-                    timer: 3000, // Opcional: cerrar después de 3 segundos
+                    timer: 3000, // Opcional: cerrar despuÃ©s de 3 segundos
                     showConfirmButton: false
                 });
             }, 4000); // 4000 ms = 4 segundos
@@ -1089,13 +1089,13 @@ async function ImprimirDeduccion(id) {
         day: '2-digit', month: 'long', year: 'numeric'
     });
 
-    // Crear contenido HTML manteniendo la estructura exacta de tu diseño
+    // Crear contenido HTML manteniendo la estructura exacta de tu diseÃ±o
     const htmlContent = `
         <!DOCTYPE html>
         <html>
         <head>
             <meta charset="UTF-8">
-            <title>Recibo de Deducción ${folio}</title>
+            <title>Recibo de DeducciÃ³n ${folio}</title>
             <style>
                 @page {
                     margin: 0;
@@ -1176,7 +1176,7 @@ async function ImprimirDeduccion(id) {
             </style>
         </head>
         <body>
-            <!-- Rectángulo de borde -->
+            <!-- RectÃ¡ngulo de borde -->
             <div class="border-rectangle"></div>
 
             <!-- Encabezado -->
@@ -1209,7 +1209,7 @@ async function ImprimirDeduccion(id) {
                 ${ubicacion} a: ${fechaFormateada}
             </div>
 
-            <!-- Líneas de firma -->
+            <!-- LÃ­neas de firma -->
             <div class="firma-line" style="top: 125mm; left: 50mm; width: 50mm;"></div>
             <div class="firma-line" style="top: 125mm; left: 170mm; width: 50mm;"></div>
 
@@ -1243,20 +1243,20 @@ async function ImprimirDeduccion(id) {
             document.body.removeChild(a);
 
         } else {
-            throw new Error('Error en la generación del PDF');
+            throw new Error('Error en la generaciÃ³n del PDF');
         }
     } catch (error) {
         Swal.fire({
             icon: 'error',
             title: 'Error',
-            text: 'Ocurrió un error al generar el recibo',
+            text: 'OcurriÃ³ un error al generar el recibo',
             confirmButtonText: 'Entendido'
         });
     }
 }
 
-// Función auxiliar para formatear tipo de gasto
+// FunciÃ³n auxiliar para formatear tipo de gasto
 function formatearTipoGasto(tipo) {
-    // Mantén tu lógica actual de formateo
+    // MantÃ©n tu lÃ³gica actual de formateo
     return tipo.charAt(0).toUpperCase() + tipo.slice(1).toLowerCase();
 }
