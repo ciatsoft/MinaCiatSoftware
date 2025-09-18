@@ -972,10 +972,6 @@ async function printItem(rowIndex) {
     }
 }
 
-
-
-
-
 // Asociar Vehiculos CLiente
 function AbrirModalVehiculoPublicoGeneral() {
     // Limpiar completamente el modal antes de cargar nuevo contenido
