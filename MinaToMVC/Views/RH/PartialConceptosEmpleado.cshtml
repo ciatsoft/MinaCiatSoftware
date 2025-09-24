@@ -1,0 +1,291 @@
+﻿@model MinaTolEntidades.DtoEmpleados.ConceptoEmpleado
+@{
+    var trabajadorId = (long)ViewBag.TrabajadorId;
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
+    var usuario = @ViewBag.UserToken.UserName;
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+<div class="content">
+    @using (Html.BeginForm("SaveOrUpdateConceptoEmpleadoByIdEmpleado", "RH", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmConceptoEmpleado" }))
+    {
+        @Html.HiddenFor(x => x.Id, new { @id = "id" })
+        @Html.HiddenFor(x => x.IdTrabajador, new { @id = "idTrabajador", Value = trabajadorId })
+        @Html.HiddenFor(x => x.Estatus)
+        @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy", Value = usuario })
+        @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy", Value = usuario })
+        @Html.HiddenFor(x => x.CreatedDt, new { id = "CreatedDt", Value = fechaActual })
+        @Html.HiddenFor(x => x.UpdatedDt, new { id = "UpdatedDt", Value = fechaActual })
+
+        @Html.HiddenFor(x => x.NombreConceptoEmpleado, new { @id = "nombreConceptoEmpleado" })
+
+        <br />
+        <div class="tabla-consultas-roll">
+            <div class="rectangulos" style="width: 100%;">
+                <h2>Agregar Concepto</h2>
+
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-lg-4">
+                        <label>Tipo Concepto:</label>
+                        @Html.DropDownListFor(x => x.IdConceptoEmpleado,
+                            (IEnumerable<SelectListItem>)ViewBag.ConceptosEmpleados,
+                            "Seleccione un Tipo De Concepto",
+                            new { @class = "form-control", @id = "ddlConceptoEmpleado" })
+                    </div>
+
+                    <div class="col-lg-4" id="salario">
+                        <label>Cantidad:</label>
+                        @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control", @id = "cantidad", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
+                    </div>
+
+                    <div class="col-lg-4">
+                        <label>Valor:</label>
+                        @Html.TextBoxFor(x => x.Valor, new { @class = "form-control", @id = "valor", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>Total Neto:</label>
+                        @Html.TextBoxFor(x => x.TotalNeto, new { @class = "form-control", @id = "totalNeto", @readonly = "readonly" })
+                    </div>
+
+                    <div class="col-lg-4">
+                        <label>Fecha:</label>
+                        @Html.TextBoxFor(x => x.Fecha, new { @class = "form-control", @id = "fecha", Value = fechaActual, @readonly = "readonly" })
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12">
+                        <input type="button" value="Guardar" onclick="SaveOrUpdateConceptoEmpleadoByIdEmpleado()" class="btn btn-success" />
+                        <a href="/VentaPublicoGeneral/Index" class="btn btn-custom-cancel">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <br />
+    <div class="row">
+        <div class="col-lg-12">
+            <table class="table table-bordered table-striped" id="tblConceptosEmpleado" style="width: 100%;"></table>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        // Función para calcular el total automáticamente
+        function calcularTotal() {
+            var cantidad = parseFloat($('#cantidad').val()) || 0;
+            var valor = parseFloat($('#valor').val()) || 0;
+            var total = cantidad * valor;
+
+            // Formatear el total a 2 decimales
+            $('#totalNeto').val(total.toFixed(2));
+        }
+
+        // Eventos para los campos cantidad y valor
+        $('#cantidad').on('input', function () {
+            calcularTotal();
+        });
+        $('#valor').on('input', function () {
+            calcularTotal();
+        });
+
+        // Pasamos la lista completa a JS
+        var conceptos = @Html.Raw(ViewBag.ConceptosJson);
+
+        $('#ddlConceptoEmpleado').on('change', function () {
+            var selectedId = $(this).val();
+            var selectedText = $("#ddlConceptoEmpleado option:selected").text();
+
+            // Obtener el ID del empleado (asumiendo que tienes un campo para esto)
+            var idEmpleado = @trabajadorId;
+
+            var concepto = conceptos.find(c => c.Id == selectedId);
+            var valor = concepto ? concepto.Valor : '';
+
+            $('#nombreConceptoEmpleado').val(selectedText);
+            $('#valor').val(valor);
+
+            // Verificar si es "Dia Extra" o "Falta"
+            if (selectedText.toLowerCase().includes('dia extra') ||
+                selectedText.toLowerCase().includes('falta') ||
+                selectedText.toLowerCase().includes('día extra')) {
+
+                // Ejecutar la función para obtener el salario
+                if (idEmpleado) {
+                    GetSalarioActivoByIdEmpleado(idEmpleado);
+                } else {
+                    Swal.fire({
+                        title: 'Advertencia',
+                        text: 'Primero debe seleccionar un empleado',
+                        icon: 'warning',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            } else {
+                // Lógica original para otros conceptos
+                if (valor === 0 || valor === 0.00 || valor === '0' || valor === '0.00' || valor === '' || valor === null) {
+                    $('#valor').prop('readonly', false);
+                } else {
+                    $('#valor').prop('readonly', true);
+                }
+            }
+        });
+
+        $("#tblConceptosEmpleado").DataTable({
+            data: [],
+            columns: [
+                { data: 'id', title: 'ID', visible: false },
+                { data: 'idTrabajador', title: 'Id Trabajador', visible: false },
+                { data: 'idConceptoEmpleado', title: 'Id Concepto Empleado', visible: false },
+                { data: 'nombreConceptoEmpleado', title: 'Nombre del Concepto' },
+                { data: 'cantidad', title: 'Cantidad' },
+                { data: 'valor', title: 'Valor' },
+                { data: 'totalNeto', title: 'Total Neto' },
+                {
+                    data: "id", title: "Acciones", render: function (data) {
+                        return ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarConceptoEmpleado(' + data + ')"/>';
+                    }
+                },
+            ],
+            language: {
+                "decimal": ",",
+                "thousands": ".",
+                "processing": "Procesando...",
+                "lengthMenu": "Mostrar _MENU_ entradas",
+                "zeroRecords": "No se encontraron resultados",
+                "emptyTable": "Ningun dato disponible en esta tabla",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+                "search": "Buscar:",
+                "loadingRecords": "Cargando...",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                    "sortDescending": ": activar para ordenar la columna de manera descendente"
+                }
+            }
+        });
+
+        $("#frmConceptoEmpleado").validate({
+            rules: {
+                nombreConceptoEmpleado: "required",
+                nombre: "required",
+                cantidad: "required",
+                valor: "required",
+                totalNeto: "required",
+            },
+            messages: {
+                nombreConceptoEmpleado: "Por favor ingresa un Concepto",
+                nombre: "Por favor ingresa un Nombre",
+                cantidad: "Por favor ingresa una Cantidad",
+                valor: "Por favor ingresa un Valor",
+                totalNeto: "Por favor ingresa un Calculo",
+            }
+        });
+
+        GetAllConceptoEmpleadoByIdEmpleado(@trabajadorId)
+    });
+
+    function GetAllConceptoEmpleadoByIdEmpleado(id) {
+        GetMVC("/RH/GetAllConceptoEmpleadoByIdEmpleado?id=" + id, function (r) {
+            if (r.IsSuccess) {
+                MapingPropertiesDataTable("tblConceptosEmpleado", r.Response);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar los Conceptos del Empleado: ' + r.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+
+    function GetSalarioActivoByIdEmpleado(id) {
+        GetMVC("/RH/GetSalarioActivoByIdEmpleado?id=" + id, function (r) {
+            if (r.IsSuccess) {
+                if (r.Response === null || r.Response === undefined) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'El Empleado no tiene un Salario Activo establecido.',
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    setTimeout(function () {
+                        $("#genericModal").modal("hide");
+                    }, 4000);
+                } else {
+                    var salarioActual = r.Response.monto;
+                    
+                    // Establecer el valor en el input y bloquearlo
+                    $('#valor').val(salarioActual);
+                    $('#valor').prop('readonly', true);
+                }
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar el Salario Activo del Empleado: ' + r.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+
+    function SaveOrUpdateConceptoEmpleadoByIdEmpleado() {
+        if ($("#frmConceptoEmpleado").valid()) {
+
+            var parametro = {
+                id: $("#id").val(),
+                idTrabajador: $("#idTrabajador").val(),
+                idConceptoEmpleado: $("#ddlConceptoEmpleado").val(), // Cambiado para obtener del dropdown
+                nombreConceptoEmpleado: $("#nombreConceptoEmpleado").val(),
+                cantidad: $("#cantidad").val(),
+                valor: $("#valor").val(),
+                totalNeto: $("#totalNeto").val(),
+                fecha: $("#fecha").val(),
+                estatus: $("#Estatus").val(), // Asumiendo que existe este campo hidden
+                createdBy: $("#createdBy").val(),
+                createdDt: $("#CreatedDt").val(), // Corregido el ID
+                updatedBy: $("#updatedBy").val(),
+                updatedDt: $("#UpdatedDt").val() // Corregido el ID
+            };
+
+            PostMVC('/RH/SaveOrUpdateConceptoEmpleadoByIdEmpleado', parametro, function (r) {
+                if (r.IsSuccess) {
+                    Swal.fire({
+                        title: "Registro guardado!",
+                        text: "El registro se ha guardado correctamente.",
+                        icon: "success",
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Registro guardado!",
+                        text: "El registro se ha guardado correctamente.",
+                        icon: "success",
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                }
+            });
+        }
+    }
+</script>
