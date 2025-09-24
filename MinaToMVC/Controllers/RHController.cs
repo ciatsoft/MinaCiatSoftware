@@ -1,4 +1,5 @@
 ﻿using MinaTolEntidades;
+using MinaTolEntidades.DtoEmpleados;
 using MinaTolEntidades.Security;
 using MinaToMVC.Helpers;
 using Newtonsoft.Json;
@@ -34,6 +35,98 @@ namespace MinaToMVC.Controllers
         public ActionResult Editar()
         {
             return View();
+        }
+        public async Task<ActionResult> NominaEmpleado()
+        {
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            return View();
+        }
+        public async Task<ActionResult> ConceptosRH(long id = 0)
+        {
+            ConceptosEmpleado conceptosEmpleado = new ConceptosEmpleado();
+
+            if( id != 0)
+            {
+                var response = await httpClientConnection.GetConceptosEmpleadosById(id);
+                conceptosEmpleado = JsonConvert.DeserializeObject<ConceptosEmpleado>(response.Response.ToString());
+            }
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            return View(conceptosEmpleado);
+        }
+        #endregion
+
+        #region VistasParciales
+        public async Task<ActionResult> PartialConceptosEmpleado(long id = 0)
+        {
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            var conceptosEmpleadosResponse = await httpClientConnection.GetAllConceptosEmpleados();
+            var conceptosEmpleados = JsonConvert.DeserializeObject<List<ConceptosEmpleado>>(
+                conceptosEmpleadosResponse.Response.ToString()
+            );
+
+            // Filtrar excluyendo Sueldo y Préstamo
+            var conceptosEmpleadosDdl = conceptosEmpleados
+                .Where(c => c.Nombre != "Sueldo" && c.Nombre != "Prestamo")
+                .Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Nombre
+                })
+                .ToList();
+
+            // lista para el DropDownList
+            ViewBag.ConceptosEmpleados = conceptosEmpleadosDdl;
+
+            // lista serializada para usar en JS (también filtrada)
+            ViewBag.ConceptosJson = JsonConvert.SerializeObject(
+                conceptosEmpleados.Where(c => c.Nombre != "Sueldo" && c.Nombre != "Préstamo").ToList()
+            );
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+            ViewBag.TrabajadorId = id;
+
+            return PartialView();
         }
         #endregion
 
@@ -77,6 +170,43 @@ namespace MinaToMVC.Controllers
             }
             return JsonConvert.SerializeObject(mr);
         }
+
+        #region ConceptosEmpleados
+        public async Task<ActionResult> SaveOrUpdateConceptosEmpleados(ConceptosEmpleado ce)
+        {
+            var result = await httpClientConnection.SaveOrUpdateConceptosEmpleados(ce);
+            return Redirect("ConceptosRH");
+        }
+        public async Task<string> GetAllConceptosEmpleados()
+        {
+            var result = await httpClientConnection.GetAllConceptosEmpleados();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> DeleteConceptosEmpleadosById(long id)
+        {
+            var result = await httpClientConnection.DeleteConceptosEmpleadosById(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        #endregion
+
+        #region ConceptoEmpleadoByIdEmpleado
+        public async Task<string> GetAllConceptoEmpleadoByIdEmpleado(long id)
+        {
+            var result = await httpClientConnection.GetAllConceptoEmpleadoByIdEmpleado(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetSalarioActivoByIdEmpleado(long id)
+        {
+            var result = await httpClientConnection.GetSalarioActivoByIdEmpleado(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<ActionResult> SaveOrUpdateConceptoEmpleadoByIdEmpleado(ConceptoEmpleado ce)
+        {
+            var result = await httpClientConnection.SaveOrUpdateConceptoEmpleadoByIdEmpleado(ce);
+            return Redirect("ConceptosRH");
+        }
+
+        #endregion
         #endregion
     }
 }

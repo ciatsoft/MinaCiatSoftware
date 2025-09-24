@@ -1,0 +1,18 @@
+﻿@{
+    ViewBag.Title = "NominaEmpleado";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
+}
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<div class="content">
+    <br />
+    <center><h1>Generar Nominas para Empleados</h1></center>
+    <br />
+    <table id="tblEmpleados" class="table table-bordered table-striped" style="width: 100%;"></table>
+    <br />
+</div>
+
+<script src="@(Url.StaticFile("Scripts/Trabajador/Nominas.js"))"></script>
