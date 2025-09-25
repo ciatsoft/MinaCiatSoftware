@@ -205,7 +205,11 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.SaveOrUpdateConceptoEmpleadoByIdEmpleado(ce);
             return Redirect("ConceptosRH");
         }
-
+        public async Task<ActionResult> DeleteConceptoEmpleadoById(long id)
+        {
+            var result = await httpClientConnection.DeleteConceptoEmpleadoById(id);
+            return Redirect("ConceptosRH");
+        }
         #endregion
         #endregion
     }

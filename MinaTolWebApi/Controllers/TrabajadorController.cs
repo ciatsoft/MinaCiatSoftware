@@ -144,6 +144,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.SaveOrUpdateConceptoEmpleadoByIdEmpleado(ce);
             return result;
         }
+        [HttpPost, Route("DeleteConceptoEmpleadoById/{id:long}")]
+        public ModelResponse DeleteConceptoEmpleadoById(long id)
+        {
+            var result = wrapper.DeleteConceptoEmpleadoById(id);
+            return result;
+        }
         #endregion
     }
 }

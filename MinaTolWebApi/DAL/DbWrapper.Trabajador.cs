@@ -327,14 +327,14 @@ namespace MinaTolWebApi.DAL
             try
             {
                 var parameters = new List<SqlParameter>
-        {
-            new SqlParameter
-            {
-                Value = id,
-                ParameterName = "@Id",
-                SqlDbType = SqlDbType.BigInt  // Cambiado a BigInt para coincidir con tu parámetro
-            }
-        };
+                {
+                    new SqlParameter
+                    {
+                        Value = id,
+                        ParameterName = "@Id",
+                        SqlDbType = SqlDbType.BigInt  // Cambiado a BigInt para coincidir con tu parámetro
+                    }
+                };
 
                 // Cambiar GetObject por GetList para obtener múltiples registros
                 var result = GetList("GetAllConceptoEmpleadoByIdEmpleado", CommandType.StoredProcedure,
@@ -403,6 +403,32 @@ namespace MinaTolWebApi.DAL
             }
 
             return modelResponse;
+        }
+        public ModelResponse DeleteConceptoEmpleadoById(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id"
+                });
+
+                var result = ExecuteNonQuery("DeleteConceptoEmpleadoById", System.Data.CommandType.StoredProcedure, parameters);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
         }
         #endregion
     }
