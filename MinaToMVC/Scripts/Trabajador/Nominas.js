@@ -22,8 +22,8 @@ $(document).ready(function () {
             {
                 data: "id", title: "Acciones", render: function (data) {
                     return '<input type="button" value="Agregar Concepto" class="btn btn-success btn-lg-custom" onclick="ConceptoEmpleado(' + data + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarEmpleado(' + data + ')"/>' +
-                        ' <input type="button" value="Nominas" class="btn btn-custom-clean" onclick="AsignarSalario(' + data + ')"/>';
+                        ' <input type="button" value="Generar Nomina" class="btn btn-custom-clean" onclick="NominasEmpleado(' + data + ')"/>' + 
+                        ' <input type="button" value="Historial de Nominas" class="btn btn-success btn-lg-custom" onclick="HistorialNominas(' + data + ')" />';
                 }
             },
         ],
@@ -78,6 +78,16 @@ function ConceptoEmpleado(id) {
 
     $("#titleGenerciModal").text("Agregar Conceptos");
     $("#boddyGeericModal").load("/RH/PartialConceptosEmpleado/" + id, function () {
+        $("#genericModal").modal("show");
+    });
+}
+
+function NominasEmpleado(id) {
+    $("#genericModal").removeData('b s.modal');
+    $("#boddyGeericModal").empty();
+
+    $("#titleGenerciModal").text("Nominas del Empleado");
+    $("#boddyGeericModal").load("/RH/PartialNominasEmpleado/" + id, function () {
         $("#genericModal").modal("show");
     });
 }

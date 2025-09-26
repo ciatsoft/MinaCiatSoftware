@@ -151,7 +151,6 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllEmpleados();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-
         public async Task<ActionResult> SaveOrupdateEmpleado(Empleado t)
         {
             try
@@ -213,6 +212,11 @@ namespace MinaToMVC.Controllers
         {
             var r = await httpClientConnection.DeleteEmpleadoById(id);
             return Redirect("AltaEdicion");
+        }
+        public async Task<string> ObtenerDatosEmpleado(long id)
+        {
+            var result = await httpClientConnection.ObtenerDatosEmpleado(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
         #endregion
 

@@ -1,0 +1,230 @@
+﻿@model MinaTolEntidades.DtoEmpleados.NominaEmpleado
+@{
+    var trabajadorId = (long)ViewBag.TrabajadorId;
+
+    DateTime hoy = DateTime.Today;
+    int diferencia1 = hoy.DayOfWeek - DayOfWeek.Monday;
+    DateTime lunes = hoy.AddDays(-diferencia1);
+    var fechaLunes = lunes.ToString("yyyy-MM-dd");
+
+    DateTime viernes = lunes.AddDays(4);
+    var fechaViernes = viernes.ToString("yyyy-MM-dd");
+
+    DateTime sabado = lunes.AddDays(5);
+    var fechaSabado = sabado.ToString("yyyy-MM-dd");
+
+    var usuario = @ViewBag.UserToken.UserName;
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+<div class="content">
+    <div class="tabla-consultas-roll">
+        <div class="rectangulos" style="width: 100%;">
+            <h2>Generar Nomina</h2>
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-lg-3">
+                    <label>Fecha del Lunes:</label>
+                    <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" value="@fechaLunes">
+                </div>
+                <div class="col-lg-3">
+                    <label>Fecha de Viernes:</label>
+                    <input type="date" class="form-control" id="fechaFinal" name="fechaFinal" value="@fechaViernes">
+                </div>
+                <div class="col-lg-5">
+                    <input type="button" value="Buscar Conceptos" onclick="SearchConceptosEmpleado()" class="btn btn-success" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tabla-consultas-roll">
+        <div class="rectangulos" style="width: 100%;">
+            <h3>Conceptos Acumulados para Nomina Semanal</h3>
+            <br />
+            <table class="table table-bordered table-striped" id="tblConceptosEmpleado" style="width: 100%;"></table>
+        </div>
+    </div>
+    @using (Html.BeginForm("SaveOrUpdateConceptoEmpleadoByIdEmpleado", "RH", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmConceptoEmpleado" }))
+    {
+        @Html.HiddenFor(x => x.Id, new { @id = "id" })
+        @Html.HiddenFor(x => x.IdTrabajador, new { @id = "idTrabajador", Value = trabajadorId })
+        @Html.HiddenFor(x => x.Estatus)
+        @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy", Value = usuario })
+        @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy", Value = usuario })
+        @Html.HiddenFor(x => x.CreatedDt, new { id = "CreatedDt", Value = hoy })
+        @Html.HiddenFor(x => x.UpdatedDt, new { id = "UpdatedDt", Value = hoy })
+        @Html.HiddenFor(x => x.FechaInicio, new { @class = "form-control", @id = "fechaInicioRazor", @readonly = "readonly" })
+        @Html.HiddenFor(x => x.FechaFinal, new { @class = "form-control", @id = "fechaFinalRazor", @readonly = "readonly" })
+        <div class="tabla-consultas-roll">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-lg-4">
+                        <label>Salario Semanal:</label>
+                        @Html.TextBoxFor(x => x.SalarioSemanal, new { @class = "form-control", @id = "salarioSemanal", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly" })
+                    </div>
+                    <div class="col-lg-4">
+                        <label>Total de Aumento:</label>
+                        @Html.TextBoxFor(x => x.Aumento, new { @class = "form-control", @id = "aumento", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly" })
+                    </div>
+                    <div class="col-lg-4">
+                        <label>Total de Descuento:</label>
+                        @Html.TextBoxFor(x => x.Descuento, new { @class = "form-control", @id = "descuento", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly" })
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>Salario Final Semanal:</label>
+                        @Html.TextBoxFor(x => x.SalarioFinal, new { @class = "form-control", @id = "salarioFinal", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly" })
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12">
+                        <input type="button" value="Guardar" onclick="SaveOrUpdateNominasByIdEmpleado()" class="btn btn-success" />
+                        <a href="/RH/NominaEmpleado" class="btn btn-custom-cancel">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        // Actualizar al cambiar los inputs date
+        $('#fechaInicio, #fechaFinal').change(function () {
+            $('#fechaInicioRazor').val($('#fechaInicio').val());
+            $('#fechaFinalRazor').val($('#fechaFinal').val());
+        });
+
+        // Establecer valores iniciales
+        $('#fechaInicioRazor').val($('#fechaInicio').val());
+        $('#fechaFinalRazor').val($('#fechaFinal').val());
+
+        $("#tblConceptosEmpleado").DataTable({
+            data: [],
+            columns: [
+                { data: 'id', title: 'ID', visible: false },
+                { data: 'idTrabajador', title: 'Id Trabajador', visible: false },
+                { data: 'idConceptoEmpleado', title: 'Id Concepto Empleado', visible: false },
+                { data: 'nombreConceptoEmpleado', title: 'Nombre del Concepto' },
+                { data: 'cantidad', title: 'Cantidad' },
+                {
+                    data: 'valor', title: 'Valor', render: function (data) {
+                        return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
+                    }
+                },
+                {
+                    data: 'totalNeto', title: 'Total Neto', render: function (data) {
+                        return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
+                    }
+                },
+                {
+                    data: 'fecha', title: 'Fecha', render: function (data) {
+                        return data ? new Date(data).toISOString().split('T')[0] : '';
+                    }
+                },
+            ],
+            order: [[0, 'desc']],
+            language: {
+                "decimal": ",",
+                "thousands": ".",
+                "processing": "Procesando...",
+                "lengthMenu": "Mostrar _MENU_ entradas",
+                "zeroRecords": "No se encontraron resultados",
+                "emptyTable": "Ningun dato disponible en esta tabla",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+                "search": "Buscar:",
+                "loadingRecords": "Cargando...",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                    "sortDescending": ": activar para ordenar la columna de manera descendente"
+                }
+            }
+        });
+
+        ObtenerDatosEmpleado(@trabajadorId);
+    });
+
+    function SearchConceptosEmpleado() {
+        // Asegurar que las fechas estén actualizadas
+        $('#fechaInicioRazor').val($('#fechaInicio').val());
+        $('#fechaFinalRazor').val($('#fechaFinal').val());
+    }
+
+    function GetAllConceptoEmpleadoByIdEmpleadoDates(fechaInicio, fechaFin) {
+        GetMVC("/RH/GetAllConceptoEmpleadoByIdEmpleado?id=" + id, function (r) {
+            if (r.IsSuccess) {
+                MapingPropertiesDataTable("tblConceptosEmpleado", r.Response);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar los Conceptos del Empleado: ' + r.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+
+    function ObtenerDatosEmpleado(id) {
+        if (!id || id <= 0) {
+            console.error('ID de empleado inválido:', id);
+            return;
+        }
+
+        $.ajax({
+            url: '/Empleado/ObtenerDatosEmpleado',
+            type: 'GET',
+            data: { Id: id },
+            dataType: 'json', // Asegurar que espera JSON
+            success: function (r) {
+                // Si el controlador retorna un string serializado, necesitamos parsearlo
+                try {
+                    var response = typeof r === 'string' ? JSON.parse(r) : r;
+
+                    if (response && response.IsSuccess) {
+                        console.log('Datos del empleado:', response.Response);
+                    } else {
+                        var errorMsg = response && response.ErrorMessage ? response.ErrorMessage : 'Error desconocido';
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Error al cargar datos del empleado: ' + errorMsg,
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+                } catch (parseError) {
+                    console.error('Error parseando respuesta:', parseError);
+                    Swal.fire({
+                        title: 'Error de formato',
+                        text: 'La respuesta del servidor tiene un formato incorrecto',
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error AJAX:', error);
+                console.log('Respuesta completa:', xhr.responseText);
+
+                Swal.fire({
+                    title: 'Error de conexión',
+                    text: 'No se pudo conectar al servidor: ' + error,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+</script>

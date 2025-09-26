@@ -11,5 +11,6 @@ namespace MinaTolEntidades.DtoEmpleados
         public string Nombre { get; set; }
         public string Descripcion { get; set; }
         public decimal Valor { get; set; }
+        public bool Aumento { get; set; }
     }
 }
