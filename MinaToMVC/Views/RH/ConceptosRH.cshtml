@@ -36,6 +36,10 @@
                         <label>Valor:</label>
                         @Html.TextBoxFor(x => x.Valor, new { @class = "form-control", @type = "number", id = "valor" })
                     </div>
+                    <div class="col-lg-3">
+                        <label>Aumento de Salario:</label>
+                        @Html.CheckBoxFor(x => x.Aumento, new { @class = "form-control", id = "aumentoCheckbox" })
+                    </div>
                 </div>
             </div>
             <div class="row">

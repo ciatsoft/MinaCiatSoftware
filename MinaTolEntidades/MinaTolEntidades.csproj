@@ -54,6 +54,7 @@
     <Compile Include="DtoEmpleados\DtoHoraExtraTrabajador.cs" />
     <Compile Include="DtoEmpleados\DocumentosEmpleado.cs" />
     <Compile Include="DtoEmpleados\Empleado.cs" />
+    <Compile Include="DtoEmpleados\NominaEmpleado.cs" />
     <Compile Include="DtoIngresosRfid\IngresosRfid.cs" />
     <Compile Include="DtoRfid\DtoRfid.cs" />
     <Compile Include="DtoCatalogos\DtoAreaTrabajo.cs" />

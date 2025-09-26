@@ -3,10 +3,27 @@ $(document).ready(function () {
     $("#tblConceptosRH").DataTable({
         data: [],
         columns: [
-            { data: 'id', title: 'ID' },
+            { data: 'id', title: 'ID', visible: false },
             { data: 'nombre', title: 'Nombre' },
             { data: 'descripcion', title: 'Descripcion' },
-            { data: 'valor', title: 'Valor' },
+            {
+                data: 'valor', title: 'Valor', render: function (data) {
+                    return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
+                }
+            },
+            {
+                data: 'aumento',
+                title: 'Tipo de Cargo',
+                render: function (data, type, row) {
+                    if (data === 1 || data === true) {
+                        return '<span>Aumento</span>';
+                    } else if (data === 0 || data === false) {
+                        return '<span>Descuento</span>';
+                    } else {
+                        return '<span>No definido</span>';
+                    }
+                }
+            },
             {
                 data: "id", title: "Acciones", render: function (data) {
                     return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarConceptosRH(' + data + ')" />' +
@@ -76,6 +93,7 @@ function SaveOrUpdateConceptosEmpleados() {
             nombre: $("#nombre").val(),
             descripcion: $("#descripcion").val(),
             valor: $("#valor").val(),
+            aumento: $("#aumentoCheckbox").val(),
             Estatus: $("#estatus").val(),
             CreatedBy: $("#createdBy").val(),
             CreatedDt: $("#createdDt").val(),

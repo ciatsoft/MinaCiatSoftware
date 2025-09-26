@@ -39,6 +39,18 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
+        public async Task<ModelResponse> ObtenerDatosEmpleado(long id)
+        {
+            var result = await RequestAsync<object>($"api/Trabajador/ObtenerDatosEmpleado/{id}", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
 
         public async Task<ModelResponse> GetTrabajadorById(long id)
         {
@@ -187,6 +199,42 @@ namespace MinaToMVC.DAL
         }
         #endregion
 
+        #region NominaEmpleado
+        public async Task<ModelResponse> GetAllNominasByIdEmpleado(long id)
+        {
+            var result = await RequestAsync<object>($"api/Trabajador/GetAllNominasByIdEmpleado/{id}", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
 
+            return modelResponse;
+
+        }
+        public async Task<ModelResponse> SaveOrUpdateNominasByIdEmpleado(NominaEmpleado ce)
+        {
+            var result = await RequestAsync<object>("api/Trabajador/SaveOrUpdateNominasByIdEmpleado", HttpMethod.Post, ce,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+        public async Task<ModelResponse> DeleteNominasByIdEmpleado(long id)
+        {
+            var result = await RequestAsync<object>($"api/Trabajador/DeleteNominasByIdEmpleado/{id}", HttpMethod.Post, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
+        #endregion
     }
 }

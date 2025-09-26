@@ -335,6 +335,7 @@
     <Content Include="Views\RH\NominaEmpleado.cshtml" />
     <Content Include="Views\RH\ConceptosRH.cshtml" />
     <Content Include="Views\RH\PartialConceptosEmpleado.cshtml" />
+    <Content Include="Views\RH\PartialNominasEmpleado.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

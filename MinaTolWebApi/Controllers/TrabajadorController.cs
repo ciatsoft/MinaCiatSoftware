@@ -49,6 +49,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetAllEmpleados();
             return result;
         }
+        [HttpGet, Route("ObtenerDatosEmpleado/{id:long}")]
+        public ModelResponse ObtenerDatosEmpleado(long id)
+        {
+            var result = wrapper.ObtenerDatosEmpleado(id);
+            return result;
+        }
 
         [HttpGet, Route("{id:long}")]
         public ModelResponse GetTrabajadorById(long id)
@@ -124,6 +130,7 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
         #endregion
+
         #region ConceptoEmpleadoByIdEmpleado
 
         [HttpGet, Route("GetAllConceptoEmpleadoByIdEmpleado/{id:long}")]
@@ -148,6 +155,27 @@ namespace MinaTolWebApi.Controllers
         public ModelResponse DeleteConceptoEmpleadoById(long id)
         {
             var result = wrapper.DeleteConceptoEmpleadoById(id);
+            return result;
+        }
+        #endregion
+
+        #region NominaEmpleado
+        [HttpGet, Route("GetAllNominasByIdEmpleado/{id:long}")]
+        public ModelResponse GetAllNominasByIdEmpleado(long id)
+        {
+            var result = wrapper.GetAllNominasByIdEmpleado(id);
+            return result;
+        }
+        [HttpPost, Route("SaveOrUpdateNominasByIdEmpleado/")]
+        public ModelResponse SaveOrUpdateNominasByIdEmpleado(NominaEmpleado ce)
+        {
+            var result = wrapper.SaveOrUpdateNominasByIdEmpleado(ce);
+            return result;
+        }
+        [HttpPost, Route("DeleteNominasByIdEmpleado/{id:long}")]
+        public ModelResponse DeleteNominasByIdEmpleado(long id)
+        {
+            var result = wrapper.DeleteNominasByIdEmpleado(id);
             return result;
         }
         #endregion

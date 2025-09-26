@@ -128,7 +128,28 @@ namespace MinaToMVC.Controllers
 
             return PartialView();
         }
-        #endregion
+
+        public async Task<ActionResult> PartialNominasEmpleado(long id = 0)
+        {
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+            ViewBag.TrabajadorId = id;
+
+            return PartialView();
+        }
+        #endregion 
 
         #region Data Acces
         [HttpPost]
@@ -208,6 +229,24 @@ namespace MinaToMVC.Controllers
         public async Task<ActionResult> DeleteConceptoEmpleadoById(long id)
         {
             var result = await httpClientConnection.DeleteConceptoEmpleadoById(id);
+            return Redirect("ConceptosRH");
+        }
+        #endregion
+
+        #region NominaEmpleado
+        public async Task<string> GetAllNominasByIdEmpleado(long id)
+        {
+            var result = await httpClientConnection.GetAllNominasByIdEmpleado(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<ActionResult> SaveOrUpdateNominasByIdEmpleado(NominaEmpleado ce)
+        {
+            var result = await httpClientConnection.SaveOrUpdateNominasByIdEmpleado(ce);
+            return Redirect("ConceptosRH");
+        }
+        public async Task<ActionResult> DeleteNominasByIdEmpleado(long id)
+        {
+            var result = await httpClientConnection.DeleteNominasByIdEmpleado(id);
             return Redirect("ConceptosRH");
         }
         #endregion

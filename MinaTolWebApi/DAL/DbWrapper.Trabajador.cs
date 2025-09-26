@@ -39,6 +39,30 @@ namespace MinaTolWebApi.DAL
 
             return modelResponse;
         }
+        public ModelResponse ObtenerDatosEmpleado(long id)
+        {
+            var modelResponse = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+            try
+            {
+                var user = GetObject($"SELECT * FROM TRABAJADOR where id = {id}", CommandType.Text, parameters,
+                    new Func<IDataReader, Empleado>((reader) =>
+                    {
+                        var r = FillEntity<Empleado>(reader);
+                        return r;
+                    }));
+
+                modelResponse.Response = user;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
         public ModelResponse GetTrabajadorById(long id)
         {
             var modelResponse = new ModelResponse();
@@ -420,6 +444,87 @@ namespace MinaTolWebApi.DAL
                 });
 
                 var result = ExecuteNonQuery("DeleteConceptoEmpleadoById", System.Data.CommandType.StoredProcedure, parameters);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
+        #endregion
+
+        #region NominaEmpleado
+        public ModelResponse GetAllNominasByIdEmpleado(long id)
+        {
+            var response = new ModelResponse();
+
+            try
+            {
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter
+                    {
+                        Value = id,
+                        ParameterName = "@Id",
+                        SqlDbType = SqlDbType.BigInt
+                    }
+                };
+
+                // Cambiar GetObject por GetList para obtener múltiples registros
+                var result = GetList("GetAllNominasByIdEmpleado", CommandType.StoredProcedure,
+                    parameters, reader => FillEntity<NominaEmpleado>(reader));
+
+                response.IsSuccess = true;
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
+        public ModelResponse SaveOrUpdateNominasByIdEmpleado(NominaEmpleado u)
+        {
+            var modelResponse = new ModelResponse();
+
+            try
+            {
+                var userID = ExecuteScalar($"SaveOrUpdateNominasByIdEmpleado", CommandType.StoredProcedure, GenerateSQLParameters(u));
+                u.Id = Convert.ToInt64(userID);
+
+                modelResponse.Response = u;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
+        public ModelResponse DeleteNominasByIdEmpleado(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id"
+                });
+
+                var result = ExecuteNonQuery("DeleteNominasByIdEmpleado", System.Data.CommandType.StoredProcedure, parameters);
             }
             catch (Exception ex)
             {
