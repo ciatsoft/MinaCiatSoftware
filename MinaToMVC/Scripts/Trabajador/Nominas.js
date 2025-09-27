@@ -7,23 +7,24 @@ $(document).ready(function () {
             {
                 data: null,
                 title: 'Nombre Completo',
-                render: (data, type, row) => `${row.apellidoPaterno} ${row.apellidoMaterno} ${row.nombre}`,
-                // Agregar campo para ordenamiento por apellido paterno
-                type: 'string',
-                // Función para extraer el apellido paterno para ordenamiento
                 render: function (data, type, row) {
                     if (type === 'sort') {
-                        return row.apellidoPaterno; // Para ordenamiento, usar solo apellido paterno
+                        return row.apellidoPaterno;
                     }
-                    return `${row.apellidoPaterno} ${row.apellidoMaterno} ${row.nombre}`; // Para display normal
+                    return `${row.apellidoPaterno} ${row.apellidoMaterno} ${row.nombre}`;
                 }
             },
             { data: 'nombreDepartamento', title: 'Departamento' },
             {
-                data: "id", title: "Acciones", render: function (data) {
-                    return '<input type="button" value="Agregar Concepto" class="btn btn-success btn-lg-custom" onclick="ConceptoEmpleado(' + data + ')" />' +
-                        ' <input type="button" value="Generar Nomina" class="btn btn-custom-clean" onclick="NominasEmpleado(' + data + ')"/>' + 
-                        ' <input type="button" value="Historial de Nominas" class="btn btn-success btn-lg-custom" onclick="HistorialNominas(' + data + ')" />';
+                data: null,  // Cambiado a null para acceder a toda la fila
+                title: "Acciones",
+                render: function (data, type, row) {
+                    // Construir el nombre completo para pasar como parámetro
+                    var nombreCompleto = `${row.apellidoPaterno} ${row.apellidoMaterno} ${row.nombre}`;
+
+                    return '<input type="button" value="Agregar Concepto" class="btn btn-success btn-lg-custom" onclick="ConceptoEmpleado(' + row.id + ', \'' + nombreCompleto + '\')" />' +
+                        ' <input type="button" value="Generar Nomina" class="btn btn-custom-clean" onclick="NominasEmpleado(' + row.id + ', \'' + nombreCompleto + '\')"/>' +
+                        ' <input type="button" value="Historial de Nominas" class="btn btn-success btn-lg-custom" onclick="HistorialNominas(' + row.id + ', \'' + nombreCompleto + '\')" />';
                 }
             },
         ],
@@ -72,22 +73,24 @@ function GetAllEmpleados() {
     });
 }
 
-function ConceptoEmpleado(id) {
+function ConceptoEmpleado(id, nombreCompleto) {
     $("#genericModal").removeData('b s.modal');
     $("#boddyGeericModal").empty();
 
     $("#titleGenerciModal").text("Agregar Conceptos");
-    $("#boddyGeericModal").load("/RH/PartialConceptosEmpleado/" + id, function () {
+    $("#boddyGeericModal").load("/RH/PartialConceptosEmpleado/" + id + "?nombreCompleto=" + encodeURIComponent(nombreCompleto), function () {
         $("#genericModal").modal("show");
     });
 }
 
-function NominasEmpleado(id) {
-    $("#genericModal").removeData('b s.modal');
+function NominasEmpleado(id, nombreCompleto) {
+    $("#genericModal").removeData('bs.modal');
     $("#boddyGeericModal").empty();
 
     $("#titleGenerciModal").text("Nominas del Empleado");
-    $("#boddyGeericModal").load("/RH/PartialNominasEmpleado/" + id, function () {
+
+    // Enviar nombreCompleto como parámetro en la URL
+    $("#boddyGeericModal").load("/RH/PartialNominasEmpleado/" + id + "?nombreCompleto=" + encodeURIComponent(nombreCompleto), function () {
         $("#genericModal").modal("show");
     });
 }
