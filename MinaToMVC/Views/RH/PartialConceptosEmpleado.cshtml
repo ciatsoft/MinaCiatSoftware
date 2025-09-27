@@ -35,19 +35,23 @@
                             "Seleccione un Tipo De Concepto",
                             new { @class = "form-control", @id = "ddlConceptoEmpleado" })
                     </div>
-
-                    <div class="col-lg-4" id="salario">
-                        <label>Cantidad:</label>
-                        @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control", @id = "cantidad", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
+                    <div class="col-lg-4">
+                        <label>Tipo de Cargo:</label>
+                        @Html.TextBoxFor(x => x.TipoCargo, new { @class = "form-control", @id = "TipoCargo", @readonly = "readonly" })
                     </div>
 
                     <div class="col-lg-4">
-                        <label>Valor:</label>
-                        @Html.TextBoxFor(x => x.Valor, new { @class = "form-control", @id = "valor", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
+                        <label>Cantidad:</label>
+                        @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control", @id = "cantidad", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
                     </div>
                 </div>
 
                 <div class="row">
+                    <div class="col-lg-4">
+                        <label>Valor:</label>
+                        @Html.TextBoxFor(x => x.Valor, new { @class = "form-control", @id = "valor", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
+                    </div>
+
                     <div class="col-lg-4">
                         <label>Total Neto:</label>
                         @Html.TextBoxFor(x => x.TotalNeto, new { @class = "form-control", @id = "totalNeto", @readonly = "readonly" })
@@ -104,14 +108,19 @@
             var selectedId = $(this).val();
             var selectedText = $("#ddlConceptoEmpleado option:selected").text();
 
-            // Obtener el ID del empleado (asumiendo que tienes un campo para esto)
+            // Obtener el ID del empleado
             var idEmpleado = @trabajadorId;
 
             var concepto = conceptos.find(c => c.Id == selectedId);
             var valor = concepto ? concepto.Valor : '';
+            var aumento = concepto ? concepto.Aumento : false; // Capturar el valor de Aumento (true/false)
 
             $('#nombreConceptoEmpleado').val(selectedText);
             $('#valor').val(valor);
+
+            // Convertir el valor booleano a texto "Aumento" o "Descuento"
+            var tipoCargo = aumento ? 'Aumento' : 'Descuento';
+            $('#TipoCargo').val(tipoCargo);
 
             // Verificar si es "Dia Extra" o "Falta"
             if (selectedText.toLowerCase().includes('dia extra') ||
@@ -162,6 +171,7 @@
                         return data ? new Date(data).toISOString().split('T')[0] : '';
                     }
                 },
+                { data: 'tipoCargo', title: 'Tipo de Cargo' },
                 {
                     data: "id", title: "Acciones", render: function (data) {
                         return ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarConceptoEmpleado(' + data + ')"/>';
@@ -198,6 +208,7 @@
             rules: {
                 nombreConceptoEmpleado: "required",
                 nombre: "required",
+                tipoCargo: "required",
                 cantidad: "required",
                 valor: "required",
                 totalNeto: "required",
@@ -205,6 +216,7 @@
             messages: {
                 nombreConceptoEmpleado: "Por favor ingresa un Concepto",
                 nombre: "Por favor ingresa un Nombre",
+                tipoCargo: "Por favor ingresa un Tipo de Cargo",
                 cantidad: "Por favor ingresa una Cantidad",
                 valor: "Por favor ingresa un Valor",
                 totalNeto: "Por favor ingresa un Calculo",
@@ -267,6 +279,7 @@
                 id: $("#id").val(),
                 idTrabajador: $("#idTrabajador").val(),
                 idConceptoEmpleado: $("#ddlConceptoEmpleado").val(), // Cambiado para obtener del dropdown
+                tipoCargo: $("#TipoCargo").val(), // Cambiado para obtener del dropdown
                 nombreConceptoEmpleado: $("#nombreConceptoEmpleado").val(),
                 cantidad: $("#cantidad").val(),
                 valor: $("#valor").val(),

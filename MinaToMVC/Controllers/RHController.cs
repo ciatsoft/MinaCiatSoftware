@@ -239,6 +239,16 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllNominasByIdEmpleado(id);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+        public async Task<string> GetAllConceptoEmpleadoByIdEmpleadoDates(long id, DateTime fechaInicio, DateTime fechaFinal)
+        {
+            var result = await httpClientConnection.GetAllConceptoEmpleadoByIdEmpleadoDates(id, fechaInicio, fechaFinal);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetAllPrestamosByIdEmpleadoDates(long id, DateTime fechaInicio, DateTime fechaFinal)
+        {
+            var result = await httpClientConnection.GetAllPrestamosByIdEmpleadoDates(id, fechaInicio, fechaFinal);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
         public async Task<ActionResult> SaveOrUpdateNominasByIdEmpleado(NominaEmpleado ce)
         {
             var result = await httpClientConnection.SaveOrUpdateNominasByIdEmpleado(ce);

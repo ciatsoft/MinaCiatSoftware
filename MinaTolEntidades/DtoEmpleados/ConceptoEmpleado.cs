@@ -15,5 +15,6 @@ namespace MinaTolEntidades.DtoEmpleados
         public decimal Valor {  get; set; }
         public decimal TotalNeto { get; set; }
         public DateTime Fecha {  get; set; }
+        public string TipoCargo { get; set; }
     }
 }

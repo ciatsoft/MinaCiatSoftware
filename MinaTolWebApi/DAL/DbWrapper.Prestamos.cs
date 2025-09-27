@@ -1,14 +1,15 @@
-﻿using System;
+﻿using MinaTolEntidades;
+using MinaTolEntidades.DtoCatalogos;
+using MinaTolEntidades.DtoClientes;
+using MinaTolEntidades.DtoEmpleados;
+using MinaTolEntidades.DtoSucursales;
+using MinaTolEntidades.Security;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
-using MinaTolEntidades.DtoSucursales;
-using MinaTolEntidades;
-using MinaTolEntidades.DtoCatalogos;
-using MinaTolEntidades.Security;
-using System.Data;
-using MinaTolEntidades.DtoClientes;
 
 namespace MinaTolWebApi.DAL
 {
@@ -19,31 +20,15 @@ namespace MinaTolWebApi.DAL
             var response = new ModelResponse();
             try
             {
-                response.IsSuccess = true;
                 var parameters = new List<SqlParameter>();
 
-                var result = GetObjects("GetAllPrestamos", CommandType.StoredProcedure,
-                    parameters, new Func<IDataReader, DtoCatalogoPrestamo>((reader) =>
-                    {
-                        var prestamo = new DtoCatalogoPrestamo
-                        {
-                            Id = reader.GetInt64(reader.GetOrdinal("Id")),
-                            Nombre = reader.GetString(reader.GetOrdinal("Nombre")),
-                            Descripcion = reader.GetString(reader.GetOrdinal("Descripcion")),
-                            Monto = reader.GetDecimal(reader.GetOrdinal("Monto")),
-                            Fecha = reader.GetDateTime(reader.GetOrdinal("Fecha")),
-                            UsuarioName = reader.GetString(reader.GetOrdinal("UsuarioName")),
-                            IdTrabajador = new DtoTrabajador
-                            {
-                                Id = reader.GetInt64(reader.GetOrdinal("IdTrabajador")),
-                                Nombre = reader.GetString(reader.GetOrdinal("NombreTrabajador"))
-                                // Agrega más campos de DtoTrabajador si tu SP los devuelve
-                            },
-                        };
+                var result = GetObjects(
+                    "GetAllPrestamos",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader => FillEntity<DtoCatalogoPrestamo>(reader));
 
-                        return prestamo;
-                    }));
-
+                response.IsSuccess = true;
                 response.Response = result;
             }
             catch (Exception ex)
@@ -54,7 +39,6 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
-
         public ModelResponse GetPrestamosById(int id)
         {
             var response = new ModelResponse();
@@ -76,11 +60,12 @@ namespace MinaTolWebApi.DAL
                         return new DtoCatalogoPrestamo
                         {
                             Id = reader.GetInt64(reader.GetOrdinal("Id")),
-                            IdTrabajador = new DtoTrabajador
-                            {
-                                Id = reader.GetInt64(reader.GetOrdinal("IdTrabajador"))
-                                // Puedes mapear más propiedades si tu SP las retorna
-                            },
+                            IdTrabajador = reader.GetInt64(reader.GetOrdinal("Id")),
+                            //IdTrabajador = new DtoTrabajador
+                            //{
+                            //    Id = reader.GetInt64(reader.GetOrdinal("IdTrabajador"))
+                            //    // Puedes mapear más propiedades si tu SP las retorna
+                            //},
                             Nombre = reader.GetString(reader.GetOrdinal("Nombre")),
                             Descripcion = reader.GetString(reader.GetOrdinal("Descripcion")),
                             Monto = reader.GetDecimal(reader.GetOrdinal("Monto")),

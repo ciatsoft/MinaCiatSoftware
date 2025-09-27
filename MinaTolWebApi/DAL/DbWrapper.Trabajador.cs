@@ -489,6 +489,92 @@ namespace MinaTolWebApi.DAL
 
             return response;
         }
+        public ModelResponse GetAllConceptoEmpleadoByIdEmpleadoDates(long id, DateTime fechaInicio, DateTime fechaFinal)
+        {
+            var response = new ModelResponse();
+
+            try
+            {
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter
+                    {
+                        Value = id,
+                        ParameterName = "@IdTrabajador",
+                        SqlDbType = SqlDbType.BigInt
+                    },
+                    new SqlParameter
+                    {
+                        Value = fechaInicio,
+                        ParameterName = "@FechaInicio",
+                        SqlDbType = SqlDbType.DateTime
+                    },
+                    new SqlParameter
+                    {
+                        Value = fechaFinal,
+                        ParameterName = "@FechaFin",
+                        SqlDbType = SqlDbType.DateTime
+                    }
+                };
+
+                var result = GetList("GetAllConceptoEmpleadoByIdEmpleadoDates", CommandType.StoredProcedure,
+                    parameters, reader => FillEntity<ConceptoEmpleado>(reader));
+
+                response.IsSuccess = true;
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
+        public ModelResponse GetAllPrestamosByIdEmpleadoDates(long id, DateTime fechaInicio, DateTime fechaFinal)
+        {
+            var response = new ModelResponse();
+
+            try
+            {
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter
+                    {
+                        Value = id,
+                        ParameterName = "@IdTrabajador",
+                        SqlDbType = SqlDbType.BigInt
+                    },
+                    new SqlParameter
+                    {
+                        Value = fechaInicio,
+                        ParameterName = "@FechaInicio",
+                        SqlDbType = SqlDbType.DateTime
+                    },
+                    new SqlParameter
+                    {
+                        Value = fechaFinal,
+                        ParameterName = "@FechaFin",
+                        SqlDbType = SqlDbType.DateTime
+                    }
+                };
+
+                var result = GetList("GetAllPrestamosByIdEmpleadoDates", CommandType.StoredProcedure,
+                    parameters, reader => FillEntity<DtoCatalogoPrestamo>(reader));
+
+                response.IsSuccess = true;
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
         public ModelResponse SaveOrUpdateNominasByIdEmpleado(NominaEmpleado u)
         {
             var modelResponse = new ModelResponse();
