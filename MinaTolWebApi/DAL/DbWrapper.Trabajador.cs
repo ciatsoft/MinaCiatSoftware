@@ -621,6 +621,49 @@ namespace MinaTolWebApi.DAL
 
             return response;
         }
+        public ModelResponse SearchNominaEmpleadoByDates(long id, DateTime fechaInicio, DateTime fechaFinal)
+        {
+            var response = new ModelResponse();
+
+            try
+            {
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter
+                    {
+                        Value = id,
+                        ParameterName = "@Id",
+                        SqlDbType = SqlDbType.BigInt
+                    },
+                    new SqlParameter
+                    {
+                        Value = fechaInicio,
+                        ParameterName = "@FechaInicio",
+                        SqlDbType = SqlDbType.DateTime
+                    },
+                    new SqlParameter
+                    {
+                        Value = fechaFinal,
+                        ParameterName = "@FechaFinal",
+                        SqlDbType = SqlDbType.DateTime
+                    }
+                };
+
+                var result = GetList("SearchNominaEmpleadoByDates", CommandType.StoredProcedure,
+                    parameters, reader => FillEntity<NominaEmpleado>(reader));
+
+                response.IsSuccess = true;
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
         #endregion
     }
 }

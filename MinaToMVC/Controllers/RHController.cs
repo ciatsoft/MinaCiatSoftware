@@ -261,6 +261,11 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.DeleteNominasByIdEmpleado(id);
             return Redirect("ConceptosRH");
         }
+        public async Task<string> SearchNominaEmpleadoByDates(long id, DateTime fechaInicio, DateTime fechaFinal)
+        {
+            var result = await httpClientConnection.SearchNominaEmpleadoByDates(id, fechaInicio, fechaFinal);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
         #endregion
         #endregion
     }
