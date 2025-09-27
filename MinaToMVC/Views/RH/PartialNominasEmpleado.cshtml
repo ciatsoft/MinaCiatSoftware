@@ -14,6 +14,8 @@
     var fechaSabado = sabado.ToString("yyyy-MM-dd");
 
     var usuario = @ViewBag.UserToken.UserName;
+    var nombreCompleto = ViewBag.NombreTrabajador;
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
 }
 
 <link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
@@ -23,14 +25,14 @@
 <div class="content">
     <div class="tabla-consultas-roll">
         <div class="rectangulos" style="width: 100%;">
-            <h2>Generar Nomina</h2>
+            <h2>Generar Nomina para @nombreCompleto</h2>
             <div class="row" style="margin-top: 20px;">
                 <div class="col-lg-3">
-                    <label>Fecha del Lunes:</label>
+                    <label>Fecha del Inicio:</label>
                     <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" value="@fechaLunes" readonly>
                 </div>
                 <div class="col-lg-3">
-                    <label>Fecha de Viernes:</label>
+                    <label>Fecha de Fin:</label>
                     <input type="date" class="form-control" id="fechaFinal" name="fechaFinal" value="" readonly>
                     <input type="hidden" class="form-control" id="diaNomina" name="diaNomina" readonly>
                 </div>
@@ -54,11 +56,11 @@
     {
         @Html.HiddenFor(x => x.Id, new { @id = "id" })
         @Html.HiddenFor(x => x.IdTrabajador, new { @id = "idTrabajador", Value = trabajadorId })
-        @Html.HiddenFor(x => x.Estatus)
+        @Html.HiddenFor(x => x.Estatus, new { @id = "estatus" })
         @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy", Value = usuario })
         @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy", Value = usuario })
-        @Html.HiddenFor(x => x.CreatedDt, new { id = "CreatedDt", Value = hoy })
-        @Html.HiddenFor(x => x.UpdatedDt, new { id = "UpdatedDt", Value = hoy })
+        @Html.HiddenFor(x => x.CreatedDt, new { id = "createdDt", Value = fechaActual })
+        @Html.HiddenFor(x => x.UpdatedDt, new { id = "updatedDt", Value = fechaActual })
         @Html.HiddenFor(x => x.FechaInicio, new { @class = "form-control", @id = "fechaInicioRazor", @readonly = "readonly" })
         @Html.HiddenFor(x => x.FechaFinal, new { @class = "form-control", @id = "fechaFinalRazor", @readonly = "readonly" })
         <div class="tabla-consultas-roll">
@@ -82,7 +84,7 @@
                     <div class="col-lg-4">
                         <label>Salario Final Semanal:</label>
                         @Html.TextBoxFor(x => x.SalarioFinal, new { @class = "form-control", @id = "salarioFinal", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly" })
-                    </div>
+                    </div> 
                 </div>
 
                 <div class="row" style="margin-top: 20px;">
@@ -124,6 +126,11 @@
                         return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
                     }
                 },
+                {
+                    data: 'fecha', title: 'Fecha', render: function (data) {
+                        return data ? new Date(data).toISOString().split('T')[0] : '';
+                    }
+                }
             ],
             language: {
                 decimal: ",",
@@ -449,6 +456,77 @@
                     text: 'Error al cargar el Salario Activo del Empleado: ' + r.ErrorMessage,
                     icon: 'error',
                     confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+
+    function SaveOrUpdateNominasByIdEmpleado() {
+        // Función para limpiar formato de moneda
+        function limpiarFormatoMoneda(valor) {
+            if (!valor) return "0";
+            // Remover comas y convertir a número
+            return valor.toString().replace(/,/g, '');
+        }
+
+        // Actualizar campos hidden antes de enviar
+        $("#fechaInicioRazor").val($("#fechaInicio").val());
+        $("#fechaFinalRazor").val($("#fechaFinal").val());
+
+        var parametro = {
+            Id: parseInt($("#id").val()) || 0,
+            IdTrabajador: parseInt($("#idTrabajador").val()) || 0,
+            FechaInicio: $("#fechaInicioRazor").val(),
+            FechaFinal: $("#fechaFinalRazor").val(),
+            DiaNomina: $("#diaNominaHidden").val() || "5",
+            SalarioSemanal: parseFloat(limpiarFormatoMoneda($("#salarioSemanal").val())) || 0,
+            Aumento: parseFloat(limpiarFormatoMoneda($("#aumento").val())) || 0,
+            Descuento: parseFloat(limpiarFormatoMoneda($("#descuento").val())) || 0,
+            SalarioFinal: parseFloat(limpiarFormatoMoneda($("#salarioFinal").val())) || 0,
+            Estatus: true,
+            CreatedBy: $("#createdBy").val(),
+            CreatedDt: $("#createdDt").val(),
+            UpdatedBy: $("#updatedBy").val(),
+            UpdatedDt: $("#updatedDt").val()
+        }
+
+        // Debug para verificar los valores convertidos
+        console.log('Valores convertidos:');
+        console.log('SalarioSemanal:', parametro.SalarioSemanal);
+        console.log('Aumento:', parametro.Aumento);
+        console.log('Descuento:', parametro.Descuento);
+        console.log('SalarioFinal:', parametro.SalarioFinal);
+        console.log('Parámetro completo:', JSON.stringify(parametro, null, 2));
+
+        // Validaciones
+        if (!parametro.IdTrabajador || parametro.IdTrabajador <= 0) {
+            Swal.fire('Error', 'ID de trabajador no válido', 'error');
+            return;
+        }
+
+        if (!parametro.FechaInicio || !parametro.FechaFinal) {
+            Swal.fire('Error', 'Fechas de inicio y fin son requeridas', 'error');
+            return;
+        }
+
+        PostMVC('/RH/SaveOrUpdateNominasByIdEmpleado', parametro, function (r) {
+            if (r.IsSuccess) {
+                Swal.fire({
+                    title: "Registro guardado!",
+                    text: "El registro se ha guardado correctamente.",
+                    icon: "success",
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.reload();
+                });
+            } else {
+                Swal.fire({
+                    title: "Registro guardado!",
+                    text: "El registro se ha guardado correctamente.",
+                    icon: "success",
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.reload();
                 });
             }
         });

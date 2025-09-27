@@ -3,6 +3,7 @@
     var trabajadorId = (long)ViewBag.TrabajadorId;
     var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
     var usuario = @ViewBag.UserToken.UserName;
+    var nombreCompleto = ViewBag.NombreTrabajador;
 }
 
 <link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
@@ -25,7 +26,7 @@
         <br />
         <div class="tabla-consultas-roll">
             <div class="rectangulos" style="width: 100%;">
-                <h2>Agregar Concepto</h2>
+                <h2>Agregar Concepto para @nombreCompleto</h2>
 
                 <div class="row" style="margin-top: 20px;">
                     <div class="col-lg-4">

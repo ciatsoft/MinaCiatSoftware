@@ -85,7 +85,7 @@ namespace MinaToMVC.Controllers
         #endregion
 
         #region VistasParciales
-        public async Task<ActionResult> PartialConceptosEmpleado(long id = 0)
+        public async Task<ActionResult> PartialConceptosEmpleado(long id = 0, string nombreCompleto = "")
         {
             var usuarioToken = SessionHelper.GetSessionUser();
             var usuario = new List<Usuario>()
@@ -125,11 +125,12 @@ namespace MinaToMVC.Controllers
             ViewBag.UserToken = usuarioAutenticado;
             ViewBag.Usuarios = usuarios;
             ViewBag.TrabajadorId = id;
+            ViewBag.NombreTrabajador = nombreCompleto;
 
             return PartialView();
         }
 
-        public async Task<ActionResult> PartialNominasEmpleado(long id = 0)
+        public async Task<ActionResult> PartialNominasEmpleado(long id = 0, string nombreCompleto = "")
         {
             var usuarioToken = SessionHelper.GetSessionUser();
             var usuario = new List<Usuario>()
@@ -146,6 +147,7 @@ namespace MinaToMVC.Controllers
             ViewBag.UserToken = usuarioAutenticado;
             ViewBag.Usuarios = usuarios;
             ViewBag.TrabajadorId = id;
+            ViewBag.NombreTrabajador = nombreCompleto;
 
             return PartialView();
         }
