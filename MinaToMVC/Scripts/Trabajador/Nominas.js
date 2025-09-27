@@ -94,3 +94,15 @@ function NominasEmpleado(id, nombreCompleto) {
         $("#genericModal").modal("show");
     });
 }
+
+function HistorialNominas(id, nombreCompleto) {
+    $("#genericModal").removeData('bs.modal');
+    $("#boddyGeericModal").empty();
+
+    $("#titleGenerciModal").text("Historial de Nominas");
+
+    // Enviar nombreCompleto como parámetro en la URL
+    $("#boddyGeericModal").load("/RH/PartialHistorialNominas/" + id + "?nombreCompleto=" + encodeURIComponent(nombreCompleto), function () {
+        $("#genericModal").modal("show");
+    });
+}

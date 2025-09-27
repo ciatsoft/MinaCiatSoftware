@@ -37,7 +37,7 @@
                     <input type="hidden" class="form-control" id="diaNomina" name="diaNomina" readonly>
                 </div>
                 <div class="col-lg-5">
-                    <input type="button" value="Buscar Conceptos" onclick="GetAllConceptoEmpleadoByIdEmpleadoDates()" class="btn btn-success" />
+                    <input type="button" value="Calcular Nomina Semanal" onclick="GetAllConceptoEmpleadoByIdEmpleadoDates()" class="btn btn-success" />
                 </div>
             </div>
         </div>
@@ -488,6 +488,11 @@
             CreatedDt: $("#createdDt").val(),
             UpdatedBy: $("#updatedBy").val(),
             UpdatedDt: $("#updatedDt").val()
+        }
+
+        if (parametro.SalarioFinal == 0) {
+            Swal.fire('Error', 'No se ha calculado la nomina aun.', 'error');
+            return;
         }
 
         // Validaciones
