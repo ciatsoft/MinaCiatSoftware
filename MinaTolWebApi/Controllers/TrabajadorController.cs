@@ -190,6 +190,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetAllPrestamosByIdEmpleadoDates(id, fechaInicio, fechaFinal);
             return result;
         }
+        [HttpGet, Route("SearchNominaEmpleadoByDates/{id:long}/{fechaInicio}/{fechaFinal}")]
+        public ModelResponse SearchNominaEmpleadoByDates(long id, DateTime fechaInicio, DateTime fechaFinal)
+        {
+            var result = wrapper.SearchNominaEmpleadoByDates(id, fechaInicio, fechaFinal);
+            return result;
+        }
         #endregion
     }
 }

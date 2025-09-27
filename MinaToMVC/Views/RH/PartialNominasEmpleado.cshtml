@@ -89,7 +89,7 @@
 
                 <div class="row" style="margin-top: 20px;">
                     <div class="col-md-12">
-                        <input type="button" value="Guardar" onclick="SaveOrUpdateNominasByIdEmpleado()" class="btn btn-success" />
+                        <input type="button" value="Guardar" onclick="SearchNominaEmpleadoByDates()" class="btn btn-success" />
                         <a href="/RH/NominaEmpleado" class="btn btn-custom-cancel">Cancelar</a>
                     </div>
                 </div>
@@ -490,14 +490,6 @@
             UpdatedDt: $("#updatedDt").val()
         }
 
-        // Debug para verificar los valores convertidos
-        console.log('Valores convertidos:');
-        console.log('SalarioSemanal:', parametro.SalarioSemanal);
-        console.log('Aumento:', parametro.Aumento);
-        console.log('Descuento:', parametro.Descuento);
-        console.log('SalarioFinal:', parametro.SalarioFinal);
-        console.log('Parámetro completo:', JSON.stringify(parametro, null, 2));
-
         // Validaciones
         if (!parametro.IdTrabajador || parametro.IdTrabajador <= 0) {
             Swal.fire('Error', 'ID de trabajador no válido', 'error');
@@ -531,4 +523,58 @@
             }
         });
     }
+
+    function SearchNominaEmpleadoByDates() {
+        // Obtener el ID del empleado
+        var idEmpleado = @trabajadorId;
+
+        // Obtener valores de los inputs de fecha
+        var fechaInicio = document.getElementById('fechaInicio').value;
+        var fechaFinal = document.getElementById('fechaFinal').value;
+
+        // Validar que las fechas no estén vacías
+        if (!fechaInicio || !fechaFinal) {
+            Swal.fire({
+                title: 'Advertencia',
+                text: 'Por favor, seleccione ambas fechas',
+                icon: 'warning',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
+
+        // Convertir strings a objetos Date
+        var fechaInicioDate = new Date(fechaInicio);
+        var fechaFinalDate = new Date(fechaFinal);
+
+        // Construir la URL
+        const url = `/RH/SearchNominaEmpleadoByDates?id=${idEmpleado}&fechaInicio=${fechaInicio}&fechaFinal=${fechaFinal}`;
+
+        GetMVC(url, function (r) {
+            if (r.IsSuccess) {
+                // CORRECCIÓN: Lógica invertida
+                if (r.Response != null && r.Response.length > 0) {
+                    // Si hay datos en la respuesta, significa que YA EXISTE una nómina
+                    Swal.fire({
+                        title: 'Nómina Ya Generada',
+                        text: 'Ya se generó la nómina semanal, no puedes generar una nueva. Por favor consulta el historial de nóminas del empleado y eliminala si es necesario.',
+                        icon: 'warning',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    return;
+                } else {
+                    // Si NO hay datos, podemos generar una nueva nómina
+                    SaveOrUpdateNominasByIdEmpleado();
+                }
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar los Conceptos del Empleado: ' + r.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+
 </script>
