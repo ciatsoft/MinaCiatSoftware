@@ -178,6 +178,18 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.DeleteNominasByIdEmpleado(id);
             return result;
         }
+        [HttpGet, Route("GetAllConceptoEmpleadoByIdEmpleadoDates/{id:long}/{fechaInicio}/{fechaFinal}")]
+        public ModelResponse GetAllConceptoEmpleadoByIdEmpleadoDates(long id, DateTime fechaInicio, DateTime fechaFinal)
+        {
+            var result = wrapper.GetAllConceptoEmpleadoByIdEmpleadoDates(id, fechaInicio, fechaFinal);
+            return result;
+        }
+        [HttpGet, Route("GetAllPrestamosByIdEmpleadoDates/{id:long}/{fechaInicio}/{fechaFinal}")]
+        public ModelResponse GetAllPrestamosByIdEmpleadoDates(long id, DateTime fechaInicio, DateTime fechaFinal)
+        {
+            var result = wrapper.GetAllPrestamosByIdEmpleadoDates(id, fechaInicio, fechaFinal);
+            return result;
+        }
         #endregion
     }
 }

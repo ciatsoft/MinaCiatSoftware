@@ -1,6 +1,7 @@
-﻿using MinaTolEntidades;
+﻿    using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoClientes;
+using MinaTolEntidades.DtoEmpleados;
 using MinaTolEntidades.DtoSucursales;
 using MinaTolEntidades.DtoVentaPublicoGeneral;
 using MinaTolEntidades.DtoVentas;
@@ -652,9 +653,9 @@ namespace MinaToMVC.Controllers
             var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
             var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
 
-            var trabajadores = new List<DtoTrabajador>();
+            var trabajadores = new List<Empleado>();
             var responsetrabajadores = await httpClientConnection.GetAllEmpleados();
-            trabajadores = JsonConvert.DeserializeObject<List<DtoTrabajador>>(responsetrabajadores.Response.ToString());
+            trabajadores = JsonConvert.DeserializeObject<List<Empleado>>(responsetrabajadores.Response.ToString());
 
             ViewBag.UserToken = usuarioAutenticado;
             ViewBag.Usuarios = usuarios;
