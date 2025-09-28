@@ -34,33 +34,33 @@
                         @Html.DropDownListFor(x => x.IdConceptoEmpleado,
                             (IEnumerable<SelectListItem>)ViewBag.ConceptosEmpleados,
                             "Seleccione un Tipo De Concepto",
-                            new { @class = "form-control", @id = "ddlConceptoEmpleado" })
+                            new { @class = "form-control", @id = "ddlConceptoEmpleado", @required = "required" })
                     </div>
                     <div class="col-lg-4">
                         <label>Tipo de Cargo:</label>
-                        @Html.TextBoxFor(x => x.TipoCargo, new { @class = "form-control", @id = "TipoCargo", @readonly = "readonly" })
+                        @Html.TextBoxFor(x => x.TipoCargo, new { @class = "form-control", @id = "TipoCargo", @readonly = "readonly", @required = "required" })
                     </div>
 
                     <div class="col-lg-4">
                         <label>Cantidad:</label>
-                        @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control", @id = "cantidad", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
+                        @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control", @id = "cantidad", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @required = "required" })
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-lg-4">
                         <label>Valor:</label>
-                        @Html.TextBoxFor(x => x.Valor, new { @class = "form-control", @id = "valor", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
+                        @Html.TextBoxFor(x => x.Valor, new { @class = "form-control", @id = "valor", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @required = "required" })
                     </div>
 
                     <div class="col-lg-4">
                         <label>Total Neto:</label>
-                        @Html.TextBoxFor(x => x.TotalNeto, new { @class = "form-control", @id = "totalNeto", @readonly = "readonly" })
+                        @Html.TextBoxFor(x => x.TotalNeto, new { @class = "form-control", @id = "totalNeto", @readonly = "readonly", @required = "required" })
                     </div>
 
                     <div class="col-lg-4">
                         <label>Fecha:</label>
-                        @Html.TextBoxFor(x => x.Fecha, new { @class = "form-control", @id = "fecha", Value = fechaActual, @readonly = "readonly" })
+                        @Html.TextBoxFor(x => x.Fecha, new { @class = "form-control", @id = "fecha", Value = fechaActual, @readonly = "readonly", @required = "required" })
                     </div>
                 </div>
 
@@ -83,6 +83,14 @@
 
 <script>
     $(document).ready(function () {
+
+        $('form').submit(function (e) {
+            if ($('#ddlConceptoEmpleado').val() === '') {
+                e.preventDefault();
+                alert('Por favor, seleccione un concepto empleado');
+                $('#ddlConceptoEmpleado').focus();
+            }
+        });
 
         // Función para calcular el total automáticamente
         function calcularTotal() {
@@ -359,4 +367,4 @@
             }
         });
     }
-</script>
+                        </script>
