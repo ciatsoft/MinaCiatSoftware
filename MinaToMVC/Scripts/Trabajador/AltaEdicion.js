@@ -53,10 +53,16 @@
                 }
             },
             {
-                data: "id", title: "Acciones", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarEmpleado(' + data + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarEmpleado(' + data + ')"/>' +
-                        ' <input type="button" value="Salarios" class="btn btn-success btn-lg-custom" onclick="AsignarSalario(' + data + ')"/>';
+                data: null, // Accede a TODA la fila 
+                title: "Acciones",
+                render: function (data, type, row) {
+
+                    var nombreCompleto = `${row.apellidoPaterno} ${row.apellidoMaterno} ${row.nombre}`; // Aqui se contruye el nombre completo
+
+                    //Agregaremos Nombre aparte del Id SOLO para Eliminar
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarEmpleado(' + row.id + ')" />' +
+                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarEmpleado(' + row.id + ', \'' + nombreCompleto + '\')"/>' + //Aqui se implementa ID y NOMBRECOMPLETO
+                        ' <input type="button" value="Salarios" class="btn btn-success btn-lg-custom" onclick="AsignarSalario(' + row.id + ')"/>';
                 }
             },
         ],
@@ -194,30 +200,18 @@ function EditarEmpleado(id) {
     location.href = "/Empleado/AltaEdicion/" + id;
 }
 
-function EliminarEmpleado(id) {
-    Swal.fire({
-        title: '¿Estas seguro?',
-        text: "¿Desea eliminar el siguiente registro?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            var parametro = { Id: id };
+function EliminarEmpleado(id, nombreCompleto) {
 
-            PostMVC('/Empleado/DeleteEmpleadoById', parametro, function (r) {
-                if (r.IsSuccess) {
-                    Swal.fire('Eliminado', 'El Empleado ha sido eliminado.', 'success')
-                        .then(() => { window.location.reload(); });
-                } else {
-                    Swal.fire('Eliminado', 'El Empleado ha sido eliminado.', 'success')
-                        .then(() => { window.location.reload(); });
-                }
-            });
-        }
+    //Agregamos funciones para abrir el modal y mandar esos parametros
+
+    $("#genericModal").removeData('bs.modal');
+    $("#boddyGeericModal").empty();
+
+    $("#titleGenerciModal").text("Baja de Empleado");
+
+    // Enviar nombreCompleto como parámetro en la URL
+    $("#boddyGeericModal").load("/Empleado/PartialBajaEmpleado/" + id + "?nombreCompleto=" + encodeURIComponent(nombreCompleto), function () {
+        $("#genericModal").modal("show");
     });
 }
 

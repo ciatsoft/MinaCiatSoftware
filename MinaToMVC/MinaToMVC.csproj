@@ -181,6 +181,7 @@
     <Content Include="Scripts\Taller\CatalogoInventario.js" />
     <Content Include="Scripts\Taller\InventarioTaller.js" />
     <Content Include="Scripts\Trabajador\AltaEdicion.js" />
+    <Content Include="Scripts\Trabajador\BajaEmpleados.js" />
     <Content Include="Scripts\Trabajador\ConceptosRH.js" />
     <Content Include="Scripts\Trabajador\Documento.js" />
     <Content Include="Scripts\Trabajador\Nominas.js" />
@@ -337,6 +338,8 @@
     <Content Include="Views\RH\PartialConceptosEmpleado.cshtml" />
     <Content Include="Views\RH\PartialNominasEmpleado.cshtml" />
     <Content Include="Views\RH\PartialHistorialNominas.cshtml" />
+    <Content Include="Views\Empleado\PartialBajaEmpleado.cshtml" />
+    <Content Include="Views\RH\BajaEmpleados.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

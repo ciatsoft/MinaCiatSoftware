@@ -140,6 +140,30 @@ namespace MinaToMVC.Controllers
             return PartialView();
         }
 
+        //Creamos vista parcial VAMOS A DEPURAR
+        public async Task<ActionResult> PartialBajaEmpleado(long id = 0, string nombreCompleto = "")
+        {
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            // Aqui se viene este detalle de mandar como ViewBag
+            ViewBag.TrabajadorId = id;
+            ViewBag.NombreTrabajador = nombreCompleto;
+
+            return PartialView();
+        }
 
         #endregion
 
