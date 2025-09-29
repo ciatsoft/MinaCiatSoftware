@@ -284,5 +284,20 @@ namespace MinaToMVC.DAL
             return modelResponse;
         }
         #endregion
+
+        #region BajaEmpleado
+        public async Task<ModelResponse> SaveOrUpdateBajasEmpleado(DtoBajasEmpleado ce)
+        {
+            var result = await RequestAsync<object>("api/BajasEmpleado/", HttpMethod.Post, ce,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+
+        #endregion
     }
 }

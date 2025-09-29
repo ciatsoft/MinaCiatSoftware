@@ -1,6 +1,8 @@
-﻿
+﻿@model MinaTolEntidades.DtoEmpleados.DtoBajasEmpleado
 @{
     var trabajadorId = (long)ViewBag.TrabajadorId;
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
+    var usuario = @ViewBag.UserToken.UserName;
     var nombreCompleto = ViewBag.NombreTrabajador;
 }
 
@@ -9,10 +11,103 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 
 <div class="content">
-    <div class="tabla-consultas-roll">
-        <div class="rectangulos" style="width: 100%;">
-            <h2>Dar de Baja a @nombreCompleto</h2>
+    @using (Html.BeginForm("SaveOrUpdateBajasEmpleado", "RH", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmBajaEmpleado" }))
+    {
+        @Html.HiddenFor(x => x.Id, new { Value = 0 })
+        @Html.HiddenFor(x => x.IdTrabajador, new { Value = trabajadorId })
+        @Html.HiddenFor(x => x.Nombre, new { Value = nombreCompleto })
+        @Html.HiddenFor(x => x.CreatedBy, new { Value = usuario })
+        @Html.HiddenFor(x => x.UpdatedBy, new { Value = usuario })
+        @Html.HiddenFor(x => x.CreatedDt, new { Value = fechaActual })
+        @Html.HiddenFor(x => x.UpdatedDt, new { Value = fechaActual })
 
+        <br />
+        <div class="tabla-consultas-roll">
+            <div class="rectangulos" style="width: 100%;">
+                <h2>Dar de Baja a @nombreCompleto</h2>
+
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-lg-6">
+                        <label>Fecha de Baja:</label>
+                        @Html.TextBoxFor(x => x.Fecha, new { type = "date", required = "required", @class = "form-control", Value = fechaActual })
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-lg-12">
+                        <label>Comentarios:</label>
+                        @Html.TextBoxFor(x => x.Comentario, new { type = "text", required = "required", @class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12">
+                        <input type="button" value="Guardar" onclick="SaveOrUpdateBajasEmpleado()" class="btn btn-success" />
+                        <a href="/RH/BajaEmpleados" class="btn btn-custom-cancel">Cancelar</a>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    }
 </div>
+
+<script>
+    $(document).ready(function () {
+        // Validación del formulario
+        $("#frmBajaEmpleado").validate({
+            rules: {
+                Fecha: {
+                    required: true,
+                    date: true
+                },
+                Comentario: "required"
+            },
+            messages: {
+                Fecha: {
+                    required: "Por favor ingresa la fecha de baja",
+                    date: "Por favor ingresa una fecha válida"
+                },
+                Comentario: "Por favor ingresa un comentario"
+            }
+        });
+    });
+
+    function SaveOrUpdateBajasEmpleado() {
+        if ($("#frmBajaEmpleado").valid()) {
+            // Usar el formulario directamente en lugar de construir el objeto manualmente
+            var formData = $("#frmBajaEmpleado").serialize();
+
+            // Enviar usando el formulario serializado
+            $.post('/RH/SaveOrUpdateBajasEmpleado', formData, function (r) {
+                if (r.IsSuccess) {
+                    Swal.fire({
+                        title: "Baja registrada!",
+                        text: "La baja del empleado se ha registrado correctamente.",
+                        icon: "success",
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        // Redirigir directamente desde el cliente
+                        window.location.href = "/Empleado/AltaEdicion";
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Baja registrada!",
+                        text: "La baja del empleado se ha registrado correctamente.",
+                        icon: "success",
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        // Redirigir directamente desde el cliente
+                        window.location.href = "/Empleado/AltaEdicion";
+                    });
+                }
+            }).fail(function (xhr, status, error) {
+                Swal.fire({
+                    title: "Error!",
+                    text: "Error en la petición: " + error,
+                    icon: "error",
+                    confirmButtonText: 'OK'
+                });
+            });
+        }
+    }
+</script>
