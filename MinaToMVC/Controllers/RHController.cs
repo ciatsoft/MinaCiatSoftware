@@ -82,6 +82,26 @@ namespace MinaToMVC.Controllers
 
             return View(conceptosEmpleado);
         }
+
+        public async Task<ActionResult> BajaEmpleados(long id = 0)
+        {
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            return View();
+        }
         #endregion
 
         #region VistasParciales
