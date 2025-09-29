@@ -1,0 +1,150 @@
+﻿@{
+    var trabajadorId = (long)ViewBag.TrabajadorId;
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
+    var usuario = @ViewBag.UserToken.UserName;
+    var nombreCompleto = ViewBag.NombreTrabajador;
+}
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+<div class="content">
+    <div class="tabla-consultas-roll">
+        <div class="rectangulos" style="width: 100%;">
+            <h2>Historial de Nominas de @nombreCompleto</h2>
+            <br />
+            <div class="row">
+                <div class="col-lg-12">
+                    <table class="table table-bordered table-striped" id="tblHistorialNominas" style="width: 100%;"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#tblHistorialNominas").DataTable({
+            data: [],
+            columns: [
+                { data: 'id', title: 'ID', visible: false },
+                {
+                    data: 'fechaInicio',
+                    title: 'Fecha de Inicio',
+                    render: function (data) {
+                        if (data) {
+                            var fecha = new Date(data);
+                            return fecha.toLocaleDateString('es-MX');
+                        }
+                        return '';
+                    }
+                },
+                {
+                    data: 'fechaFinal',
+                    title: 'Fecha de Final',
+                    render: function (data) {
+                        if (data) {
+                            var fecha = new Date(data);
+                            return fecha.toLocaleDateString('es-MX');
+                        }
+                        return '';
+                    }
+                },
+                {
+                    data: 'salarioSemanal', title: 'Salario Semanal', render: function (data) {
+                        return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
+                    }
+                },
+                {
+                    data: 'aumento', title: 'Aumento', render: function (data) {
+                        return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
+                    }
+                },
+                {
+                    data: 'descuento', title: 'Descuento', render: function (data) {
+                        return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
+                    }
+                },
+                {
+                    data: 'salarioFinal', title: 'Salario Final', render: function (data) {
+                        return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
+                    }
+                },
+                {
+                    data: "id", title: "Acciones", render: function (data) {
+                        return '<input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarNomina(' + data + ')"/>' +
+                            '<input type="button" style="margin-top: 10px;" value="Imprimir" class="btn btn-custom-clean" onclick="ImprimirNomina(' + data + ')"/>';
+                    }
+                }
+            ],
+            order: [[0, 'desc']],
+            language: {
+                "decimal": ",",
+                "thousands": ".",
+                "processing": "Procesando...",
+                "lengthMenu": "Mostrar _MENU_ entradas",
+                "zeroRecords": "No se encontraron resultados",
+                "emptyTable": "Ningun dato disponible en esta tabla",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+                "search": "Buscar:",
+                "loadingRecords": "Cargando...",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                    "sortDescending": ": activar para ordenar la columna de manera descendente"
+                }
+            }
+        });
+
+        GetAllNominasByIdEmpleado(@trabajadorId);
+    });
+
+    function GetAllNominasByIdEmpleado(id){
+        GetMVC(`/RH/GetAllNominasByIdEmpleado?id=${id}`, function (r) {
+            if (r.IsSuccess) {
+                MapingPropertiesDataTable("tblHistorialNominas", r.Response);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar el Historial de Nominas: ' + r.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+
+    function EliminarNomina(id) {
+        Swal.fire({
+            title: '¿Estas seguro?',
+            text: "¿Desea eliminar el siguiente registro?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var parametro = { Id: id };
+
+                PostMVC('/RH/DeleteNominasByIdEmpleado', parametro, function (r) {
+                    if (r.IsSuccess) {
+                        Swal.fire('Eliminado', 'La Nomina ha sido eliminada.', 'success')
+                            .then(() => { window.location.reload(); });
+                    } else {
+                        Swal.fire('Eliminado', 'La Nomina ha sido eliminada.', 'success')
+                            .then(() => { window.location.reload(); });
+                    }
+                });
+            }
+        });
+    }
+</script>

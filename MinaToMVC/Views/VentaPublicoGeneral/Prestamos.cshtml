@@ -3,7 +3,7 @@
     ViewBag.Title = "Prestamos";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    var trabajadores = (List<MinaTolEntidades.DtoSucursales.DtoTrabajador>)ViewBag.Trabajadores;
+    var trabajadores = (List<MinaTolEntidades.DtoEmpleados.Empleado>)ViewBag.Trabajadores;
 }
 
 <link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
@@ -31,14 +31,17 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-4">
-                        <label>Nombre:</label>
-                        @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control", @id = "nombre" })
-                    </div>
+                        @Html.HiddenFor(x => x.Nombre, new { @class = "form-control", @id = "nombre", @value = "Nombre" })
+                        @Html.HiddenFor(x => x.NombreTrabajador, new { @class = "form-control", @id = "nombreTrabajador" })
                     <div class="col-lg-4">
                         <label>Trabajador:</label>
                         @Html.DropDownListFor(x => x.IdTrabajador,
-                            new SelectList(trabajadores, "Id", "Nombre", Model.IdTrabajador),
+                            new SelectList(trabajadores.Select(t => new
+                            {
+                                Id = t.Id,
+                                NombreCompleto =  t.ApellidoPaterno + " " + t.ApellidoMaterno + " " + t.Nombre,
+                                ApellidoPaterno = t.ApellidoPaterno
+                            }).OrderBy(t => t.ApellidoPaterno), "Id", "NombreCompleto", Model.IdTrabajador),
                             "Seleccione un trabajador",
                             new { @class = "form-control", @id = "ddlTransportistas" })
                     </div>

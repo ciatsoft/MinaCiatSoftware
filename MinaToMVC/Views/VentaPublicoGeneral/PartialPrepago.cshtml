@@ -19,19 +19,16 @@
     @Html.HiddenFor(x => x.UpdatedDt, new { @Value = fechaActual, @id = "updatedDtModal" })
 
     <div class="content">
-        <br />
         <div class="tabla-consultas-roll">
             <div class="rectangulos" style="width: 100%;">
                 <h2>Crear Valera de Prepago</h2>
-
                 <!-- Sección de campos de auditoría visibles -->
                 <div class="row" style="margin-top: 20px;">
                     <div class="col-lg-4">
                         <label>Folio:</label>
-                        @Html.TextBoxFor(x => x.Folio, new { @class = "form-control no-select", @type = "number", id = "folioModal", @readonly = "readonly", @Value = "" })
+                        @Html.HiddenFor(x => x.Folio, new { @class = "form-control no-select", @type = "number", id = "folioModal", @readonly = "readonly"})
                     </div>
                 </div>
-
                 <!-- Campos del formulario -->
                 <div class="row" style="margin-top: 20px;">
                     <!-- Primera fila -->
@@ -268,63 +265,67 @@ $(document).ready(function() {
             $("#importeVenta").val("");
         }
     }
+
     $("#btnGuardarPrepago").click(async function() {
-        // Validar cantidad de vales
-        var cantidadVales = parseInt($("#cantidadVales").val());
-        if (isNaN(cantidadVales) || cantidadVales <= 0) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Debe ingresar una cantidad válida de vales (mayor a 0)',
-                confirmButtonText: 'Aceptar'
-            });
-            return;
-        }
-
-        // Obtener el folio base
-        var folioBase = $("#folioModal").val();
-        var numeroFolio = parseInt(folioBase) || 0;
-
-        // Calcular folio inicial y final
-        var folioInicio = numeroFolio.toString().padStart(5, '0');
-        var folioFinal = (numeroFolio + cantidadVales - 1).toString().padStart(5, '0');
-
-        // Crear array para guardar todos los vales
-        var valesParaGuardar = [];
-
-        for (var i = 0; i < cantidadVales; i++) {
-            var vale = {
-                Id: $("#id").val(),
-                Estatus: $("#Estatus").val(),
-                CreatedBy: $("#createdByModal").val(),
-                UpdatedBy: $("#updatedByModal").val(),
-                CreatedDt: $("#createdDtModal").val(),
-                UpdatedDt: $("#updatedDtModal").val(),
-                Folio: (numeroFolio + i).toString().padStart(5, '0'),
-                IdMaterial: $("#idMaterial").val(),
-                CantidadM3: $("#cantidadM3").val(),
-                M3Faltantes: $("#cantidadM3").val(),
-                PrecioUnidad: $("#precioUnidad").val(),
-                ImporteVenta: $("#importeVenta").val(),
-                RFID: $("#rfidModal").val(),
-                IdCliente: $("#idCliente").val(),
-                NombreCliente: $("#nombreClienteModal").val(),
-                CantidadVales: cantidadVales.toString(),
-                Fecha: $("#fechaModal").val(),
-                NoVale: (i + 1),
-                NombreMaterial: $("#idMaterial option:selected").text(),
-                UserName: "@usuarioToken.UserName",
-                // Agregamos los nuevos campos de auditoría
-                FolioInicio: folioInicio,
-                FolioFinal: folioFinal
-            };
-            valesParaGuardar.push(vale);
-        }
-
-        // Deshabilitar botón
-        $("#btnGuardarPrepago").prop("disabled", true).text("Guardando...");
-
         try {
+            // Primero obtener el folio base
+            const folioBase = await obtenerUltimoFolio();
+            $('#folioModal').val(folioBase);
+
+            // Validar cantidad de vales
+            var cantidadVales = parseInt($("#cantidadVales").val());
+            if (isNaN(cantidadVales) || cantidadVales <= 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Debe ingresar una cantidad válida de vales (mayor a 0)',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
+
+            // Obtener el folio base
+            var numeroFolio = parseInt(folioBase) || 0;
+
+            // Calcular folio inicial y final
+            var folioInicio = numeroFolio.toString().padStart(5, '0');
+            var folioFinal = (numeroFolio + cantidadVales - 1).toString().padStart(5, '0');
+
+            // Crear array para guardar todos los vales
+            var valesParaGuardar = [];
+
+            for (var i = 0; i < cantidadVales; i++) {
+                var vale = {
+                    Id: $("#id").val(),
+                    Estatus: $("#Estatus").val(),
+                    CreatedBy: $("#createdByModal").val(),
+                    UpdatedBy: $("#updatedByModal").val(),
+                    CreatedDt: $("#createdDtModal").val(),
+                    UpdatedDt: $("#updatedDtModal").val(),
+                    Folio: (numeroFolio + i).toString().padStart(5, '0'),
+                    IdMaterial: $("#idMaterial").val(),
+                    CantidadM3: $("#cantidadM3").val(),
+                    M3Faltantes: $("#cantidadM3").val(),
+                    PrecioUnidad: $("#precioUnidad").val(),
+                    ImporteVenta: $("#importeVenta").val(),
+                    RFID: $("#rfidModal").val(),
+                    IdCliente: $("#idCliente").val(),
+                    NombreCliente: $("#nombreClienteModal").val(),
+                    CantidadVales: cantidadVales.toString(),
+                    Fecha: $("#fechaModal").val(),
+                    NoVale: (i + 1),
+                    NombreMaterial: $("#idMaterial option:selected").text(),
+                    UserName: "@usuarioToken.UserName",
+                    // Agregamos los nuevos campos de auditoría
+                    FolioInicio: folioInicio,
+                    FolioFinal: folioFinal
+                };
+                valesParaGuardar.push(vale);
+            }
+
+            // Deshabilitar botón
+            $("#btnGuardarPrepago").prop("disabled", true).text("Guardando...");
+
             // Enviar TODOS los vales en un solo arreglo
             const response = await enviarVales(valesParaGuardar);
 
@@ -343,7 +344,7 @@ $(document).ready(function() {
                 didOpen: () => {
                     Swal.showLoading();
 
-                    // Cerrar automáticamente después de 8 segundos
+                    // Cerrar automáticamente después de 4 segundos
                     setTimeout(() => {
                         Swal.close();
 
@@ -359,7 +360,7 @@ $(document).ready(function() {
                                 window.location.href = '/VentaPublicoGeneral/Index';
                             }
                         });
-                    }, 4000); // 4000 ms = 4 segundos
+                    }, 4000);
                 }
             });
 
@@ -447,45 +448,42 @@ $(document).ready(function() {
         });
     }
 
-    // Función para obtener el último FOLIO registrado en la base de datos (Modificar a que sea a base del boton de guardado)
+    // Función para obtener el último folio disponible
     function obtenerUltimoFolio() {
-        $.ajax({
-            url: '/VentaPublicoGeneral/GetUltimoFolio',
-            type: 'GET',
-            dataType: 'json',
-            success: function (response) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/VentaPublicoGeneral/GetUltimoFolio',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    var ultimoFolio = null;
 
-                var ultimoFolio = null;
+                    if (response.IsSuccess && Array.isArray(response.Response) && response.Response.length > 0) {
+                        // Tomar el primer elemento del array (que debería ser el último registro)
+                        var ultimoRegistro = response.Response[0];
 
-                if (response.IsSuccess && Array.isArray(response.Response) && response.Response.length > 0) {
-                    // Tomar el primer elemento del array (que debería ser el último registro)
-                    var ultimoRegistro = response.Response[0];
-
-                    // Extraer el folio del objeto y convertirlo a número
-                    if (ultimoRegistro.folio) {
-                        // Convertir a número, sumar 1, y luego formatear con ceros a la izquierda
-                        var folioNumerico = parseInt(ultimoRegistro.folio) || 0;
-                        ultimoFolio = (folioNumerico + 1).toString().padStart(5, '0');
+                        // Extraer el folio del objeto y convertirlo a número
+                        if (ultimoRegistro.folio) {
+                            // Convertir a número, sumar 1, y luego formatear con ceros a la izquierda
+                            var folioNumerico = parseInt(ultimoRegistro.folio) || 0;
+                            ultimoFolio = (folioNumerico + 1).toString().padStart(5, '0');
+                        }
                     }
-                }
 
-                // Solo actualizar si se obtuvo un valor válido
-                if (ultimoFolio !== null) {
-                    $('#folioModal').val(ultimoFolio);
-                } else {
-                    console.warn("No se pudo obtener un folio válido de la respuesta:", response);
+                    // Solo resolver si se obtuvo un valor válido
+                    if (ultimoFolio !== null) {
+                        resolve(ultimoFolio);
+                    } else {
+                        console.warn("No se pudo obtener un folio válido de la respuesta:", response);
+                        reject(new Error("No se pudo obtener un folio válido"));
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error al obtener último folio:", error);
+                    reject(error);
                 }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error al obtener último folio:", error);
-            }
+            });
         });
     }
-
-    // Configurar el intervalo para ejecutar cada 2 segundos
-    var intervaloFolio = setInterval(obtenerUltimoFolio, 2000);
-
-    // Ejecutar inmediatamente al cargar la página
-    obtenerUltimoFolio();
 });
 </script>

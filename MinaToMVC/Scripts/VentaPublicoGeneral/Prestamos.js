@@ -1,4 +1,16 @@
 $(document).ready(function () {
+    // Cuando cambie la selección del dropdown
+    $('#ddlTransportistas').change(function () {
+        var textoSeleccionado = $(this).find('option:selected').text();
+        $('#nombreTrabajador').val(textoSeleccionado);
+    });
+
+    // Ejecutar al cargar la página si ya hay un valor seleccionado
+    if ($('#ddlTransportistas').val()) {
+        var textoSeleccionado = $('#ddlTransportistas').find('option:selected').text();
+        $('#nombreTrabajador').val(textoSeleccionado);
+    }
+
     $("#frmPrestamos").validate({
         rules: {
             "nombre": "required",
@@ -31,9 +43,10 @@ $(document).ready(function () {
         searching: true,
         columns: [
             { data: "id", visible: true, title: "Id" },
-            { data: "nombre", title: "Nombre" },
-            { data: "descripcion", title: "Descripción de Préstamo" },
-            { data: "idTrabajador.nombre", title: "Nombre del Trabajador" },
+            { data: "nombre", title: "Nombre", visible: false },
+            { data: "idTrabajador", title: "Nombre del Trabajador", visible: false },
+            { data: "nombreTrabajador", title: "Nombre del Trabajador" },
+            { data: "descripcion", title: "Descripcion de Prestamo" },
             {
                 data: "monto",
                 title: "Monto",
@@ -52,13 +65,14 @@ $(document).ready(function () {
                 }
             }
         ],
+        order: [0,'des'],
         language: {
             decimal: ",",
             thousands: ".",
             processing: "Procesando...",
             lengthMenu: "Mostrar _MENU_ entradas",
             zeroRecords: "No se encontraron resultados",
-            emptyTable: "Ningún dato disponible en esta tabla",
+            emptyTable: "Ningun dato disponible en esta tabla",
             info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             infoEmpty: "Mostrando 0 a 0 de 0 entradas",
             infoFiltered: "(filtrado de un total de _MAX_ entradas)",
@@ -114,12 +128,13 @@ function SaveOrUpdatePrestamos() {
     if ($("#frmPrestamos").valid()) {
         var parametro = {
             Id: $("#id").val(),
-            nombre: $("#nombre").val(),
+            nombre: "Nombre",
+            nombreTrabajador: $("#nombreTrabajador").val(),
             descripcion: $("#descripcion").val(),
             Monto: $("#monto").val(),
             Fecha: $("#fecha").val(),
             UsuarioName: $("#encargado").val(),
-            IdTrabajador: { Id: $("#ddlTransportistas").val() },
+            IdTrabajador: $("#ddlTransportistas").val(),
             Estatus: 1,
             CreatedBy: $("#encargado").val(),
             CreatedDt: $("#fecha").val(),
@@ -132,8 +147,9 @@ function SaveOrUpdatePrestamos() {
             title: isUpdating ? '¿Desea actualizar el registro?' : '¿Desea guardar el nuevo registro?',
             html: `<strong>Id:</strong> ${parametro.Id}<br/>
                    <strong>Nombre:</strong> ${parametro.nombre}<br/> 
-                   <strong>Trabajador:</strong> ${parametro.IdTrabajador.Id}<br/> 
-                   <strong>Descripción:</strong> ${parametro.descripcion}<br/>
+                   <strong>Trabajador:</strong> ${parametro.nombreTrabajador}<br/> 
+                   <strong>Trabajador:</strong> ${parametro.IdTrabajador}<br/> 
+                   <strong>Descripcion:</strong> ${parametro.descripcion}<br/>
                    <strong>Monto:</strong> ${parametro.Monto}<br/>
                    <strong>Fecha:</strong> ${parametro.Fecha}<br/>
                    <strong>Encargado:</strong> ${parametro.UsuarioName}`,
@@ -145,7 +161,7 @@ function SaveOrUpdatePrestamos() {
             if (result.isConfirmed) {
                 PostMVC("/VentaPublicoGeneral/SaveOrUpdatePrestamos", parametro, function (success, response) {
                     if (success) {
-                        Swal.fire('Éxito', isUpdating ? 'Datos actualizados exitosamente.' : 'Datos guardados exitosamente.', 'success')
+                        Swal.fire('Exito', isUpdating ? 'Datos actualizados exitosamente.' : 'Datos guardados exitosamente.', 'success')
                             .then(() => window.location.href = '/VentaPublicoGeneral/Prestamos');
                     } else {
                         Swal.fire('Error', 'Error al guardar los datos: ' + response.ErrorMessage, 'error');

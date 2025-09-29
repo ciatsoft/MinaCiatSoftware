@@ -181,7 +181,9 @@
     <Content Include="Scripts\Taller\CatalogoInventario.js" />
     <Content Include="Scripts\Taller\InventarioTaller.js" />
     <Content Include="Scripts\Trabajador\AltaEdicion.js" />
+    <Content Include="Scripts\Trabajador\ConceptosRH.js" />
     <Content Include="Scripts\Trabajador\Documento.js" />
+    <Content Include="Scripts\Trabajador\Nominas.js" />
     <Content Include="Scripts\Vehiculo\Vehiculo.js" />
     <Content Include="Scripts\VentaPublicoGeneral\CajaChica.js" />
     <Content Include="Scripts\VentaPublicoGeneral\ClientePublicoGral.js" />
@@ -330,6 +332,11 @@
     <Content Include="Views\Home\PartialMenus.cshtml" />
     <Content Include="Views\Empleado\DescargarDocumento.cshtml" />
     <Content Include="Views\Administracion\AbrirModalPermisosUsuario.cshtml" />
+    <Content Include="Views\RH\NominaEmpleado.cshtml" />
+    <Content Include="Views\RH\ConceptosRH.cshtml" />
+    <Content Include="Views\RH\PartialConceptosEmpleado.cshtml" />
+    <Content Include="Views\RH\PartialNominasEmpleado.cshtml" />
+    <Content Include="Views\RH\PartialHistorialNominas.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

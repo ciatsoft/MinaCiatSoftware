@@ -15,7 +15,6 @@
                     title: 'Ocurrió un error.',
                     text: r.Message
                 });
-                //alert(r.Message);
             }
         });
     });

@@ -9,11 +9,8 @@ namespace MinaTolEntidades.DtoCatalogos
 {
     public class DtoCatalogoPrestamo : BaseObject
     {
-        public DtoCatalogoPrestamo()
-        {
-            IdTrabajador = new DtoTrabajador();
-        }
-        public DtoTrabajador IdTrabajador { get; set; }  // Se usará para mostrar en GetAllPrestamos
+        public long IdTrabajador { get; set; }
+        public string NombreTrabajador { get; set; }
         public string Nombre { get; set; }
         public string Descripcion { get; set; }
         public decimal Monto { get; set; }
