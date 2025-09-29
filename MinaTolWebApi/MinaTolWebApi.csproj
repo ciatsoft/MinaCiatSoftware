@@ -127,12 +127,14 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\App_Start.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\BajasEmpleadoController.cs" />
     <Compile Include="Controllers\CatalogosController.cs" />
     <Compile Include="Controllers\ClientePublicoGralController.cs" />
     <Compile Include="Controllers\DocumentosController.cs" />
@@ -163,6 +165,7 @@
     <Compile Include="Controllers\VentaPublicoGeneralController.cs" />
     <Compile Include="Controllers\ViajesController.cs" />
     <Compile Include="DAL\BaseDbWrapper.cs" />
+    <Compile Include="DAL\DbWrapper.BajaEmpleados.cs" />
     <Compile Include="DAL\DbWrapper.ClientePublicoGral.cs" />
     <Compile Include="DAL\DbWrapper.Deducciones.cs" />
     <Compile Include="DAL\DbWrapper.DireccionCliente.cs" />
@@ -207,6 +210,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\web.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -216,7 +223,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Data\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\BajasEmpleado\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MinaTolEntidades\MinaTolEntidades.csproj">
