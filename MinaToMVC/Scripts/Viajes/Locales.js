@@ -73,6 +73,7 @@ $(document).ready(function () {
             }
 
         ],
+        order: [0, 'desc'],
         language: {
             "decimal": ",",
             "thousands": ".",

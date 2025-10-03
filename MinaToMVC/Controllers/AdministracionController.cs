@@ -134,6 +134,11 @@ namespace MinaToMVC.Controllers
             var result = httpClientConnection.SaveOrUpdateCliente(t);
             return JsonConvert.SerializeObject(result);
         }
+        public async Task<ActionResult> DeleteCliente(long id)
+        {
+            var result = httpClientConnection.DeleteCliente(id);
+            return Redirect("Clientes");
+        }
 
 
         public ActionResult Solicitudes()

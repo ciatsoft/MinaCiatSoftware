@@ -32,12 +32,13 @@ $(document).ready(function () {
             {
                 data: "id", render: function (data) {
                     var render = '<input type="button" value="Editar" onclick="EditarCliente(' + data + ')" class="btn btn-custom-clean">';
-                    render = render + '<input type="button" value="Eliminar" onclick="EliminarCliente(' + data + ')" class="btn btn-custom-cancel">';
+                    //render = render + '<input type="button" value="Eliminar" onclick="EliminarCliente(' + data + ')" class="btn btn-custom-cancel">';
                     return render;
                 }
             }
 
         ],
+        order: [0, 'desc'],
         language: {
             "decimal": ",",
             "thousands": ".",
@@ -324,19 +325,12 @@ function SaveOrUpdateCliente() {
 }
 
 // Función para eliminar el cliente con confirmación y actualización de estatus
-function EliminarCliente(id, boton) {
-    var row = $(boton).closest("tr");
-    var nombre = row.find("td:eq(0)").text();
-    var telefono = row.find("td:eq(1)").text();
-    var Email = row.find("td:eq(2)").text();
-    var comentario = row.find("td:eq(3)").text();
-    var rfc = row.find("td:eq(4)").text();
-    var razon = row.find("td:eq(5)").text();
-
+function EliminarCliente(id) {
     // Confirmación de eliminación con SweetAlert
+    console.log(id);
     Swal.fire({
         title: '¿Está seguro?',
-        text: "¿Desea eliminar el siguiente cliente? \nNombre: " + nombre + "\nTelefono: " + telefono + "\nEmail: " + Email + "\nComentario: " + comentario + "\nRFC: " + rfc + "\nRazón social: " + razon,
+        text: "¿Desea eliminar este cliente?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -345,26 +339,10 @@ function EliminarCliente(id, boton) {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            var parametro = {
-                Id: id,
-                Nombre: nombre,
-                Telefono: telefono,
-                Email: Email,
-                Comentarios: comentario,
-                RFC: rfc,
-                Razon_Social: razon,
-                Estatus: 0,
-                CreatedBy: $("#txtCreatedBy").val(),
-                CreatedDt: $("#txtCreatedDt").val(),
-                UpdatedBy: $("#txtUpdatedBy").val(),
-                UpdatedDt: new Date().toISOString()
-            };
-            window.location.href = '/Administracion/Clientes';
-            PostMVC('/Administracion/SaveOrUpdateCliente', parametro, function (r) {
-
+            PostMVC('/Administracion/DeleteCliente', id, function (r) {
                 if (r.IsSuccess) {
                     Swal.fire("Eliminado", "El cliente ha sido eliminado.", "success").then(() => {
-
+                        window.location.href = '/Administracion/Clientes';
                     });
                 } else {
                     Swal.fire("Error", "Error al eliminar el cliente: " + r.ErrorMessage, "error");

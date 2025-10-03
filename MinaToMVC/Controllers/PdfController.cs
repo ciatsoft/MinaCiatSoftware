@@ -656,5 +656,27 @@ namespace MinaToMVC.Controllers
 
             return Json(new { pdf = pdfBase64 });
         }
+        [HttpPost]
+        public ActionResult GenerarPDF(string htmlContent)
+        {
+            try
+            {
+                var htmlToPdf = new HtmlToPdfConverter();
+
+                // Configuración del PDF
+                htmlToPdf.Orientation = PageOrientation.Portrait;
+                htmlToPdf.Size = PageSize.A4;
+                htmlToPdf.Margins = new PageMargins { Top = 10, Bottom = 10, Left = 10, Right = 10 };
+
+                // Generar PDF
+                var pdfBytes = htmlToPdf.GeneratePdf(htmlContent);
+
+                return File(pdfBytes, "application/pdf", "recibo_nomina.pdf");
+            }
+            catch (Exception ex)
+            {
+                return Json(new { IsSuccess = false, ErrorMessage = ex.Message });
+            }
+        }
     }
 }
