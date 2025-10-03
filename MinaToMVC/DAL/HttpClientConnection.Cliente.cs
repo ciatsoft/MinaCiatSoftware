@@ -28,6 +28,19 @@ namespace MinaToMVC.DAL
 
         }
 
+        public async Task<ModelResponse> DeleteCliente(long id)
+        {
+            var result = await RequestAsync<object>($"api/Cliente/{id}", HttpMethod.Delete, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
+
         public async Task<ModelResponse> GetAllCliente()
         {
             var result = await RequestAsync<object>("api/Cliente/List", HttpMethod.Get, null,

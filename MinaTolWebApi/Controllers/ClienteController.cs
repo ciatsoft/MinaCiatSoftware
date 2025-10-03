@@ -40,5 +40,11 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.SaveOrUpdateCliente(c);
             return result;
         }
+        [HttpDelete, Route("{id:long}")]
+        public async Task<ModelResponse> DeleteCliente(long id)
+        {
+            var result = wrapper.DeleteCliente(id);
+            return result;
+        }
     }
 }
