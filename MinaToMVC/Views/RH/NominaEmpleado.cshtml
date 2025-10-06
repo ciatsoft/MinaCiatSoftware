@@ -11,8 +11,28 @@
     <br />
     <center><h1>Generar Nominas para Empleados</h1></center>
     <br />
+    <h3><strong>Generar Reporte de Conceptos Generados</strong></h3>
+    <div>
+        <div class="row">
+            <div class="col-md-2">
+                <label for="fechaInicio" class="form-label">Fecha Inicio:</label>
+                <input type="date" id="fechaFiltro" name="fechaFiltro" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="col-md-2">
+                <label for="fechaFinal" class="form-label">Fecha Final:</label>
+                <input type="date" id="fechaFiltro" name="fechaFiltro" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="col-md-1 d-flex align-items-end">
+                <button id="btnFiltrar" type="button" class="btn btn-custom-clean w-100">Buscar</button>
+            </div>
+            <div class="col-md-1 d-flex align-items-end">
+                <a href="/RH/NominaEmpleado" class="btn btn-custom-cancel w-100">Cancelar</a>
+            </div>
+        </div>
+    </div>
+    <br />
     <table id="tblEmpleados" class="table table-bordered table-striped" style="width: 100%;"></table>
     <br />
 </div>
 
-<script src="@(Url.StaticFile("Scripts/Trabajador/Nominas.js"))"></script>
+    <script src="@(Url.StaticFile("Scripts/Trabajador/Nominas.js"))"></script>

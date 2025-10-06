@@ -118,13 +118,24 @@
                 </div>
                 <div class="row">
                     <div class="col-md-9">
-                        <div class="col-lg-5">
+                        <div class="col-lg-4">
                             <label>RFC:</label>
                             <input type="text" id="txtRFC" name="txtRFC" class="form-control" />
                         </div>
-                        <div class="col-lg-5">
+                        <div class="col-lg-4">
                             <label>Razon social:</label>
                             <input type="text" id="txtrazon" name="txtrazon" class="form-control" />
+                        </div>
+                        <div class="col-lg-4">
+                            <label>Tipo de Cliente:</label>
+                            <select id="ddlTipoCliente" name="ddlTipoCliente" class="form-control">
+                                <option value="">Selecciona una opcion</option>
+                                <!-- Las opciones se cargarán desde el ViewBag -->
+                                @foreach (var item in ViewBag.TipoCliente)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
                         </div>
                         <div class="col-md-12">
                             <label>Comentarios:</label>
@@ -137,13 +148,6 @@
                                 <table class="table table-bordered table-striped dataTable no-footer" id="tableTipodematerial"></table>
                             </div>
                         </div>
-                        @*<div class="row">
-                            <div class="col-md-12">
-                                <button type="button" class="btn btn-custom-clean" id="btnmaterial" name="btnmaterial">
-                                    <i class="fa fa-plus"></i> Configuración de costos
-                                </button>
-                            </div>
-                        </div>*@
                     </div>
                     <div class="row">
                         <br />
