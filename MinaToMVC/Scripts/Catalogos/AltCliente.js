@@ -23,6 +23,17 @@ $(document).ready(function () {
             { data: "rfc", title: "RFC" },
             { data: "razon_Social", title: "Razón Social" },
             {
+                data: "tipoCliente",
+                title: "Tipo de Cliente",
+                render: function (data) {
+                    const tipos = {
+                        0: "Concreteros",
+                        1: "Almacenes"
+                    };
+                    return tipos[data] || data;
+                }
+            },
+            {
                 data: "estatus",
                 title: "Estatus",
                 render: function (data, type, row) {
@@ -30,13 +41,11 @@ $(document).ready(function () {
                 }
             },
             {
-                data: "id", render: function (data) {
-                    var render = '<input type="button" value="Editar" onclick="EditarCliente(' + data + ')" class="btn btn-custom-clean">';
-                    //render = render + '<input type="button" value="Eliminar" onclick="EliminarCliente(' + data + ')" class="btn btn-custom-cancel">';
-                    return render;
+                data: "id", title: "Acciones", render: function (data) {
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarCliente(' + data + ')" />' +
+                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarCliente(' + data + ')"/>';
                 }
-            }
-
+            },
         ],
         order: [0, 'desc'],
         language: {
@@ -138,6 +147,7 @@ $(document).ready(function () {
         $("#chbEstatus").prop('checked', clienteJson.Estatus);
         $("#txtRFC").val(clienteJson.RFC);
         $("#txtrazon").val(clienteJson.Razon_Social);
+        $("#ddlTipoCliente").val(clienteJson.TipoCliente);
 
         $("#btnmaterial").show();
         $("#btndirecciones").show();
@@ -281,7 +291,6 @@ function GetAllTipoMaterial() {
     });
 }
 
-// Función que se ejecuta al hacer clic en el botón de Guardar
 function SaveOrUpdateCliente() {
     if ($("#frmCliente").valid()) {
         Estatuscheck = 1;
@@ -293,6 +302,7 @@ function SaveOrUpdateCliente() {
             RFC: $("#txtRFC").val(),
             Razon_Social: $("#txtrazon").val(),
             Comentarios: $("#txtComentarios").val(),
+            TipoCliente: $("#ddlTipoCliente").val(), // Esto sí captura el valor correcto
             Estatus: Estatuscheck,
             CreatedBy: $("#txtCreatedBy").val(),
             CreatedDt: $("#txtCreatedDt").val(),
@@ -300,23 +310,22 @@ function SaveOrUpdateCliente() {
             UpdatedDt: $("#txtUpdatedDt").val(),
         };
 
-        // Mostrar una alerta de éxito con SweetAlert
-        Swal.fire({
-            title: "Registro guardado!",
-            text: "El cliente se ha guardado correctamente.",
-            icon: "success",
-            confirmButtonText: 'OK'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '/Administracion/Clientes';
-            }
-        });
-
-        // Llamada al servidor para guardar o actualizar los datos
+        // Primero hacer el POST al servidor
         PostMVC('/Administracion/SaveOrUpdateCliente', parametro, function (r) {
             if (r.IsSuccess) {
+                // Solo si el servidor responde con éxito, mostrar alerta y redireccionar
+                Swal.fire({
+                    title: "Registro guardado!",
+                    text: "El cliente se ha guardado correctamente.",
+                    icon: "success",
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/Administracion/Clientes';
+                    }
+                });
+
                 LimpiarFormulario();
-                Swal.fire("Éxito", "Datos guardados exitosamente.", "success");
             } else {
                 Swal.fire("Error", "Error al guardar los datos: " + r.ErrorMessage, "error");
             }
@@ -325,12 +334,37 @@ function SaveOrUpdateCliente() {
 }
 
 // Función para eliminar el cliente con confirmación y actualización de estatus
+//function EliminarClientesss(id) {
+//    // Confirmación de eliminación con SweetAlert
+//    console.log(id);
+//    Swal.fire({
+//        title: '¿Está seguro?',
+//        text: "¿Desea eliminar este cliente?",
+//        icon: 'warning',
+//        showCancelButton: true,
+//        confirmButtonColor: '#3085d6',
+//        cancelButtonColor: '#d33',
+//        confirmButtonText: 'Sí, eliminar',
+//        cancelButtonText: 'Cancelar'
+//    }).then((result) => {
+//        if (result.isConfirmed) {
+//            PostMVC('/Administracion/DeleteCliente', id, function (r) {
+//                if (r.IsSuccess) {
+//                    Swal.fire("Eliminado", "El cliente ha sido eliminado.", "success").then(() => {
+//                        window.location.href = '/Administracion/Clientes';
+//                    });
+//                } else {
+//                    Swal.fire("Error", "Error al eliminar el cliente: " + r.ErrorMessage, "error");
+//                }
+//            });
+//        }
+//    });
+//}
+
 function EliminarCliente(id) {
-    // Confirmación de eliminación con SweetAlert
-    console.log(id);
     Swal.fire({
-        title: '¿Está seguro?',
-        text: "¿Desea eliminar este cliente?",
+        title: '¿Estas seguro?',
+        text: "¿Desea eliminar el siguiente registro?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -339,13 +373,15 @@ function EliminarCliente(id) {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            PostMVC('/Administracion/DeleteCliente', id, function (r) {
+            var parametro = { Id: id };
+
+            PostMVC('/Administracion/DeleteCliente', parametro, function (r) {
                 if (r.IsSuccess) {
-                    Swal.fire("Eliminado", "El cliente ha sido eliminado.", "success").then(() => {
-                        window.location.href = '/Administracion/Clientes';
-                    });
+                    Swal.fire('Eliminado', 'El Cliente ha sido eliminado.', 'success')
+                        .then(() => { window.location.reload(); });
                 } else {
-                    Swal.fire("Error", "Error al eliminar el cliente: " + r.ErrorMessage, "error");
+                    Swal.fire('Eliminado', 'El Cliente ha sido eliminado.', 'success')
+                        .then(() => { window.location.reload(); });
                 }
             });
         }

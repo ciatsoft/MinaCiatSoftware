@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
@@ -53,9 +54,6 @@ namespace MinaToMVC.Controllers
 
                 var materialesPorClientesResponse = await httpClientConnection.GetTipoMaterialByCliente(id);
                 materialesPorClientes = JsonConvert.DeserializeObject<List<ClienteTipoMaterial>>(materialesPorClientesResponse.Response.ToString());
-
-                
-
             }
             else
             {
@@ -63,7 +61,6 @@ namespace MinaToMVC.Controllers
                 direccionporClientes = Enumerable.Empty<DireccionCliente>().ToArray();
                 direccionCliente = Enumerable.Empty<DireccionCliente>().ToArray();
             }
-
             
             var usuarioToken = SessionHelper.GetSessionUser();
             var usuario = new List<Usuario>()
@@ -80,8 +77,21 @@ namespace MinaToMVC.Controllers
 
             ViewBag.UserToken = usuarioAutenticado;
             ViewBag.Usuarios = usuarios;
-
             ViewBag.MaterialesCliente = materialesPorClientes;
+
+            string tipoCliente = ConfigurationManager.AppSettings["TipoCliente"];
+
+            var opcionesCliente = tipoCliente.Split('|')
+                .Select(opt =>
+                {
+                    var parts = opt.Split(':');
+                    return new SelectListItem
+                    {
+                        Value = parts[0],
+                        Text = parts[1]
+                    };
+                }).ToList();
+            ViewBag.TipoCliente = opcionesCliente;
 
             return View(Cliente);
         }
@@ -139,8 +149,6 @@ namespace MinaToMVC.Controllers
             var result = httpClientConnection.DeleteCliente(id);
             return Redirect("Clientes");
         }
-
-
         public ActionResult Solicitudes()
         {
             return View();
