@@ -1,0 +1,44 @@
+﻿
+@{
+    ViewBag.Title = "ReportesViajesLocales";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+<div class="content">
+    <br />
+    <center><h1>Reportes de Ventas General</h1></center>
+    <div class="tabla-consultas-empleados">
+        <div class="rectangulos" style="width: 100%;">
+            <table id="tblVentasGenerales" class="table table-bordered table-striped" style="width: 100%;"></table>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+                <div class="mb-2" style="text-align: right;">
+                    <button id="btnGenerarPDFVentasGenerales" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
+                        Generar Reporte PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <center><h1>Reportes de Ventas Filtradas</h1></center>
+    <div class="tabla-consultas-empleados">
+        <div class="rectangulos" style="width: 100%;">
+            <table id="tblVentasGeneralesFiltradas" class="table table-bordered table-striped" style="width: 100%;"></table>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+                <div class="mb-2" style="text-align: right;">
+                    <button id="btnVentasGeneralesFiltradas" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
+                        Generar Reporte PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+</div>
+<script src="@(Url.StaticFile("Scripts/Viajes/ReportesViajesLocales.js"))"></script>
