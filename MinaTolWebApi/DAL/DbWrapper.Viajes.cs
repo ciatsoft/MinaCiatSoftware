@@ -60,6 +60,10 @@ namespace MinaTolWebApi.DAL
                         {
                             Id = MappingProperties<long>(reader["UbicacionOrigenId"])
                         };
+                        r.DireccionDestino = new MinaTolEntidades.DtoClientes.DireccionCliente()
+                        {
+                            Id = MappingProperties<long>(reader["DireccionDestinoId"])
+                        };
                         r.TipoMaterial = new MinaTolEntidades.DtoCatalogos.DtoTipoMaterialUbicacion()
                         {
                             Id = MappingProperties<long>(reader["MaterialId"])

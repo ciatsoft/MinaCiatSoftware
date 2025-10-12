@@ -109,6 +109,7 @@
                     <div class="col-lg-3">
                         <label>Cliente:</label>
                         <select id="ddlCliente" class="form-control" onchange="actualizarTiposDeMaterial()">
+                            <option value="" disabled selected>Selecciona una opcion</option>
                             @foreach (var i in clientes)
                             {
                                 <option value="@i.Id">@i.Nombre</option>
@@ -118,6 +119,7 @@
                     <div class="col-lg-3">
                         <label>Tipo de Material:</label>
                         <select id="ddlTipoMaterial" class="form-control">
+                            <option value="" disabled selected>Selecciona una opcion</option>
                             @foreach (var i in tipoMateriales)
                             {
                                 <option value="@i.TipoMaterial.Id">@i.TipoMaterial.NombreTipoMaterial</option>
@@ -127,6 +129,12 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-3">
+                        <label>Direccion Destino:</label>
+                        <select id="ddlDireccionesCliente" class="form-control">
+                            <option value="" disabled selected>Selecciona una opcion</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
                         <label>Transportista:</label>
                         <select id="ddlTransportistas" class="form-control">
                             @foreach (var i in trabajadores)
@@ -135,7 +143,7 @@
                             }
                         </select>
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-3">
                         <label>Vehículo:</label>
                         <select id="ddlVehiculo" class="form-control">
                             @foreach (var i in vehiculos)
@@ -144,7 +152,7 @@
                             }
                         </select>
                     </div>
-                    <div class="col-lg-2">
+                    <div class="col-lg-1">
                         <label>Unidad De Medida:</label>
                         <select id="ddlUnidadM" class="form-control" disabled>
                             @foreach (var unidad in unidadmedida)
@@ -154,7 +162,7 @@
                         </select>
 
                     </div>
-                    <div class="col-lg-3">
+                    <div class="col-lg-2">
                         <label>Fecha del viaje:</label>
                         <input type="date" id="dtpFechaViaje" name="dtpFechaViaje" class="form-control" />
                     </div>
@@ -183,6 +191,8 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 </form>
 
 <script src="@(Url.StaticFile("Scripts/Viajes/Locales.js"))"></script>

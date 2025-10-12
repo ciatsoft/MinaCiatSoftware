@@ -26,7 +26,11 @@
 
 $(document).ready(function () {
 
-
+    // Event listener para el cambio de selección en el dropdown de clientes
+    $("#ddlCliente").change(function () {
+        var selectedId = $(this).val();
+        ObtenerDireccionCliente(selectedId);
+    });
 
     // Inicialización de la tabla de viajes locales con formato
     $("#tblViajesLocales").dataTable({
@@ -108,12 +112,17 @@ $(document).ready(function () {
         console.log("Datos recibidos: " + JSON.stringify(viajeLocalJson)); 
         $("#txtViajeinterno").val(viajeLocalJson.Id);
         $("#ddlUOrigen").val(viajeLocalJson.UbicacionOrigen.Id);
+        $("#ddlDireccionesCliente").val(viajeLocalJson.DireccionDestino.Id);
         $("#ddlTipoMaterial").val(viajeLocalJson.TipoMaterial.Id);
         $("#ddlTransportistas").val(viajeLocalJson.Transportista.Id);
         $("#ddlVehiculo").val(viajeLocalJson.Vehiculo.Id);
-        $("#ddlCliente").val(viajeLocalJson.Cliente.Id);
+        $("#ddlCliente").val(viajeLocalJson.Cliente.Id).prop('disabled', true);
         $("#dtpFechaViaje").val(viajeLocalJson.FechaViaje.substring(0, 10));
         $("#txtObservaciones").val(viajeLocalJson.Observaciones);
+
+        actualizarTiposDeMaterial(viajeLocalJson.Cliente.Id);
+        ObtenerDireccionCliente(viajeLocalJson.Cliente.Id);
+
         // Mostrar botón de eliminar y ocultar el de guardar
         $("#btnEliminar").show();
         $("#btnGuardar").show();
@@ -133,6 +142,7 @@ function SaveOrUpdateViajeLocal() {
             UbicacionOrigen: { Id: $("#ddlUOrigen").val() },
             Transportista: { Id: $("#ddlTransportistas").val() },
             TipoMaterial: { Id: $("#ddlTipoMaterial").val() },
+            DireccionDestino: { Id: $("#ddlDireccionesCliente").val() },
             Vehiculo: { Id: $("#ddlVehiculo").val() },
             Cliente: { Id: $("#ddlCliente").val() },
             UnidadMedida: { Id: $("#ddlUnidadM").val() },
@@ -154,6 +164,7 @@ function SaveOrUpdateViajeLocal() {
                    <strong>Material:</strong> ${$("#ddlTipoMaterial option:selected").text()}<br/>
                    <strong>Vehículo:</strong> ${$("#ddlVehiculo option:selected").text()}<br/>
                    <strong>Cliente:</strong> ${$("#ddlCliente option:selected").text()}<br/>
+                   <strong>Direccion Destino:</strong> ${$("#ddlDireccionesCliente option:selected").text()}<br/>
                    <strong>Unidad de Medida:</strong> ${$("#ddlUnidadM option:selected").text()}<br/>
                    <strong>Fecha del Viaje:</strong> ${$("#dtpFechaViaje").val()}<br/>
                    <strong>Observaciones:</strong> ${$("#txtObservaciones").val()}`,
@@ -284,8 +295,8 @@ function GetAllViajeLocal() {
     });
 }
 
-function actualizarTiposDeMaterial() {
-    var ubicacionId = $("#ddlCliente").val(); // Obtener el ID de la ubicación seleccionada
+function actualizarTiposDeMaterial(id) {
+    var ubicacionId = $("#ddlCliente").val() || id; // Obtener el ID de la ubicación seleccionada
 
     // Realizar una llamada AJAX al controlador para obtener los tipos de material
     $.ajax({
@@ -305,10 +316,6 @@ function actualizarTiposDeMaterial() {
                     $("#ddlTipoMaterial").append(templateoption);
                 });
             }
-            /*
-             Else 
-             Alert
-             */
         },
         error: function (xhr, status, error) {
             console.log("Error al obtener los tipos de material:", error);
@@ -316,4 +323,45 @@ function actualizarTiposDeMaterial() {
     });
 }
 
-//Comentarios
+function ObtenerDireccionCliente(id) {
+    var dropdown = $("#ddlDireccionesCliente");
+
+    // Limpiar dropdown completamente
+    dropdown.empty();
+
+    // Agregar opción por defecto
+    dropdown.append($('<option></option>')
+        .val("")
+        .text("Selecciona una opcion")
+        .prop('disabled', true)
+        .prop('selected', true));
+
+    if (!id) {
+        return;
+    }
+
+    GetMVC(`/Viajes/ObtenerDireccionCliente?id=${id}`, function (r, textStatus, jqXHR) {
+        if (r.IsSuccess) {
+            // Verificar si hay direcciones
+            if (r.Response && r.Response.length > 0) {
+                // Agregar cada dirección como opción
+                $.each(r.Response, function (index, direccion) {
+                    var texto = `${direccion.calle}, ${direccion.municipio}, ${direccion.estado}`;
+                    var option = $('<option></option>')
+                        .val(direccion.id)
+                        .text(texto);
+                    dropdown.append(option);
+                });
+            } else {
+                dropdown.append($('<option></option>')
+                    .val("")
+                    .text("No hay direcciones disponibles"));
+            }
+        } else {
+            alert("Error al cargar las direcciones del cliente: " + r.ErrorMessage);
+            dropdown.append($('<option></option>')
+                .val("")
+                .text("Error al cargar direcciones"));
+        }
+    });
+}

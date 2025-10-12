@@ -171,7 +171,6 @@ namespace MinaToMVC.Controllers
         #region Viajes Locales
         public async Task<string> SaveOrUpdateViajeLocal(DtoViajeLocal t)
         {
-
             var result = await httpClientConnection.SaveOrUpdateViajeLocal(t);
             return JsonConvert.SerializeObject(result);
         }
