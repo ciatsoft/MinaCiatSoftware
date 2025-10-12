@@ -33,6 +33,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetAllViajeLocal();
             return result;
         }
+        [HttpGet, Route("ListlocalDates/{fecha1:datetime}/{fecha2:datetime}")]
+        public ModelResponse GetAllViajeLocalByDates(DateTime fecha1, DateTime fecha2)
+        {
+            var result = wrapper.GetAllViajeLocalByDates(fecha1, fecha2);
+            return result;
+        }
 
         [HttpGet, Route("Interno/{id:long}")]
         public ModelResponse GetViajeInternoById(long id)

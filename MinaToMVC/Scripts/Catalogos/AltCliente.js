@@ -332,35 +332,6 @@ function SaveOrUpdateCliente() {
         });
     }
 }
-
-// Función para eliminar el cliente con confirmación y actualización de estatus
-//function EliminarClientesss(id) {
-//    // Confirmación de eliminación con SweetAlert
-//    console.log(id);
-//    Swal.fire({
-//        title: '¿Está seguro?',
-//        text: "¿Desea eliminar este cliente?",
-//        icon: 'warning',
-//        showCancelButton: true,
-//        confirmButtonColor: '#3085d6',
-//        cancelButtonColor: '#d33',
-//        confirmButtonText: 'Sí, eliminar',
-//        cancelButtonText: 'Cancelar'
-//    }).then((result) => {
-//        if (result.isConfirmed) {
-//            PostMVC('/Administracion/DeleteCliente', id, function (r) {
-//                if (r.IsSuccess) {
-//                    Swal.fire("Eliminado", "El cliente ha sido eliminado.", "success").then(() => {
-//                        window.location.href = '/Administracion/Clientes';
-//                    });
-//                } else {
-//                    Swal.fire("Error", "Error al eliminar el cliente: " + r.ErrorMessage, "error");
-//                }
-//            });
-//        }
-//    });
-//}
-
 function EliminarCliente(id) {
     Swal.fire({
         title: '¿Estas seguro?',
