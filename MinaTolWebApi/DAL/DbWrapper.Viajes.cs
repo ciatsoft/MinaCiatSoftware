@@ -127,6 +127,43 @@ namespace MinaTolWebApi.DAL
 
             return modelResponse;
         }
+
+        public ModelResponse GetAllViajeLocalByDates(DateTime fecha1, DateTime fecha2)
+        {
+            var modelResponse = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+
+            try
+            {
+                // Agregar los parámetros de fecha a la lista
+                parameters.Add(new SqlParameter("@Fecha1", fecha1));
+                parameters.Add(new SqlParameter("@Fecha2", fecha2));
+
+                var user = GetObjects($"GetAllViajeLocalByDates", CommandType.StoredProcedure, parameters,
+                    new Func<IDataReader, DtoViajeLocal>((reader) =>
+                    {
+                        var r = FillEntity<DtoViajeLocal>(reader);
+                        r.UbicacionOrigen.NombreUbicacion = MappingProperties<string>(reader["Origen"]);
+                        r.Transportista.Nombre = MappingProperties<string>(reader["Chofer"]);
+                        r.TipoMaterial.NombreTipoMaterial = MappingProperties<string>(reader["Material"]);
+                        r.Vehiculo.Placa = MappingProperties<string>(reader["Auto"]);
+                        r.Cliente.Nombre = MappingProperties<string>(reader["ClienteNombre"]);
+                        r.UnidadMedida.Nombre = MappingProperties<string>(reader["Unidad"]);
+
+                        return r;
+                    }));
+
+                modelResponse.Response = user;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
         public ModelResponse GetViajeInternoById(long id)
         {
             var modelResponse = new ModelResponse();

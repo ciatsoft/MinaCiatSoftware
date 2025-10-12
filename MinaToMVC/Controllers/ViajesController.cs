@@ -1,17 +1,20 @@
 ﻿using MinaTolEntidades.DtoCatalogos;
-using MinaTolEntidades.DtoViajes;
 using MinaTolEntidades.DtoClientes;
+using MinaTolEntidades.DtoEmpleados;
 using MinaTolEntidades.DtoSucursales;
+using MinaTolEntidades.DtoViajes;
+using MinaTolEntidades.Security;
+using MinaToMVC.DAL;
+using MinaToMVC.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using static MinaToMVC.Controllers.Filters.FiltersHelper;
-using System.Net.Http;
-using MinaToMVC.DAL;
 
 namespace MinaToMVC.Controllers
 {
@@ -19,6 +22,7 @@ namespace MinaToMVC.Controllers
     public class ViajesController : BaseController
     {
         // GET: Viajes
+        #region Views
         public async Task<ActionResult> Internos(long id = 0)
         {
             var ubicaciones = new List<DtoUbicacion>();
@@ -72,21 +76,6 @@ namespace MinaToMVC.Controllers
 
             return View(ViajeInterno);
         }
-
-        public string SaveOrUpdateViajeInterno(DtoViajeInterno t)
-        {
-
-            var result = httpClientConnection.SaveOrUpdateViajeInterno(t);
-            return JsonConvert.SerializeObject(result);
-        }
-
-        public async Task<string> GetAllViajeInterno()
-        {
-            var token = Helpers.SessionHelper.GetSessionUser();
-            var result = await httpClientConnection.GetAllViajeInterno(token.Token.access_token);
-            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
-        }
-
         public async Task<ActionResult> Locales(long id = 0)
         {
             var ubicaciones = new List<DtoUbicacion>();
@@ -138,21 +127,65 @@ namespace MinaToMVC.Controllers
 
             return View(ViajeLocal);
         }
+        public async Task<ActionResult> ReportesViajesLocales(long id = 0)
+        {
+            var clientes = new List<Cliente>();
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            var responseClientes = await httpClientConnection.GetAllCliente();
+            clientes = JsonConvert.DeserializeObject<List<Cliente>>(responseClientes.Response.ToString());
+            ViewBag.Clientes = clientes;
+
+            return View();
+        }
+        #endregion
+        #region DataAccess
+        #region Viajes Internos
+        public string SaveOrUpdateViajeInterno(DtoViajeInterno t)
+        {
+
+            var result = httpClientConnection.SaveOrUpdateViajeInterno(t);
+            return JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetAllViajeInterno()
+        {
+            var token = Helpers.SessionHelper.GetSessionUser();
+            var result = await httpClientConnection.GetAllViajeInterno(token.Token.access_token);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        #endregion
+        #region Viajes Locales
         public async Task<string> SaveOrUpdateViajeLocal(DtoViajeLocal t)
         {
 
             var result = await httpClientConnection.SaveOrUpdateViajeLocal(t);
             return JsonConvert.SerializeObject(result);
         }
-
-
         public async Task<string> GetAllViajeLocal()
         {
             var token = Helpers.SessionHelper.GetSessionUser();
             var result = await httpClientConnection.GetAllViajeLocal(token.Token.access_token);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-
+        public async Task<string> GetAllViajeLocalByDates(DateTime fecha1, DateTime fecha2)
+        {
+            var result = await httpClientConnection.GetAllViajeLocalByDates(fecha1, fecha2);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
         public async Task<string> GetTipoMaterialByCliente(long id)
         {
             var result = await httpClientConnection.GetTipoMaterialByCliente(id);
@@ -163,5 +196,12 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetTipoMaterialByUnicacion(id);
             return JsonConvert.SerializeObject(result);
         }
+        public async Task<string> ObtenerDireccionCliente(long id)
+        {
+            var result = await httpClientConnection.ObtenerDireccionCliente(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        #endregion
+        #endregion
     }
 }

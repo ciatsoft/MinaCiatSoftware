@@ -40,6 +40,18 @@ namespace MinaToMVC.DAL
 
             return modelResponse;
         }
+        public async Task<ModelResponse> GetAllViajeLocalByDates(DateTime fecha1, DateTime fecha2)
+        {
+            string url = $"api/Viajes/ListlocalDates/{fecha1.ToString("yyyy-MM-dd")}/{fecha2.ToString("yyyy-MM-dd")}";
+
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
 
         public async Task<ModelResponse> SaveOrUpdateViajeInterno(DtoViajeInterno u)
         {

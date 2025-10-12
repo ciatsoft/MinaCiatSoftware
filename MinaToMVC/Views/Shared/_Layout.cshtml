@@ -54,13 +54,9 @@
 
     <link href="~/Assets/css/jquery.dataTables.min.css" rel="stylesheet" />
     <script src="~/Assets/js/jquery.dataTables.min.js"></script>
+    <link rel="icon" href="@Url.Content("~/Assets/img/Logo.ico")" type="image/x-icon" />
 
-
-</head>
-<link rel="icon" href="@Url.Content("~/Assets/img/Logo.ico")" type="image/x-icon" />
-
-
-<style>
+    <style>
     .main_title_html {
         background-color: white;
         font-family: Helvetica Neue;
@@ -94,8 +90,7 @@
     body {
         background-color: #83988e;
     }
-</style>
-<style>
+
     /* Estilos generales */
     .slider_section {
         background: linear-gradient(rgba(2, 2, 2, 0.2), rgba(0, 0, 0, 0.2)), url("@Url.Content("~/Assets/img/minas.png")") fixed center center;
@@ -304,7 +299,8 @@
         border-radius: 100px;
         border: 3px solid black;
     }
-</style>
+    </style>
+</head>
 
 <body>
 
@@ -334,6 +330,7 @@
                                     <a class="dropdown-item" data-title="Clientes" href="@Url.Action("Clientes", "Administracion")">Clientes</a>
                                     <a class="dropdown-item" data-title="Usuarios" href="@Url.Action("Usuarios", "Administracion")">Usuarios</a>
                                     <a class="dropdown-item" data-title="Catálogos" href="@Url.Action("locales", "Viajes")">Viajes Locales</a>
+                                    <a class="dropdown-item" data-title="Catálogos" href="@Url.Action("ReportesViajesLocales", "Viajes")">Generar Reportes</a>
                                 </div>
                             </li>
                             <li class="nav-item dropdown">

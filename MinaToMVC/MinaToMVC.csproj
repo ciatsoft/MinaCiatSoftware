@@ -196,6 +196,7 @@
     <Content Include="Scripts\VentaPublicoGeneral\VentaPlanta.js" />
     <Content Include="Scripts\Viajes\Internos.js" />
     <Content Include="Scripts\Viajes\Locales.js" />
+    <Content Include="Scripts\Viajes\ReportesViajesLocales.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -340,6 +341,7 @@
     <Content Include="Views\RH\PartialHistorialNominas.cshtml" />
     <Content Include="Views\Empleado\PartialBajaEmpleado.cshtml" />
     <Content Include="Views\RH\BajaEmpleados.cshtml" />
+    <Content Include="Views\Viajes\ReportesViajesLocales.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -120,6 +120,36 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
+        public ModelResponse ObtenerDireccionCliente(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@Id", SqlDbType.BigInt) { Value = id },
+                };
+
+                // CORREGIDO: usar GetList para obtener varios registros
+                var result = GetList(
+                    "ObtenerDireccionCliente",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader => FillEntity<DireccionCliente>(reader)
+                );
+
+                response.Response = result; // ahora será una lista de PV_CajaChica
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
         public ModelResponse DeleteDireccionCliente(long id)
         {
             var response = new ModelResponse();

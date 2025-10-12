@@ -29,6 +29,13 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
+        [HttpGet, Route("ObtenerDireccionCliente/{id:long}")]
+        public ModelResponse ObtenerDireccionCliente(long id)
+        {
+            var result = wrapper.ObtenerDireccionCliente(id);
+            return result;
+        }
+
         [HttpPost, Route("")]
         public ModelResponse SaveOrUpdateDireccionCliente(DireccionCliente at)
         {

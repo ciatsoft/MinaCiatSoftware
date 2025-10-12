@@ -1,0 +1,98 @@
+﻿
+@{
+    ViewBag.Title = "ReportesViajesLocales";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
+    var clientes = (List<MinaTolEntidades.DtoClientes.Cliente>)ViewBag.Clientes;
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+<div class="content">
+    <br />
+    <center><h1>Reporte de Venta General</h1></center>
+    <br />
+    <div class="tabla-consultas-empleados">
+        <div class="row align-items-end">
+            @* FILTRADO POR FECHA *@
+            <div class="col-auto">
+                <label for="fechaFiltro1" class="form-label">Fecha Inicio:</label>
+                <input type="date" id="fechaFiltro1" name="fechaFiltro1" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            </div>
+
+            <div class="col-auto">
+                <label for="fechaFiltro2" class="form-label">Fecha Final:</label>
+                <input type="date" id="fechaFiltro2" name="fechaFiltro2" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            </div>
+
+            <div class="col-auto">
+                <input id="btnFiltrar1" type="button" value="Buscar" class="btn btn-custom-clean" style="margin-top: -30px" />
+                <a href="/Viajes/ReportesViajesLocales" class="btn btn-custom-cancel" style="margin-top: -30px; margin-left: 10px">Cancelar</a>
+            </div>
+        </div>
+        <div class="rectangulos" style="width: 100%;">
+            <table id="tblVentasGenerales" class="table table-bordered table-striped" style="width: 100%;"></table>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+                <div class="mb-2" style="text-align: right;">
+                    <button id="btnGenerarPDFVentasGenerales" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
+                        Generar Reporte PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <center><h1>Reporte de Venta Filtrada</h1></center>
+    <br />
+    <div class="tabla-consultas-empleados">
+        <div class="row align-items-end">
+            @* FILTRADO POR FECHA *@
+            <div class="col-auto">
+                <label for="fechaFiltro3" class="form-label">Fecha Inicio:</label>
+                <input type="date" id="fechaFiltro3" name="fechaFiltro3" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            </div>
+
+            <div class="col-auto">
+                <label for="fechaFiltro4" class="form-label">Fecha Final:</label>
+                <input type="date" id="fechaFiltro4" name="fechaFiltro4" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            </div>
+
+            <div class="col-auto">
+                <label>Cliente:</label>
+                <select id="ddlCliente" class="form-control">
+                    <option value="" disabled selected>Selecciona una opcion</option>
+                    @foreach (var i in clientes)
+                    {
+                        <option value="@i.Id">@i.Nombre</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-auto">
+                <label>Direcciones:</label>
+                <select id="ddlDireccionesCliente" class="form-control">
+                    <option value="" disabled selected>Selecciona una opcion</option>
+                </select>
+            </div>
+
+            <div class="col-auto">
+                <input id="btnFiltrar2" type="button" value="Buscar" class="btn btn-custom-clean" style="margin-top: -30px" />
+                <a href="/Viajes/ReportesViajesLocales" class="btn btn-custom-cancel" style="margin-top: -30px; margin-left: 10px">Cancelar</a>
+            </div>
+            <div class="rectangulos" style="width: 100%;">
+                <table id="tblVentasGeneralesFiltradas" class="table table-bordered table-striped" style="width: 100%;"></table>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+                    <div class="mb-2" style="text-align: right;">
+                        <button id="btnVentasGeneralesFiltradas" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
+                            Generar Reporte PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+</div>
+<script src="@(Url.StaticFile("Scripts/Viajes/ReportesViajesLocales.js"))"></script>
