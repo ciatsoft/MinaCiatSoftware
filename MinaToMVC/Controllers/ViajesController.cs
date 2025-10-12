@@ -185,6 +185,11 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllViajeLocalByDates(fecha1, fecha2);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+        public async Task<string> GetAllViajeLocalByDatesClientDireccion(DateTime fecha1, DateTime fecha2, long idCliente, long idDireccion)
+        {
+            var result = await httpClientConnection.GetAllViajeLocalByDatesClientDireccion(fecha1, fecha2, idCliente, idDireccion);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
         public async Task<string> GetTipoMaterialByCliente(long id)
         {
             var result = await httpClientConnection.GetTipoMaterialByCliente(id);
