@@ -122,3 +122,148 @@ function GetAllViajeLocalByDatesFacturado(fecha1, fecha2) {
         }
     });
 }
+
+
+document.getElementById("btnPreFacturaNoFacturados").addEventListener("click", function () {
+    var fecha1 = $("#fechaFiltro1").val();
+    var fecha2 = $("#fechaFiltro2").val();
+    if (!fecha1 || !fecha2) {
+        alert("Por favor, seleccione una fecha válida.");
+        return;
+    }
+    // Convertir a objetos Date para comparación
+    var date1 = new Date(fecha1);
+    var date2 = new Date(fecha2);
+
+    // Validar que fecha2 no sea menor que fecha1
+    if (date2 < date1) {
+        alert("Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.");
+        return;
+    }
+
+    GetMVC(`/Viajes/GetAllViajeLocalByDatesFacturado?fecha1=${fecha1}&fecha2=${fecha2}`, function (r, textStatus, jqXHR) {
+        if (r.IsSuccess) {
+            // Filtrar solo los registros donde facturado es false o 0
+            const datosFiltrados = r.Response.filter(item => item.facturado === false || item.facturado === 0);
+            GenerarPDFPreFacturas(datosFiltrados, 0)
+        } else {
+            alert("Error al cargar los viajes: " + r.ErrorMessage);
+        }
+    });
+});
+
+document.getElementById("btnPreFacturaSiFacturados").addEventListener("click", function () {
+    var fecha1 = $("#fechaFiltro1").val();
+    var fecha2 = $("#fechaFiltro2").val();
+    if (!fecha1 || !fecha2) {
+        alert("Por favor, seleccione una fecha válida.");
+        return;
+    }
+    // Convertir a objetos Date para comparación
+    var date1 = new Date(fecha1);
+    var date2 = new Date(fecha2);
+
+    // Validar que fecha2 no sea menor que fecha1
+    if (date2 < date1) {
+        alert("Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.");
+        return;
+    }
+
+    GetMVC(`/Viajes/GetAllViajeLocalByDatesFacturado?fecha1=${fecha1}&fecha2=${fecha2}`, function (r, textStatus, jqXHR) {
+        if (r.IsSuccess) {
+            // Filtrar solo los registros donde facturado es true o 1
+            const datosFiltrados = r.Response.filter(item => item.facturado === true || item.facturado === 1);
+            GenerarPDFPreFacturas(datosFiltrados, 1)
+        } else {
+            alert("Error al cargar los viajes: " + r.ErrorMessage);
+        }
+    });
+});
+
+function GenerarPDFPreFacturas(data, bandera) {
+
+
+    if (bandera == 1) {
+        if (data.length === 0) {
+            alert("No existen vales pendientes");
+            return;
+        }
+    } else if (bandera == 0) {
+        if (data.length === 0) {
+            alert("No existen vales pendientes");
+            return;
+        }
+    }
+
+    // Swalfire de generando reporte
+    Swal.fire({
+        title: "Generando reporte...",
+        text: "Por favor espere mientras se genera el PDF",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+
+            // Cerrar automáticamente después de 8 segundos
+            setTimeout(() => {
+                Swal.close();
+
+                // Mostrar mensaje de éxito después de cerrar
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Reporte generado',
+                    text: 'El PDF se ha creado correctamente',
+                    timer: 3000, // Opcional: cerrar después de 3 segundos
+                    showConfirmButton: false
+                });
+            }, 4000); // 4000 ms = 4 segundos
+        }
+    });
+
+    // Crear tabla HTML manualmente
+    var tablaHTML = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
+
+    // Encabezados (excluyendo columnas ocultas y de acciones)
+    tablaHTML += '<thead><tr>';
+    tablaHTML += '<th>Folio</th>';
+    tablaHTML += '<th>Fecha de transporte</th>';
+    tablaHTML += '<th>Cliente</th>';
+    tablaHTML += '<th>Material</th>';
+    tablaHTML += '</tr></thead>';
+
+    // Datos - usar TODOS los registros (no solo los primeros 30)
+    tablaHTML += '<tbody>';
+    data.forEach(function (item) {
+        tablaHTML += '<tr>';
+        tablaHTML += '<td>' + (item.folio || '') + '</td>';
+        tablaHTML += '<td>' + (item.fechaViaje ? (() => {
+            const d = new Date(item.fechaViaje);
+            return `${d.getDate().toString().padStart(2, '0')}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getFullYear()}`;
+        })() : '') + '</td>';
+        tablaHTML += '<td>' + (item.cliente.nombre || '') + '</td>';
+        tablaHTML += '<td>' + (item.tipoMaterial.nombreTipoMaterial || '') + '</td>';
+        tablaHTML += '</tr>';
+    });
+    tablaHTML += '</tbody></table>';
+
+    // Determinar el endpoint según la bandera
+    var endpoint = '';
+    if (bandera === 1) {
+        endpoint = '/Pdf/GenerarPDFPreFacturas1';
+    } else if (bandera === 0) {
+        endpoint = '/Pdf/GenerarPDFPreFacturas2';
+    }
+
+    // Crear formulario y enviar
+    var form = $('<form>', {
+        method: 'POST',
+        action: endpoint
+    });
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'tablaHTML',
+        value: tablaHTML
+    }).appendTo(form);
+
+    form.appendTo('body').submit().remove();
+}
