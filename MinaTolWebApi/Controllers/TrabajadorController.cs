@@ -36,6 +36,8 @@ namespace MinaTolWebApi.Controllers
         }
         #endregion
 
+
+
         #region Empleado
         [HttpPost, Route("")]
         public ModelResponse SaveOrupdateEmpleado(Empleado t)
@@ -69,6 +71,23 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
         #endregion
+        #region BajasEmpleados
+        [HttpGet, Route("Bajas/")]
+        public ModelResponse GetAllBajasEmpleado()
+        {
+            var result = wrapper.GetAllBajasEmpleadoList();
+            return result;
+        }
+
+        [HttpPost, Route("Recontratacion/{id:long}")]
+        public ModelResponse Recontratacion(long id)
+        {
+            var result = wrapper.Recontratacion(id);
+            return result;
+        }
+        #endregion
+
+
 
         #region DocumentosEmpleados
         [HttpPost, Route("DocumentosTrabajador/")]
