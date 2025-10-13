@@ -13,6 +13,7 @@ namespace MinaTolEntidades.DtoViajes
     {
         public DtoViajeLocal() {
             UbicacionOrigen = new DtoUbicacion();
+            DireccionDestino = new DireccionCliente();
             TipoMaterial = new DtoTipoMaterialUbicacion();
             Transportista = new DtoTrabajador();
             Vehiculo = new Vehiculo();
@@ -20,6 +21,7 @@ namespace MinaTolEntidades.DtoViajes
             Cliente = new Cliente();
         }
         public DtoUbicacion UbicacionOrigen { get; set; }
+        public DireccionCliente DireccionDestino { get; set; }
         public DtoTipoMaterialUbicacion TipoMaterial { get; set; }
         public DtoTrabajador Transportista { get; set; }
         public Vehiculo Vehiculo { get; set; }
@@ -28,5 +30,6 @@ namespace MinaTolEntidades.DtoViajes
         public string Observaciones { get; set; }
         public Cliente Cliente { get; set; }
         public string Folio { get; set; }
+        public bool Facturado { get; set; }
     }
 }

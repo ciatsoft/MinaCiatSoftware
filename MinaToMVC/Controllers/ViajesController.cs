@@ -152,6 +152,27 @@ namespace MinaToMVC.Controllers
 
             return View();
         }
+        public async Task<ActionResult> PreFactura(long id = 0)
+        {
+            var clientes = new List<Cliente>();
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            return View();
+        }
         #endregion
         #region DataAccess
         #region Viajes Internos
@@ -171,7 +192,6 @@ namespace MinaToMVC.Controllers
         #region Viajes Locales
         public async Task<string> SaveOrUpdateViajeLocal(DtoViajeLocal t)
         {
-
             var result = await httpClientConnection.SaveOrUpdateViajeLocal(t);
             return JsonConvert.SerializeObject(result);
         }
@@ -184,6 +204,21 @@ namespace MinaToMVC.Controllers
         public async Task<string> GetAllViajeLocalByDates(DateTime fecha1, DateTime fecha2)
         {
             var result = await httpClientConnection.GetAllViajeLocalByDates(fecha1, fecha2);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetAllViajeLocalByDatesFacturado(DateTime fecha1, DateTime fecha2)
+        {
+            var result = await httpClientConnection.GetAllViajeLocalByDatesFacturado(fecha1, fecha2);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> CheckPreFactura(long id, bool facturado)
+        {
+            var result = await httpClientConnection.CheckPreFactura(id, facturado);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetAllViajeLocalByDatesClientDireccion(DateTime fecha1, DateTime fecha2, long idCliente, long idDireccion)
+        {
+            var result = await httpClientConnection.GetAllViajeLocalByDatesClientDireccion(fecha1, fecha2, idCliente, idDireccion);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
         public async Task<string> GetTipoMaterialByCliente(long id)

@@ -148,6 +148,17 @@ function GetAllViajeLocalByDates(fecha1, fecha2) {
         }
     });
 }
+function GetAllViajeLocalByDatesClientDireccion(fecha1, fecha2, clienteId, direccionId) {
+    
+    // Usar GET con parámetros en la URL
+    GetMVC(`/Viajes/GetAllViajeLocalByDatesClientDireccion?fecha1=${fecha1}&fecha2=${fecha2}&idCliente=${clienteId}&idDireccion=${direccionId}`, function (r, textStatus, jqXHR) {
+        if (r.IsSuccess) {
+            MapingPropertiesDataTable("tblVentasGeneralesFiltradas", r.Response);
+        } else {
+            alert("Error al cargar los viajes: " + r.ErrorMessage);
+        }
+    });
+}
 
 function ObtenerDireccionCliente(id) {
     var dropdown = $("#ddlDireccionesCliente");
@@ -197,6 +208,15 @@ function ObtenerDireccionCliente(id) {
 document.getElementById("btnFiltrar1").addEventListener("click", function () {
     var fecha1 = $("#fechaFiltro1").val();
     var fecha2 = $("#fechaFiltro2").val();
+    // Convertir a objetos Date para comparación
+    var date1 = new Date(fecha1);
+    var date2 = new Date(fecha2);
+
+    // Validar que fecha2 no sea menor que fecha1
+    if (date2 < date1) {
+        alert("Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.");
+        return;
+    }
     GetAllViajeLocalByDates(fecha1, fecha2);
 });
 
@@ -219,12 +239,17 @@ document.getElementById("btnFiltrar2").addEventListener("click", function () {
         alert("Por favor, seleccione una direccion.");
         return;
     }
+    // Convertir a objetos Date para comparación
+    var date1 = new Date(fechaInicio);
+    var date2 = new Date(fechaFinal);
 
-    console.log("Fecha Inicio:", fechaInicio);
-    console.log("Fecha Final:", fechaFinal);
-    console.log("Cliente ID:", clienteId);
-    console.log("Direccion ID:", direccionId);
+    // Validar que fecha2 no sea menor que fecha1
+    if (date2 < date1) {
+        alert("Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.");
+        return;
+    }
 
+    GetAllViajeLocalByDatesClientDireccion(fechaInicio, fechaFinal, clienteId, direccionId);
 });
 
 // Reportes
@@ -232,10 +257,105 @@ document.getElementById("btnFiltrar2").addEventListener("click", function () {
 document.getElementById("btnGenerarPDFVentasGenerales").addEventListener("click", function () {
     btnGenerarPDFVentasGenerales();
 });
+document.getElementById("btnVentasGeneralesFiltradas").addEventListener("click", function () {
+    btnGenerarPDFVentasGeneralesFiltradas();
+});
 
 function btnGenerarPDFVentasGenerales() {
     var table = $('#tblVentasGenerales').DataTable();
     var datos = table.data().toArray();
+
+    // Tomar solo los primeros 30 registros
+    var primeros30 = datos.slice(0, 30);
+
+    // Swalfire de generando reporte
+    Swal.fire({
+        title: "Generando reporte...",
+        text: "Por favor espere mientras se genera el PDF",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+
+            // Cerrar automáticamente después de 8 segundos
+            setTimeout(() => {
+                Swal.close();
+
+                // Mostrar mensaje de éxito después de cerrar
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Reporte generado',
+                    text: 'El PDF se ha creado correctamente',
+                    timer: 3000, // Opcional: cerrar después de 3 segundos
+                    showConfirmButton: false
+                });
+            }, 4000); // 4000 ms = 4 segundos
+        }
+    });
+
+    // Crear tabla HTML manualmente
+    var tablaHTML = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
+
+    // Encabezados (excluyendo columnas ocultas y de acciones)
+    tablaHTML += '<thead><tr>';
+    tablaHTML += '<th>Folio</th>';
+    tablaHTML += '<th>Fecha de transporte</th>';
+    tablaHTML += '<th>Cliente</th>';
+    tablaHTML += '<th>Transportista</th>';
+    tablaHTML += '<th>Vehiculo</th>';
+    tablaHTML += '<th>Origen</th>';
+    tablaHTML += '<th>Material</th>';
+    tablaHTML += '<th>Metraje</th>';
+    tablaHTML += '<th>Importe</th>';
+    tablaHTML += '</tr></thead>';
+
+    // Datos - usar solo los primeros 30 registros
+    tablaHTML += '<tbody>';
+    primeros30.forEach(function (item) {
+        tablaHTML += '<tr>';
+        tablaHTML += '<td>' + (item.folio || '') + '</td>';
+        tablaHTML += '<td>' + (item.fechaViaje ? (() => {
+            const d = new Date(item.fechaViaje);
+            return `${d.getDate().toString().padStart(2, '0')}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getFullYear()}`;
+        })() : '') + '</td>';
+        tablaHTML += '<td>' + (item.cliente.nombre || '') + '</td>';
+        tablaHTML += '<td>' + (item.transportista.nombre || '') + '</td>';
+        tablaHTML += '<td>' + (item.vehiculo.placa || '') + '</td>';
+        tablaHTML += '<td>' + (item.ubicacionOrigen.nombreUbicacion || '') + '</td>';
+        tablaHTML += '<td>' + (item.tipoMaterial.nombreTipoMaterial || '') + '</td>';
+        //tablaHTML += '<td>' + (item.metraje|| '') + '</td>';
+        //tablaHTML += '<td>' + (item.importe ?
+        //    new Intl.NumberFormat('es-MX', {
+        //        style: 'currency',
+        //        currency: 'MXN'
+        //    }).format(item.importe) : '') + '</td>';
+        tablaHTML += '</tr>';
+    });
+    tablaHTML += '</tbody></table>';
+
+    // Crear formulario y enviar
+    var form = $('<form>', {
+        method: 'POST',
+        action: '/Pdf/GenerarReporteVentasGenerales'
+    });
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'tablaHTML',
+        value: tablaHTML
+    }).appendTo(form);
+
+    form.appendTo('body').submit().remove();
+}
+
+function btnGenerarPDFVentasGeneralesFiltradas() {
+    var table = $('#tblVentasGeneralesFiltradas').DataTable();
+    var datos = table.data().toArray();
+
+    // Verificar si la tabla está vacía
+    if (datos.length === 0) {
+        alert("La tabla esta vacia, no se puede proceder");
+        return;
+    }
 
     // Tomar solo los primeros 30 registros
     var primeros30 = datos.slice(0, 30);

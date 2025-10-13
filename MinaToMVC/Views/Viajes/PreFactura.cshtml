@@ -1,0 +1,47 @@
+﻿
+@{
+    ViewBag.Title = "PreFactura";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+<div class="content">
+    <br />
+    <center><h1>Pre-Facturas</h1></center>
+    <br />
+    <div class="tabla-consultas-empleados">
+        <div class="row align-items-end">
+            @* FILTRADO POR FECHA *@
+            <div class="col-auto">
+                <label for="fechaFiltro1" class="form-label">Fecha Inicio:</label>
+                <input type="date" id="fechaFiltro1" name="fechaFiltro1" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-01")" />
+            </div>
+
+            <div class="col-auto">
+                <label for="fechaFiltro2" class="form-label">Fecha Final:</label>
+                <input type="date" id="fechaFiltro2" name="fechaFiltro2" class="form-control" value="@DateTime.Now.AddDays(1 - DateTime.Now.Day).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="col-auto">
+                <input id="btnFiltrar2" type="button" value="Buscar" class="btn btn-custom-clean" style="margin-top: -30px" />
+                <a href="/Viajes/PreFactura" class="btn btn-custom-cancel" style="margin-top: -30px; margin-left: 10px">Cancelar</a>
+            </div>
+            <div class="rectangulos" style="width: 100%;">
+                <table id="tblPreFactura" class="table table-bordered table-striped" style="width: 100%;"></table>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+                    <div class="mb-2" style="text-align: right;">
+                        <button id="btnPreFactura" style="background-color: #28a745; margin-left:15px;  color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
+                            Generar Reporte PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+</div>
+<script src="@(Url.StaticFile("Scripts/Viajes/PreFactura.js"))"></script>
