@@ -14,6 +14,7 @@ namespace MinaTolWebApi.DAL
 {
     public partial class DbWrapper
     {
+
         #region Empleados
         public ModelResponse GetAllEmpleados()
         {
@@ -135,7 +136,60 @@ namespace MinaTolWebApi.DAL
             return response;
         }
         #endregion
+        #region BajasYRecontratacion
+        public ModelResponse GetAllBajasEmpleadoList()
+        {
+            var response = new ModelResponse();
+            var parameters = new List<SqlParameter>();
 
+            try
+            {
+                var result = GetObjects("GetAllBajasEmpleado", CommandType.StoredProcedure, parameters,
+                    reader => FillEntity<DtoBajasEmpleado>(reader));
+
+                response.IsSuccess = true;
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Enum = Enumeration.ErrorNoControlado;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+        public ModelResponse Recontratacion(long idEmpleado)
+        {
+            var response = new ModelResponse();
+
+            try
+            {
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter
+                    {
+                        Value = idEmpleado,
+                        ParameterName = "@Id",
+                        SqlDbType = SqlDbType.BigInt
+                    }
+                };
+                var result = ExecuteScalar("Recontratacion", CommandType.StoredProcedure, parameters);
+
+                response.IsSuccess = true;
+                response.Response = new { IdEmpleado = idEmpleado, TotalBajas = Convert.ToInt32(result) };
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Enum = Enumeration.ErrorNoControlado;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+
+        #endregion
         #region DocumentosEmpleados
         public ModelResponse SaveOrUpdateDocumentosEmpleado(DocumentosEmpleado u)
         {
