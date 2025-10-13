@@ -25,13 +25,13 @@ $(document).ready(function () {
             { data: "cliente.nombre", title: "Cliente" },
             { data: "tipoMaterial.nombreTipoMaterial", title: "Material" },
             {
-                data: "completado", // Asumiendo que tu modelo tiene esta propiedad
-                title: "Completado",
+                data: "facturado", // Asumiendo que tu modelo tiene esta propiedad
+                title: "Facturado",
                 orderable: false,
                 render: function (data, type, row) {
                     // Si el dato viene como 1/0, true/false, o string
                     var isChecked = data === true || data === 1 || data === '1' || data === 'true';
-                    return '<input type="checkbox" class="completado-checkbox" ' +
+                    return '<input type="checkbox" class="completado-checkbox form-control" ' +
                         (isChecked ? 'checked' : '') +
                         ' data-id="' + row.id + '">';
                 }
@@ -70,27 +70,55 @@ $(document).ready(function () {
 
         console.log('Checkbox cambiado - ID:', id, 'Completado:', isChecked);
 
-        // Aquí puedes hacer una llamada AJAX para guardar el estado
         guardarEstadoCheckbox(id, isChecked);
     });
 
-    // Función para guardar el estado (puedes adaptarla a tu API)
-    function guardarEstadoCheckbox(id, completado) {
+    function guardarEstadoCheckbox(id, facturado) {
         $.ajax({
-            url: '/tu-endpoint/actualizar-estado', // Cambia por tu URL
+            url: '/Viajes/CheckPreFactura',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({
                 id: id,
-                completado: completado
+                facturado: facturado
             }),
             success: function (response) {
                 console.log('Estado guardado correctamente');
             },
             error: function (xhr, status, error) {
                 console.error('Error al guardar estado:', error);
-                // Puedes revertir el checkbox si falla
             }
         });
     }
 });
+
+document.getElementById("btnFiltrar2").addEventListener("click", function () {
+    var fecha1 = $("#fechaFiltro1").val();
+    var fecha2 = $("#fechaFiltro2").val();
+    if (!fecha1 || !fecha2) {
+        alert("Por favor, seleccione una fecha válida.");
+        return;
+    }
+    // Convertir a objetos Date para comparación
+    var date1 = new Date(fecha1);
+    var date2 = new Date(fecha2);
+
+    // Validar que fecha2 no sea menor que fecha1
+    if (date2 < date1) {
+        alert("Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.");
+        return;
+    }
+    GetAllViajeLocalByDatesFacturado(fecha1, fecha2);
+});
+
+function GetAllViajeLocalByDatesFacturado(fecha1, fecha2) {
+    // Usar GET con parámetros en la URL
+    GetMVC(`/Viajes/GetAllViajeLocalByDatesFacturado?fecha1=${fecha1}&fecha2=${fecha2}`, function (r, textStatus, jqXHR) {
+        if (r.IsSuccess) {
+            console.log(r.Response);
+            MapingPropertiesDataTable("tblPreFactura", r.Response);
+        } else {
+            alert("Error al cargar los viajes: " + r.ErrorMessage);
+        }
+    });
+}

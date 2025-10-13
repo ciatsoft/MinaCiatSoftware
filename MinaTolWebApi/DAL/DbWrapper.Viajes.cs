@@ -168,6 +168,68 @@ namespace MinaTolWebApi.DAL
 
             return modelResponse;
         }
+        public ModelResponse GetAllViajeLocalByDatesFacturado(DateTime fecha1, DateTime fecha2)
+        {
+            var modelResponse = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+
+            try
+            {
+                // Agregar los parámetros de fecha a la lista
+                parameters.Add(new SqlParameter("@Fecha1", fecha1));
+                parameters.Add(new SqlParameter("@Fecha2", fecha2));
+
+                var user = GetObjects($"GetAllViajeLocalByDatesFacturado", CommandType.StoredProcedure, parameters,
+                    new Func<IDataReader, DtoViajeLocal>((reader) =>
+                    {
+                        var r = FillEntity<DtoViajeLocal>(reader);
+                        r.UbicacionOrigen.NombreUbicacion = MappingProperties<string>(reader["Origen"]);
+                        r.Transportista.Nombre = MappingProperties<string>(reader["Chofer"]);
+                        r.TipoMaterial.NombreTipoMaterial = MappingProperties<string>(reader["Material"]);
+                        r.Vehiculo.Placa = MappingProperties<string>(reader["Auto"]);
+                        r.Cliente.Nombre = MappingProperties<string>(reader["ClienteNombre"]);
+                        r.UnidadMedida.Nombre = MappingProperties<string>(reader["Unidad"]);
+
+                        return r;
+                    }));
+
+                modelResponse.Response = user;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
+        public ModelResponse CheckPreFactura(long id, bool facturado)
+        {
+            var modelResponse = new ModelResponse();
+
+            try
+            {
+                // Crear parámetros para el stored procedure
+                var parameters = new[]
+                {
+                    new SqlParameter("@Id", id),
+                    new SqlParameter("@Facturado", facturado)
+                };
+
+                var salarioId = ExecuteScalar($"CheckPreFactura", CommandType.StoredProcedure, parameters);
+
+                modelResponse.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
         public ModelResponse GetAllViajeLocalByDatesClientDireccion(DateTime fecha1, DateTime fecha2, long idCliente, long idDireccion)
         {
             var modelResponse = new ModelResponse();

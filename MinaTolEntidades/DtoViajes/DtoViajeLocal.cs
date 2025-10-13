@@ -30,5 +30,6 @@ namespace MinaTolEntidades.DtoViajes
         public string Observaciones { get; set; }
         public Cliente Cliente { get; set; }
         public string Folio { get; set; }
+        public bool Facturado { get; set; }
     }
 }

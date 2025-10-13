@@ -52,6 +52,30 @@ namespace MinaToMVC.DAL
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
             return modelResponse;
         }
+        public async Task<ModelResponse> GetAllViajeLocalByDatesFacturado(DateTime fecha1, DateTime fecha2)
+        {
+            string url = $"api/Viajes/ListlocalDatesFacturado/{fecha1.ToString("yyyy-MM-dd")}/{fecha2.ToString("yyyy-MM-dd")}";
+
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        public async Task<ModelResponse> CheckPreFactura(long id, bool facturado)
+        {
+            string url = $"api/Viajes/CheckPreFactura/{id}/{facturado}";
+
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
         public async Task<ModelResponse> GetAllViajeLocalByDatesClientDireccion(DateTime fecha1, DateTime fecha2, long idCliente, long idDireccion)
         {
             string url = $"api/Viajes/GetAllViajeLocalByDatesClientDireccion/{fecha1.ToString("yyyy-MM-dd")}/{fecha2.ToString("yyyy-MM-dd")}/{idCliente}/{idDireccion}";

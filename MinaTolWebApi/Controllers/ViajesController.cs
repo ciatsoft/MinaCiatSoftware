@@ -39,6 +39,18 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetAllViajeLocalByDates(fecha1, fecha2);
             return result;
         }
+        [HttpGet, Route("ListlocalDatesFacturado/{fecha1:datetime}/{fecha2:datetime}")]
+        public ModelResponse GetAllViajeLocalByDatesFacturado(DateTime fecha1, DateTime fecha2)
+        {
+            var result = wrapper.GetAllViajeLocalByDatesFacturado(fecha1, fecha2);
+            return result;
+        }
+        [HttpGet, Route("CheckPreFactura/{id:long}/{facturado:bool}")]
+        public ModelResponse CheckPreFactura(long id, bool facturado)
+        {
+            var result = wrapper.CheckPreFactura(id, facturado);
+            return result;
+        }
         [HttpGet, Route("GetAllViajeLocalByDatesClientDireccion/{fecha1:datetime}/{fecha2:datetime}/{idCliente:long}/{idDireccion:long}")]
         public ModelResponse GetAllViajeLocalByDatesClientDireccion(DateTime fecha1, DateTime fecha2, long idCliente, long idDireccion)
         {

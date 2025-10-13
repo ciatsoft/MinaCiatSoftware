@@ -208,6 +208,15 @@ function ObtenerDireccionCliente(id) {
 document.getElementById("btnFiltrar1").addEventListener("click", function () {
     var fecha1 = $("#fechaFiltro1").val();
     var fecha2 = $("#fechaFiltro2").val();
+    // Convertir a objetos Date para comparación
+    var date1 = new Date(fecha1);
+    var date2 = new Date(fecha2);
+
+    // Validar que fecha2 no sea menor que fecha1
+    if (date2 < date1) {
+        alert("Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.");
+        return;
+    }
     GetAllViajeLocalByDates(fecha1, fecha2);
 });
 
@@ -228,6 +237,15 @@ document.getElementById("btnFiltrar2").addEventListener("click", function () {
     }
     if (!direccionId) {
         alert("Por favor, seleccione una direccion.");
+        return;
+    }
+    // Convertir a objetos Date para comparación
+    var date1 = new Date(fechaInicio);
+    var date2 = new Date(fechaFinal);
+
+    // Validar que fecha2 no sea menor que fecha1
+    if (date2 < date1) {
+        alert("Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.");
         return;
     }
 

@@ -206,6 +206,16 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllViajeLocalByDates(fecha1, fecha2);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+        public async Task<string> GetAllViajeLocalByDatesFacturado(DateTime fecha1, DateTime fecha2)
+        {
+            var result = await httpClientConnection.GetAllViajeLocalByDatesFacturado(fecha1, fecha2);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> CheckPreFactura(long id, bool facturado)
+        {
+            var result = await httpClientConnection.CheckPreFactura(id, facturado);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
         public async Task<string> GetAllViajeLocalByDatesClientDireccion(DateTime fecha1, DateTime fecha2, long idCliente, long idDireccion)
         {
             var result = await httpClientConnection.GetAllViajeLocalByDatesClientDireccion(fecha1, fecha2, idCliente, idDireccion);
