@@ -1,4 +1,5 @@
-﻿using MinaTolEntidades;
+﻿
+using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.DtoSeguridad;
@@ -339,6 +340,11 @@ namespace MinaToMVC.Controllers
         {
             var result = await httpClientConnection.GetAllCliente();
 
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetAllTipoCliente(long id)
+        {
+            var result = await httpClientConnection.GetAllTipoCliente(id);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 

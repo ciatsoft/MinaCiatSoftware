@@ -53,6 +53,19 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
+        public async Task<ModelResponse> GetAllTipoCliente(long id)
+        {
+            var url = $"api/Cliente/TipoClienteList/{id}";
+
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
 
         public async Task<ModelResponse> GetClienteById(long id)
         {

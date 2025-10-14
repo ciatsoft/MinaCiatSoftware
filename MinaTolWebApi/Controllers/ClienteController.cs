@@ -27,6 +27,13 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
         [AllowAnonymous]
+        [Route("TipoClienteList/{id:long}"), HttpGet]
+        public async Task<ModelResponse> GetAllTipoCliente(long id)
+        {
+            var result = wrapper.GetAllTipoCliente(id);
+            return result;
+        }
+        [AllowAnonymous]
         [HttpGet, Route("{id:long}")]
         public async Task<ModelResponse> GetClienteById(int id)
         {

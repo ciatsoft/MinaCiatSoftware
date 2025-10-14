@@ -29,6 +29,18 @@
             </div>
 
             <div class="col-auto">
+                <label>Tipo de Cliente:</label>
+                <select id="ddlTipoCliente1" name="ddlTipoCliente" class="form-control">
+                    <option value="" disabled selected>Selecciona una opcion</option>
+                    <!-- Las opciones se cargarán desde el ViewBag -->
+                    @foreach (var item in ViewBag.TipoCliente)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-auto">
                 <input id="btnFiltrar1" type="button" value="Buscar" class="btn btn-custom-clean" style="margin-top: -30px" />
                 <a href="/Viajes/ReportesViajesLocales" class="btn btn-custom-cancel" style="margin-top: -30px; margin-left: 10px">Cancelar</a>
             </div>
@@ -57,6 +69,18 @@
             <div class="col-auto">
                 <label for="fechaFiltro4" class="form-label">Fecha Final:</label>
                 <input type="date" id="fechaFiltro4" name="fechaFiltro4" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            </div>
+
+            <div class="col-auto">
+                <label>Tipo de Cliente:</label>
+                <select id="ddlTipoCliente2" name="ddlTipoCliente" class="form-control">
+                    <option value="" disabled selected>Selecciona una opcion</option>
+                    <!-- Las opciones se cargarán desde el ViewBag -->
+                    @foreach (var item in ViewBag.TipoCliente)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
             </div>
 
             <div class="col-auto">

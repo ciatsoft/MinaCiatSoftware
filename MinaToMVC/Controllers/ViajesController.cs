@@ -9,6 +9,7 @@ using MinaToMVC.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -201,6 +202,20 @@ namespace MinaToMVC.Controllers
             clientes = JsonConvert.DeserializeObject<List<Cliente>>(responseClientes.Response.ToString());
             ViewBag.Clientes = clientes;
 
+            string tipoCliente = ConfigurationManager.AppSettings["TipoCliente"];
+
+            var opcionesCliente = tipoCliente.Split('|')
+                .Select(opt =>
+                {
+                    var parts = opt.Split(':');
+                    return new SelectListItem
+                    {
+                        Value = parts[0],
+                        Text = parts[1]
+                    };
+                }).ToList();
+            ViewBag.TipoCliente = opcionesCliente;
+
             return View();
         }
         public async Task<ActionResult> PreFactura(long id = 0)
@@ -257,9 +272,9 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllViajeLocal(token.Token.access_token);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-        public async Task<string> GetAllViajeLocalByDates(DateTime fecha1, DateTime fecha2)
+        public async Task<string> GetAllViajeLocalByDates(DateTime fecha1, DateTime fecha2, string tipoCliente)
         {
-            var result = await httpClientConnection.GetAllViajeLocalByDates(fecha1, fecha2);
+            var result = await httpClientConnection.GetAllViajeLocalByDates(fecha1, fecha2, tipoCliente);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
         public async Task<string> GetAllViajeLocalByDatesFacturado(DateTime fecha1, DateTime fecha2)

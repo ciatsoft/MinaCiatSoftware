@@ -137,7 +137,7 @@ namespace MinaTolWebApi.DAL
             return modelResponse;
         }
 
-        public ModelResponse GetAllViajeLocalByDates(DateTime fecha1, DateTime fecha2)
+        public ModelResponse GetAllViajeLocalByDates(DateTime fecha1, DateTime fecha2, string tipoCliente)
         {
             var modelResponse = new ModelResponse();
             var parameters = new List<SqlParameter>();
@@ -147,6 +147,7 @@ namespace MinaTolWebApi.DAL
                 // Agregar los parámetros de fecha a la lista
                 parameters.Add(new SqlParameter("@Fecha1", fecha1));
                 parameters.Add(new SqlParameter("@Fecha2", fecha2));
+                parameters.Add(new SqlParameter("@TipoCliente", tipoCliente));
 
                 var user = GetObjects($"GetAllViajeLocalByDates", CommandType.StoredProcedure, parameters,
                     new Func<IDataReader, DtoViajeLocal>((reader) =>
