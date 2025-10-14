@@ -348,7 +348,27 @@ namespace MinaTolWebApi.DAL
 
             try
             {
-                var salarioId = ExecuteScalar($"SaveOrUpdateViajeLocal", CommandType.StoredProcedure, GenerateSQLParameters(vi));
+                var parameters = new[]
+                {
+                    new SqlParameter("@Id", vi.Id == 0 ? DBNull.Value : (object)vi.Id),
+                    new SqlParameter("@UbicacionOrigen", vi.UbicacionOrigen.Id),
+                    new SqlParameter("@DireccionDestino", vi.DireccionDestino.Id),
+                    new SqlParameter("@Transportista", vi.Transportista.Id),
+                    new SqlParameter("@TipoMaterial", vi.TipoMaterial.Id),
+                    new SqlParameter("@Vehiculo", vi.Vehiculo.Id),
+                    new SqlParameter("@Cliente", vi.Cliente.Id),
+                    new SqlParameter("@UnidadMedida", vi.UnidadMedida.Id),
+                    new SqlParameter("@FechaViaje", vi.FechaViaje),
+                    new SqlParameter("@Observaciones", vi.Observaciones ?? (object)DBNull.Value),
+                    new SqlParameter("@Estatus", vi.Estatus),
+                    new SqlParameter("@CreatedBy", vi.CreatedBy ?? (object)DBNull.Value),
+                    new SqlParameter("@CreatedDt", vi.CreatedDt),
+                    new SqlParameter("@UpdatedBy", vi.UpdatedBy ?? (object)DBNull.Value),
+                    new SqlParameter("@UpdatedDt", vi.UpdatedDt),
+                    new SqlParameter("@Folio", vi.Folio ?? (object)DBNull.Value)
+                };
+
+                var salarioId = ExecuteScalar($"SaveOrUpdateViajeLocal", CommandType.StoredProcedure, parameters);
                 vi.Id = Convert.ToInt64(salarioId);
 
                 modelResponse.Response = vi;
@@ -361,6 +381,32 @@ namespace MinaTolWebApi.DAL
             }
 
             return modelResponse;
+        }
+        public ModelResponse DeleteViajeLocal(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id"
+                });
+
+                var result = ExecuteNonQuery("DeleteViajeLocal", System.Data.CommandType.StoredProcedure, parameters);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
         }
         public ModelResponse UpdateFoliador(string nombre)
         {

@@ -181,7 +181,7 @@ function SaveOrUpdateViajeLocal() {
                     }
                 });
             }
-            window.location.href = '/Viajes/Locales';
+            window.location.href = '/Viajes/Concreteras';
         });
     } else {
         window.Swal.fire('Advertencia', 'Por favor, complete todos los campos obligatorios.', 'warning');
@@ -191,78 +191,38 @@ function SaveOrUpdateViajeLocal() {
 
 // Función para eliminar con confirmación y estructura de mensajes de SweetAlert
 function EliminarViajeLocal() {
-    var valid = true;
-    $(".required").each(function () {
-        if ($(this).val() === "") {
-            valid = false;
-            $(this).addClass("is-invalid");
-        } else {
-            $(this).removeClass("is-invalid");
+    Swal.fire({
+        title: '¿Estas seguro?',
+        text: "¿Desea eliminar el siguiente registro?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var id = $("#txtViajeinterno").val();
+
+            // Cambiar a GET y enviar el ID en la URL
+            GetMVC('/Viajes/DeleteViajeLocal?id=' + id, function (r) {
+                if (r.IsSuccess) {
+                    Swal.fire('Eliminado', 'El registro ha sido eliminado.', 'success')
+                        .then(() => {
+                            window.location.href = '/Viajes/Concreteras';
+                        });
+                } else {
+                    Swal.fire('Error', 'No se pudo eliminar el registro.', 'error');
+                }
+            });
         }
     });
-
-    if (valid) {
-        // Se construye el objeto de parámetros para el viaje local
-        var parametro = {
-            Id: $("#txtViajeinterno").val(),
-            UbicacionOrigen: { Id: $("#ddlUOrigen").val() },
-            Transportista: { Id: $("#ddlTransportistas").val() },
-            TipoMaterial: { Id: $("#ddlTipoMaterial").val() },
-            Vehiculo: { Id: $("#ddlVehiculo").val() },
-            Cliente: { Id: $("#ddlCliente").val() },
-            UnidadMedida: { Id: $("#ddlUnidadM").val() },
-            FechaViaje: $("#dtpFechaViaje").val(),
-            Observaciones: $("#txtObservaciones").val(),
-            Estatus: false,
-            CreatedBy: $("#txtCreatedBy").val(),
-            CreatedDt: $("#txtCreatedDt").val(),
-            UpdatedBy: $("#txtUpdatedBy").val(),
-            UpdatedDt: $("#txtUpdatedDt").val(),
-            Folio: $("#Folio").val()
-        };
-
-        // Mostrar los datos capturados en una alerta usando SweetAlert
-        Swal.fire({
-            title: 'Confirmar eliminación',
-            html: `<strong>¿Estás seguro de que deseas eliminar este viaje?</strong><br/>
-                   <strong>Origen:</strong> ${$("#ddlUOrigen option:selected").text()}<br/>
-                   <strong>Transportista:</strong> ${$("#ddlTransportistas option:selected").text()}<br/>
-                   <strong>Material:</strong> ${$("#ddlTipoMaterial option:selected").text()}<br/>
-                   <strong>Vehículo:</strong> ${$("#ddlVehiculo option:selected").text()}<br/>
-                   <strong>Cliente:</strong> ${$("#ddlCliente option:selected").text()}<br/>
-                   <strong>Unidad de Medida:</strong> ${$("#ddlUnidadM option:selected").text()}<br/>
-                   <strong>Fecha del Viaje:</strong> ${$("#dtpFechaViaje").val()}<br/>
-                   <strong>Observaciones:</strong> ${$("#txtObservaciones").val()}`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Eliminar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            window.location.href = '/Viajes/Locales';
-            if (result.isConfirmed) {
-                window.location.href = '/Viajes/Locales';
-                // Enviar los datos al servidor para eliminar
-                PostMVC("/Viajes/SaveOrUpdateViajeLocal", parametro, function (r) {
-                    if (r.IsSuccess) {
-                        LimpiarFormulario();
-                        Swal.fire('Éxito', 'El viaje ha sido eliminado exitosamente', 'success');
-                    } else {
-                        Swal.fire('Error', 'Error al eliminar el viaje: ' + r.response.ErrorMessage, 'error');
-                    }
-                });
-            }
-        });
-    } else {
-        Swal.fire('Advertencia', 'Por favor, complete todos los campos obligatorios antes de continuar.', 'warning');
-    }
 }
-
-
 
 // Función para editar con estilo de redireccionamiento 
 function EditarViajeLocal(id) {
     actualizarTiposDeMaterial();
-    location.href = "/Viajes/Locales/" + id;
+    location.href = "/Viajes/Concreteras/" + id;
     console.log(id);
 }
 

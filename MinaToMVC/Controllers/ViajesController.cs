@@ -246,6 +246,11 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.SaveOrUpdateViajeLocal(t);
             return JsonConvert.SerializeObject(result);
         }
+        public async Task<string> DeleteViajeLocal(long id)
+        {
+            var result = await httpClientConnection.DeleteViajeLocal(id);
+            return JsonConvert.SerializeObject(result);
+        }
         public async Task<string> GetAllViajeLocal()
         {
             var token = Helpers.SessionHelper.GetSessionUser();
