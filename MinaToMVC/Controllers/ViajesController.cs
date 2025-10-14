@@ -100,9 +100,10 @@ namespace MinaToMVC.Controllers
             var responseClientes = await httpClientConnection.GetAllCliente();
             clientes = JsonConvert.DeserializeObject<List<Cliente>>(responseClientes.Response.ToString());
 
-            string Nombre = "ViajeLocal";
-            var responsefolio = await httpClientConnection.GetFoliadorByNombre(Nombre);
-            folio = JsonConvert.DeserializeObject<DtoFoliador>(responsefolio.Response.ToString());
+            var foliadorResponse = await httpClientConnection.GetFoliadorByNombre("ViajeAlmacenes");
+            var foliador = JsonConvert.DeserializeObject<DtoFoliador>(foliadorResponse.Response.ToString());
+            foliador.CalcualrConsecutivoString();
+            ViewBag.Folio = "A" + foliador.ConsecutivoString;
 
             var responseUbicaciones = await httpClientConnection.GetAllUbicacion();
             ubicaciones = JsonConvert.DeserializeObject<List<DtoUbicacion>>(responseUbicaciones.Response.ToString());
@@ -123,8 +124,7 @@ namespace MinaToMVC.Controllers
             ViewBag.Trabajadores = trabajadores;
             ViewBag.Vehiculos = vehiculos;
             ViewBag.Clientes = clientes;
-            ViewBag.Folio = folio;
-
+            
             return View(ViajeLocal);
         }
         public async Task<ActionResult> Concreteras(long id = 0)
@@ -151,9 +151,10 @@ namespace MinaToMVC.Controllers
             var responseClientes = await httpClientConnection.GetAllCliente();
             clientes = JsonConvert.DeserializeObject<List<Cliente>>(responseClientes.Response.ToString());
 
-            string Nombre = "ViajeLocal";
-            var responsefolio = await httpClientConnection.GetFoliadorByNombre(Nombre);
-            folio = JsonConvert.DeserializeObject<DtoFoliador>(responsefolio.Response.ToString());
+            var foliadorResponse = await httpClientConnection.GetFoliadorByNombre("ViajeConcretera");
+            var foliador = JsonConvert.DeserializeObject<DtoFoliador>(foliadorResponse.Response.ToString());
+            foliador.CalcualrConsecutivoString();
+            ViewBag.Folio = "C" + foliador.ConsecutivoString;
 
             var responseUbicaciones = await httpClientConnection.GetAllUbicacion();
             ubicaciones = JsonConvert.DeserializeObject<List<DtoUbicacion>>(responseUbicaciones.Response.ToString());
@@ -174,7 +175,6 @@ namespace MinaToMVC.Controllers
             ViewBag.Trabajadores = trabajadores;
             ViewBag.Vehiculos = vehiculos;
             ViewBag.Clientes = clientes;
-            ViewBag.Folio = folio;
 
             return View(ViajeLocal);
         }
