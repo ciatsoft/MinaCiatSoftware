@@ -310,17 +310,6 @@ namespace MinaToMVC.Controllers
         }
         #endregion
 
-        #region BajaEmpleado
-
-        public async Task<ActionResult> SaveOrUpdateBajasEmpleado(DtoBajasEmpleado ce)
-        {
-            var result = await httpClientConnection.SaveOrUpdateBajasEmpleado(ce);
-
-            // Redirigir al controlador Empleado y método AltaEdicion
-            return RedirectToAction("AltaEdicion", "Empleado");
-        }
-
-        #endregion
         #endregion
     }
 }

@@ -145,7 +145,7 @@ namespace MinaTolWebApi.DAL
             try
             {
                 var result = GetObjects("GetAllBajasEmpleado", CommandType.StoredProcedure, parameters,
-                    reader => FillEntity<DtoBajasEmpleado>(reader));
+                    reader => FillEntity<Empleado>(reader));
 
                 response.IsSuccess = true;
                 response.Response = result;
@@ -159,7 +159,7 @@ namespace MinaTolWebApi.DAL
 
             return response;
         }
-        public ModelResponse Recontratacion(long idEmpleado)
+        public ModelResponse Recontratacion(long id)
         {
             var response = new ModelResponse();
 
@@ -169,7 +169,7 @@ namespace MinaTolWebApi.DAL
                 {
                     new SqlParameter
                     {
-                        Value = idEmpleado,
+                        Value = id,
                         ParameterName = "@Id",
                         SqlDbType = SqlDbType.BigInt
                     }
@@ -177,7 +177,7 @@ namespace MinaTolWebApi.DAL
                 var result = ExecuteScalar("Recontratacion", CommandType.StoredProcedure, parameters);
 
                 response.IsSuccess = true;
-                response.Response = new { IdEmpleado = idEmpleado, TotalBajas = Convert.ToInt32(result) };
+                response.Response = new { IdEmpleado = id, TotalBajas = Convert.ToInt32(result) };
             }
             catch (Exception ex)
             {
