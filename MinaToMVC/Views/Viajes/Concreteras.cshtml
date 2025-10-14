@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "Locales";
+    ViewBag.Title = "Concreteras";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var estatus = new List<string> { "Activo", "Inactivo" };
 
@@ -84,7 +84,7 @@
         <input type="hidden" id="txtUpdatedDt" value="@DateTime.Now" />
         <input type="hidden" id="txtViajeinterno" />
         <br>
-        <center><h1>Viajes de Almacenes</h1></center>
+        <center><h1>Viajes de Concreteras</h1></center>
         <div class="tabla-consultas-empleados">
             <div class="rectangulos" style="width: 100%;">
                 <div class="row">
@@ -110,7 +110,7 @@
                         <label>Cliente:</label>
                         <select id="ddlCliente" class="form-control" onchange="actualizarTiposDeMaterial()">
                             <option value="" disabled selected>Selecciona una opcion</option>
-                            @foreach (var i in clientes.Where(c => c.TipoCliente == 1).OrderBy(c => c.Nombre))
+                            @foreach (var i in clientes.Where(c => c.TipoCliente == 0).OrderBy(c => c.Nombre))
                             {
                                 <option value="@i.Id">@i.Nombre</option>
                             }
@@ -195,7 +195,7 @@
     </div>
 </form>
 
-<script src="@(Url.StaticFile("Scripts/Viajes/Locales.js"))"></script>
+<script src="@(Url.StaticFile("Scripts/Viajes/Concreteras.js"))"></script>
 <script>
     var viajeLocalJson = JSON.parse('@Html.Raw((Newtonsoft.Json.JsonConvert.SerializeObject(ViajeLocal)))');
 </script>

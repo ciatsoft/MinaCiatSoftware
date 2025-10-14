@@ -127,6 +127,57 @@ namespace MinaToMVC.Controllers
 
             return View(ViajeLocal);
         }
+        public async Task<ActionResult> Concreteras(long id = 0)
+        {
+            var ubicaciones = new List<DtoUbicacion>();
+            var tipoMateriales = new List<ClienteTipoMaterial>();
+            var trabajadores = new List<DtoTrabajador>();
+            var vehiculos = new List<Vehiculo>();
+            var unidadmedida = new List<UnidadMedida>();
+            var clientes = new List<Cliente>();
+            var folio = new DtoFoliador();
+
+            var ViajeLocal = new DtoViajeLocal();
+
+            var responseVehiculo = await httpClientConnection.GetAllVehiculo();
+            vehiculos = JsonConvert.DeserializeObject<List<Vehiculo>>(responseVehiculo.Response.ToString());
+
+            if (id != 0)
+            {
+                var result = await httpClientConnection.GetViajeLocalById(id);
+                ViajeLocal = JsonConvert.DeserializeObject<DtoViajeLocal>(result.Response.ToString());
+            }
+
+            var responseClientes = await httpClientConnection.GetAllCliente();
+            clientes = JsonConvert.DeserializeObject<List<Cliente>>(responseClientes.Response.ToString());
+
+            string Nombre = "ViajeLocal";
+            var responsefolio = await httpClientConnection.GetFoliadorByNombre(Nombre);
+            folio = JsonConvert.DeserializeObject<DtoFoliador>(responsefolio.Response.ToString());
+
+            var responseUbicaciones = await httpClientConnection.GetAllUbicacion();
+            ubicaciones = JsonConvert.DeserializeObject<List<DtoUbicacion>>(responseUbicaciones.Response.ToString());
+
+            var responseTipoMaterial = await httpClientConnection.GetTipoMaterialByCliente(clientes.FirstOrDefault().Id);
+            tipoMateriales = JsonConvert.DeserializeObject<List<ClienteTipoMaterial>>(responseTipoMaterial.Response.ToString());
+
+            var responsetrabajadores = await httpClientConnection.GetAllEmpleados();
+            trabajadores = JsonConvert.DeserializeObject<List<DtoTrabajador>>(responsetrabajadores.Response.ToString());
+
+            var responseunidadmedida = await httpClientConnection.GetAllUnidadMedida();
+            unidadmedida = JsonConvert.DeserializeObject<List<UnidadMedida>>(responseunidadmedida.Response.ToString());
+
+            ViewBag.UnidadDeMedida = unidadmedida;
+
+            ViewBag.Ubicaciones = ubicaciones;
+            ViewBag.TipoMaterial = tipoMateriales;
+            ViewBag.Trabajadores = trabajadores;
+            ViewBag.Vehiculos = vehiculos;
+            ViewBag.Clientes = clientes;
+            ViewBag.Folio = folio;
+
+            return View(ViajeLocal);
+        }
         public async Task<ActionResult> ReportesViajesLocales(long id = 0)
         {
             var clientes = new List<Cliente>();

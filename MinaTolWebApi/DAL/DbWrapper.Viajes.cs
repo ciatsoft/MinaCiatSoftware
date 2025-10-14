@@ -115,12 +115,17 @@ namespace MinaTolWebApi.DAL
                         r.TipoMaterial.NombreTipoMaterial = MappingProperties<string>(reader["Material"]);
                         r.Vehiculo.Placa = MappingProperties<string>(reader["Auto"]);
                         r.Cliente.Nombre = MappingProperties<string>(reader["ClienteNombre"]);
+
+                        // CORRECCIÓN: Asignar TipoCliente directamente al DTO, no al cliente
+                        r.Cliente.TipoCliente = MappingProperties<int>(reader["TipoCliente"]);
+
                         r.UnidadMedida.Nombre = MappingProperties<string>(reader["Unidad"]);
 
                         return r;
                     }));
 
                 modelResponse.Response = user;
+                modelResponse.IsSuccess = true; // Asegurar que IsSuccess sea true en caso de éxito
             }
             catch (Exception ex)
             {
