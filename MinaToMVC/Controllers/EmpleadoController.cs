@@ -175,6 +175,17 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllEmpleados();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+        public async Task<string> GetAllBajasEmpleado()
+        {
+            var result = await httpClientConnection.GetAllBajasEmpleado();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> RecontratarEmpleado(long id)
+        {
+            var result = await httpClientConnection.RecontratarEmpleado(id);
+            return JsonConvert.SerializeObject(result);
+        }
+
         public async Task<ActionResult> SaveOrupdateEmpleado(Empleado t)
         {
             try
@@ -481,6 +492,7 @@ namespace MinaToMVC.Controllers
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
         #endregion
+
         #endregion
     }
 }

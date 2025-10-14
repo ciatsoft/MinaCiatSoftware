@@ -1,5 +1,7 @@
-﻿using MinaTolEntidades.DtoSucursales;
-using MinaTolEntidades;
+﻿using MinaTolEntidades;
+using MinaTolEntidades.DtoClientes;
+using MinaTolEntidades.DtoEmpleados;
+using MinaTolEntidades.DtoSucursales;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,7 +10,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using MinaTolEntidades.DtoEmpleados;
 
 namespace MinaToMVC.DAL
 {
@@ -30,6 +31,30 @@ namespace MinaToMVC.DAL
         public async Task<ModelResponse> GetAllEmpleados()
         {
             var result = await RequestAsync<object>("api/Trabajador/List", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
+        public async Task<ModelResponse> GetAllBajasEmpleado()
+        {
+            var result = await RequestAsync<object>("api/Trabajador/Bajas", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
+        public async Task<ModelResponse> RecontratarEmpleado(long id)
+        {
+            var result = await RequestAsync<object>($"api/Trabajador/Recontratacion/{id}", HttpMethod.Post, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
@@ -285,7 +310,7 @@ namespace MinaToMVC.DAL
         }
         #endregion
 
-        #region BajaEmpleado
+        #region BajaEmpleados
         public async Task<ModelResponse> SaveOrUpdateBajasEmpleado(DtoBajasEmpleado ce)
         {
             var result = await RequestAsync<object>("api/BajasEmpleado/", HttpMethod.Post, ce,
@@ -297,7 +322,29 @@ namespace MinaToMVC.DAL
 
             return modelResponse;
         }
+        public async Task<ModelResponse> GetAllBajasEmpleadoList()
+        {
+            var result = await RequestAsync<object>("api/Trabajador/GetAllBajasEmpleado", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
 
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+
+        public async Task<ModelResponse> Recontratacion(long id)
+        {
+            var result = await RequestAsync<object>($"api/Trabajador/Recontratacion/{id}", HttpMethod.Post, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
         #endregion
     }
 }
