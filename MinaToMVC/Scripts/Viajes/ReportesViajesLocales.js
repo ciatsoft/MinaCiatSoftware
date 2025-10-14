@@ -1,6 +1,24 @@
 $(document).ready(function () {
 
-    // Event listener para el cambio de selección en el dropdown de clientes
+    $("#ddlTipoCliente2").change(function () {
+        var selectedId = $(this).val();
+
+        // Limpiar dropdown de clientes Y direcciones
+        $("#ddlCliente").empty().append($('<option></option>')
+            .val("")
+            .text("Selecciona una opcion")
+            .prop('disabled', true)
+            .prop('selected', true));
+
+        $("#ddlDireccionesCliente").empty().append($('<option></option>')
+            .val("")
+            .text("Selecciona una opcion")
+            .prop('disabled', true)
+            .prop('selected', true));
+
+        ObtenerTipoCliente(selectedId);
+    });
+
     $("#ddlCliente").change(function () {
         var selectedId = $(this).val();
         ObtenerDireccionCliente(selectedId);
@@ -133,14 +151,14 @@ function GetAllViajeLocal() {
     });
 }
 
-function GetAllViajeLocalByDates(fecha1, fecha2) {
+function GetAllViajeLocalByDates(fecha1, fecha2, tipoCliente) {
     if (!fecha1 || !fecha2) {
         alert("Por favor, seleccione una fecha válida.");
         return;
     }
 
     // Usar GET con parámetros en la URL
-    GetMVC(`/Viajes/GetAllViajeLocalByDates?fecha1=${fecha1}&fecha2=${fecha2}`, function (r, textStatus, jqXHR) {
+    GetMVC(`/Viajes/GetAllViajeLocalByDates?fecha1=${fecha1}&fecha2=${fecha2}&tipoCliente=${tipoCliente}`, function (r, textStatus, jqXHR) {
         if (r.IsSuccess) {
             MapingPropertiesDataTable("tblVentasGenerales", r.Response);
         } else {
@@ -156,6 +174,51 @@ function GetAllViajeLocalByDatesClientDireccion(fecha1, fecha2, clienteId, direc
             MapingPropertiesDataTable("tblVentasGeneralesFiltradas", r.Response);
         } else {
             alert("Error al cargar los viajes: " + r.ErrorMessage);
+        }
+    });
+}
+
+function ObtenerTipoCliente(id) {
+    var dropdownCliente = $("#ddlCliente");
+    var dropdownDireccion = $("#ddlDireccionesCliente");
+
+    // Limpiar ambos dropdowns
+    dropdownCliente.empty().append($('<option></option>')
+        .val("")
+        .text("Selecciona una opcion")
+        .prop('disabled', true)
+        .prop('selected', true));
+
+    dropdownDireccion.empty().append($('<option></option>')
+        .val("")
+        .text("Selecciona una opcion")
+        .prop('disabled', true)
+        .prop('selected', true));
+
+    if (!id) {
+        return;
+    }
+
+    GetMVC(`/Administracion/GetAllTipoCliente?id=${id}`, function (r, textStatus, jqXHR) {
+        if (r.IsSuccess) {
+            if (r.Response && r.Response.length > 0) {
+                $.each(r.Response, function (index, cliente) {
+                    var texto = `${cliente.nombre}`;
+                    var option = $('<option></option>')
+                        .val(cliente.id)
+                        .text(texto);
+                    dropdownCliente.append(option);
+                });
+            } else {
+                dropdownCliente.append($('<option></option>')
+                    .val("")
+                    .text("No hay clientes disponibles"));
+            }
+        } else {
+            alert("Error al cargar los clientes: " + r.ErrorMessage);
+            dropdownCliente.append($('<option></option>')
+                .val("")
+                .text("Error al cargar clientes"));
         }
     });
 }
@@ -208,16 +271,41 @@ function ObtenerDireccionCliente(id) {
 document.getElementById("btnFiltrar1").addEventListener("click", function () {
     var fecha1 = $("#fechaFiltro1").val();
     var fecha2 = $("#fechaFiltro2").val();
+    var cliente = $("#ddlTipoCliente1").val();
+
     // Convertir a objetos Date para comparación
     var date1 = new Date(fecha1);
     var date2 = new Date(fecha2);
+
+    // Validar que ambas fechas tengan valor
+    if (!fecha1 || !fecha2) {
+        alert("Filtrado inválido: Ambas fechas son requeridas.");
+        return;
+    }
 
     // Validar que fecha2 no sea menor que fecha1
     if (date2 < date1) {
         alert("Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.");
         return;
     }
-    GetAllViajeLocalByDates(fecha1, fecha2);
+
+    // Validar que se haya seleccionado un cliente
+    if (cliente == null || cliente === "") {
+        alert("Filtrado invalido: Por favor selecciona un tipo de cliente.");
+        return;
+    }
+
+    // CORRECCIÓN PRINCIPAL: Usar la variable correcta 'cliente' en lugar de 'tipoCliente'
+    var tipoClienteFiltrado = cliente; // Renombrar para evitar confusión
+
+    if (tipoClienteFiltrado === "0") {
+        tipoClienteFiltrado = 'C';
+    } else if (tipoClienteFiltrado === "1") {
+        tipoClienteFiltrado = 'A';
+    }
+
+    // Llamar a la función con los parámetros correctos
+    GetAllViajeLocalByDates(fecha1, fecha2, tipoClienteFiltrado);
 });
 
 // Filtro 2
