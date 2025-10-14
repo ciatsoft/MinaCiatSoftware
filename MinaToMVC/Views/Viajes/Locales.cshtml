@@ -11,7 +11,7 @@
     var clientes = (List<MinaTolEntidades.DtoClientes.Cliente>)ViewBag.Clientes;
     var unidadmedida = (List<MinaTolEntidades.DtoSucursales.UnidadMedida>)ViewBag.UnidadDeMedida;
     var ubicaciones = (List<MinaTolEntidades.DtoCatalogos.DtoUbicacion>)ViewBag.Ubicaciones;
-    var folio = (MinaTolEntidades.DtoViajes.DtoFoliador)ViewBag.Folio;
+    //var folio = (MinaTolEntidades.DtoViajes.DtoFoliador)ViewBag.Folio;
 
     var ViajeLocal = (MinaTolEntidades.DtoViajes.DtoViajeLocal)Model;
 }
@@ -91,10 +91,10 @@
                     <div class="col-lg-3">
                         <label>Folio:</label>
                         <!-- Input oculto para almacenar folio.Id -->
-                        <input type="hidden" id="FolioId" name="FolioId" value="@folio.Id" />
+                        @*<input type="hidden" id="FolioId" name="FolioId" value="@folio.Id" />*@
 
                         <!-- Input visible para mostrar folio.Consecutivo -->
-                        <input type="text" id="Folio" name="Folio" class="form-control" value="@folio.ConsecutivoString" disabled />
+                        <input type="text" id="Folio" name="Folio" class="form-control" value="@ViewBag.Folio" disabled />
                     </div>
 
                     <div class="col-lg-3">
