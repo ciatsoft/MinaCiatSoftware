@@ -28,6 +28,15 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
+        public async Task<ModelResponse> DeleteViajeLocal(long Id)
+        {
+            var result = await RequestAsync($"api/Viajes/DeleteViajeLocal/{Id}", HttpMethod.Delete, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+        }
         public async Task<ModelResponse> GetAllViajeLocal(string token)
         {
             var result = await RequestAsync<object>("api/Viajes/Listlocal", HttpMethod.Get, null,

@@ -194,6 +194,7 @@
     <Content Include="Scripts\VentaPublicoGeneral\Precios.js" />
     <Content Include="Scripts\VentaPublicoGeneral\Prestamos.js" />
     <Content Include="Scripts\VentaPublicoGeneral\VentaPlanta.js" />
+    <Content Include="Scripts\Viajes\Concreteras.js" />
     <Content Include="Scripts\Viajes\Internos.js" />
     <Content Include="Scripts\Viajes\Locales.js" />
     <Content Include="Scripts\Viajes\PreFactura.js" />
@@ -344,6 +345,7 @@
     <Content Include="Views\RH\BajaEmpleados.cshtml" />
     <Content Include="Views\Viajes\ReportesViajesLocales.cshtml" />
     <Content Include="Views\Viajes\PreFactura.cshtml" />
+    <Content Include="Views\Viajes\Concreteras.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

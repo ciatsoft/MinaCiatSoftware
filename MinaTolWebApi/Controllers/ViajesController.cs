@@ -84,6 +84,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.SaveOrUpdateViajeLocal(vl);
             return result;
         }
+        [HttpDelete, Route("DeleteViajeLocal/{id:long}")]
+        public ModelResponse DeleteViajeLocal(long id)
+        {
+            var result = wrapper.DeleteViajeLocal(id);
+            return result;
+        }
         [Route("Material/{id:long}"), HttpGet]
         public ModelResponse GetTipoMaterialByCliente(long id)
         {

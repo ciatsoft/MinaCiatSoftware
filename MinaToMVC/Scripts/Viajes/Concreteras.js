@@ -1,4 +1,4 @@
-ï»¿$(function () {
+$(function () {
     jQuery.validator.addMethod("lettersonly", function (value, element) {
         return this.optional(element) || /^[a-z\s]+$/i.test(value);
     }, "Only alphabetical characters");
@@ -26,13 +26,13 @@
 
 $(document).ready(function () {
 
-    // Event listener para el cambio de selecciÃ³n en el dropdown de clientes
+    // Event listener para el cambio de selección en el dropdown de clientes
     $("#ddlCliente").change(function () {
         var selectedId = $(this).val();
         ObtenerDireccionCliente(selectedId);
     });
 
-    // InicializaciÃ³n de la tabla de viajes locales con formato
+    // Inicialización de la tabla de viajes locales con formato
     $("#tblViajesLocales").dataTable({
         processing: true,
         destroy: true,
@@ -42,9 +42,9 @@ $(document).ready(function () {
             { data: "id", "visible": false, title: "Id" },
             { data: "folio", "visible": false, title: "Folio" },
             { data: "ubicacionOrigen.nombreUbicacion", title: "Origen" },
-            { data: "transportista.nombre", title: "Transportista" },  
-            { data: "tipoMaterial.nombreTipoMaterial", title: "Material" },  
-            { data: "vehiculo.placa", title: "VehÃ­culo" },
+            { data: "transportista.nombre", title: "Transportista" },
+            { data: "tipoMaterial.nombreTipoMaterial", title: "Material" },
+            { data: "vehiculo.placa", title: "Vehículo" },
             { data: "cliente.nombre", title: "Cliente" },
             { data: "unidadMedida.nombre", title: "Unidad de Medida" },
             {
@@ -84,7 +84,7 @@ $(document).ready(function () {
             "processing": "Procesando...",
             "lengthMenu": "Mostrar _MENU_ entradas",
             "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "NingÃºn dato disponible en esta tabla",
+            "emptyTable": "Ningún dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -92,7 +92,7 @@ $(document).ready(function () {
             "loadingRecords": "Cargando...",
             "paginate": {
                 "first": "Primero",
-                "last": "Ãšltimo",
+                "last": "Último",
                 "next": "Siguiente",
                 "previous": "Anterior"
             },
@@ -104,12 +104,12 @@ $(document).ready(function () {
     });
 
 
-    GetAllViajeLocal(); // Llamada a la funciÃ³n para cargar todos los viajes locales
+    GetAllViajeLocal(); // Llamada a la función para cargar todos los viajes locales
 
-    // Cargar el registro en caso de ediciÃ³n
+    // Cargar el registro en caso de edición
     if (viajeLocalJson.Id != 0) {
 
-        console.log("Datos recibidos: " + JSON.stringify(viajeLocalJson)); 
+        console.log("Datos recibidos: " + JSON.stringify(viajeLocalJson));
         $("#txtViajeinterno").val(viajeLocalJson.Id);
         $("#ddlUOrigen").val(viajeLocalJson.UbicacionOrigen.Id);
         $("#ddlDireccionesCliente").val(viajeLocalJson.DireccionDestino.Id);
@@ -123,7 +123,7 @@ $(document).ready(function () {
         actualizarTiposDeMaterial(viajeLocalJson.Cliente.Id);
         ObtenerDireccionCliente(viajeLocalJson.Cliente.Id);
 
-        // Mostrar botÃ³n de eliminar y ocultar el de guardar
+        // Mostrar botón de eliminar y ocultar el de guardar
         $("#btnEliminar").show();
         $("#btnGuardar").show();
     } else {
@@ -133,10 +133,10 @@ $(document).ready(function () {
     }
 });
 
-// FunciÃ³n para guardar o actualizar
+// Función para guardar o actualizar
 function SaveOrUpdateViajeLocal() {
     if ($("#frmViajesInternos").valid()) {
-        // Se construye el objeto de parÃ¡metros para el viaje local
+        // Se construye el objeto de parámetros para el viaje local
         var parametro = {
             Id: $("#txtViajeinterno").val(),
             UbicacionOrigen: { Id: $("#ddlUOrigen").val() },
@@ -162,7 +162,7 @@ function SaveOrUpdateViajeLocal() {
             html: `<strong>Origen:</strong> ${$("#ddlUOrigen option:selected").text()}<br/>
                    <strong>Transportista:</strong> ${$("#ddlTransportistas option:selected").text()}<br/>
                    <strong>Material:</strong> ${$("#ddlTipoMaterial option:selected").text()}<br/>
-                   <strong>VehÃ­culo:</strong> ${$("#ddlVehiculo option:selected").text()}<br/>
+                   <strong>Vehículo:</strong> ${$("#ddlVehiculo option:selected").text()}<br/>
                    <strong>Cliente:</strong> ${$("#ddlCliente option:selected").text()}<br/>
                    <strong>Direccion Destino:</strong> ${$("#ddlDireccionesCliente option:selected").text()}<br/>
                    <strong>Unidad de Medida:</strong> ${$("#ddlUnidadM option:selected").text()}<br/>
@@ -181,7 +181,7 @@ function SaveOrUpdateViajeLocal() {
                     }
                 });
             }
-            window.location.href = '/Viajes/Locales';
+            window.location.href = '/Viajes/Concreteras';
         });
     } else {
         window.Swal.fire('Advertencia', 'Por favor, complete todos los campos obligatorios.', 'warning');
@@ -189,16 +189,16 @@ function SaveOrUpdateViajeLocal() {
 }
 
 
-// FunciÃ³n para eliminar con confirmaciÃ³n y estructura de mensajes de SweetAlert
+// Función para eliminar con confirmación y estructura de mensajes de SweetAlert
 function EliminarViajeLocal() {
     Swal.fire({
-        title: 'Â¿Estas seguro?',
-        text: "Â¿Desea eliminar el siguiente registro?",
+        title: '¿Estas seguro?',
+        text: "¿Desea eliminar el siguiente registro?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'SÃ­, eliminar',
+        confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -209,7 +209,8 @@ function EliminarViajeLocal() {
                 if (r.IsSuccess) {
                     Swal.fire('Eliminado', 'El registro ha sido eliminado.', 'success')
                         .then(() => {
-                            window.location.href = '/Viajes/Locales';});
+                            window.location.href = '/Viajes/Concreteras';
+                        });
                 } else {
                     Swal.fire('Error', 'No se pudo eliminar el registro.', 'error');
                 }
@@ -218,10 +219,10 @@ function EliminarViajeLocal() {
     });
 }
 
-// FunciÃ³n para editar con estilo de redireccionamiento 
+// Función para editar con estilo de redireccionamiento 
 function EditarViajeLocal(id) {
     actualizarTiposDeMaterial();
-    location.href = "/Viajes/Locales/" + id;
+    location.href = "/Viajes/Concreteras/" + id;
     console.log(id);
 }
 
@@ -231,7 +232,7 @@ function ImprimirReporte(id) {
 }
 
 
-// FunciÃ³n para limpiar el formulario con estilo uniforme
+// Función para limpiar el formulario con estilo uniforme
 function LimpiarFormulario() {
     $("#txtidtipomaterial").val('');
     $("#txtNombreTipoMaterial").val('');
@@ -241,14 +242,14 @@ function LimpiarFormulario() {
     $("#chbEstatus").prop('checked', false);
 }
 
-// FunciÃ³n para obtener todos los tipos de material
+// Función para obtener todos los tipos de material
 function GetAllViajeLocal() {
     GetMVC("/Viajes/GetAllViajeLocal", function (r) {
         console.log("Datos recibidos:", r); // Inspecciona la respuesta en la consola
         if (r.IsSuccess) {
             
             // Filtrar los datos donde cliente.tipoCliente sea igual a 1
-            const datosFiltrados = r.Response.filter(item => item.cliente && item.cliente.tipoCliente === 1);
+            const datosFiltrados = r.Response.filter(item => item.cliente && item.cliente.tipoCliente === 0);
 
             console.log("Datos filtrados:", datosFiltrados); // Verificar los datos filtrados
 
@@ -260,13 +261,13 @@ function GetAllViajeLocal() {
 }
 
 function actualizarTiposDeMaterial(id) {
-    var ubicacionId = $("#ddlCliente").val() || id; // Obtener el ID de la ubicaciÃ³n seleccionada
+    var ubicacionId = $("#ddlCliente").val() || id; // Obtener el ID de la ubicación seleccionada
 
     // Realizar una llamada AJAX al controlador para obtener los tipos de material
     $.ajax({
-        url: '/Viajes/GetTipoMaterialByCliente', // Cambia esto al nombre de tu controlador y acciÃ³n
+        url: '/Viajes/GetTipoMaterialByCliente', // Cambia esto al nombre de tu controlador y acción
         type: 'GET',
-        data: { id: ubicacionId }, // Enviar el ID de la ubicaciÃ³n
+        data: { id: ubicacionId }, // Enviar el ID de la ubicación
         success: function (response) {
             response = JSON.parse(response);
             if (response.IsSuccess) {
@@ -293,7 +294,7 @@ function ObtenerDireccionCliente(id) {
     // Limpiar dropdown completamente
     dropdown.empty();
 
-    // Agregar opciÃ³n por defecto
+    // Agregar opción por defecto
     dropdown.append($('<option></option>')
         .val("")
         .text("Selecciona una opcion")
@@ -308,7 +309,7 @@ function ObtenerDireccionCliente(id) {
         if (r.IsSuccess) {
             // Verificar si hay direcciones
             if (r.Response && r.Response.length > 0) {
-                // Agregar cada direcciÃ³n como opciÃ³n
+                // Agregar cada dirección como opción
                 $.each(r.Response, function (index, direccion) {
                     var texto = `${direccion.calle}, ${direccion.municipio}, ${direccion.estado}`;
                     var option = $('<option></option>')

@@ -19,6 +19,7 @@ namespace MinaTolEntidades.DtoViajes
             Vehiculo = new Vehiculo();
             UnidadMedida = new UnidadMedida();
             Cliente = new Cliente();
+            // Remover esta línea duplicada: TipoCliente = new Cliente();
         }
         public DtoUbicacion UbicacionOrigen { get; set; }
         public DireccionCliente DireccionDestino { get; set; }
@@ -31,5 +32,6 @@ namespace MinaTolEntidades.DtoViajes
         public Cliente Cliente { get; set; }
         public string Folio { get; set; }
         public bool Facturado { get; set; }
+        public int TipoCliente { get; set; } // Cambiar de Cliente a int
     }
 }
