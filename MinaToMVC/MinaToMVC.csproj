@@ -346,6 +346,7 @@
     <Content Include="Views\Viajes\ReportesViajesLocales.cshtml" />
     <Content Include="Views\Viajes\PreFactura.cshtml" />
     <Content Include="Views\Viajes\Concreteras.cshtml" />
+    <Content Include="Views\Administracion\PartialConfigurarCombustible.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

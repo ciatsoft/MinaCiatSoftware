@@ -648,3 +648,15 @@ $(document).on('click', '.btnEditar', function () {
     // Abrir modal en modo edición
     AbrirModalDirecciones(idCliente, nombreCliente, idDireccion);
 });
+
+function AbrirModalPrecioCombustible() {
+    $("#genericModal").removeData('bs.modal');
+    $("#boddyGeericModal").empty();
+
+    $("#titleGenerciModal").text("Configurar Precio Actual de Combustible");
+
+    // Enviar nombreCompleto como parámetro en la URL
+    $("#boddyGeericModal").load("/Administracion/PartialConfigurarCombustible", function () {
+        $("#genericModal").modal("show");
+    });
+}
