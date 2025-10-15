@@ -20,13 +20,29 @@ namespace MinaTolWebApi.Controllers
         {
             wrapper = new DbWrapper();
         }
+
+        #region Viaje Interno
         [HttpGet, Route("List")]
         public ModelResponse GetAllViajeInterno()
         {
             var result = wrapper.GetAllViajeInterno();
             return result;
         }
+        [HttpGet, Route("Interno/{id:long}")]
+        public ModelResponse GetViajeInternoById(long id)
+        {
+            var result = wrapper.GetViajeInternoById(id);
+            return result;
+        }
+        [HttpPost, Route("Interno")]
+        public ModelResponse SaveOrUpdateViajeInterno(DtoViajeInterno vi)
+        {
+            var result = wrapper.SaveOrUpdateViajeInterno(vi);
+            return result;
+        }
+        #endregion
 
+        #region Viaje Local
         [HttpGet, Route("Listlocal")]
         public ModelResponse GetAllViajeLocal()
         {
@@ -57,25 +73,10 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetAllViajeLocalByDatesClientDireccion(fecha1, fecha2, idCliente, idDireccion);
             return result;
         }
-
-        [HttpGet, Route("Interno/{id:long}")]
-        public ModelResponse GetViajeInternoById(long id)
-        {
-            var result = wrapper.GetViajeInternoById(id);
-            return result;
-        }
-
         [HttpGet, Route("{id:long}")]
         public ModelResponse GetViajeLocalById(long id)
         {
             var result = wrapper.GetViajeLocalById(id);
-            return result;
-        }
-
-        [HttpPost, Route("Interno")]
-        public ModelResponse SaveOrUpdateViajeInterno(DtoViajeInterno vi)
-        {
-            var result = wrapper.SaveOrUpdateViajeInterno(vi);
             return result;
         }
         [HttpPost, Route("Local")]
@@ -90,11 +91,53 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.DeleteViajeLocal(id);
             return result;
         }
+        #endregion
+
+        #region Material Cliente
         [Route("Material/{id:long}"), HttpGet]
         public ModelResponse GetTipoMaterialByCliente(long id)
         {
             var result = wrapper.GetTipoMaterialByCliente(id);
             return result;
         }
+        #endregion
+
+        #region Precio Combustible
+        [HttpPost, Route("PrecioCombustible")]
+        public ModelResponse SaveOrUpdatePrecioCombustible(PrecioCombustible pc)
+        {
+            var result = wrapper.SaveOrUpdatePrecioCombustible(pc);
+            return result;
+        }
+
+        [HttpGet, Route("PrecioActivoCombustible")]
+        public ModelResponse GetPrecioActivoCombustible()
+        {
+            var result = wrapper.GetPrecioActivoCombustible();
+            return result;
+        }
+
+        [HttpGet, Route("PrecioCombustibleList")]
+        public ModelResponse GetAllPrecioCombustible()
+        {
+            var result = wrapper.GetAllPrecioCombustible();
+            return result;
+        }
+
+        [HttpGet, Route("PrecioCombustible/{id:long}")]
+        public ModelResponse GetPrecioCombustibleById(long id)
+        {
+            var result = wrapper.GetPrecioCombustibleById(id);
+            return result;
+        }
+
+        [HttpDelete, Route("DeletePrecioCombustible/{id:long}")]
+        public ModelResponse DeletePrecioCombustible(long id)
+        {
+            var result = wrapper.DeletePrecioCombustibleById(id);
+            return result;
+        }
+        #endregion
+
     }
 }

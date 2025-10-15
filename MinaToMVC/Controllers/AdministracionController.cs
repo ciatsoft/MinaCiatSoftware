@@ -2,6 +2,7 @@
 using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoClientes;
+using MinaTolEntidades.DtoEmpleados;
 using MinaTolEntidades.DtoSeguridad;
 using MinaTolEntidades.DtoSucursales;
 using MinaTolEntidades.DtoViajes;
@@ -214,6 +215,34 @@ namespace MinaToMVC.Controllers
 
             return PartialView();
         }
+        public async Task<ActionResult> PartialConfigurarCombustible(long id = 0)
+        {
+            PrecioCombustible precioCombustible = new PrecioCombustible();
+
+            if(id != 0)
+            {
+                var response = await httpClientConnection.GetPrecioCombustibleById(id);
+                precioCombustible = JsonConvert.DeserializeObject<PrecioCombustible>(response.Response.ToString());
+            }
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+            ViewBag.UsuarioModalId = id;
+
+            return PartialView(precioCombustible);
+        }
         #endregion
 
         #region Data Acces
@@ -360,6 +389,24 @@ namespace MinaToMVC.Controllers
         }
         #endregion
 
+        #endregion
+
+        #region Precio Combustible
+        public string SaveOrUpdatePrecioCombustible(PrecioCombustible t)
+        {
+            var result = httpClientConnection.SaveOrUpdatePrecioCombustible(t);
+            return JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetAllPrecioCombustible()
+        {
+            var result = await httpClientConnection.GetAllPrecioCombustible();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<ActionResult> DeletePrecioCombustible(long id)
+        {
+            var result = httpClientConnection.DeletePrecioCombustible(id);
+            return Redirect("Clientes");
+        }
         #endregion
 
         #endregion

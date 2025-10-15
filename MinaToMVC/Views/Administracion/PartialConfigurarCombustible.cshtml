@@ -1,0 +1,229 @@
+﻿@model MinaTolEntidades.DtoViajes.PrecioCombustible
+@{
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
+    var usuario = @ViewBag.UserToken.UserName;
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+<div class="content">
+    @using (Html.BeginForm("SaveOrUpdatePrecioCombustible", "Administracion", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmPrecioCombustible" }))
+    {
+        @Html.HiddenFor(x => x.Id, new { @id = "id" })
+        @Html.HiddenFor(x => x.Estatus, new { Value = 1, @id = "estatus" })
+        @Html.HiddenFor(x => x.CreatedBy, new { Value = usuario, @id = "createdBy" })
+        @Html.HiddenFor(x => x.UpdatedBy, new { Value = usuario, @id = "updatedBy" })
+        @Html.HiddenFor(x => x.CreatedDt, new { Value = fechaActual, @id = "createdDt" })
+        @Html.HiddenFor(x => x.UpdatedDt, new { Value = fechaActual, @id = "updatedDt" })
+
+        <br />
+        <div class="tabla-consultas-roll">
+            <div class="rectangulos" style="width: 100%;">
+                <h2>Configurar Precio Actual de Combustible</h2>
+
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-lg-6">
+                        <label>Precio del Combustible:</label>
+                        @Html.TextBoxFor(x => x.Precio, new { type = "number", required = "required", @class = "form-control", @id = "precio" })
+                    </div>
+                    <div class="col-lg-6">
+                        <label>Precio Actual:</label>
+                        @Html.CheckBoxFor(x => x.PrecioActivo, new { @class = "form-control", @id = "precioActivo" })
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12">
+                        <input type="button" value="Guardar" onclick="SaveOrUpdatePrecioCombustible()" class="btn btn-success" />
+                        <a href="/Administracion/Clientes" class="btn btn-custom-cancel">Cancelar</a>
+                    </div>
+                </div>
+                <br />
+                <h4>Historial de Precios de Combustible</h4>
+                <div class="row">
+                    <div class="col-lg-12 table-responsive">
+                        <table id="tablePreciosCombustible" class="table" style="width:100%;">
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Validación del formulario
+        $("#frmPrecioCombustible").validate({
+            rules: {
+                Precio: {
+                    required: true,
+                    number: true
+                },
+            },
+            messages: {
+                Precio: {
+                    required: "Por favor ingresa un precio",
+                },
+            }
+        });
+
+        // Configuración de DataTable
+        $("#tablePreciosCombustible").DataTable({
+            data: [],
+            columns: [
+                { data: 'id', title: 'ID', visible: false },
+                {
+                    data: 'precio',
+                    title: 'Precio',
+                    render: function (data, type, row) {
+                        if (data == null || data === "") return "$0.00";
+                        return "$" + parseFloat(data).toLocaleString('es-MX', { minimumFractionDigits: 2 });
+                    }
+                },
+                {
+                    data: 'precioActivo',
+                    title: 'Precio Actual',
+                    render: function (data, type, row) {
+                        if (data == 1 || data === true) {
+                            return '<span style="color: green; font-size: 20px;">●</span> <span style="color: black;">Precio Actual</span>';
+                        } else {
+                            return '<span style="color: red; font-size: 20px;">●</span> <span style="color: black;">Precio NO Actual</span>';
+                        }
+                    }
+                },
+                {
+                    data: null, // Accede a TODA la fila 
+                    title: "Acciones",
+                    render: function (data, type, row) {
+                        return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarPrecioCombustible(' + row.id + ')" />' +
+                            ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarPrecioCombustible(' + row.id + ')"/>';
+                    }
+                },
+            ],
+            // Orden inicial: primero por departamento (columna 3), luego por apellido paterno (columna 1)
+            order: [0, 'desc'],
+            language: {
+                "decimal": ",",
+                "thousands": ".",
+                "processing": "Procesando...",
+                "lengthMenu": "Mostrar _MENU_ entradas",
+                "zeroRecords": "No se encontraron resultados",
+                "emptyTable": "Ningun dato disponible en esta tabla",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+                "search": "Buscar:",
+                "loadingRecords": "Cargando...",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                    "sortDescending": ": activar para ordenar la columna de manera descendente"
+                }
+            }
+        });
+
+        GetAllPrecioCombustible();
+    });
+
+    function GetAllPrecioCombustible() {
+        GetMVC("/Administracion/GetAllPrecioCombustible", function (r) {
+            if (r.IsSuccess) {
+                MapingPropertiesDataTable("tablePreciosCombustible", r.Response);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar los precios: ' + r.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+
+    function SaveOrUpdatePrecioCombustible() {
+        if ($("#frmPrecioCombustible").valid()) {
+            
+            var parametro = {
+                id: $("#id").val(),
+                precio: $("#precio").val(),
+                precioActivo: $("#precioActivo").val(),
+                estatus: $("#estatus").val(),
+                createdBy: $("#createdBy").val(),
+                createdDt: $("#createdDt").val(),
+                updatedBy: $("#updatedBy").val(),
+                updatedDt: $("#updatedDt").val(),
+            };
+
+            PostMVC('/Administracion/SaveOrUpdatePrecioCombustible', parametro, function (r) {
+                if (r.IsSuccess) {
+                    LimpiarFormulario();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al guardar los datos: ' + r.ErrorMessage,
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            });
+            Swal.fire({
+                title: "Registro guardado!",
+                text: "El registro se ha guardado correctamente.",
+                icon: "success",
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.reload();
+            });
+        }
+    }
+
+    function LimpiarFormulario() {
+        $("#frmPrecioCombustible")[0].reset();
+    }
+
+    function EditarPrecioCombustible(id) {
+        $("#genericModal").removeData('bs.modal');
+        $("#boddyGeericModal").empty();
+
+        $("#titleGenerciModal").text("Configurar Precio Actual de Combustible");
+
+        // Enviar nombreCompleto como parámetro en la URL
+        $("#boddyGeericModal").load("/Administracion/PartialConfigurarCombustible/" + id, function () {
+            $("#genericModal").modal("show");
+        });
+    }
+
+    function EliminarPrecioCombustible(id) {
+        Swal.fire({
+            title: '¿Estas seguro?',
+            text: "¿Desea eliminar el siguiente registro?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var parametro = { Id: id };
+
+                PostMVC('/Administracion/DeletePrecioCombustible', parametro, function (r) {
+                    if (r.IsSuccess) {
+                        Swal.fire('Eliminado', 'El precio del combustible ha sido eliminado.', 'success')
+                            .then(() => { window.location.reload(); });
+                    } else {
+                        Swal.fire('Eliminado', 'El precio del combustible ha sido eliminado.', 'success')
+                            .then(() => { window.location.reload(); });
+                    }
+                });
+            }
+        });
+    }
+</script>
