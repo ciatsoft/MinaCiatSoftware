@@ -1,78 +1,94 @@
 ﻿@{
     var precios = (List<MinaTolEntidades.DtoClientes.ClienteTipoMaterial>)ViewBag.Precios;
+    var direccionesClientes = (List<MinaTolEntidades.DtoClientes.DireccionCliente>)ViewBag.DireccionClientes;
 }
 
 <div class="container" onmouseover="debounceCalculations()">
     <!-- Input oculto para el clienteId y materialId -->
+    <label class="form-label font-weight-bold">Cliente Id:</label>
     <input type="hidden" id="clienteId" value="@Request["clienteId"]" />
+    <label class="form-label font-weight-bold">Material Id:</label>
     <input type="hidden" id="materialId" value="@Request["materialId"]" />
 
     <!-- Etiquetas para mostrar el nombre del cliente y material -->
     <div class="row mb-3">
         <div class="col-6">
-            <label class="form-label font-weight-bold">Cliente:</label>
-            <span id="nombreCliente" class="form-label">@ViewBag.ClienteNombre"</span>
+            <h3 class="form-label font-weight-bold">Cliente: @ViewBag.ClienteNombre</h3>
         </div>
         <div class="col-6">
-            <label class="form-label font-weight-bold">Material:</label>
-            <span id="nombreMaterial" class="form-label">@ViewBag.MaterialNombre</span>
+            <h3 class="form-label font-weight-bold">Material: @ViewBag.MaterialNombre</h3>
         </div>
     </div>
 
     <div class="row">
         <div class="col-4">
+            <label>Direcciones:</label>
+            <select id="ddlDirecciones" name="ddlDirecciones" class="form-control">
+                <option value="" disabled selected>Selecciona una opcion</option>
+            </select>
+            <input type="hidden" id="idDireccion" class="form-control" />
+            <input type="hidden" id="direccion" class="form-control" />
+        </div>
+        <div class="col-4">
             <label for="p-mat-m3">P. Mat. M3</label>
             <input type="number" id="p-mat-m3" class="form-control" />
         </div>
+    </div>
+    <div class="row mt-2">
         <div class="col-4">
             <label for="p-flete-m3">P. Flete M3</label>
             <input type="number" id="p-flete-m3" class="form-control" />
         </div>
-    </div>
-    <div class="row mt-2">
         <div class="col-4">
             <label for="precio-m3">Precio M3</label>
             <input type="number" id="precio-m3" class="form-control" readonly />
         </div>
+    </div>
+    <div class="row mt-2">
         <div class="col-4">
             <label for="km-cargado">KM Cargado</label>
             <input type="number" id="km-cargado" class="form-control" />
         </div>
-    </div>
-    <div class="row mt-2">
         <div class="col-4">
             <label for="km-basio">KM Basio</label>
             <input type="number" id="km-basio" class="form-control" />
         </div>
+    </div>
+    <div class="row mt-2">
         <div class="col-4">
             <label for="total-km-recorridos">Total KM Recorridos</label>
             <input type="number" id="total-km-recorridos" class="form-control" readonly />
         </div>
-    </div>
-    <div class="row mt-2">
         <div class="col-4">
             <label for="carga-diesel">Carga de Diesel (Lt)</label>
             <input type="number" id="carga-diesel" class="form-control" />
+            <input type="hidden" id="PrecioCombustibleActual" class="form-control" />
         </div>
+    </div>
+    <div class="row mt-2">
         <div class="col-4">
             <label for="total-diesel">Total Diesel ($)</label>
             <input type="number" id="total-diesel" class="form-control" readonly />
         </div>
-    </div>
-    <div class="row mt-2">
         <div class="col-4">
             <label for="casetas">Casetas</label>
             <input type="number" id="casetas" class="form-control" />
         </div>
+    </div>
+    <div class="row mt-2">
         <div class="col-4">
             <label for="mano-obra">Mano de Obra</label>
             <input type="number" id="mano-obra" class="form-control" />
         </div>
-    </div>
-    <div class="row mt-2">
         <div class="col-4">
             <label for="material-viajes">Material Viajes (30 M3)</label>
             <input type="number" id="material-viajes" class="form-control" readonly />
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-4">
+            <label for="subtotal-ingreso">Subtotal Ingreso (Viajes 30 M3)</label>
+            <input type="number" id="subtotal-ingreso" class="form-control" readonly />
         </div>
         <div class="col-4">
             <label for="total-gastos">Total Gastos</label>
@@ -80,9 +96,9 @@
         </div>
     </div>
     <div class="row mt-2">
-        <div class="col-8">
-            <label for="subtotal-ingreso">Subtotal Ingreso (Viajes 30 M3)</label>
-            <input type="number" id="subtotal-ingreso" class="form-control" readonly />
+        <div class="col-4">
+            <label for="precioActual">Precio Actual</label>
+            <input type="checkbox" id="precioActual" name="precioActual" class="form-control" />
         </div>
     </div>
     <div class="row mt-2">
@@ -90,14 +106,221 @@
             <input type="button" value="Guardar" onclick="AgregarPreciosMaterialACliente()" class="btn btn-success" />
         </div>
     </div>
+    <br />
+    <div class="row">
+        <div class="col-lg-8">
+            <table class="table table-bordered table-striped" id="tblDireccionMaterial" style="width: 100%;"></table>
+        </div>
+    </div>
 </div>
 
 <script>
+
+    // Inicializar DataTable simplificada
+    // TipoMaterial
+    $(document).on('click', '.btnEliminarTipoMaterial', function () {
+        const id = $(this).data('id');
+        PostMVC('/Administracion/DeletTipoMaterial/', { Id: id }, function (r) {
+            if (r.IsSuccess) {
+                location.reload(); // Recarga inmediata
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo eliminar la dirección',
+                });
+                console.error(r);
+            }
+        });
+    });
+
+    // Crea una nueva tabla sin datos
+    $('#tblDireccionMaterial').DataTable({
+        data: [], // Array vacío
+        columns: [
+            { title: 'ID', data: 'id' },
+            { title: 'Dirección', data: 'direccion' },
+            { title: 'Material', data: 'tipoMaterial.nombreTipoMaterial' },
+            { title: 'Cliente', data: 'cliente.nombre' },
+            {
+                title: 'Total de Importe',
+                data: 'total_Gastos',
+                render: function (data) {
+                    return data ? '$' + data.toLocaleString('es-MX') : '$0';
+                }
+            },
+            {
+                data: 'precioActivo',
+                title: 'Precio Actual',
+                render: function (data, type, row) {
+                    if (data == 1 || data === true) {
+                        return '<span style="color: green; font-size: 20px;">●</span> <span style="color: black;">Precio Actual</span>';
+                    } else {
+                        return '<span style="color: red; font-size: 20px;">●</span> <span style="color: black;">Precio NO Actual</span>';
+                    }
+                }
+            },
+            {
+                data: null,
+                title: 'Acciones',
+                orderable: false,
+                render: function (data, type, row) {
+                    return `
+                    <button class="btn btn-sm btn-primary btnEditarTipoMaterial" data-id="${row.id}" title="Editar">
+                        Editar
+                    </button>
+                    <button class="btn btn-sm btn-danger btnEliminarTipoMaterial" data-id="${row.id}" title="Eliminar">
+                        Eliminar
+                    </button>`;
+                }
+            }
+        ],
+        scrollX: true,
+        responsive: true,
+        autoWidth: false,
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-MX.json'
+        },
+        pageLength: 50,
+    });
+
+    // Evento cuando cambia la selección del dropdown
+    $('#ddlDirecciones').on('change', function () {
+        var optionSeleccionada = $(this).find('option:selected');
+        var idSeleccionado = optionSeleccionada.val();
+        var nombreSeleccionado = optionSeleccionada.text();
+
+        // Insertar el texto en el input
+        $('#idDireccion').val(idSeleccionado);
+        $('#direccion').val(nombreSeleccionado);
+
+        ClienteTipoMaterialByDireccionMaterialAndCliente(idSeleccionado)
+    });
+
+    function ClienteTipoMaterialByDireccionMaterialAndCliente(id) {
+        var idCliente = @Request["clienteId"];
+        var idMaterial = @Request["materialId"];
+
+        PostMVC('/Administracion/ClienteTipoMaterialByDireccionMaterialAndCliente', { Id: id, IdCliente: idCliente, IdMaterial: idMaterial }, function (r) {
+            if (r.IsSuccess) {
+                var data = r.Response;
+                console.log(data);
+
+                // Inicializar o recargar la DataTable
+                cargarDataTable(data);
+            }
+        });
+    }
+
+    function cargarDataTable(data) {
+        // Destruir la tabla si ya existe
+        if ($.fn.DataTable.isDataTable('#tblDireccionMaterial')) {
+            $('#tblDireccionMaterial').DataTable().destroy();
+        }
+
+        // Inicializar DataTable simplificada
+        $('#tblDireccionMaterial').DataTable({
+            data: data,
+            columns: [
+                { title: 'ID', data: 'id'},
+                { title: 'Dirección', data: 'direccion'},
+                { title: 'Material', data: 'tipoMaterial.nombreTipoMaterial'},
+                { title: 'Cliente', data: 'cliente.nombre'},
+                {
+                    title: 'Total de Importe',
+                    data: 'total_Gastos',
+                    render: function (data) {
+                        return '$' + data.toLocaleString('es-MX');
+                    }
+                },
+                {
+                    data: 'precioActivo',
+                    title: 'Precio Actual',
+                    render: function (data, type, row) {
+                        if (data == 1 || data === true) {
+                            return '<span style="color: green; font-size: 20px;">●</span> <span style="color: black;">Precio Actual</span>';
+                        } else {
+                            return '<span style="color: red; font-size: 20px;">●</span> <span style="color: black;">Precio NO Actual</span>';
+                        }
+                    }
+                },
+                {
+                    data: null,
+                    title: 'Acciones',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `
+                        <button class="btn btn-sm btn-primary btnEditar" data-id="${row.id}" title="Editar">
+                            Editar
+                        </button>
+                        <button class="btn btn-sm btn-danger btnEliminarTipoMaterial" data-id="${row.id}" title="Eliminar">
+                            Eliminar
+                        </button>`;
+                    }
+                }
+            ],
+            scrollX: true,           // habilita scroll horizontal
+            responsive: true,        // mejora la experiencia en pantallas pequeñas
+            autoWidth: false,        // evita el autoajuste de ancho que a veces rompe el diseño
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-MX.json'
+            },
+            pageLength: 50,
+        });
+    }
+
+    function GetPrecioActivoCombustible() {
+        GetMVC('/Administracion/GetPrecioActivoCombustible', function (r) {
+            if (r.IsSuccess) {
+                var datos = r.Response;
+                $("#PrecioCombustibleActual").val(datos.precio);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar los materiales: ' + r.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+
+    function SearchDireccionesCliente(clienteId) {
+        PostMVC('/Administracion/GetDireccionesCliente', { Id: clienteId }, function (r) {
+            if (r.IsSuccess) {
+                const data = r.Response;
+                const $select = $('#ddlDirecciones');
+                $select.empty();
+
+                // Tu opción por defecto (mejorada)
+                $select.append($('<option>', {
+                    value: '',
+                    disabled: true,
+                    selected: true,
+                    text: 'Seleccionar Dirección'
+                }));
+
+                // Agregar direcciones
+                $.each(data, function (index, direccion) {
+                    const textoDireccion = `${direccion.calle}, ${direccion.colonia}, ${direccion.municipio}, ${direccion.estado}`;
+
+                    $select.append($('<option>', {
+                        value: direccion.id,
+                        text: textoDireccion
+                    }));
+                });
+            }
+        });
+    }
+
     // Variables de tiempo para evitar cálculos en cada tecla
     let timeout;
 
     // Función para calcular los totales generales
     function calcularTotales() {
+
+        var precioActivoCombustible = parseFloat(document.getElementById('PrecioCombustibleActual').value) || 0;
+
         const pMatM3 = parseFloat(document.getElementById('p-mat-m3').value) || 0;
         const pFleteM3 = parseFloat(document.getElementById('p-flete-m3').value) || 0;
         const kmCargado = parseFloat(document.getElementById('km-cargado').value) || 0;
@@ -109,7 +332,7 @@
         // Cálculos intermedios
         const totalpreciom3 = pMatM3 + pFleteM3;
         const totalKmRecorridos = kmCargado + kmBasio;
-        const totalpreciokm = cargaDiesel * 25.49;
+        const totalpreciokm = cargaDiesel * precioActivoCombustible;
         const totalGastos = totalpreciom3 + totalpreciokm + manoObra + casetas;
 
         // Actualizar los campos intermedios
@@ -155,7 +378,7 @@
     document.getElementById('mano-obra').addEventListener('input', debounceCalculations);
 </script>
 
-<script>
+@*<script>
     var preciosJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(precios))');
 
     // Convertir ViewBag.precios en un objeto JS
@@ -187,4 +410,4 @@
         debounceCalculations();
     }
     debounceCalculations();
-</script>
+</script>*@

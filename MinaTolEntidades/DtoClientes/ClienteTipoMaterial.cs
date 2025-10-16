@@ -29,6 +29,9 @@ namespace MinaTolEntidades.DtoClientes
         public decimal Material_Viajes_De_30M3 { get; set; }
         public decimal Total_Gastos { get; set; }
         public decimal Subtotal_Ingreso_Viajes_M3 { get; set; }
+        public long IdDireccion { get; set; }
+        public string Direccion { get; set; }
+        public bool PrecioActivo { get; set; }
 
     }
 }

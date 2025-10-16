@@ -115,19 +115,29 @@ $(document).ready(function () {
                 }
             });
             // codigo de ejemplo para el apartado de modales
-            // Manejar el evento del botón "Precios"
             $(btnPrecios).on("click", function () {
-                var clienteId = clienteJson.Id; // Obtener el clienteId
-                var materialId = $(this).data("material-id"); // Obtener el materialId
+                var clienteId = clienteJson.Id;
+                var materialId = $(this).data("material-id");
 
-                // Abrir el modal con la vista parcial y pasar los datos
+                // Cerrar el modal si está abierto y limpiar
+                $("#genericModal").modal("hide");
+
+                // Limpiar contenido anterior inmediatamente
+                $("#boddyGeericModal").empty();
                 $("#titleGenerciModal").text("Configuración de costos por cliente");
-                $("#boddyGeericModal").empty().load("/Administracion/PartialConfiguracionCostosCliente", { clienteId: clienteId, materialId: materialId }, function () {
 
-                    // Mostrar el modal
-                    $("#genericModal").modal("show");
-
-                });
+                // Esperar a que el modal se cierre completamente antes de abrirlo de nuevo
+                setTimeout(() => {
+                    $("#boddyGeericModal").load("/Administracion/PartialConfiguracionCostosCliente", {
+                        clienteId: clienteId,
+                        materialId: materialId
+                    }, function () {
+                        // Mostrar el modal
+                        $("#genericModal").modal("show");
+                        SearchDireccionesCliente(clienteId);
+                        GetPrecioActivoCombustible();
+                    });
+                }, 500);
             });
         }
     });
@@ -191,6 +201,11 @@ function AgregarMaterialACliente(clienteId, materialId) {
 }
 
 function AgregarPreciosMaterialACliente() {
+    // Nuevos Campos
+    var idDireccion = $("#idDireccion").val();
+    var direccion = $("#direccion").val();
+    var precioActivo = $("#precioActual").is(":checked"); // CORRECCIÓN AQUÍ
+
     // Recoger los valores de los campos de la vista parcial
     var clienteId = $("#clienteId").val();
     var materialId = $("#materialId").val();
@@ -229,7 +244,10 @@ function AgregarPreciosMaterialACliente() {
         Mano_De_Obra: manoObra,
         Material_Viajes_De_30M3: materialViajes,
         Total_Gastos: totalGastos,
-        Subtotal_Ingreso_Viajes_M3: subtotalIngreso
+        Subtotal_Ingreso_Viajes_M3: subtotalIngreso,
+        IdDireccion: idDireccion,
+        Direccion: direccion,
+        PrecioActivo: precioActivo
     };
 
     // Llamar al método SaveOrUpdateClienteTipoMaterial a través de PostMVC
@@ -237,8 +255,7 @@ function AgregarPreciosMaterialACliente() {
         console.log(parametro);
         if (r.IsSuccess) {
             Swal.fire("Éxito", "Los precios se agregaron exitosamente al cliente", "success");
-            /*window.location.replace('/Administracion/Clientes');*/
-            $("#genericModal").modal("hide");
+            window.location.replace('/Administracion/Clientes/' + clienteId);
         } else {
             Swal.fire({
                 title: 'Error',
@@ -628,6 +645,23 @@ $(document).on('click', '.btnEliminar', function () {
         if (r.IsSuccess) {
             const clienteId = $('#idCliente').val();
             SearchDireccionesCliente(clienteId);
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo eliminar la dirección',
+            });
+            console.error(r);
+        }
+    });
+});
+
+// TipoMaterial
+$(document).on('click', '.btnEliminarTipoMaterial', function () {
+    const id = $(this).data('id');
+    PostMVC('/Administracion/DeletTipoMaterial/', { Id: id }, function (r) {
+        if (r.IsSuccess) {
+            location.reload(); // Recarga inmediata
         } else {
             Swal.fire({
                 icon: 'error',

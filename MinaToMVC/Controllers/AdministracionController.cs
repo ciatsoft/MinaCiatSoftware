@@ -162,7 +162,7 @@ namespace MinaToMVC.Controllers
         #endregion
 
         #region Partials Views
-        public async Task<ActionResult> PartialConfiguracionCostosCliente(int clienteId, int materialId)
+        public async Task<ActionResult> PartialConfiguracionCostosCliente(long clienteId, int materialId)
         {
             var precios = new List<ClienteTipoMaterial>();
             if (clienteId != 0 && materialId != 0)
@@ -325,6 +325,16 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.SaveOrUpdateClienteTipoMaterial(t);
             return JsonConvert.SerializeObject(result);
         }
+        public async Task<String> ClienteTipoMaterialByDireccionMaterialAndCliente(long id, long idCliente, long idMaterial)
+        {
+            var resuslt = await httpClientConnection.ClienteTipoMaterialByDireccionMaterialAndCliente(id, idCliente, idMaterial);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(resuslt);
+        }
+        public async Task<String> DeletTipoMaterial(long id)
+        {
+            var result = await httpClientConnection.DeletTipoMaterial(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
         #endregion
 
         #region DireccionCliente
@@ -400,6 +410,11 @@ namespace MinaToMVC.Controllers
         public async Task<string> GetAllPrecioCombustible()
         {
             var result = await httpClientConnection.GetAllPrecioCombustible();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetPrecioActivoCombustible()
+        {
+            var result = await httpClientConnection.GetPrecioActivoCombustible();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
         public async Task<ActionResult> DeletePrecioCombustible(long id)
