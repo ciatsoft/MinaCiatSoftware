@@ -120,6 +120,8 @@ $(document).ready(function () {
         $("#txtObservaciones").val(viajeLocalJson.Observaciones);
         $("#totalKMRecorridos").val(viajeLocalJson.KilometrosRecorridos);
         $("#totalImporte").val(viajeLocalJson.TotalImporte);
+        $("#Folio").val(viajeLocalJson.Folio);
+
 
         actualizarTiposDeMaterial(viajeLocalJson.Cliente.Id);
         ObtenerDireccionCliente(viajeLocalJson.Cliente.Id);
@@ -224,7 +226,6 @@ function SaveOrUpdateViajeLocal() {
     }
 }
 
-
 // Función para eliminar con confirmación y estructura de mensajes de SweetAlert
 function EliminarViajeLocal() {
     Swal.fire({
@@ -260,12 +261,10 @@ function EditarViajeLocal(id) {
     location.href = "/Viajes/Locales/" + id;
     console.log(id);
 }
-
 function ImprimirReporte(id) {
     window.open("http://localhost:57871/RptViajesLocales.aspx?id=" + id, '_blank');
     console.log(id);
 }
-
 
 // Función para limpiar el formulario con estilo uniforme
 function LimpiarFormulario() {
@@ -310,7 +309,7 @@ function actualizarTiposDeMaterial(id, seleccionPrevia = null) {
                 $("#ddlTipoMaterial").empty();
 
                 // Agregar la opción principal deshabilitada
-                $("#ddlTipoMaterial").append("<option value='' disabled selected>Selecciona una opción</option>");
+                $("#ddlTipoMaterial").append("<option value='' disabled selected>Selecciona una opcion</option>");
 
                 // Llenar el DDL con los nuevos tipos de material
                 $.each(response.Response, function (index, item) {
@@ -400,6 +399,9 @@ function ObtenerDireccionCliente(id, seleccionPrevia = null) {
 }
 
 function ObtenerKilometrajeImporte(idCliente, idTipoMaterial, idDireccion) {
+    console.log(idCliente);
+    console.log(idTipoMaterial);
+    console.log(idDireccion);
     GetMVC(`/Viajes/GetPrecioActivoClienteTipoMaterialByDireccionMaterialAndCliente?idCliente=${idCliente}&idTipoMaterial=${idTipoMaterial}&idDireccion=${idDireccion}`, function (r, textStatus, jqXHR) {
         if (r.IsSuccess) {
             var data = r.Response;
@@ -413,7 +415,9 @@ function ObtenerKilometrajeImporte(idCliente, idTipoMaterial, idDireccion) {
                 $("#totalImporte").val(item.total_Gastos);
 
             } else {
-                alert("No se encontró información para los parámetros seleccionados.");
+                alert("No se ha configurado algun precio especidifo para este filtro.");
+                // Bloquear el botón
+                document.getElementById('btnGuardar').disabled = true;
             }
         } else {
             alert("Error al cargar los datos: " + r.ErrorMessage);

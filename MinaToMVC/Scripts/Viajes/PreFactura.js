@@ -35,6 +35,14 @@ $(document).ready(function () {
                         (isChecked ? 'checked' : '') +
                         ' data-id="' + row.id + '">';
                 }
+            },
+            {
+                data: "totalImporte",
+                title: "Importe",
+                render: function (data, type, row) {
+                    if (data == null || data === "") return "$0.00";
+                    return data.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
+                }
             }
         ],
         order: [0, 'desc'],
@@ -182,7 +190,6 @@ document.getElementById("btnPreFacturaSiFacturados").addEventListener("click", f
 
 function GenerarPDFPreFacturas(data, bandera) {
 
-
     if (bandera == 1) {
         if (data.length === 0) {
             alert("No existen vales pendientes");
@@ -194,6 +201,14 @@ function GenerarPDFPreFacturas(data, bandera) {
             return;
         }
     }
+
+    // Calcular la sumatoria total de totalImporte
+    var sumatoriaTotal = 0;
+    data.forEach(function (item) {
+        if (item.totalImporte) {
+            sumatoriaTotal += parseFloat(item.totalImporte);
+        }
+    });
 
     // Swalfire de generando reporte
     Swal.fire({
@@ -228,6 +243,7 @@ function GenerarPDFPreFacturas(data, bandera) {
     tablaHTML += '<th>Fecha de transporte</th>';
     tablaHTML += '<th>Cliente</th>';
     tablaHTML += '<th>Material</th>';
+    tablaHTML += '<th>Importe</th>';
     tablaHTML += '</tr></thead>';
 
     // Datos - usar TODOS los registros (no solo los primeros 30)
@@ -241,8 +257,23 @@ function GenerarPDFPreFacturas(data, bandera) {
         })() : '') + '</td>';
         tablaHTML += '<td>' + (item.cliente.nombre || '') + '</td>';
         tablaHTML += '<td>' + (item.tipoMaterial.nombreTipoMaterial || '') + '</td>';
+        tablaHTML += '<td>' +
+            (item.totalImporte
+                ? parseFloat(item.totalImporte).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' })
+                : '$0.00'
+            ) +
+            '</td>';
         tablaHTML += '</tr>';
     });
+
+    // Agregar fila de total
+    tablaHTML += '<tr style="font-weight: bold; background-color: #f0f0f0;">';
+    tablaHTML += '<td colspan="4" style="text-align: right;">TOTAL:</td>';
+    tablaHTML += '<td>' +
+        sumatoriaTotal.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) +
+        '</td>';
+    tablaHTML += '</tr>';
+
     tablaHTML += '</tbody></table>';
 
     // Determinar el endpoint según la bandera

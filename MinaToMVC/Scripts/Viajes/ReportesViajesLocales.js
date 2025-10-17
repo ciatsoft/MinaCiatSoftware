@@ -370,6 +370,14 @@ function btnGenerarPDFVentasGenerales() {
     // Tomar solo los primeros 30 registros
     var primeros30 = datos.slice(0, 30);
 
+    // Calcular la sumatoria total de totalImporte
+    var sumatoriaTotal = 0;
+    primeros30.forEach(function (item) {
+        if (item.totalImporte) {
+            sumatoriaTotal += parseFloat(item.totalImporte);
+        }
+    });
+
     // Swalfire de generando reporte
     Swal.fire({
         title: "Generando reporte...",
@@ -433,6 +441,15 @@ function btnGenerarPDFVentasGenerales() {
             '</td>';
         tablaHTML += '</tr>';
     });
+
+    // Agregar fila de total
+    tablaHTML += '<tr style="font-weight: bold; background-color: #f0f0f0;">';
+    tablaHTML += '<td colspan="8" style="text-align: right;">TOTAL:</td>';
+    tablaHTML += '<td>' +
+        sumatoriaTotal.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) +
+        '</td>';
+    tablaHTML += '</tr>';
+
     tablaHTML += '</tbody></table>';
 
     // Crear formulario y enviar
@@ -463,6 +480,14 @@ function btnGenerarPDFVentasGeneralesFiltradas() {
     // Tomar solo los primeros 30 registros
     var primeros30 = datos.slice(0, 30);
 
+    // Calcular la sumatoria total de totalImporte
+    var sumatoriaTotal = 0;
+    primeros30.forEach(function (item) {
+        if (item.totalImporte) {
+            sumatoriaTotal += parseFloat(item.totalImporte);
+        }
+    });
+
     // Swalfire de generando reporte
     Swal.fire({
         title: "Generando reporte...",
@@ -527,6 +552,15 @@ function btnGenerarPDFVentasGeneralesFiltradas() {
 
         tablaHTML += '</tr>';
     });
+
+    // Agregar fila de total
+    tablaHTML += '<tr style="font-weight: bold; background-color: #f0f0f0;">';
+    tablaHTML += '<td colspan="8" style="text-align: right;">TOTAL:</td>';
+    tablaHTML += '<td>' +
+        sumatoriaTotal.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) +
+        '</td>';
+    tablaHTML += '</tr>';
+
     tablaHTML += '</tbody></table>';
 
     // Crear formulario y enviar
