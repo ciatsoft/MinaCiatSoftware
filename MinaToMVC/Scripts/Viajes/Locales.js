@@ -1,4 +1,6 @@
-﻿$(function () {
+﻿let preservandoSelecciones = false;
+
+$(function () {
     jQuery.validator.addMethod("lettersonly", function (value, element) {
         return this.optional(element) || /^[a-z\s]+$/i.test(value);
     }, "Only alphabetical characters");
@@ -24,13 +26,10 @@
 });
 
 
-$(document).ready(function () {
+$(document).ready(function () {    
 
-    // Event listener para el cambio de selección en el dropdown de clientes
-    $("#ddlCliente").change(function () {
-        var selectedId = $(this).val();
-        ObtenerDireccionCliente(selectedId);
-    });
+    // Asignar el mismo event listener a todos los dropdowns
+    $("#ddlCliente, #ddlTipoMaterial, #ddlDireccionesCliente").change(manejarTodosLosCambios);
 
     // Inicialización de la tabla de viajes locales con formato
     $("#tblViajesLocales").dataTable({
@@ -119,6 +118,10 @@ $(document).ready(function () {
         $("#ddlCliente").val(viajeLocalJson.Cliente.Id).prop('disabled', true);
         $("#dtpFechaViaje").val(viajeLocalJson.FechaViaje.substring(0, 10));
         $("#txtObservaciones").val(viajeLocalJson.Observaciones);
+        $("#totalKMRecorridos").val(viajeLocalJson.KilometrosRecorridos);
+        $("#totalImporte").val(viajeLocalJson.TotalImporte);
+        $("#Folio").val(viajeLocalJson.Folio);
+
 
         actualizarTiposDeMaterial(viajeLocalJson.Cliente.Id);
         ObtenerDireccionCliente(viajeLocalJson.Cliente.Id);
@@ -132,6 +135,36 @@ $(document).ready(function () {
         $("#btnGuardar").show();
     }
 });
+
+function manejarTodosLosCambios() {
+    if (preservandoSelecciones) return;
+
+    // Obtener todos los IDs actuales
+    var clienteId = $("#ddlCliente").val();
+    var tipoMaterialId = $("#ddlTipoMaterial").val();
+    var direccionId = $("#ddlDireccionesCliente").val();
+
+    // Determinar qué elemento disparó el cambio
+    var elementoCambiado = $(this).attr('id');
+
+    // Lógica de actualizaciones en cadena
+    if (elementoCambiado === 'ddlCliente' && clienteId && clienteId !== "") {
+        // Guardar selecciones actuales ANTES de actualizar
+        var materialSeleccionado = $("#ddlTipoMaterial").val();
+        var direccionSeleccionada = $("#ddlDireccionesCliente").val();
+
+        // Actualizar tipos de material cuando cambia el cliente
+        actualizarTiposDeMaterial(clienteId, materialSeleccionado);
+
+        // Actualizar direcciones del cliente
+        ObtenerDireccionCliente(clienteId, direccionSeleccionada);
+    }
+
+    // Ejecutar cálculo de kilometraje e importe cuando tengamos todos los datos necesarios
+    if (clienteId && direccionId && tipoMaterialId) {
+        ObtenerKilometrajeImporte(clienteId, tipoMaterialId, direccionId);
+    }
+}
 
 // Función para guardar o actualizar
 function SaveOrUpdateViajeLocal() {
@@ -153,7 +186,9 @@ function SaveOrUpdateViajeLocal() {
             CreatedDt: $("#txtCreatedDt").val(),
             UpdatedBy: $("#txtUpdatedBy").val(),
             UpdatedDt: $("#txtUpdatedDt").val(),
-            Folio: $("#Folio").val()
+            Folio: $("#Folio").val(),
+            KilometrosRecorridos: $("#totalKMRecorridos").val(),
+            TotalImporte: $("#totalImporte").val()
         };
 
         // Mostrar los datos capturados en una alerta usando SweetAlert
@@ -167,6 +202,8 @@ function SaveOrUpdateViajeLocal() {
                    <strong>Direccion Destino:</strong> ${$("#ddlDireccionesCliente option:selected").text()}<br/>
                    <strong>Unidad de Medida:</strong> ${$("#ddlUnidadM option:selected").text()}<br/>
                    <strong>Fecha del Viaje:</strong> ${$("#dtpFechaViaje").val()}<br/>
+                   <strong>Kilometraje Aproximado Recorrido:</strong> ${$("#totalKMRecorridos").val()}<br/>
+                   <strong>Importe Total:</strong> ${$("#totalImporte").val()}<br/>
                    <strong>Observaciones:</strong> ${$("#txtObservaciones").val()}`,
             icon: 'info',
             showCancelButton: true,
@@ -176,6 +213,7 @@ function SaveOrUpdateViajeLocal() {
             if (result.isConfirmed) {
                 PostMVC("/Viajes/SaveOrUpdateViajeLocal", parametro, function (r) {
                     if (r.IsSuccess) {
+                        window.location.href = '/Viajes/Locales';
                     } else {
                         window.Swal.fire('Error', 'Error al guardar los datos: ' + r.response.ErrorMessage, 'error');
                     }
@@ -187,7 +225,6 @@ function SaveOrUpdateViajeLocal() {
         window.Swal.fire('Advertencia', 'Por favor, complete todos los campos obligatorios.', 'warning');
     }
 }
-
 
 // Función para eliminar con confirmación y estructura de mensajes de SweetAlert
 function EliminarViajeLocal() {
@@ -224,12 +261,10 @@ function EditarViajeLocal(id) {
     location.href = "/Viajes/Locales/" + id;
     console.log(id);
 }
-
 function ImprimirReporte(id) {
     window.open("http://localhost:57871/RptViajesLocales.aspx?id=" + id, '_blank');
     console.log(id);
 }
-
 
 // Función para limpiar el formulario con estilo uniforme
 function LimpiarFormulario() {
@@ -244,13 +279,10 @@ function LimpiarFormulario() {
 // Función para obtener todos los tipos de material
 function GetAllViajeLocal() {
     GetMVC("/Viajes/GetAllViajeLocal", function (r) {
-        console.log("Datos recibidos:", r); // Inspecciona la respuesta en la consola
         if (r.IsSuccess) {
             
             // Filtrar los datos donde cliente.tipoCliente sea igual a 1
             const datosFiltrados = r.Response.filter(item => item.cliente && item.cliente.tipoCliente === 1);
-
-            console.log("Datos filtrados:", datosFiltrados); // Verificar los datos filtrados
 
             MapingPropertiesDataTable("tblViajesLocales", datosFiltrados);
         } else {
@@ -259,36 +291,57 @@ function GetAllViajeLocal() {
     });
 }
 
-function actualizarTiposDeMaterial(id) {
-    var ubicacionId = $("#ddlCliente").val() || id; // Obtener el ID de la ubicación seleccionada
+function actualizarTiposDeMaterial(id, seleccionPrevia = null) {
+    var ubicacionId = $("#ddlCliente").val() || id;
 
     // Realizar una llamada AJAX al controlador para obtener los tipos de material
     $.ajax({
-        url: '/Viajes/GetTipoMaterialByCliente', // Cambia esto al nombre de tu controlador y acción
+        url: '/Viajes/GetTipoMaterialByCliente',
         type: 'GET',
-        data: { id: ubicacionId }, // Enviar el ID de la ubicación
+        data: { id: ubicacionId },
         success: function (response) {
             response = JSON.parse(response);
             if (response.IsSuccess) {
+                // Activar bandera para prevenir cambios no deseados
+                preservandoSelecciones = true;
+
                 // Limpiar el DDL de "Tipo de Material"
                 $("#ddlTipoMaterial").empty();
+
+                // Agregar la opción principal deshabilitada
+                $("#ddlTipoMaterial").append("<option value='' disabled selected>Selecciona una opcion</option>");
 
                 // Llenar el DDL con los nuevos tipos de material
                 $.each(response.Response, function (index, item) {
                     var templateoption = "<option value='" + item.tipoMaterial.id + "'>" + item.tipoMaterial.nombreTipoMaterial + "</option>";
-
                     $("#ddlTipoMaterial").append(templateoption);
                 });
+
+                // Restaurar selección previa si existe y está disponible
+                if (seleccionPrevia && seleccionPrevia !== "") {
+                    setTimeout(function () {
+                        if ($("#ddlTipoMaterial option[value='" + seleccionPrevia + "']").length > 0) {
+                            $("#ddlTipoMaterial").val(seleccionPrevia);
+                        }
+                        preservandoSelecciones = false;
+                    }, 50);
+                } else {
+                    preservandoSelecciones = false;
+                }
             }
         },
         error: function (xhr, status, error) {
             console.log("Error al obtener los tipos de material:", error);
+            preservandoSelecciones = false;
         }
     });
 }
 
-function ObtenerDireccionCliente(id) {
+function ObtenerDireccionCliente(id, seleccionPrevia = null) {
     var dropdown = $("#ddlDireccionesCliente");
+
+    // Activar bandera para prevenir cambios no deseados
+    preservandoSelecciones = true;
 
     // Limpiar dropdown completamente
     dropdown.empty();
@@ -301,6 +354,7 @@ function ObtenerDireccionCliente(id) {
         .prop('selected', true));
 
     if (!id) {
+        preservandoSelecciones = false;
         return;
     }
 
@@ -316,16 +370,58 @@ function ObtenerDireccionCliente(id) {
                         .text(texto);
                     dropdown.append(option);
                 });
+
+                // Restaurar selección previa si existe y está disponible
+                if (seleccionPrevia && seleccionPrevia !== "") {
+                    setTimeout(function () {
+                        if (dropdown.find("option[value='" + seleccionPrevia + "']").length > 0) {
+                            dropdown.val(seleccionPrevia);
+                        }
+                        preservandoSelecciones = false;
+                    }, 50);
+                } else {
+                    preservandoSelecciones = false;
+                }
             } else {
                 dropdown.append($('<option></option>')
                     .val("")
                     .text("No hay direcciones disponibles"));
+                preservandoSelecciones = false;
             }
         } else {
             alert("Error al cargar las direcciones del cliente: " + r.ErrorMessage);
             dropdown.append($('<option></option>')
                 .val("")
                 .text("Error al cargar direcciones"));
+            preservandoSelecciones = false;
         }
     });
 }
+
+function ObtenerKilometrajeImporte(idCliente, idTipoMaterial, idDireccion) {
+    console.log(idCliente);
+    console.log(idTipoMaterial);
+    console.log(idDireccion);
+    GetMVC(`/Viajes/GetPrecioActivoClienteTipoMaterialByDireccionMaterialAndCliente?idCliente=${idCliente}&idTipoMaterial=${idTipoMaterial}&idDireccion=${idDireccion}`, function (r, textStatus, jqXHR) {
+        if (r.IsSuccess) {
+            var data = r.Response;
+
+            // Verifica si la respuesta es un arreglo
+            if (Array.isArray(data) && data.length > 0) {
+                var item = data[0]; // Tomamos el primer objeto del arreglo
+
+                // Asignamos los valores a los inputs
+                $("#totalKMRecorridos").val(item.total_KM_Recorridos);
+                $("#totalImporte").val(item.total_Gastos);
+
+            } else {
+                alert("No se ha configurado algun precio especidifo para este filtro.");
+                // Bloquear el botón
+                document.getElementById('btnGuardar').disabled = true;
+            }
+        } else {
+            alert("Error al cargar los datos: " + r.ErrorMessage);
+        }
+    });
+}
+

@@ -366,7 +366,9 @@ namespace MinaTolWebApi.DAL
                     new SqlParameter("@CreatedDt", vi.CreatedDt),
                     new SqlParameter("@UpdatedBy", vi.UpdatedBy ?? (object)DBNull.Value),
                     new SqlParameter("@UpdatedDt", vi.UpdatedDt),
-                    new SqlParameter("@Folio", vi.Folio ?? (object)DBNull.Value)
+                    new SqlParameter("@Folio", vi.Folio ?? (object)DBNull.Value),
+                    new SqlParameter("@KilometrosRecorridos", vi.KilometrosRecorridos),
+                    new SqlParameter("@TotalImporte", vi.TotalImporte),
                 };
 
                 var salarioId = ExecuteScalar($"SaveOrUpdateViajeLocal", CommandType.StoredProcedure, parameters);

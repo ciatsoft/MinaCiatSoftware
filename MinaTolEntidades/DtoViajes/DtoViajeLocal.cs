@@ -33,5 +33,7 @@ namespace MinaTolEntidades.DtoViajes
         public string Folio { get; set; }
         public bool Facturado { get; set; }
         public int TipoCliente { get; set; } // Cambiar de Cliente a int
+        public decimal KilometrosRecorridos { get; set; }
+        public decimal TotalImporte { get; set; }
     }
 }

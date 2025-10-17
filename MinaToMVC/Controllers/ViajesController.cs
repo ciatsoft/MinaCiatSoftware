@@ -307,6 +307,11 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.ObtenerDireccionCliente(id);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+        public async Task<string> GetPrecioActivoClienteTipoMaterialByDireccionMaterialAndCliente(long idCliente, long idTipoMaterial, long idDireccion)
+        {
+            var result = await httpClientConnection.GetPrecioActivoClienteTipoMaterialByDireccionMaterialAndCliente(idCliente, idTipoMaterial, idDireccion);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
         #endregion
         #endregion
     }

@@ -52,8 +52,15 @@ $(document).ready(function () {
             { data: "vehiculo.placa", title: "Vehiculo" },
             { data: "ubicacionOrigen.nombreUbicacion", title: "Origen" },
             { data: "tipoMaterial.nombreTipoMaterial", title: "Material" },
-            //{ data: "", title: "Metraje" },
-            //{ data: "", title: "Importe" }
+            { data: "kilometrosRecorridos", title: "Kilometros Recorridos" },
+            {
+                data: "totalImporte",
+                title: "Importe",
+                render: function (data, type, row) {
+                    if (data == null || data === "") return "$0.00";
+                    return data.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
+                }
+            }
         ],
         order: [0, 'desc'],
         language: {
@@ -109,8 +116,15 @@ $(document).ready(function () {
             { data: "vehiculo.placa", title: "Vehiculo" },
             { data: "ubicacionOrigen.nombreUbicacion", title: "Origen" },
             { data: "tipoMaterial.nombreTipoMaterial", title: "Material" },
-            //{ data: "", title: "Metraje" },
-            //{ data: "", title: "Importe" }
+            { data: "kilometrosRecorridos", title: "Kilometros Recorridos" },
+            {
+                data: "totalImporte",
+                title: "Importe",
+                render: function (data, type, row) {
+                    if (data == null || data === "") return "$0.00";
+                    return data.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
+                }
+            }
         ],
         order: [0, 'desc'],
         language: {
@@ -356,6 +370,14 @@ function btnGenerarPDFVentasGenerales() {
     // Tomar solo los primeros 30 registros
     var primeros30 = datos.slice(0, 30);
 
+    // Calcular la sumatoria total de totalImporte
+    var sumatoriaTotal = 0;
+    primeros30.forEach(function (item) {
+        if (item.totalImporte) {
+            sumatoriaTotal += parseFloat(item.totalImporte);
+        }
+    });
+
     // Swalfire de generando reporte
     Swal.fire({
         title: "Generando reporte...",
@@ -410,14 +432,24 @@ function btnGenerarPDFVentasGenerales() {
         tablaHTML += '<td>' + (item.vehiculo.placa || '') + '</td>';
         tablaHTML += '<td>' + (item.ubicacionOrigen.nombreUbicacion || '') + '</td>';
         tablaHTML += '<td>' + (item.tipoMaterial.nombreTipoMaterial || '') + '</td>';
-        //tablaHTML += '<td>' + (item.metraje|| '') + '</td>';
-        //tablaHTML += '<td>' + (item.importe ?
-        //    new Intl.NumberFormat('es-MX', {
-        //        style: 'currency',
-        //        currency: 'MXN'
-        //    }).format(item.importe) : '') + '</td>';
+        tablaHTML += '<td>' + (item.kilometrosRecorridos || '') + '</td>';
+        tablaHTML += '<td>' +
+            (item.totalImporte
+                ? parseFloat(item.totalImporte).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' })
+                : '$0.00'
+            ) +
+            '</td>';
         tablaHTML += '</tr>';
     });
+
+    // Agregar fila de total
+    tablaHTML += '<tr style="font-weight: bold; background-color: #f0f0f0;">';
+    tablaHTML += '<td colspan="8" style="text-align: right;">TOTAL:</td>';
+    tablaHTML += '<td>' +
+        sumatoriaTotal.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) +
+        '</td>';
+    tablaHTML += '</tr>';
+
     tablaHTML += '</tbody></table>';
 
     // Crear formulario y enviar
@@ -448,6 +480,14 @@ function btnGenerarPDFVentasGeneralesFiltradas() {
     // Tomar solo los primeros 30 registros
     var primeros30 = datos.slice(0, 30);
 
+    // Calcular la sumatoria total de totalImporte
+    var sumatoriaTotal = 0;
+    primeros30.forEach(function (item) {
+        if (item.totalImporte) {
+            sumatoriaTotal += parseFloat(item.totalImporte);
+        }
+    });
+
     // Swalfire de generando reporte
     Swal.fire({
         title: "Generando reporte...",
@@ -502,14 +542,25 @@ function btnGenerarPDFVentasGeneralesFiltradas() {
         tablaHTML += '<td>' + (item.vehiculo.placa || '') + '</td>';
         tablaHTML += '<td>' + (item.ubicacionOrigen.nombreUbicacion || '') + '</td>';
         tablaHTML += '<td>' + (item.tipoMaterial.nombreTipoMaterial || '') + '</td>';
-        //tablaHTML += '<td>' + (item.metraje|| '') + '</td>';
-        //tablaHTML += '<td>' + (item.importe ?
-        //    new Intl.NumberFormat('es-MX', {
-        //        style: 'currency',
-        //        currency: 'MXN'
-        //    }).format(item.importe) : '') + '</td>';
+        tablaHTML += '<td>' + (item.kilometrosRecorridos || '') + '</td>';
+        tablaHTML += '<td>' +
+            (item.totalImporte
+                ? parseFloat(item.totalImporte).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' })
+                : '$0.00'
+            ) +
+            '</td>';
+
         tablaHTML += '</tr>';
     });
+
+    // Agregar fila de total
+    tablaHTML += '<tr style="font-weight: bold; background-color: #f0f0f0;">';
+    tablaHTML += '<td colspan="8" style="text-align: right;">TOTAL:</td>';
+    tablaHTML += '<td>' +
+        sumatoriaTotal.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) +
+        '</td>';
+    tablaHTML += '</tr>';
+
     tablaHTML += '</tbody></table>';
 
     // Crear formulario y enviar

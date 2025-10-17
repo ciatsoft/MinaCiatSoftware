@@ -77,6 +77,17 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
+        public async Task<ModelResponse> GetPrecioActivoClienteTipoMaterialByDireccionMaterialAndCliente(long idCliente, long idTipoMaterial, long idDireccion)
+        {
+            var result = await RequestAsync<object>($"api/Viajes/GetPrecioActivoClienteTipoMaterialByDireccionMaterialAndCliente/{idCliente}/{idTipoMaterial}/{idDireccion}", HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
 
+            return modelResponse;
+
+        }
     }
 }

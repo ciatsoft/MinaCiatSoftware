@@ -108,7 +108,7 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Cliente:</label>
-                        <select id="ddlCliente" class="form-control" onchange="actualizarTiposDeMaterial()">
+                        <select id="ddlCliente" class="form-control">
                             <option value="" disabled selected>Selecciona una opcion</option>
                             @foreach (var i in clientes.Where(c => c.TipoCliente == 1).OrderBy(c => c.Nombre))
                             {
@@ -120,10 +120,6 @@
                         <label>Tipo de Material:</label>
                         <select id="ddlTipoMaterial" class="form-control">
                             <option value="" disabled selected>Selecciona una opcion</option>
-                            @foreach (var i in tipoMateriales)
-                            {
-                                <option value="@i.TipoMaterial.Id">@i.TipoMaterial.NombreTipoMaterial</option>
-                            }
                         </select>
                     </div>
                 </div>
@@ -173,6 +169,8 @@
                         <textarea name="txtObservaciones" id="txtObservaciones" class="form-control" rows="6"></textarea>
                     </div>
                 </div>
+                <input type="hidden" id="totalKMRecorridos" value="0" />
+                <input type="hidden" id="totalImporte" value="0" />
                 <div class="row">
                     <div class="col-lg-12 d-flex justify-content-between">
                         <!-- Contenedor para los botones de la izquierda -->
