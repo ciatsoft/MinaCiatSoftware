@@ -1,5 +1,4 @@
-﻿
-using MinaTolEntidades;
+﻿using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.DtoEmpleados;
@@ -171,6 +170,21 @@ namespace MinaToMVC.Controllers
                 var result = await httpClientConnection.GetClienteTipoMaterialByMaterial(clienteId, materialId);
                 precios = JsonConvert.DeserializeObject<List<ClienteTipoMaterial>>(result.Response.ToString());
             }
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
 
             ViewBag.ClienteId = clienteId;
             ViewBag.MaterialId = materialId;
