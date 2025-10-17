@@ -91,6 +91,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.DeleteViajeLocal(id);
             return result;
         }
+        [HttpGet, Route("GetPrecioActivoClienteTipoMaterialByDireccionMaterialAndCliente/{idCliente:long}/{idTipoMaterial:long}/{idDireccion:long}")]
+        public ModelResponse GetPrecioActivoClienteTipoMaterialByDireccionMaterialAndCliente(long idCliente, long idTipoMaterial, long idDireccion)
+        {
+            var result = wrapper.GetPrecioActivoClienteTipoMaterialByDireccionMaterialAndCliente(idCliente, idTipoMaterial, idDireccion);
+            return result;
+        }
         #endregion
 
         #region Material Cliente

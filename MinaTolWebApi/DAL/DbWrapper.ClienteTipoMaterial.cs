@@ -205,5 +205,44 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
+        public ModelResponse GetPrecioActivoClienteTipoMaterialByDireccionMaterialAndCliente(long idCliente, long idTipoMaterial, long idDireccion)
+        {
+            var response = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("@Id", idDireccion));
+            parameters.Add(new SqlParameter("@ClienteId", idCliente));
+            parameters.Add(new SqlParameter("@MaterialId", idTipoMaterial));
+            try
+            {
+                var result = GetObjects("GetPrecioActivoClienteTipoMaterialByDireccionMaterialAndCliente", CommandType.StoredProcedure, parameters,
+                     new Func<IDataReader, ClienteTipoMaterial>((reader) =>
+                     {
+                         var r = FillEntity<ClienteTipoMaterial>(reader);
+
+                         r.Cliente = new MinaTolEntidades.DtoClientes.Cliente()
+                         {
+                             Id = MappingProperties<long>(reader["ClienteId"]),
+                             Nombre = MappingProperties<string>(reader["NombreCliente"])
+                         };
+                         r.TipoMaterial = new MinaTolEntidades.DtoCatalogos.DtoTipoMaterialUbicacion()
+                         {
+                             Id = MappingProperties<long>(reader["MaterialId"]),
+                             NombreTipoMaterial = MappingProperties<string>(reader["Material"])
+                         };
+
+                         return r;
+                     }));
+
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
     }
 }

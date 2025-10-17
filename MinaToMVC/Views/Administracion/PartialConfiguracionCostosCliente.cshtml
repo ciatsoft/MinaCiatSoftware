@@ -7,9 +7,7 @@
 
 <div class="container" onmouseover="debounceCalculations()">
     <!-- Input oculto para el clienteId y materialId -->
-    <label class="form-label font-weight-bold">Cliente Id:</label>
     <input type="hidden" id="clienteId" value="@Request["clienteId"]" />
-    <label class="form-label font-weight-bold">Material Id:</label>
     <input type="hidden" id="materialId" value="@Request["materialId"]" />
     <input type="hidden" id="createdBy" value="@usuarioToken.UserName" />
     <input type="hidden" id="updatedBy" value="@usuarioToken.UserName" />
@@ -25,7 +23,7 @@
             <h3 class="form-label font-weight-bold">Material: @ViewBag.MaterialNombre</h3>
         </div>
     </div>
-    <input type="text" id="id" value="0" readonly/>
+    <input type="hidden" id="id" value="0" readonly/>
     <div class="row">
         <div class="col-4">
             <label>Direcciones:</label>
@@ -232,7 +230,6 @@
                 }
             ],
             scrollX: true,
-            responsive: true,
             autoWidth: false,
             language: {
                 url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-MX.json'
