@@ -136,6 +136,9 @@ $(document).ready(function () {
                         $("#genericModal").modal("show");
                         SearchDireccionesCliente(clienteId);
                         GetPrecioActivoCombustible();
+                        TablaVacia();
+                        DropListDirecciones();
+                        BotonesEditarEliminar();
                     });
                 }, 500);
             });
@@ -205,6 +208,11 @@ function AgregarPreciosMaterialACliente() {
     var idDireccion = $("#idDireccion").val();
     var direccion = $("#direccion").val();
     var precioActivo = $("#precioActual").is(":checked"); // CORRECCIÓN AQUÍ
+    var id = $("#id").val();
+    var createdBy = $("#createdBy").val();
+    var updatedBy = $("#updatedBy").val();
+    var createdDt = $("#createdDt").val();
+    var updatedDt = $("#updatedDt").val();
 
     // Recoger los valores de los campos de la vista parcial
     var clienteId = $("#clienteId").val();
@@ -225,6 +233,7 @@ function AgregarPreciosMaterialACliente() {
 
     // Crear el objeto con los datos
     var parametro = {
+        Id: id,
         Cliente: {
             Id: clienteId
         },
@@ -247,7 +256,11 @@ function AgregarPreciosMaterialACliente() {
         Subtotal_Ingreso_Viajes_M3: subtotalIngreso,
         IdDireccion: idDireccion,
         Direccion: direccion,
-        PrecioActivo: precioActivo
+        PrecioActivo: precioActivo,
+        CreatedBy: createdBy,
+        CreatedDt: createdDt,
+        UpdatedBy: updatedBy,
+        UpdatedDt: updatedDt
     };
 
     // Llamar al método SaveOrUpdateClienteTipoMaterial a través de PostMVC

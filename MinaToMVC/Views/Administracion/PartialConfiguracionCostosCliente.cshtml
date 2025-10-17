@@ -1,6 +1,8 @@
 ﻿@{
     var precios = (List<MinaTolEntidades.DtoClientes.ClienteTipoMaterial>)ViewBag.Precios;
     var direccionesClientes = (List<MinaTolEntidades.DtoClientes.DireccionCliente>)ViewBag.DireccionClientes;
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
 }
 
 <div class="container" onmouseover="debounceCalculations()">
@@ -9,6 +11,10 @@
     <input type="hidden" id="clienteId" value="@Request["clienteId"]" />
     <label class="form-label font-weight-bold">Material Id:</label>
     <input type="hidden" id="materialId" value="@Request["materialId"]" />
+    <input type="hidden" id="createdBy" value="@usuarioToken.UserName" />
+    <input type="hidden" id="updatedBy" value="@usuarioToken.UserName" />
+    <input type="hidden" id="createdDt" value="@fechaActual" />
+    <input type="hidden" id="updatedDt" value="@fechaActual" />
 
     <!-- Etiquetas para mostrar el nombre del cliente y material -->
     <div class="row mb-3">
@@ -19,7 +25,7 @@
             <h3 class="form-label font-weight-bold">Material: @ViewBag.MaterialNombre</h3>
         </div>
     </div>
-
+    <input type="text" id="id" value="0" readonly/>
     <div class="row">
         <div class="col-4">
             <label>Direcciones:</label>
@@ -116,90 +122,143 @@
 
 <script>
 
-    // Inicializar DataTable simplificada
-    // TipoMaterial
-    $(document).on('click', '.btnEliminarTipoMaterial', function () {
-        const id = $(this).data('id');
-        PostMVC('/Administracion/DeletTipoMaterial/', { Id: id }, function (r) {
-            if (r.IsSuccess) {
-                location.reload(); // Recarga inmediata
+    function BotonesEditarEliminar() {
+        // Inicializar DataTable simplificada
+        // TipoMaterial
+        $(document).on('click', '.btnEliminarTipoMaterial', function () {
+            const id = $(this).data('id');
+            PostMVC('/Administracion/DeletTipoMaterial/', { Id: id }, function (r) {
+                if (r.IsSuccess) {
+                    location.reload(); // Recarga inmediata
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudo eliminar el registro',
+                    });
+                    console.error(r);
+                }
+            });
+        });
+
+        // Evento delegado para botón Editar
+        $(document).on('click', '.btnEditarTipoMaterial', function () {
+            const id = $(this).data('id');
+
+            // Busca el registro correspondiente en la tabla
+            const table = $('#tblDireccionMaterial').DataTable();
+            const data = table.rows().data().toArray();
+            const registro = data.find(x => x.id === id);
+
+            if (registro) {
+                precargarFormulario(registro);
             } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'No se pudo eliminar la dirección',
-                });
-                console.error(r);
+                alert('No se encontró la información del registro seleccionado.');
             }
         });
-    });
+    }
 
-    // Crea una nueva tabla sin datos
-    $('#tblDireccionMaterial').DataTable({
-        data: [], // Array vacío
-        columns: [
-            { title: 'ID', data: 'id' },
-            { title: 'Dirección', data: 'direccion' },
-            { title: 'Material', data: 'tipoMaterial.nombreTipoMaterial' },
-            { title: 'Cliente', data: 'cliente.nombre' },
-            {
-                title: 'Total de Importe',
-                data: 'total_Gastos',
-                render: function (data) {
-                    return data ? '$' + data.toLocaleString('es-MX') : '$0';
-                }
-            },
-            {
-                data: 'precioActivo',
-                title: 'Precio Actual',
-                render: function (data, type, row) {
-                    if (data == 1 || data === true) {
-                        return '<span style="color: green; font-size: 20px;">●</span> <span style="color: black;">Precio Actual</span>';
-                    } else {
-                        return '<span style="color: red; font-size: 20px;">●</span> <span style="color: black;">Precio NO Actual</span>';
+    function precargarFormulario(registro) {
+        // Campos básicos
+        $('#id').val(registro.id);
+        $('#idDireccion').val(registro.idDireccion);
+        $('#direccion').val(registro.direccion);
+
+        // Si tu dropdown de direcciones tiene opciones, intenta seleccionar la correcta
+        $('#ddlDirecciones').val(registro.idDireccion);
+
+        // Campos numéricos
+        $('#p-mat-m3').val(registro.p_Mta_M3);
+        $('#p-flete-m3').val(registro.p_Flete_M3);
+        $('#precio-m3').val(registro.precio_M3);
+        $('#km-cargado').val(registro.kM_Cargado);
+        $('#km-basio').val(registro.kM_Basico);
+        $('#total-km-recorridos').val(registro.total_KM_Recorridos);
+        $('#carga-diesel').val(registro.carga_Disel);
+        $('#total-diesel').val(registro.total_Diesel_Precio_XLT);
+        $('#casetas').val(registro.casetas);
+        $('#mano-obra').val(registro.mano_De_Obra);
+        $('#material-viajes').val(registro.material_Viajes_De_30M3);
+        $('#subtotal-ingreso').val(registro.subtotal_Ingreso_Viajes_M3);
+        $('#total-gastos').val(registro.total_Gastos);
+
+        // Checkbox de precio actual
+        $('#precioActual').prop('checked', registro.precioActivo === true);
+
+        console.log("Formulario precargado con:", registro);
+    }
+
+
+    function TablaVacia() {
+        // Crea una nueva tabla sin datos
+        $('#tblDireccionMaterial').DataTable({
+            data: [], // Array vacío
+            columns: [
+                { title: 'ID', data: 'id', visible: false },
+                { title: 'Dirección', data: 'direccion' },
+                { title: 'Material', data: 'tipoMaterial.nombreTipoMaterial' },
+                { title: 'Cliente', data: 'cliente.nombre' },
+                {
+                    title: 'Total de Importe',
+                    data: 'total_Gastos',
+                    render: function (data) {
+                        return data ? '$' + data.toLocaleString('es-MX') : '$0';
+                    }
+                },
+                {
+                    data: 'precioActivo',
+                    title: 'Precio Actual',
+                    render: function (data, type, row) {
+                        if (data == 1 || data === true) {
+                            return '<span style="color: green; font-size: 20px;">●</span> <span style="color: black;">Precio Actual</span>';
+                        } else {
+                            return '<span style="color: red; font-size: 20px;">●</span> <span style="color: black;">Precio NO Actual</span>';
+                        }
+                    }
+                },
+                {
+                    data: null,
+                    title: 'Acciones',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `
+                <button class="btn btn-sm btn-primary btnEditarTipoMaterial" data-id="${row.id}" title="Editar">
+                    Editar
+                </button>
+                <button class="btn btn-sm btn-danger btnEliminarTipoMaterial" data-id="${row.id}" title="Eliminar">
+                    Eliminar
+                </button>`;
                     }
                 }
+            ],
+            scrollX: true,
+            responsive: true,
+            autoWidth: false,
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-MX.json'
             },
-            {
-                data: null,
-                title: 'Acciones',
-                orderable: false,
-                render: function (data, type, row) {
-                    return `
-                    <button class="btn btn-sm btn-primary btnEditarTipoMaterial" data-id="${row.id}" title="Editar">
-                        Editar
-                    </button>
-                    <button class="btn btn-sm btn-danger btnEliminarTipoMaterial" data-id="${row.id}" title="Eliminar">
-                        Eliminar
-                    </button>`;
-                }
-            }
-        ],
-        scrollX: true,
-        responsive: true,
-        autoWidth: false,
-        language: {
-            url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-MX.json'
-        },
-        pageLength: 50,
-    });
+            pageLength: 50,
+        });
+    }
 
-    // Evento cuando cambia la selección del dropdown
-    $('#ddlDirecciones').on('change', function () {
-        var optionSeleccionada = $(this).find('option:selected');
-        var idSeleccionado = optionSeleccionada.val();
-        var nombreSeleccionado = optionSeleccionada.text();
+    function DropListDirecciones() {
+        // Evento cuando cambia la selección del dropdown
+        $('#ddlDirecciones').on('change', function () {
+            var optionSeleccionada = $(this).find('option:selected');
+            var idSeleccionado = optionSeleccionada.val();
+            var nombreSeleccionado = optionSeleccionada.text();
 
-        // Insertar el texto en el input
-        $('#idDireccion').val(idSeleccionado);
-        $('#direccion').val(nombreSeleccionado);
+            // Insertar el texto en el input
+            $('#idDireccion').val(idSeleccionado);
+            $('#direccion').val(nombreSeleccionado);
 
-        ClienteTipoMaterialByDireccionMaterialAndCliente(idSeleccionado)
-    });
+            ClienteTipoMaterialByDireccionMaterialAndCliente(idSeleccionado)
+        });
+    }
 
     function ClienteTipoMaterialByDireccionMaterialAndCliente(id) {
-        var idCliente = @Request["clienteId"];
-        var idMaterial = @Request["materialId"];
+        var idCliente = $("#clienteId").val();
+        var idMaterial = $("#materialId").val();
 
         PostMVC('/Administracion/ClienteTipoMaterialByDireccionMaterialAndCliente', { Id: id, IdCliente: idCliente, IdMaterial: idMaterial }, function (r) {
             if (r.IsSuccess) {
@@ -222,7 +281,7 @@
         $('#tblDireccionMaterial').DataTable({
             data: data,
             columns: [
-                { title: 'ID', data: 'id'},
+                { title: 'ID', data: 'id', visible: false},
                 { title: 'Dirección', data: 'direccion'},
                 { title: 'Material', data: 'tipoMaterial.nombreTipoMaterial'},
                 { title: 'Cliente', data: 'cliente.nombre'},
@@ -250,7 +309,7 @@
                     orderable: false,
                     render: function (data, type, row) {
                         return `
-                        <button class="btn btn-sm btn-primary btnEditar" data-id="${row.id}" title="Editar">
+                        <button class="btn btn-sm btn-primary btnEditarTipoMaterial" data-id="${row.id}" title="Editar">
                             Editar
                         </button>
                         <button class="btn btn-sm btn-danger btnEliminarTipoMaterial" data-id="${row.id}" title="Eliminar">
