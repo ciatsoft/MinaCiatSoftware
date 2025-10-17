@@ -52,8 +52,15 @@ $(document).ready(function () {
             { data: "vehiculo.placa", title: "Vehiculo" },
             { data: "ubicacionOrigen.nombreUbicacion", title: "Origen" },
             { data: "tipoMaterial.nombreTipoMaterial", title: "Material" },
-            //{ data: "", title: "Metraje" },
-            //{ data: "", title: "Importe" }
+            { data: "kilometrosRecorridos", title: "Kilometros Recorridos" },
+            {
+                data: "totalImporte",
+                title: "Importe",
+                render: function (data, type, row) {
+                    if (data == null || data === "") return "$0.00";
+                    return data.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
+                }
+            }
         ],
         order: [0, 'desc'],
         language: {
@@ -109,8 +116,15 @@ $(document).ready(function () {
             { data: "vehiculo.placa", title: "Vehiculo" },
             { data: "ubicacionOrigen.nombreUbicacion", title: "Origen" },
             { data: "tipoMaterial.nombreTipoMaterial", title: "Material" },
-            //{ data: "", title: "Metraje" },
-            //{ data: "", title: "Importe" }
+            { data: "kilometrosRecorridos", title: "Kilometros Recorridos" },
+            {
+                data: "totalImporte",
+                title: "Importe",
+                render: function (data, type, row) {
+                    if (data == null || data === "") return "$0.00";
+                    return data.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
+                }
+            }
         ],
         order: [0, 'desc'],
         language: {
@@ -410,12 +424,13 @@ function btnGenerarPDFVentasGenerales() {
         tablaHTML += '<td>' + (item.vehiculo.placa || '') + '</td>';
         tablaHTML += '<td>' + (item.ubicacionOrigen.nombreUbicacion || '') + '</td>';
         tablaHTML += '<td>' + (item.tipoMaterial.nombreTipoMaterial || '') + '</td>';
-        //tablaHTML += '<td>' + (item.metraje|| '') + '</td>';
-        //tablaHTML += '<td>' + (item.importe ?
-        //    new Intl.NumberFormat('es-MX', {
-        //        style: 'currency',
-        //        currency: 'MXN'
-        //    }).format(item.importe) : '') + '</td>';
+        tablaHTML += '<td>' + (item.kilometrosRecorridos || '') + '</td>';
+        tablaHTML += '<td>' +
+            (item.totalImporte
+                ? parseFloat(item.totalImporte).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' })
+                : '$0.00'
+            ) +
+            '</td>';
         tablaHTML += '</tr>';
     });
     tablaHTML += '</tbody></table>';
@@ -502,12 +517,14 @@ function btnGenerarPDFVentasGeneralesFiltradas() {
         tablaHTML += '<td>' + (item.vehiculo.placa || '') + '</td>';
         tablaHTML += '<td>' + (item.ubicacionOrigen.nombreUbicacion || '') + '</td>';
         tablaHTML += '<td>' + (item.tipoMaterial.nombreTipoMaterial || '') + '</td>';
-        //tablaHTML += '<td>' + (item.metraje|| '') + '</td>';
-        //tablaHTML += '<td>' + (item.importe ?
-        //    new Intl.NumberFormat('es-MX', {
-        //        style: 'currency',
-        //        currency: 'MXN'
-        //    }).format(item.importe) : '') + '</td>';
+        tablaHTML += '<td>' + (item.kilometrosRecorridos || '') + '</td>';
+        tablaHTML += '<td>' +
+            (item.totalImporte
+                ? parseFloat(item.totalImporte).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' })
+                : '$0.00'
+            ) +
+            '</td>';
+
         tablaHTML += '</tr>';
     });
     tablaHTML += '</tbody></table>';

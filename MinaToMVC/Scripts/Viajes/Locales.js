@@ -118,6 +118,8 @@ $(document).ready(function () {
         $("#ddlCliente").val(viajeLocalJson.Cliente.Id).prop('disabled', true);
         $("#dtpFechaViaje").val(viajeLocalJson.FechaViaje.substring(0, 10));
         $("#txtObservaciones").val(viajeLocalJson.Observaciones);
+        $("#totalKMRecorridos").val(viajeLocalJson.KilometrosRecorridos);
+        $("#totalImporte").val(viajeLocalJson.TotalImporte);
 
         actualizarTiposDeMaterial(viajeLocalJson.Cliente.Id);
         ObtenerDireccionCliente(viajeLocalJson.Cliente.Id);
@@ -139,13 +141,6 @@ function manejarTodosLosCambios() {
     var clienteId = $("#ddlCliente").val();
     var tipoMaterialId = $("#ddlTipoMaterial").val();
     var direccionId = $("#ddlDireccionesCliente").val();
-
-    // Imprimir en consola los IDs seleccionados
-    console.log("🔔 CAMBIO DETECTADO - IDs actualizados:");
-    console.log("👤 Cliente ID:", clienteId);
-    console.log("📦 Tipo Material ID:", tipoMaterialId);
-    console.log("📍 Dirección ID:", direccionId);
-    console.log("----------------------------------------");
 
     // Determinar qué elemento disparó el cambio
     var elementoCambiado = $(this).attr('id');
@@ -189,7 +184,9 @@ function SaveOrUpdateViajeLocal() {
             CreatedDt: $("#txtCreatedDt").val(),
             UpdatedBy: $("#txtUpdatedBy").val(),
             UpdatedDt: $("#txtUpdatedDt").val(),
-            Folio: $("#Folio").val()
+            Folio: $("#Folio").val(),
+            KilometrosRecorridos: $("#totalKMRecorridos").val(),
+            TotalImporte: $("#totalImporte").val()
         };
 
         // Mostrar los datos capturados en una alerta usando SweetAlert
@@ -203,6 +200,8 @@ function SaveOrUpdateViajeLocal() {
                    <strong>Direccion Destino:</strong> ${$("#ddlDireccionesCliente option:selected").text()}<br/>
                    <strong>Unidad de Medida:</strong> ${$("#ddlUnidadM option:selected").text()}<br/>
                    <strong>Fecha del Viaje:</strong> ${$("#dtpFechaViaje").val()}<br/>
+                   <strong>Kilometraje Aproximado Recorrido:</strong> ${$("#totalKMRecorridos").val()}<br/>
+                   <strong>Importe Total:</strong> ${$("#totalImporte").val()}<br/>
                    <strong>Observaciones:</strong> ${$("#txtObservaciones").val()}`,
             icon: 'info',
             showCancelButton: true,
@@ -212,6 +211,7 @@ function SaveOrUpdateViajeLocal() {
             if (result.isConfirmed) {
                 PostMVC("/Viajes/SaveOrUpdateViajeLocal", parametro, function (r) {
                     if (r.IsSuccess) {
+                        window.location.href = '/Viajes/Locales';
                     } else {
                         window.Swal.fire('Error', 'Error al guardar los datos: ' + r.response.ErrorMessage, 'error');
                     }
@@ -338,7 +338,6 @@ function actualizarTiposDeMaterial(id, seleccionPrevia = null) {
     });
 }
 
-
 function ObtenerDireccionCliente(id, seleccionPrevia = null) {
     var dropdown = $("#ddlDireccionesCliente");
 
@@ -413,7 +412,6 @@ function ObtenerKilometrajeImporte(idCliente, idTipoMaterial, idDireccion) {
                 $("#totalKMRecorridos").val(item.total_KM_Recorridos);
                 $("#totalImporte").val(item.total_Gastos);
 
-                console.log(item);
             } else {
                 alert("No se encontró información para los parámetros seleccionados.");
             }
