@@ -931,9 +931,10 @@ async function printItem(rowIndex) {
             TituloSecundario: tituloSecundario
         };
 
-        const ipLocal = window.location.hostname; // o IP fija si sabes cual es
+        //const ipLocal = window.location.hostname; // o IP fija si sabes cual es
+        //console.log(ipLocal);
         // Enviar a endpoint de Python
-        const response = await fetch(`http://${ipLocal}:5000/imprimir-ticket`, {
+        const response = await fetch(`http://localhost:5000/imprimir-ticket`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(ticketData)

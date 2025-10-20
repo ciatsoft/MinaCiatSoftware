@@ -262,7 +262,9 @@ function EditarViajeLocal(id) {
     console.log(id);
 }
 function ImprimirReporte(id) {
-    window.open("http://localhost:57871/RptViajesLocales.aspx?id=" + id, '_blank');
+    const ipLocal = window.location.hostname;
+    console.log(ipLocal);
+    window.open(`http://${ipLocal}:57871/RptViajesLocales.aspx?id=${id}`, '_blank');
     console.log(id);
 }
 
