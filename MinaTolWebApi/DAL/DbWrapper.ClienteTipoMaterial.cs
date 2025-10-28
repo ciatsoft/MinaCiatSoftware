@@ -116,9 +116,9 @@ namespace MinaTolWebApi.DAL
             parameters.Add(new SqlParameter("@Subtotal_Ingreso_Viajes_M3", t.Subtotal_Ingreso_Viajes_M3));
 
             // Nuevos atributos
-            parameters.Add(new SqlParameter("@IdDireccion", t.IdDireccion));
-            parameters.Add(new SqlParameter("@Direccion", t.Direccion));
-            parameters.Add(new SqlParameter("@PrecioActivo", t.PrecioActivo));
+            parameters.Add(new SqlParameter("@IdDireccion", (object)t.IdDireccion ?? DBNull.Value));
+            parameters.Add(new SqlParameter("@Direccion", (object)t.Direccion ?? DBNull.Value));
+            parameters.Add(new SqlParameter("@PrecioActivo", (object)t.PrecioActivo ?? DBNull.Value));
 
             var result = ExecuteScalar("SaveOrUpdateClienteTipoMaterial", CommandType.StoredProcedure, parameters);
             t.Id = Convert.ToInt64(result);

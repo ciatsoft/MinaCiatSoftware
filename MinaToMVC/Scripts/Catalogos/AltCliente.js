@@ -340,8 +340,19 @@ function SaveOrUpdateCliente() {
             UpdatedDt: $("#txtUpdatedDt").val(),
         };
 
+        Swal.fire({
+            title: "Registro guardado!",
+            text: "El cliente se ha guardado correctamente.",
+            icon: "success",
+            confirmButtonText: 'OK'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/Administracion/Clientes';
+            }
+        });
         // Primero hacer el POST al servidor
         PostMVC('/Administracion/SaveOrUpdateCliente', parametro, function (r) {
+            // Solo si el servidor responde con éxito, mostrar alerta y redireccionar
             if (r.IsSuccess) {
                 // Solo si el servidor responde con éxito, mostrar alerta y redireccionar
                 Swal.fire({
