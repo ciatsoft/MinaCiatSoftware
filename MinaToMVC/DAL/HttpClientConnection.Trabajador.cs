@@ -346,5 +346,40 @@ namespace MinaToMVC.DAL
             return modelResponse;
         }
         #endregion
+
+        #region Reportes
+        public async Task<ModelResponse> GetNomiasReporte(DateTime fechaInicio, DateTime fechaFinal)
+        {
+            // Formatear fechas para evitar problemas de formato
+            string fechaInicioStr = fechaInicio.ToString("yyyy-MM-dd");
+            string fechaFinalStr = fechaFinal.ToString("yyyy-MM-dd");
+
+            var result = await RequestAsync<object>($"api/Trabajador/GetNomiasReporte/{fechaInicioStr}/{fechaFinalStr}",
+                HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        public async Task<ModelResponse> GetConceptosReporte(DateTime fechaInicio, DateTime fechaFinal)
+        {
+            // Formatear fechas para evitar problemas de formato
+            string fechaInicioStr = fechaInicio.ToString("yyyy-MM-dd");
+            string fechaFinalStr = fechaFinal.ToString("yyyy-MM-dd");
+
+            var result = await RequestAsync<object>($"api/Trabajador/GetConceptosReporte/{fechaInicioStr}/{fechaFinalStr}",
+                HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        #endregion
     }
 }

@@ -315,8 +315,10 @@ function actualizarTiposDeMaterial(id, seleccionPrevia = null) {
 
                 // Llenar el DDL con los nuevos tipos de material
                 $.each(response.Response, function (index, item) {
-                    var templateoption = "<option value='" + item.tipoMaterial.id + "'>" + item.tipoMaterial.nombreTipoMaterial + "</option>";
-                    $("#ddlTipoMaterial").append(templateoption);
+                    if (item.precioActivo) {
+                        var templateoption = "<option value='" + item.tipoMaterial.id + "'>" + item.tipoMaterial.nombreTipoMaterial + "</option>";
+                        $("#ddlTipoMaterial").append(templateoption);
+                    }
                 });
 
                 // Restaurar selección previa si existe y está disponible

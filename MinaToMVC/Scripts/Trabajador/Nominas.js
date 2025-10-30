@@ -106,3 +106,52 @@ function HistorialNominas(id, nombreCompleto) {
         $("#genericModal").modal("show");
     });
 }
+
+document.getElementById("btnGenerarPDF").addEventListener("click", function () {
+    ReporteConceptos();
+});
+
+function ReporteConceptos() {
+    var fechaInicio = $("#fechaInicio").val();
+    var fechaFin = $("#fechaFin").val();
+
+    // Validar que las fechas no estén vacías
+    if (!fechaInicio || !fechaFin) {
+        Swal.fire({
+            title: 'Advertencia',
+            text: 'Por favor, seleccione ambas fechas',
+            icon: 'warning',
+            confirmButtonText: 'Aceptar'
+        });
+        return;
+    }
+
+    // Enviar los parámetros en la URL para método GET
+    const url1 = `/RH/GetNomiasReporte?fechaInicio=${fechaInicio}&fechaFinal=${fechaFin}`;
+    const url2 = `/RH/GetConceptosReporte?fechaInicio=${fechaInicio}&fechaFinal=${fechaFin}`;
+
+    GetMVC(url1, function (r) {
+        if (r.IsSuccess) {
+            console.log(r.Response);
+            GetMVC(url2, function (r) {
+                if (r.IsSuccess) {
+                    console.log(r.Response);
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Error al cargar las Nominas pagadas: ' + r.Message,
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            });
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al cargar las Nominas pagadas: ' + r.Message,
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
+}
