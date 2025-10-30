@@ -719,5 +719,85 @@ namespace MinaTolWebApi.DAL
             return response;
         }
         #endregion
+
+        #region Reportes
+        public ModelResponse GetNomiasReporte(DateTime fechaInicio, DateTime fechaFin)
+        {
+            var response = new ModelResponse();
+
+            try
+            {
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter
+                    {
+                        Value = fechaInicio,
+                        ParameterName = "@FechaInicio",
+                        SqlDbType = SqlDbType.DateTime
+                    },
+                    new SqlParameter
+                    {
+                        Value = fechaFin,
+                        ParameterName = "@FechaFin",
+                        SqlDbType = SqlDbType.DateTime
+                    }
+                };
+
+                // Cambiar GetObject por GetList para obtener múltiples registros
+                var result = GetList("GetNomiasReporte", CommandType.StoredProcedure,
+                    parameters, reader => FillEntity<NominaEmpleado>(reader));
+
+                response.IsSuccess = true;
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
+
+        public ModelResponse GetConceptosReporte(DateTime fechaInicio, DateTime fechaFin)
+        {
+            var response = new ModelResponse();
+
+            try
+            {
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter
+                    {
+                        Value = fechaInicio,
+                        ParameterName = "@FechaInicio",
+                        SqlDbType = SqlDbType.DateTime
+                    },
+                    new SqlParameter
+                    {
+                        Value = fechaFin,
+                        ParameterName = "@FechaFin",
+                        SqlDbType = SqlDbType.DateTime
+                    }
+                };
+
+                // Cambiar GetObject por GetList para obtener múltiples registros
+                var result = GetList("GetConceptosReporte", CommandType.StoredProcedure,
+                    parameters, reader => FillEntity<ConceptoEmpleado>(reader));
+
+                response.IsSuccess = true;
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
+        #endregion
     }
 }

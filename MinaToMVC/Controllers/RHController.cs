@@ -310,6 +310,19 @@ namespace MinaToMVC.Controllers
         }
         #endregion
 
+        #region Reportes
+        public async Task<string> GetNomiasReporte(DateTime fechaInicio, DateTime fechaFinal)
+        {
+            var result = await httpClientConnection.GetNomiasReporte(fechaInicio, fechaFinal);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetConceptosReporte(DateTime fechaInicio, DateTime fechaFinal)
+        {
+            var result = await httpClientConnection.GetConceptosReporte(fechaInicio, fechaFinal);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        #endregion
+
         #endregion
     }
 }

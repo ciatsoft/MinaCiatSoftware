@@ -185,7 +185,6 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.RecontratarEmpleado(id);
             return JsonConvert.SerializeObject(result);
         }
-
         public async Task<ActionResult> SaveOrupdateEmpleado(Empleado t)
         {
             try

@@ -36,8 +36,6 @@ namespace MinaTolWebApi.Controllers
         }
         #endregion
 
-
-
         #region Empleado
         [HttpPost, Route("")]
         public ModelResponse SaveOrupdateEmpleado(Empleado t)
@@ -71,6 +69,7 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
         #endregion
+
         #region BajasEmpleados
         [HttpGet, Route("Bajas/")]
         public ModelResponse GetAllBajasEmpleado()
@@ -86,8 +85,6 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
         #endregion
-
-
 
         #region DocumentosEmpleados
         [HttpPost, Route("DocumentosTrabajador/")]
@@ -213,6 +210,21 @@ namespace MinaTolWebApi.Controllers
         public ModelResponse SearchNominaEmpleadoByDates(long id, DateTime fechaInicio, DateTime fechaFinal)
         {
             var result = wrapper.SearchNominaEmpleadoByDates(id, fechaInicio, fechaFinal);
+            return result;
+        }
+        #endregion
+
+        #region Reportes
+        [HttpGet, Route("GetNomiasReporte/{fechaInicio}/{fechaFinal}")]
+        public ModelResponse GetNomiasReporte(DateTime fechaInicio, DateTime fechaFinal)
+        {
+            var result = wrapper.GetNomiasReporte(fechaInicio, fechaFinal);
+            return result;
+        }
+        [HttpGet, Route("GetConceptosReporte/{fechaInicio}/{fechaFinal}")]
+        public ModelResponse GetConceptosReporte(DateTime fechaInicio, DateTime fechaFinal)
+        {
+            var result = wrapper.GetConceptosReporte(fechaInicio, fechaFinal);
             return result;
         }
         #endregion
