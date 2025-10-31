@@ -136,6 +136,7 @@ namespace MinaTolWebApi.DAL
             return response;
         }
         #endregion
+
         #region BajasYRecontratacion
         public ModelResponse GetAllBajasEmpleadoList()
         {
@@ -190,6 +191,7 @@ namespace MinaTolWebApi.DAL
         }
 
         #endregion
+
         #region DocumentosEmpleados
         public ModelResponse SaveOrUpdateDocumentosEmpleado(DocumentosEmpleado u)
         {
@@ -745,7 +747,7 @@ namespace MinaTolWebApi.DAL
 
                 // Cambiar GetObject por GetList para obtener múltiples registros
                 var result = GetList("GetNomiasReporte", CommandType.StoredProcedure,
-                    parameters, reader => FillEntity<NominaEmpleado>(reader));
+                    parameters, reader => FillEntity<ReporteEmpleadosDeducciones>(reader));
 
                 response.IsSuccess = true;
                 response.Response = result;
