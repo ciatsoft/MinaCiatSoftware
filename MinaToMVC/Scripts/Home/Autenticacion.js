@@ -7,14 +7,17 @@
 
         PostMVC("/Home/FirstAutentication", parameters, function (r) {
             if (r.IsSuccess) {
-                window.location = "/Home/Index";
+                swal({
+                    title: "¡Éxito!",
+                    text: "Autenticación exitosa",
+                    type: "success",
+                    confirmButtonText: "OK"
+                }, function () {
+                    window.location = "/Home/Index";
+                });
             }
             else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Ocurrió un error.',
-                    text: r.Message
-                });
+                swal("Error", "Usuario o Contraseña no correctos", "error");
             }
         });
     });
