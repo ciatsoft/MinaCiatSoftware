@@ -39,7 +39,7 @@ namespace Catalogs.ApplicationTest
         }
 
         [TestMethod, TestCategory("WorkArea")]
-        [DataRow(1)]
+        [DataRow(0)]
         public void GetWorkAreaById(long id)
         {
             var dt = new DataTable();
