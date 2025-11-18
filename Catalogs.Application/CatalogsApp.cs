@@ -21,7 +21,7 @@ namespace Catalogs.Application
             _catalogsProxy = catalogsProxy ?? throw new ArgumentNullException(nameof(catalogsProxy));
         }
 
-        public List<WorkAreaObj> GetAllAreaTrabajo(out OperationResult result)
+        public List<WorkAreaObj> GetAllWorkArea(out OperationResult result)
         {
             result = new() { Successful = true, SystemMessages = new List<SystemMessage>() };
             List<WorkAreaObj> response = new List<WorkAreaObj>();
@@ -42,7 +42,7 @@ namespace Catalogs.Application
             return response;
         }
 
-        public WorkAreaObj GetAreaTrabajoById(long id, out OperationResult result)
+        public WorkAreaObj GetWorkAreaById(long id, out OperationResult result)
         {
             result = new() { Successful = true };
             WorkAreaObj response = null;

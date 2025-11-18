@@ -25,7 +25,7 @@ namespace MinaTolWebApiV2.Controllers
         public WorkAreaObjListResponse GetAllWorkAreaObj()
         {
             var response = new WorkAreaObjListResponse();
-            List<WorkAreaObj> list = _catalogApp.GetAllAreaTrabajo(out OperationResult result);
+            List<WorkAreaObj> list = _catalogApp.GetAllWorkArea(out OperationResult result);
             response.WorksAreas = list;
             response.Result = result;
 
@@ -41,7 +41,7 @@ namespace MinaTolWebApiV2.Controllers
         public WorkAreaObjResponse GetAreaTrabajoById(long id)
         {
             var response = new WorkAreaObjResponse();
-            WorkAreaObj list = _catalogApp.GetAreaTrabajoById(id, out OperationResult result);
+            WorkAreaObj list = _catalogApp.GetWorkAreaById(id, out OperationResult result);
             response.WorksAreas = list;
             response.Result = result;
 

@@ -10,7 +10,7 @@ namespace Catalogs.Application
 {
     public interface ICatalogsApp
     {
-        List<WorkAreaObj> GetAllAreaTrabajo(out OperationResult result);
-        WorkAreaObj GetAreaTrabajoById(long id, out OperationResult result);
+        public List<WorkAreaObj> GetAllWorkArea(out OperationResult result);
+        public WorkAreaObj GetWorkAreaById(long id, out OperationResult result);
     }
 }
