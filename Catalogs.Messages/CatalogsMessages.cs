@@ -7,9 +7,14 @@ namespace Catalogs.Messages
     {
         
     }
-    public class CatalogsResponse
+    public class WorkAreaObjListResponse
     {
         public List<WorkAreaObj> WorksAreas { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class WorkAreaObjResponse
+    {
+        public WorkAreaObj WorksAreas { get; set; }
         public OperationResult Result { get; set; }
     }
 }

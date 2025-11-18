@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,12 +28,38 @@ namespace Catalogs.Application
             try
             {
                 DataTable responseDT = _catalogsProxy.GetAllAreaTrabajo();
-                response = CatalogsMapp.MappCatalogs(responseDT) ?? new List<WorkAreaObj>();
+                response = CatalogsMapp.MappAllWorkArea(responseDT) ?? new List<WorkAreaObj>();
             }
             catch (Exception ex)
             {
                 result.Successful = false;
-                if (result.SystemMessages == null) result.SystemMessages = new List<SystemMessage>();
+                if (result.SystemMessages == null) 
+                    result.SystemMessages = new List<SystemMessage>();
+
+                result.SystemMessages.Add(new SystemMessage() { Message = "Ocurrio un error al obtener las soruces y fondos del participante." });
+            }
+
+            return response;
+        }
+
+        public WorkAreaObj GetAreaTrabajoById(long id, out OperationResult result)
+        {
+            result = new() { Successful = true };
+            WorkAreaObj response = null;
+
+            try
+            {
+                if (id <= 0) { throw new ArgumentException("El argumento debe ser mayor a cero.", nameof(id)); }
+
+                DataTable responseDt = _catalogsProxy.GetAreaTrabajoById(id);
+                response = CatalogsMapp.MappAllWorkArea(responseDt).First();
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                    result.SystemMessages = new List<SystemMessage>();
+
                 result.SystemMessages.Add(new SystemMessage() { Message = "Ocurrio un error al obtener las soruces y fondos del participante." });
             }
 

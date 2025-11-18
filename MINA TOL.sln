@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlProxy", "SqlProxy\SqlPro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalogs.Messages", "Catalogs.Messages\Catalogs.Messages.csproj", "{89E0ED8F-A173-4B94-AF8A-568E932E3A7D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalogs.ApplicationTest", "Catalogs.ApplicationTest\Catalogs.ApplicationTest.csproj", "{FFC77815-4987-4270-BB80-CBCB43BB3D2A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +101,10 @@ Global
 		{89E0ED8F-A173-4B94-AF8A-568E932E3A7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89E0ED8F-A173-4B94-AF8A-568E932E3A7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89E0ED8F-A173-4B94-AF8A-568E932E3A7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFC77815-4987-4270-BB80-CBCB43BB3D2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFC77815-4987-4270-BB80-CBCB43BB3D2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFC77815-4987-4270-BB80-CBCB43BB3D2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFC77815-4987-4270-BB80-CBCB43BB3D2A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -124,6 +130,7 @@ Global
 		{11F1BD11-F094-498D-9F09-3DDF4BD23369} = {B4238984-95BC-405F-8CDF-2D9B717BD5EE}
 		{862D209F-B565-4484-BD2C-A24D1922A8D5} = {11F1BD11-F094-498D-9F09-3DDF4BD23369}
 		{89E0ED8F-A173-4B94-AF8A-568E932E3A7D} = {BE2FB793-F2F0-4459-868B-0CCFE877B2DB}
+		{FFC77815-4987-4270-BB80-CBCB43BB3D2A} = {51E2A5C4-2986-4F96-9038-AF5941521E49}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DBBDF505-F602-4235-B8B5-5FC84D729FFA}

@@ -15,5 +15,13 @@ namespace Catalogs.Proxy
             DataTable result = GetObject("GetAllAreaTrabajo", CommandType.StoredProcedure);
             return result;
         }
+
+        public DataTable GetAreaTrabajoById(long id)
+        {
+            DataTable result = GetObject("GetAreaTrabajoById", CommandType.StoredProcedure);
+            return result;
+        }
+
+        //
     }
 }

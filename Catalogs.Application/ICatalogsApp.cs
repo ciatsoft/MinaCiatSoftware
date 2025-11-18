@@ -11,5 +11,6 @@ namespace Catalogs.Application
     public interface ICatalogsApp
     {
         List<WorkAreaObj> GetAllAreaTrabajo(out OperationResult result);
+        WorkAreaObj GetAreaTrabajoById(long id, out OperationResult result);
     }
 }

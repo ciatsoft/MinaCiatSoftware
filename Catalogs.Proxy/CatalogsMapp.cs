@@ -12,7 +12,7 @@ namespace Catalogs.Proxy
 {
     public class CatalogsMapp
     {
-        public static List<WorkAreaObj> MappCatalogs(DataTable dto)
+        public static List<WorkAreaObj> MappAllWorkArea(DataTable dto)
         {
             // Si dto es null lanzamos excepción indicando que no fue posible obtener valores
             if (dto == null)

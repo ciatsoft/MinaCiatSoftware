@@ -17,11 +17,31 @@ namespace MinaTolWebApiV2.Controllers
             _catalogApp = catalogApp;
         }
 
+        /// <summary>
+        /// Método que regresa un listado de areas de trabajo
+        /// </summary>
+        /// <returns></returns>
         [HttpPost("GetAllWorkAreaObj")]
-        public CatalogsResponse GetAllWorkAreaObj()
+        public WorkAreaObjListResponse GetAllWorkAreaObj()
         {
-            var response = new CatalogsResponse();
+            var response = new WorkAreaObjListResponse();
             List<WorkAreaObj> list = _catalogApp.GetAllAreaTrabajo(out OperationResult result);
+            response.WorksAreas = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que regresa un area de trabajo por Id
+        /// </summary>
+        /// <param name="id">Identificador del area de trabajo</param>
+        /// <returns></returns>
+        [HttpPost("GetAreaTrabajoById")]
+        public WorkAreaObjResponse GetAreaTrabajoById(long id)
+        {
+            var response = new WorkAreaObjResponse();
+            WorkAreaObj list = _catalogApp.GetAreaTrabajoById(id, out OperationResult result);
             response.WorksAreas = list;
             response.Result = result;
 
