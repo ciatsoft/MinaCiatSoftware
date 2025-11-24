@@ -16,6 +16,7 @@ namespace Common.Domain
 
         public SystemMessageTypes MessageType { get; set; }
         public string Message { get; set; }
+        public string TechnicalDetails { get; set; }
 
         public IEnumerable<object> GetAttributesToIncludeInEqualityCheck()
         {

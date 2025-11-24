@@ -21,4 +21,8 @@ namespace Catalogs.Messages
     {
         public OperationResult Result { get; set; }
     }
+    public class DeleteWorkAreaResponse
+    {
+        public OperationResult Result { get; set; }
+    }
 }
