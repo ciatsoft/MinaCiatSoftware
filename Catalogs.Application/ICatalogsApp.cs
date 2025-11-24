@@ -12,5 +12,6 @@ namespace Catalogs.Application
     {
         public List<WorkAreaObj> GetAllWorkArea(out OperationResult result);
         public WorkAreaObj GetWorkAreaById(long id, out OperationResult result);
+        public void SaveOrUpdateWorkArea(int id, string name, string desciption, out OperationResult result);
     }
 }

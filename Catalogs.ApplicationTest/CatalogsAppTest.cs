@@ -29,7 +29,7 @@ namespace Catalogs.ApplicationTest
             dt.Rows.Add(1, "Area de pruebas 1", "Area de pruebas 1");
             dt.Rows.Add(2, "Area de pruebas 2", "Area de pruebas 2");
 
-            _catalogsProxy.Setup(x => x.GetAllAreaTrabajo()).Returns(dt);
+            _catalogsProxy.Setup(x => x.GetAllWorkArea()).Returns(dt);
 
             OperationResult result;
             var response = _catalogsApp.GetAllWorkArea(out result);
@@ -39,7 +39,7 @@ namespace Catalogs.ApplicationTest
         }
 
         [TestMethod, TestCategory("WorkArea")]
-        [DataRow(0)]
+        [DataRow(1)]
         public void GetWorkAreaById(long id)
         {
             var dt = new DataTable();
@@ -48,7 +48,7 @@ namespace Catalogs.ApplicationTest
             dt.Columns.Add("Descripcion", typeof(string));
             dt.Rows.Add(1, "Area de pruebas 1", "Area de pruebas 1");
 
-            _catalogsProxy.Setup(x => x.GetAreaTrabajoById(id)).Returns(dt);
+            _catalogsProxy.Setup(x => x.GetWorkAreaById(id)).Returns(dt);
 
             OperationResult result;
             var response = _catalogsApp.GetWorkAreaById(id, out result);

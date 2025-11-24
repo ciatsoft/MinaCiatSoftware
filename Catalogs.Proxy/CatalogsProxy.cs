@@ -10,18 +10,22 @@ namespace Catalogs.Proxy
 {
     public class CatalogsProxy : DbWrapper, ICatalogsProxy
     {
-        public DataTable GetAllAreaTrabajo()
+        public DataTable GetAllWorkArea()
         {
             DataTable result = GetObject("GetAllAreaTrabajo", CommandType.StoredProcedure);
             return result;
         }
 
-        public DataTable GetAreaTrabajoById(long id)
+        public DataTable GetWorkAreaById(long id)
         {
             DataTable result = GetObject("GetAreaTrabajoById", CommandType.StoredProcedure);
             return result;
         }
 
-        //
+        public int SaveOrUpdateWorkArea(long id, string nombre, string descripcion)
+        {
+            var result = ExecuteScalar("SaveOrUpdateAreaTrabajo", CommandType.StoredProcedure);
+            return Convert.ToInt32(result);
+        }
     }
 }

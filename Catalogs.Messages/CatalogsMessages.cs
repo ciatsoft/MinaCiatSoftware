@@ -17,4 +17,8 @@ namespace Catalogs.Messages
         public WorkAreaObj WorksAreas { get; set; }
         public OperationResult Result { get; set; }
     }
+    public class SaveOrUpdateWorkAreaResponse
+    {
+        public OperationResult Result { get; set; }
+    }
 }

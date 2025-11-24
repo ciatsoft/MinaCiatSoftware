@@ -9,7 +9,8 @@ namespace Catalogs.Proxy
 {
     public interface ICatalogsProxy
     {
-        DataTable GetAllAreaTrabajo();
-        DataTable GetAreaTrabajoById(long id);
+        DataTable GetAllWorkArea();
+        DataTable GetWorkAreaById(long id);
+        int SaveOrUpdateWorkArea(long id, string nombre, string descripcion);
     }
 }

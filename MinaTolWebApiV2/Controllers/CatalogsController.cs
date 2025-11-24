@@ -37,14 +37,33 @@ namespace MinaTolWebApiV2.Controllers
         /// </summary>
         /// <param name="id">Identificador del area de trabajo</param>
         /// <returns></returns>
-        [HttpPost("GetAreaTrabajoById")]
-        public WorkAreaObjResponse GetAreaTrabajoById(long id)
+        [HttpPost("GetWorkAreaById")]
+        public WorkAreaObjResponse GetWorkAreaById(long id)
         {
             var response = new WorkAreaObjResponse();
             WorkAreaObj list = _catalogApp.GetWorkAreaById(id, out OperationResult result);
             response.WorksAreas = list;
             response.Result = result;
 
+            return response;
+        }
+
+        /// <summary>
+        /// Método que guarda o actualiza un area de trabajo
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="desciption"></param>
+        /// <returns></returns>
+        [HttpPost("SaveOrUpdateWorkArea")]
+        public SaveOrUpdateWorkAreaResponse SaveOrUpdateWorkArea(int id, string name, string desciption)
+        {
+            _catalogApp.SaveOrUpdateWorkArea(id, name, desciption, out OperationResult result);
+
+            var response = new SaveOrUpdateWorkAreaResponse() { 
+            Result  = result
+            };
+            
             return response;
         }
     }
