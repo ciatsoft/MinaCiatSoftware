@@ -41,8 +41,16 @@ namespace Catalogs.Proxy
                     ? row["Descripcion"].ToString()
                     : string.Empty;
 
+                string createdBy = dto.Columns.Contains("CreatedBy") && row["CreatedBy"] != DBNull.Value
+                    ? row["Descripcion"].ToString()
+                    : string.Empty;
+
+                string updatedBy = dto.Columns.Contains("UpdatedBy") && row["UpdatedBy"] != DBNull.Value
+                    ? row["Descripcion"].ToString()
+                    : string.Empty;
+
                 // Crear nuevo WorkAreaObj por cada fila
-                var item = WorkAreaObj.Create(id, name, description);
+                var item = WorkAreaObj.Create(id, name, description, createdBy, updatedBy);
                 if (item != null)
                     list.Add(item);
             }

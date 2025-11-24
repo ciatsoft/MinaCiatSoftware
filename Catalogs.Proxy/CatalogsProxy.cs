@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,13 +19,41 @@ namespace Catalogs.Proxy
 
         public DataTable GetWorkAreaById(long id)
         {
-            DataTable result = GetObject("GetAreaTrabajoById", CommandType.StoredProcedure);
+            var parameter = new[]
+            {
+                new SqlParameter("@Id", id),
+            };
+
+            DataTable result = GetObject("GetAreaTrabajoById", CommandType.StoredProcedure, parameter);
             return result;
         }
 
-        public int SaveOrUpdateWorkArea(long id, string nombre, string descripcion)
+        public int SaveOrUpdateWorkArea(long id, string nombre, string descripcion, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt)
         {
-            var result = ExecuteScalar("SaveOrUpdateAreaTrabajo", CommandType.StoredProcedure);
+            var parameters = new[]
+            {
+                new SqlParameter("@Id", id),
+                new SqlParameter("@Nombre", nombre),
+                new SqlParameter("@Descripcion", descripcion),
+                new SqlParameter("@Estatus", estatus),
+                new SqlParameter("@CreatedBy", createdBy),
+                new SqlParameter("@CreatedDt", createdDt),
+                new SqlParameter("@UpdatedBy", createdBy),
+                new SqlParameter("@UpdatedDt", createdDt)
+            };
+
+            var result = ExecuteScalar("SaveOrUpdateAreaTrabajo", CommandType.StoredProcedure, parameters);
+            return Convert.ToInt32(result);
+        }
+
+        public int DeleteWorkArea(long id)
+        {
+            var parameter = new[]
+            {
+                new SqlParameter("@Id", id)
+            };
+            
+            var result = ExecuteScalar("DeleteAreaTrabajo", CommandType.StoredProcedure, parameter);
             return Convert.ToInt32(result);
         }
     }

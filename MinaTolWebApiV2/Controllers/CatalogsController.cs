@@ -21,7 +21,7 @@ namespace MinaTolWebApiV2.Controllers
         /// Método que regresa un listado de areas de trabajo
         /// </summary>
         /// <returns></returns>
-        [HttpPost("GetAllWorkAreaObj")]
+        [HttpGet("GetAllWorkAreaObj")]
         public WorkAreaObjListResponse GetAllWorkAreaObj()
         {
             var response = new WorkAreaObjListResponse();
@@ -56,11 +56,30 @@ namespace MinaTolWebApiV2.Controllers
         /// <param name="desciption"></param>
         /// <returns></returns>
         [HttpPost("SaveOrUpdateWorkArea")]
-        public SaveOrUpdateWorkAreaResponse SaveOrUpdateWorkArea(int id, string name, string desciption)
+        public SaveOrUpdateWorkAreaResponse SaveOrUpdateWorkArea(int id, string name, string desciption, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt)
         {
-            _catalogApp.SaveOrUpdateWorkArea(id, name, desciption, out OperationResult result);
+            _catalogApp.SaveOrUpdateWorkArea(id, name, desciption, estatus, createdBy, createdDt, updatedBy, updatedDt, out OperationResult result);
 
             var response = new SaveOrUpdateWorkAreaResponse() { 
+            Result  = result
+            };
+            
+            return response;
+        }
+
+        /// <summary>
+        /// Método que elimina logicamente el area de trabajo
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="desciption"></param>
+        /// <returns></returns>
+        [HttpDelete("Delete")]
+        public DeleteWorkAreaResponse DeleteWorkArea(int id)
+        {
+            _catalogApp.DeleteWorkArea(id, out OperationResult result);
+
+            var response = new DeleteWorkAreaResponse() { 
             Result  = result
             };
             
