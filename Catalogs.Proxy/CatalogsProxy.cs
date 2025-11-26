@@ -11,6 +11,7 @@ namespace Catalogs.Proxy
 {
     public class CatalogsProxy : DbWrapper, ICatalogsProxy
     {
+        #region WorkArea
         public DataTable GetAllWorkArea()
         {
             DataTable result = GetObject("GetAllAreaTrabajo", CommandType.StoredProcedure);
@@ -56,5 +57,26 @@ namespace Catalogs.Proxy
             var result = ExecuteScalar("DeleteAreaTrabajo", CommandType.StoredProcedure, parameter);
             return Convert.ToInt32(result);
         }
+        #endregion
+
+        #region LoansCatalog
+        public DataTable GetAllLoansCatalog()
+        {
+            DataTable result = GetObject("GetAllPrestamos", CommandType.StoredProcedure);
+            return result;
+        }
+        public DataTable GetLoansCatalogByIdWorkerDates(long id, DateTime dateStart, DateTime dateEnd)
+        {
+            var parameter = new[]
+            {
+                new SqlParameter("@IdTrabajador", id),
+                new SqlParameter("@FechaInicio", dateStart),
+                new SqlParameter("@FechaFin", dateEnd),
+            };
+
+            DataTable result = GetObject("GetAllPrestamosByIdEmpleadoDates", CommandType.StoredProcedure, parameter);
+            return result;
+        }
+        #endregion
     }
 }

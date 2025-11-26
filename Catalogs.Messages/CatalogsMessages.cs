@@ -7,6 +7,8 @@ namespace Catalogs.Messages
     {
         
     }
+
+    #region WorkArea
     public class WorkAreaObjListResponse
     {
         public List<WorkAreaObj> WorksAreas { get; set; }
@@ -25,4 +27,18 @@ namespace Catalogs.Messages
     {
         public OperationResult Result { get; set; }
     }
+    #endregion
+
+    #region LoansCatalog
+    public class LoansCatalogListResponse
+    {
+        public List<LoansCatalog> LoansCatalog { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class LoansCatalogResponse
+    {
+        public List<LoansCatalog> LoansCatalog { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    #endregion
 }

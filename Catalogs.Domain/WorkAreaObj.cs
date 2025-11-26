@@ -18,19 +18,35 @@ namespace Catalogs.Domain
         [JsonPropertyName("Nombre")]
         public string Name => _name;
 
-        private WorkAreaObj(long workAreaId, string name, string description, string createdBy, string updatedBy)
+        private WorkAreaObj(long workAreaId, string name, string description, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt)
         {
             Id = workAreaId;
             _name = name;
             _description = description;
             CreatedBy = createdBy;
-            CreatedDt = DateTime.UtcNow;
+            CreatedDt = createdDt;
             UpdatedBy = updatedBy;
-            UpdatedDt = DateTime.UtcNow;
+            UpdatedDt = updatedDt;
         }
-        public static WorkAreaObj Create(long workAreaId, string name, string description, string createdBy, string updatedBy)
+
+        // Constructor para JSON
+        [JsonConstructor]
+        public WorkAreaObj(long id, string name, string description, bool estatus,
+                          string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt)
         {
-            return new WorkAreaObj(workAreaId, name, description, createdBy, updatedBy);
+            Id = id;
+            _name = name;
+            _description = description;
+            Estatus = estatus;
+            CreatedBy = createdBy;
+            CreatedDt = createdDt;
+            UpdatedBy = updatedBy;
+            UpdatedDt = updatedDt;
+        }
+
+        public static WorkAreaObj Create(long workAreaId, string name, string description, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt)
+        {
+            return new WorkAreaObj(workAreaId, name, description, createdBy, createdDt, updatedBy, updatedDt);
         }
     }
 }
