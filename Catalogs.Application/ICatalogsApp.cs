@@ -10,9 +10,16 @@ namespace Catalogs.Application
 {
     public interface ICatalogsApp
     {
+        #region WorkArea
         public List<WorkAreaObj> GetAllWorkArea(out OperationResult result);
         public WorkAreaObj GetWorkAreaById(long id, out OperationResult result);
-        public void SaveOrUpdateWorkArea(int id, string name, string desciption, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, out OperationResult result);
+        public void SaveOrUpdateWorkArea(long id, string name, string desciption, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, out OperationResult result);
         public void DeleteWorkArea(int id, out OperationResult result);
+        #endregion
+
+        #region Loans Catalog
+        public List<LoansCatalog> GetAllLoansCatalog(out OperationResult result);
+        public List<LoansCatalog> GetLoansCatalogByIdWorkerDates(long id, DateTime dateStart, DateTime dateEnd, out OperationResult result);
+        #endregion
     }
 }

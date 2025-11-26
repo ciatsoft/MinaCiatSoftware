@@ -17,6 +17,7 @@ namespace MinaTolWebApiV2.Controllers
             _catalogApp = catalogApp;
         }
 
+        #region WorkArea
         /// <summary>
         /// Método que regresa un listado de areas de trabajo
         /// </summary>
@@ -54,11 +55,16 @@ namespace MinaTolWebApiV2.Controllers
         /// <param name="id"></param>
         /// <param name="name"></param>
         /// <param name="desciption"></param>
+        /// <param name="estatus"></param>
+        /// <param name="createdBy"></param>
+        /// <param name="createdDt"></param>
+        /// <param name="updatedBy"></param>
+        /// <param name="updatedDt"></param>
         /// <returns></returns>
         [HttpPost("SaveOrUpdateWorkArea")]
-        public SaveOrUpdateWorkAreaResponse SaveOrUpdateWorkArea(int id, string name, string desciption, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt)
+        public SaveOrUpdateWorkAreaResponse SaveOrUpdateWorkArea([FromBody] WorkAreaObj obj)
         {
-            _catalogApp.SaveOrUpdateWorkArea(id, name, desciption, estatus, createdBy, createdDt, updatedBy, updatedDt, out OperationResult result);
+            _catalogApp.SaveOrUpdateWorkArea(obj.Id, obj.Name, obj.Description, obj.Estatus, obj.CreatedBy, obj.CreatedDt, obj.UpdatedBy, obj.UpdatedDt, out OperationResult result);
 
             var response = new SaveOrUpdateWorkAreaResponse() { 
             Result  = result
@@ -85,5 +91,39 @@ namespace MinaTolWebApiV2.Controllers
             
             return response;
         }
+        #endregion 
+
+        #region Loans Catalog
+        /// <summary>
+        /// Método que regresa un listado de areas de trabajo
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetAllLoansCatalog")]
+        public LoansCatalogListResponse GetAllLoansCatalog()
+        {
+            var response = new LoansCatalogListResponse();
+            List<LoansCatalog> list = _catalogApp.GetAllLoansCatalog(out OperationResult result);
+            response.LoansCatalog = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que regresa un area de trabajo por Id
+        /// </summary>
+        /// <param name="id">Identificador del area de trabajo</param>
+        /// <returns></returns>
+        [HttpPost("GetLoansCatalogByIdWorkerDates")]
+        public LoansCatalogResponse GetLoansCatalogByIdWorkerDates(long id, DateTime dateStart, DateTime dateEnd)
+        {
+            var response = new LoansCatalogResponse();
+            List<LoansCatalog> list = _catalogApp.GetLoansCatalogByIdWorkerDates(id, dateStart, dateEnd, out OperationResult result);
+            response.LoansCatalog = list;
+            response.Result = result;
+
+            return response;
+        }
+        #endregion 
     }
 }
