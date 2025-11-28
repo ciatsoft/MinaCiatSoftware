@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Catalogs.Proxy
 {
@@ -75,6 +76,48 @@ namespace Catalogs.Proxy
             };
 
             DataTable result = GetObject("GetAllPrestamosByIdEmpleadoDates", CommandType.StoredProcedure, parameter);
+            return result;
+        }
+
+        public int SaveOrUpdateLoansCatalog(long idLoansCatalog, long idWorker, string nameWorker, string name, string description, decimal monto, DateTime date, string userName, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, bool estatus)
+        {
+            var parameters = new[]
+            {
+                new SqlParameter("@Id", idLoansCatalog),
+                new SqlParameter("@Nombre", name),
+                new SqlParameter("@Descripcion", description),
+                new SqlParameter("@Monto", monto),
+                new SqlParameter("@Fecha", date),
+                new SqlParameter("@UsuarioName", userName),
+                new SqlParameter("@IdTrabajador", idWorker),
+                new SqlParameter("@NombreTrabajador", nameWorker),
+                new SqlParameter("@Estatus", estatus),
+                new SqlParameter("@CreatedBy", createdBy),
+                new SqlParameter("@CreatedDt", createdDt),
+                new SqlParameter("@UpdatedBy", createdBy),
+                new SqlParameter("@UpdatedDt", createdDt)
+            };
+
+            var result = ExecuteScalar("SaveOrUpdatePrestamos", CommandType.StoredProcedure, parameters);
+            return Convert.ToInt32(result);
+        }
+        public int DeleteLoansCatalog(long id)
+        {
+            var parameter = new[]
+            {
+                new SqlParameter("@Id", id)
+            };
+
+            var result = ExecuteScalar("DeletePrestamos", CommandType.StoredProcedure, parameter);
+            return Convert.ToInt32(result);
+        }
+
+        #endregion
+
+        #region Roll
+        public DataTable GetAllRoll()
+        {
+            DataTable result = GetObject("GetAllRoll", CommandType.StoredProcedure);
             return result;
         }
         #endregion

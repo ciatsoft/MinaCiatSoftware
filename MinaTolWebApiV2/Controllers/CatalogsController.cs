@@ -80,7 +80,7 @@ namespace MinaTolWebApiV2.Controllers
         /// <param name="name"></param>
         /// <param name="desciption"></param>
         /// <returns></returns>
-        [HttpDelete("Delete")]
+        [HttpDelete("DeleteWorkArea")]
         public DeleteWorkAreaResponse DeleteWorkArea(int id)
         {
             _catalogApp.DeleteWorkArea(id, out OperationResult result);
@@ -124,6 +124,58 @@ namespace MinaTolWebApiV2.Controllers
 
             return response;
         }
-        #endregion 
+
+        /// <summary>
+        /// Método que guarda o actualiza un prestamo
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("SaveOrUpdateLoansCatalog")]
+        public SaveOrUpdateLoansCatalogResponse SaveOrUpdateLoansCatalog([FromBody] LoansCatalog obj)
+        {
+            _catalogApp.SaveOrUpdateLoansCatalog(obj.Id, obj.IdWorker, obj.NameWorker, obj.Name, obj.Description, obj.Monto, obj.Date, obj.UserName, obj.Estatus, obj.CreatedBy, obj.CreatedDt, obj.UpdatedBy, obj.UpdatedDt, out OperationResult result);
+
+            var response = new SaveOrUpdateLoansCatalogResponse()
+            {
+                Result = result
+            };
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que elimina logicamente el prestamo
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("DeleteLoansCatalog")]
+        public DeleteLoansCatalogResponse DeleteLoansCatalog(int id)
+        {
+            _catalogApp.DeleteLoansCatalog(id, out OperationResult result);
+
+            var response = new DeleteLoansCatalogResponse()
+            {
+                Result = result
+            };
+
+            return response;
+        }
+        #endregion
+
+        #region Roll
+        /// <summary>
+        /// Método que regresa un listado de roles
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetAllRoll")]
+        public RollListResponse GetAllRoll()
+        {
+            var response = new RollListResponse();
+            List<RollObj> list = _catalogApp.GetAllRoll(out OperationResult result);
+            response.Roll = list;
+            response.Result = result;
+
+            return response;
+        }
+        #endregion
     }
 }

@@ -19,6 +19,13 @@ namespace Catalogs.Proxy
         #region LoansCatalog
         DataTable GetAllLoansCatalog();
         DataTable GetLoansCatalogByIdWorkerDates(long id, DateTime dateStart, DateTime dateEnd);
+        int SaveOrUpdateLoansCatalog(long idLoansCatalog, long idWorker, string nameWorker, string name, string description, decimal monto, DateTime date, string userName, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, bool estatus);
+        int DeleteLoansCatalog(long id);
+        #endregion
+
+        #region Roll
+        DataTable GetAllRoll();
+
         #endregion
     }
 }

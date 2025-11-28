@@ -153,10 +153,110 @@ namespace Catalogs.Application
 
             try
             {
-                if (id <= 0) { throw new ArgumentException("El argumento debe ser mayor a cero.", nameof(id)); }
+                // Validación del ID
+                if (id <= 0)
+                {
+                    throw new ArgumentException("El ID del trabajador debe ser mayor a cero.", nameof(id));
+                }
+
+                // Validación CORREGIDA de fechas (DateTime no puede ser null)
+                if (dateStart == DateTime.MinValue)
+                {
+                    throw new ArgumentException("La fecha de inicio no puede estar vacía.", nameof(dateStart));
+                }
+
+                if (dateEnd == DateTime.MinValue)
+                {
+                    throw new ArgumentException("La fecha final no puede estar vacía.", nameof(dateEnd));
+                }
+
+                // Validación adicional: lógica de fechas
+                if (dateStart > dateEnd)
+                {
+                    throw new ArgumentException("La fecha de inicio no puede ser mayor que la fecha final.");
+                }
 
                 DataTable responseDT = _catalogsProxy.GetLoansCatalogByIdWorkerDates(id, dateStart, dateEnd);
                 response = CatalogsMapp.MappAllLoansCatalog(responseDT) ?? new List<LoansCatalog>();
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                    result.SystemMessages = new List<SystemMessage>();
+
+                result.SystemMessages.Add(new SystemMessage() { Message = ex.Message });
+            }
+
+            return response;
+        }
+
+        public void SaveOrUpdateLoansCatalog(long idLoansCatalog, long idWorker, string nameWorker, string name, string description, decimal monto, DateTime date, string userName, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, out OperationResult result)
+        {
+            result = new() { Successful = true };
+
+            try
+            {
+                if (idLoansCatalog < 0) { throw new ArgumentException("El argumento no debe ser menor a 0.", nameof(idLoansCatalog)); }
+                if (idWorker <= 0) { throw new ArgumentException("El argumento del trabajador no debe ser menor a 0.", nameof(idLoansCatalog)); }
+                if (nameWorker?.Length > 50) { throw new ArgumentException("El argumento del nombre trabajador no puede ser vacio y mayo de 50 caracteres.", nameof(nameWorker)); }
+                if (name?.Length > 50) { throw new ArgumentException("El argumento del nombre no puede ser vacio y mayo de 50 caracteres.", nameof(name)); }
+                if (description?.Length > 250) { throw new ArgumentException("El argumento de la descripcion no puede ser vacia o mayo de 250 caracteres.", nameof(description)); }
+                if (monto <= 0) { throw new ArgumentException("El argumento del monto no puede ser menor a 0..", nameof(monto)); }
+                if (date == DateTime.MinValue) { throw new ArgumentException("El argumento de la fecha no puede ser vacio.", nameof(date)); }
+                if (userName?.Length > 50) { throw new ArgumentException("El argumento del nombre de usuario no puede ser vacio y mayo de 50 caracteres.", nameof(userName)); }
+                if (createdBy?.Length > 80) { throw new ArgumentException("El autor del registro no puede ser nulo y mayor a 80 caracteres.", nameof(createdBy)); }
+                if (createdDt == DateTime.MinValue) { throw new ArgumentException("El argumento de la fecha de creacion no puede ser vacio.", nameof(createdDt)); }
+                if (updatedBy?.Length > 80) { throw new ArgumentException("El argumento no debe ser mayor a 80 caracteres ni vacio.", nameof(updatedBy)); }
+                if (updatedDt == DateTime.MinValue) { throw new ArgumentException("El argumento de la fecha de edicion no puede ser vacio.", nameof(updatedDt)); }
+                if (estatus == false) { throw new ArgumentException("El argumento no debe ser inactivo.", nameof(estatus)); }
+
+
+                _catalogsProxy.SaveOrUpdateLoansCatalog(idLoansCatalog, idWorker, nameWorker, name, description, monto, date, userName, createdBy, createdDt, updatedBy, updatedDt, estatus);
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                {
+                    result.SystemMessages = new List<SystemMessage>();
+                }
+                result.SystemMessages.Add(new SystemMessage() { Message = ex.Message });
+            }
+        }
+        public void DeleteLoansCatalog(int id, out OperationResult result)
+        {
+            result = new() { Successful = true };
+
+            try
+            {
+                // Validaciones estrictas para eliminación
+                if (id <= 0)
+                    throw new ArgumentException("El argumento debe ser un número positivo mayor a cero.", nameof(id));
+
+                _catalogsProxy.DeleteLoansCatalog(id);
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                {
+                    result.SystemMessages = new List<SystemMessage>();
+                }
+                result.SystemMessages.Add(new SystemMessage() { Message = ex.Message });
+            }
+        }
+        #endregion
+
+        #region Roll
+        public List<RollObj> GetAllRoll(out OperationResult result)
+        {
+            result = new() { Successful = true, SystemMessages = new List<SystemMessage>() };
+            List<RollObj> response = new List<RollObj>();
+            try
+            {
+                DataTable responseDT = _catalogsProxy.GetAllRoll();
+                response = CatalogsMapp.MappAllRoll(responseDT) ?? new List<RollObj>();
             }
             catch (Exception ex)
             {

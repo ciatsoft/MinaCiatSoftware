@@ -40,5 +40,21 @@ namespace Catalogs.Messages
         public List<LoansCatalog> LoansCatalog { get; set; }
         public OperationResult Result { get; set; }
     }
+    public class SaveOrUpdateLoansCatalogResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    public class DeleteLoansCatalogResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    #endregion
+
+    #region Roll
+    public class RollListResponse
+    {
+        public List<RollObj> Roll { get; set; }
+        public OperationResult Result { get; set; }
+    }
     #endregion
 }
