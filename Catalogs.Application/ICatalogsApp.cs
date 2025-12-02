@@ -26,6 +26,17 @@ namespace Catalogs.Application
 
         #region Roll
         public List<RollObj> GetAllRoll(out OperationResult result);
+        public RollObj GetRollById(long id, out OperationResult result);
+        public void SaveOrUpdateRoll(long id, string name, string description, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, out OperationResult result);
+        public void DeleteRoll(int id, out OperationResult result);
+        #endregion
+
+        #region TypeExpense
+        public List<TypeExpense> GetAllTypeExpense(out OperationResult result);
+        public TypeExpense GetTypeExpenseById(long id, out OperationResult result);
+        public void SaveOrUpdateTypeExpense(long id, string name, string description, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, out OperationResult result);
+        public void DeleteTypeExpense(int id, out OperationResult result);
+
         #endregion
     }
 }

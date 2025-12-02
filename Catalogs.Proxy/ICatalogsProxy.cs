@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Domain;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -25,7 +26,16 @@ namespace Catalogs.Proxy
 
         #region Roll
         DataTable GetAllRoll();
+        DataTable GetRollById(long id);
+        int SaveOrUpdateRoll(long idRol, string name, string description, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt);
+        int DeleteRoll(long id);
+        #endregion
 
+        #region TypeExpense
+        DataTable GetAllTypeExpense();
+        DataTable GetTypeExpenseById(long id);
+        int SaveOrUpdateTypeExpense(long id, string name, string description, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt);
+        int DeleteTypeExpense(long id); 
         #endregion
     }
 }

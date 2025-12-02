@@ -120,6 +120,93 @@ namespace Catalogs.Proxy
             DataTable result = GetObject("GetAllRoll", CommandType.StoredProcedure);
             return result;
         }
+
+        public DataTable GetRollById(long id)
+        {
+            var parameter = new[]
+            {
+                new SqlParameter("@Id", id),
+            };
+
+            DataTable result = GetObject("GetRollById", CommandType.StoredProcedure, parameter);
+            return result;
+        }
+
+        public int SaveOrUpdateRoll(long idRol, string name, string description, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt)
+        {
+            var parameters = new[]
+            {
+                new SqlParameter("@Id", idRol),
+                new SqlParameter("@Nombre", name),
+                new SqlParameter("@Descripcion", description),
+                new SqlParameter("@Estatus", estatus),
+                new SqlParameter("@CreatedBy", createdBy),
+                new SqlParameter("@CreatedDt", createdDt),
+                new SqlParameter("@UpdatedBy", createdBy),
+                new SqlParameter("@UpdatedDt", createdDt)
+            };
+
+            var result = ExecuteScalar("SaveOrUpdateRoll", CommandType.StoredProcedure, parameters);
+            return Convert.ToInt32(result);
+        }
+
+        public int DeleteRoll(long id)
+        {
+            var parameter = new[]
+            {
+                new SqlParameter("@Id", id)
+            };
+
+            var result = ExecuteScalar("DeleteRoll", CommandType.StoredProcedure, parameter);
+            return Convert.ToInt32(result);
+        }
+        #endregion
+
+        #region TypeExpense
+        public DataTable GetAllTypeExpense()
+        {
+            DataTable result = GetObject("GetAllTipoGastos", CommandType.StoredProcedure);
+            return result;
+        }
+        public DataTable GetTypeExpenseById(long id)
+        {
+            var parameter = new[]
+            {
+                new SqlParameter("@Id", id),
+            };
+
+            DataTable result = GetObject("GetTipoGastosById", CommandType.StoredProcedure, parameter);
+            return result;
+        }
+
+        public int SaveOrUpdateTypeExpense(long id, string name, string description, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt)
+        {
+            var parameters = new[]
+            {
+                new SqlParameter("@Id", id),
+                new SqlParameter("@Nombre", name),
+                new SqlParameter("@Descripcion", description),
+                new SqlParameter("@Estatus", estatus),
+                new SqlParameter("@CreatedBy", createdBy),
+                new SqlParameter("@CreatedDt", createdDt),
+                new SqlParameter("@UpdatedBy", createdBy),
+                new SqlParameter("@UpdatedDt", createdDt)
+            };
+
+            var result = ExecuteScalar("SaveOrUpdateTipoGastos", CommandType.StoredProcedure, parameters);
+            return Convert.ToInt32(result);
+        }
+
+        public int DeleteTypeExpense(long id)
+        {
+            var parameter = new[]
+            {
+                new SqlParameter("@Id", id)
+            };
+
+            var result = ExecuteScalar("DeleteTipoGastos", CommandType.StoredProcedure, parameter);
+            return Convert.ToInt32(result);
+        }
         #endregion
     }
 }

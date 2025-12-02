@@ -81,10 +81,12 @@ namespace Catalogs.Application
                 if (description?.Length > 250) { throw new ArgumentException("La argumento no puede ser mayo de 250 caracteres.", nameof(description)); }
                 if (estatus == false) { throw new ArgumentException("El argumento no debe ser inactivo.", nameof(estatus)); }
                 if (string.IsNullOrEmpty(createdBy)) { throw new ArgumentException("El autor del registro no puede ser nulo.", nameof(createdBy)); }
+                if (string.IsNullOrEmpty(createdBy)) { throw new ArgumentException("El autor del registro no puede ser nulo.", nameof(createdBy)); }
                 if (createdBy?.Length > 80) { throw new ArgumentException("El argumento no debe ser mayor a 80 caracteres ni vacio.", nameof(createdBy)); }
-                if (createdDt == null) { throw new ArgumentException("El argumento no puede ser vacio.", nameof(createdDt)); }
+                if (createdDt == DateTime.MinValue) { throw new ArgumentException("El argumento no puede ser vacio.", nameof(createdDt)); }
+                if (string.IsNullOrEmpty(updatedBy)) { throw new ArgumentException("El autor del registro no puede ser nulo.", nameof(updatedBy)); }
                 if (updatedBy?.Length > 80) { throw new ArgumentException("El argumento no debe ser mayor a 80 caracteres ni vacio.", nameof(updatedBy)); }
-                if (updatedDt == null) { throw new ArgumentException("El argumento no puede ser vacio.", nameof(createdDt)); }
+                if (updatedDt == DateTime.MinValue) { throw new ArgumentException("El argumento no puede ser vacio.", nameof(createdDt)); }
 
 
                 _catalogsProxy.SaveOrUpdateWorkArea(id, name, description, estatus, createdBy, createdDt, updatedBy, updatedDt);
@@ -205,10 +207,12 @@ namespace Catalogs.Application
                 if (monto <= 0) { throw new ArgumentException("El argumento del monto no puede ser menor a 0..", nameof(monto)); }
                 if (date == DateTime.MinValue) { throw new ArgumentException("El argumento de la fecha no puede ser vacio.", nameof(date)); }
                 if (userName?.Length > 50) { throw new ArgumentException("El argumento del nombre de usuario no puede ser vacio y mayo de 50 caracteres.", nameof(userName)); }
-                if (createdBy?.Length > 80) { throw new ArgumentException("El autor del registro no puede ser nulo y mayor a 80 caracteres.", nameof(createdBy)); }
-                if (createdDt == DateTime.MinValue) { throw new ArgumentException("El argumento de la fecha de creacion no puede ser vacio.", nameof(createdDt)); }
+                if (string.IsNullOrEmpty(createdBy)) { throw new ArgumentException("El autor del registro no puede ser nulo.", nameof(createdBy)); }
+                if (createdBy?.Length > 80) { throw new ArgumentException("El argumento no debe ser mayor a 80 caracteres ni vacio.", nameof(createdBy)); }
+                if (createdDt == DateTime.MinValue) { throw new ArgumentException("El argumento no puede ser vacio.", nameof(createdDt)); }
+                if (string.IsNullOrEmpty(updatedBy)) { throw new ArgumentException("El autor del registro no puede ser nulo.", nameof(updatedBy)); }
                 if (updatedBy?.Length > 80) { throw new ArgumentException("El argumento no debe ser mayor a 80 caracteres ni vacio.", nameof(updatedBy)); }
-                if (updatedDt == DateTime.MinValue) { throw new ArgumentException("El argumento de la fecha de edicion no puede ser vacio.", nameof(updatedDt)); }
+                if (updatedDt == DateTime.MinValue) { throw new ArgumentException("El argumento no puede ser vacio.", nameof(createdDt)); }
                 if (estatus == false) { throw new ArgumentException("El argumento no debe ser inactivo.", nameof(estatus)); }
 
 
@@ -268,6 +272,187 @@ namespace Catalogs.Application
             }
 
             return response;
+        }
+
+        public RollObj GetRollById(long id, out OperationResult result)
+        {
+            result = new() { Successful = true };
+            RollObj response = null;
+
+            try
+            {
+                if (id <= 0) { throw new ArgumentException("El argumento debe ser mayor a cero.", nameof(id)); }
+
+                DataTable responseDt = _catalogsProxy.GetRollById(id);
+                response = CatalogsMapp.MappAllRoll(responseDt).First();
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                    result.SystemMessages = new List<SystemMessage>();
+
+                result.SystemMessages.Add(new SystemMessage() { Message = "Ocurrio un error al obtener las soruces y fondos del participante." });
+            }
+
+            return response;
+        }
+
+        public void SaveOrUpdateRoll(long id, string name, string description, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, out OperationResult result)
+        {
+            result = new() { Successful = true };
+
+            try
+            {
+                if (id < 0) { throw new ArgumentException("El argumento no debe ser menor a 0.", nameof(id)); }
+                if (string.IsNullOrEmpty(name)) { throw new ArgumentException("El argumento no puede ser nulo o vacio.", nameof(name)); }
+                if (name.Length > 50) { throw new ArgumentException("El argumento no puede ser mayo de 50 caracteres.", nameof(name)); }
+                if (string.IsNullOrEmpty(description)) { throw new ArgumentException("El argumento no puede ser nulo o vacio.", nameof(description)); }
+                if (description?.Length > 250) { throw new ArgumentException("La argumento no puede ser mayo de 250 caracteres.", nameof(description)); }
+                if (estatus == false) { throw new ArgumentException("El argumento no debe ser inactivo.", nameof(estatus)); }
+                if (string.IsNullOrEmpty(createdBy)) { throw new ArgumentException("El autor del registro no puede ser nulo.", nameof(createdBy)); }
+                if (createdBy?.Length > 80) { throw new ArgumentException("El argumento no debe ser mayor a 80 caracteres ni vacio.", nameof(createdBy)); }
+                if (createdDt == DateTime.MinValue) { throw new ArgumentException("El argumento no puede ser vacio.", nameof(createdDt)); }
+                if (string.IsNullOrEmpty(updatedBy)) { throw new ArgumentException("El autor del registro no puede ser nulo.", nameof(updatedBy)); }
+                if (updatedBy?.Length > 80) { throw new ArgumentException("El argumento no debe ser mayor a 80 caracteres ni vacio.", nameof(updatedBy)); }
+                if (updatedDt == DateTime.MinValue) { throw new ArgumentException("El argumento no puede ser vacio.", nameof(createdDt)); }
+
+
+                _catalogsProxy.SaveOrUpdateRoll(id, name, description, estatus, createdBy, createdDt, updatedBy, updatedDt);
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                {
+                    result.SystemMessages = new List<SystemMessage>();
+                }
+                result.SystemMessages.Add(new SystemMessage() { Message = ex.Message });
+            }
+        }
+
+        public void DeleteRoll(int id, out OperationResult result)
+        {
+            result = new() { Successful = true };
+
+            try
+            {
+                // Validaciones estrictas para eliminación
+                if (id <= 0)
+                    throw new ArgumentException("El argumento debe ser un número positivo mayor a cero.", nameof(id));
+
+                _catalogsProxy.DeleteRoll(id);
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                {
+                    result.SystemMessages = new List<SystemMessage>();
+                }
+                result.SystemMessages.Add(new SystemMessage() { Message = "No es posible realizar el eliminado de los datos." });
+            }
+        }
+        #endregion
+
+        #region TypeExpense
+        public List<TypeExpense> GetAllTypeExpense(out OperationResult result)
+        {
+            result = new() { Successful = true, SystemMessages = new List<SystemMessage>() };
+            List<TypeExpense> response = new List<TypeExpense>();
+            try
+            {
+                DataTable responseDT = _catalogsProxy.GetAllTypeExpense();
+                response = CatalogsMapp.MappAllTypeExpense(responseDT) ?? new List<TypeExpense>();
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                    result.SystemMessages = new List<SystemMessage>();
+
+                result.SystemMessages.Add(new SystemMessage() { Message = "Ocurrio un error al obtener las soruces y fondos del participante." });
+            }
+
+            return response;
+        }
+
+        public TypeExpense GetTypeExpenseById(long id, out OperationResult result)
+        {
+            result = new() { Successful = true };
+            TypeExpense response = null;
+
+            try
+            {
+                if (id <= 0) { throw new ArgumentException("El argumento debe ser mayor a cero.", nameof(id)); }
+
+                DataTable responseDt = _catalogsProxy.GetTypeExpenseById(id);
+                response = CatalogsMapp.MappAllTypeExpense(responseDt).First();
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                    result.SystemMessages = new List<SystemMessage>();
+
+                result.SystemMessages.Add(new SystemMessage() { Message = "Ocurrio un error al obtener las soruces y fondos del participante." });
+            }
+
+            return response;
+        }
+        public void SaveOrUpdateTypeExpense(long id, string name, string description, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, out OperationResult result)
+        {
+            result = new() { Successful = true };
+
+            try
+            {
+                if (id < 0) { throw new ArgumentException("El argumento no debe ser menor a 0.", nameof(id)); }
+                if (string.IsNullOrEmpty(name)) { throw new ArgumentException("El argumento no puede ser nulo o vacio.", nameof(name)); }
+                if (name.Length > 50) { throw new ArgumentException("El argumento no puede ser mayo de 50 caracteres.", nameof(name)); }
+                if (string.IsNullOrEmpty(description)) { throw new ArgumentException("El argumento no puede ser nulo o vacio.", nameof(description)); }
+                if (description?.Length > 250) { throw new ArgumentException("La argumento no puede ser mayo de 250 caracteres.", nameof(description)); }
+                if (estatus == false) { throw new ArgumentException("El argumento no debe ser inactivo.", nameof(estatus)); }
+                if (string.IsNullOrEmpty(createdBy)) { throw new ArgumentException("El autor del registro no puede ser nulo.", nameof(createdBy)); }
+                if (createdBy?.Length > 80) { throw new ArgumentException("El argumento no debe ser mayor a 80 caracteres ni vacio.", nameof(createdBy)); }
+                if (createdDt == DateTime.MinValue) { throw new ArgumentException("El argumento no puede ser vacio.", nameof(createdDt)); }
+                if (string.IsNullOrEmpty(updatedBy)) { throw new ArgumentException("El autor del registro no puede ser nulo.", nameof(updatedBy)); }
+                if (updatedBy?.Length > 80) { throw new ArgumentException("El argumento no debe ser mayor a 80 caracteres ni vacio.", nameof(updatedBy)); }
+                if (updatedDt == DateTime.MinValue) { throw new ArgumentException("El argumento no puede ser vacio.", nameof(createdDt)); }
+
+
+                _catalogsProxy.SaveOrUpdateTypeExpense(id, name, description, estatus, createdBy, createdDt, updatedBy, updatedDt);
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                {
+                    result.SystemMessages = new List<SystemMessage>();
+                }
+                result.SystemMessages.Add(new SystemMessage() { Message = ex.Message });
+            }
+        }
+        public void DeleteTypeExpense(int id, out OperationResult result)
+        {
+            result = new() { Successful = true };
+
+            try
+            {
+                // Validaciones estrictas para eliminación
+                if (id <= 0)
+                    throw new ArgumentException("El argumento debe ser un número positivo mayor a cero.", nameof(id));
+
+                _catalogsProxy.DeleteTypeExpense(id);
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                {
+                    result.SystemMessages = new List<SystemMessage>();
+                }
+                result.SystemMessages.Add(new SystemMessage() { Message = "No es posible realizar el eliminado de los datos." });
+            }
         }
         #endregion
     }

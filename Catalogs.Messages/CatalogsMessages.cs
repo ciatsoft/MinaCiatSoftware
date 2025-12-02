@@ -56,5 +56,40 @@ namespace Catalogs.Messages
         public List<RollObj> Roll { get; set; }
         public OperationResult Result { get; set; }
     }
+    public class RollResponse
+    {
+        public RollObj Roll { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class SaveOrUpdateRollResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    public class DeleteRollResponse
+    {
+        public OperationResult Result { get; set; }
+    }
     #endregion
+
+    #region TypeExpense
+    public class TypeExpenseListResponse
+    {
+        public List<TypeExpense> TypeExpense { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class TypeExpenseResponse
+    {
+        public TypeExpense TypeExpense { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class SaveOrUpdateTypeExpenseResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    public class DeleteTypeExpenseResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    #endregion
+
 }

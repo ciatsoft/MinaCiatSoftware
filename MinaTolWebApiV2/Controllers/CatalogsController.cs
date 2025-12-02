@@ -176,6 +176,145 @@ namespace MinaTolWebApiV2.Controllers
 
             return response;
         }
+
+        /// <summary>
+        /// Método que regresa un area de trabajo por Id
+        /// </summary>
+        /// <param name="id">Identificador del area de trabajo</param>
+        /// <returns></returns>
+        [HttpPost("GetRollById")]
+        public RollResponse GetRollById(long id)
+        {
+            var response = new RollResponse();
+            RollObj list = _catalogApp.GetRollById(id, out OperationResult result);
+            response.Roll = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que guarda o actualiza un area de trabajo
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="desciption"></param>
+        /// <param name="estatus"></param>
+        /// <param name="createdBy"></param>
+        /// <param name="createdDt"></param>
+        /// <param name="updatedBy"></param>
+        /// <param name="updatedDt"></param>
+        /// <returns></returns>
+        [HttpPost("SaveOrUpdateRoll")]
+        public SaveOrUpdateRollResponse SaveOrUpdateRoll([FromBody] RollObj obj)
+        {
+            _catalogApp.SaveOrUpdateRoll(obj.Id, obj.Name, obj.Description, obj.Estatus, obj.CreatedBy, obj.CreatedDt, obj.UpdatedBy, obj.UpdatedDt, out OperationResult result);
+
+            var response = new SaveOrUpdateRollResponse()
+            {
+                Result = result
+            };
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que elimina logicamente el area de trabajo
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="desciption"></param>
+        /// <returns></returns>
+        [HttpDelete("DeleteRoll")]
+        public DeleteRollResponse DeleteRoll(int id)
+        {
+            _catalogApp.DeleteRoll(id, out OperationResult result);
+
+            var response = new DeleteRollResponse()
+            {
+                Result = result
+            };
+
+            return response;
+        }
+        #endregion
+
+        #region TypeExpense
+        /// <summary>
+        /// Método que regresa un listado de areas de trabajo
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetAllTypeExpense")]
+        public TypeExpenseListResponse GetAllTypeExpense()
+        {
+            var response = new TypeExpenseListResponse();
+            List<TypeExpense> list = _catalogApp.GetAllTypeExpense(out OperationResult result);
+            response.TypeExpense = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que regresa un area de trabajo por Id
+        /// </summary>
+        /// <param name="id">Identificador del area de trabajo</param>
+        /// <returns></returns>
+        [HttpPost("GetTypeExpenseById")]
+        public TypeExpenseResponse GetTypeExpenseById(long id)
+        {
+            var response = new TypeExpenseResponse();
+            TypeExpense list = _catalogApp.GetTypeExpenseById(id, out OperationResult result);
+            response.TypeExpense = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que guarda o actualiza un area de trabajo
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="desciption"></param>
+        /// <param name="estatus"></param>
+        /// <param name="createdBy"></param>
+        /// <param name="createdDt"></param>
+        /// <param name="updatedBy"></param>
+        /// <param name="updatedDt"></param>
+        /// <returns></returns>
+        [HttpPost("SaveOrUpdateTypeExpense")]
+        public SaveOrUpdateTypeExpenseResponse SaveOrUpdateTypeExpense([FromBody] TypeExpense obj)
+        {
+            _catalogApp.SaveOrUpdateTypeExpense(obj.Id, obj.Name, obj.Description, obj.Estatus, obj.CreatedBy, obj.CreatedDt, obj.UpdatedBy, obj.UpdatedDt, out OperationResult result);
+
+            var response = new SaveOrUpdateTypeExpenseResponse()
+            {
+                Result = result
+            };
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que elimina logicamente el area de trabajo
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="desciption"></param>
+        /// <returns></returns>
+        [HttpDelete("DeleteTypeExpense")]
+        public DeleteTypeExpenseResponse TypeExpense(int id)
+        {
+            _catalogApp.DeleteTypeExpense(id, out OperationResult result);
+
+            var response = new DeleteTypeExpenseResponse()
+            {
+                Result = result
+            };
+
+            return response;
+        }
         #endregion
     }
 }
