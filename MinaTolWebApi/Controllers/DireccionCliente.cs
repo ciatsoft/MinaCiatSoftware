@@ -42,7 +42,7 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.SaveOrUpdateDireccionCliente(at);
             return result;
         }
-        [HttpDelete, Route("{id:long}")]
+        [HttpPost, Route("{id:long}")]
         public ModelResponse DeleteDireccionCliente(long id)
         {
             var result = wrapper.DeleteDireccionCliente(id);

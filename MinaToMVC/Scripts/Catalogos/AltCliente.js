@@ -4,7 +4,12 @@ $(document).ready(function () {
     $("#frmCliente").validate({
         rules: {
             "txtNombre": "required",
-            "txtDescripcion": "required",
+            "txtTelefono": "required",
+            "txtEmail": "required",
+            "txtRFC": "required",
+            "txtrazon": "required",
+            "ddlTipoCliente": "required",
+            "txtComentarios": "required",
         }
     });
 
@@ -357,6 +362,17 @@ function SaveOrUpdateCliente() {
             UpdatedDt: $("#txtUpdatedDt").val(),
         };
 
+        if (parametro.nombre == null || parametro.Telefono == null || parametro.Email == null || parametro.RFC == null || parametro.Razon_Social == null || parametro.Comentarios == null) {
+            swal({
+                title: "Faltan campos por llenar.",
+                text: "Porfavor de llevar todos los campos",
+                type: "error",
+                confirmButtonText: "OK"
+            }, function () {
+                return;
+            });
+        }
+
         swal({
             title: "Registro guardado!",
             text: "El cliente se ha guardado correctamente.",
@@ -404,7 +420,7 @@ function EliminarCliente(id) {
                 if (r.IsSuccess) {
                     window.location.href = '/Administracion/Clientes';
                 } else {
-                    //window.location.href = '/Administracion/Clientes';
+                    window.location.href = '/Administracion/Clientes';
                 }
             });
         }

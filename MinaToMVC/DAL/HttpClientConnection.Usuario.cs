@@ -103,7 +103,7 @@ namespace MinaToMVC.DAL
 
         public async Task<ModelResponse> DeleteUsuario(long id)
         {
-            var result = await RequestAsync<object>($"api/Usuario/{id}", HttpMethod.Delete, null,
+            var result = await RequestAsync<object>($"api/Usuario/{id}", HttpMethod.Post, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;

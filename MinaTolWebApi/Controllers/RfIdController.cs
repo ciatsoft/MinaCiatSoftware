@@ -35,7 +35,7 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetRfidById(id);
             return result;
         }
-        [HttpDelete, Route("{id:long}")]
+        [HttpPost, Route("{id:long}")]
         public async Task<ModelResponse> DeleteRfid(int id)
         {
             var result = wrapper.DeleteRfid(id);
@@ -83,7 +83,7 @@ namespace MinaTolWebApi.Controllers
         
 
         // Eliminar RFID
-        [HttpDelete, Route("{id:long}")]
+        [HttpPost, Route("{id:long}")]
         public async Task<ModelResponse> DeleteRFID(int id)
         {
             var result = wrapper.DeleteRfid(id);

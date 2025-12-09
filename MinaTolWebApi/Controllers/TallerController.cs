@@ -42,7 +42,7 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-        [HttpDelete, Route("Inventario/{id:long}")]
+        [HttpPost, Route("Inventario/{id:long}")]
         public ModelResponse DeleteInventarioById(long id)
         {
             var result = wrapper.DeleteInventarioById(id);
@@ -73,7 +73,7 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-        [HttpDelete, Route("CategoriaInventario/{id:long}")]
+        [HttpPost, Route("CategoriaInventario/{id:long}")]
         public ModelResponse DeleteCategoriaInventarioById(long id)
         {
             var result = wrapper.DeleteCategoriaInventarioById(id);
@@ -104,7 +104,7 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-        [HttpDelete, Route("ComponenteVehiculo/{id:long}")]
+        [HttpPost, Route("ComponenteVehiculo/{id:long}")]
         public ModelResponse DeleteComponenteVehiculoById(long id)
         {
             var result = wrapper.DeleteComponenteVehiculoById(id);

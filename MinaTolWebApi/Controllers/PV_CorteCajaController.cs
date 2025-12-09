@@ -30,7 +30,7 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetPV_CorteCajaById(id);
             return result;
         }
-        [HttpDelete, Route("{id:long}")]
+        [HttpPost, Route("{id:long}")]
         public async Task<ModelResponse> DeletePV_CorteCaja(int id)
         {
             var result = wrapper.DeletePV_CorteCaja(id);

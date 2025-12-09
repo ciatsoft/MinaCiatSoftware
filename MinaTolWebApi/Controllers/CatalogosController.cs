@@ -45,7 +45,7 @@ namespace MinaTolWebApi.Controllers
         }
 
         // DELETE: Prestamo
-        [HttpDelete, Route("Prestamos/{id:long}")]
+        [HttpPost, Route("Prestamos/{id:long}")]
         public IHttpActionResult DeletePrestamos(int id)
         {
             var result = wrapper.DeletePrestamos(id);
@@ -77,7 +77,7 @@ namespace MinaTolWebApi.Controllers
         }
 
         // DELETE: Gastos
-        [HttpDelete, Route("TipoGastos/{id:long}")]
+        [HttpPost, Route("TipoGastos/{id:long}")]
         public IHttpActionResult DeleteTipoGastos(long id)
         {
             var result = wrapper.DeleteTipoGastos(id);
@@ -109,7 +109,7 @@ namespace MinaTolWebApi.Controllers
         }
 
         // DELETE: VPG
-        [HttpDelete, Route("VehiculoPublicoGral/{id:long}")]
+        [HttpPost, Route("VehiculoPublicoGral/{id:long}")]
         public IHttpActionResult DeleteVehiculosPublicoGral(long id)
         {
             var result = wrapper.DeleteVehiculosPublicoGral(id);

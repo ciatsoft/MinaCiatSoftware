@@ -32,7 +32,7 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetRollById(id);
             return result;
         }
-        [HttpDelete, Route("{id:long}")]
+        [HttpPost, Route("{id:long}")]
         public async Task<ModelResponse> DeleteRoll(int id)
         {
             var result = wrapper.DeleteRoll(id);
@@ -94,7 +94,7 @@ namespace MinaTolWebApi.Controllers
             return response;
         }
 
-        [HttpDelete, Route("QuitarRolUsuario/{id:long}")]
+        [HttpPost, Route("QuitarRolUsuario/{id:long}")]
         public ModelResponse DeleteUsuarioRolById(long id)
         {
             var response = wrapper.DeleteUsuarioRolById(id);

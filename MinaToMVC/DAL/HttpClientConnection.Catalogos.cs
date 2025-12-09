@@ -48,7 +48,7 @@ namespace MinaToMVC.DAL
 
         public async Task<ModelResponse> DeleteTipoGastos(long id)
         {
-            var result = await RequestAsync<ModelResponse>($"api/Catalogos/TipoGastos/{id}", HttpMethod.Delete, null,
+            var result = await RequestAsync<ModelResponse>($"api/Catalogos/TipoGastos/{id}", HttpMethod.Post, null,
             (responseString) =>
             {
                 return JsonConvert.DeserializeObject<ModelResponse>(responseString);
@@ -113,7 +113,7 @@ namespace MinaToMVC.DAL
 
         public async Task<ModelResponse> DeletePrestamos(long id)
         {
-            var result = await RequestAsync<object>($"api/Catalogos/Prestamos/{id}", HttpMethod.Delete, null,
+            var result = await RequestAsync<object>($"api/Catalogos/Prestamos/{id}", HttpMethod.Post, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
@@ -155,7 +155,7 @@ namespace MinaToMVC.DAL
 
         public async Task<ModelResponse> DeleteVehiculosPublicoGral(long id)
         {
-            var result = await RequestAsync<ModelResponse>($"api/Catalogos/VehiculoPublicoGral/{id}", HttpMethod.Delete, null,
+            var result = await RequestAsync<ModelResponse>($"api/Catalogos/VehiculoPublicoGral/{id}", HttpMethod.Post, null,
             (responseString) =>
             {
                 return JsonConvert.DeserializeObject<ModelResponse>(responseString);

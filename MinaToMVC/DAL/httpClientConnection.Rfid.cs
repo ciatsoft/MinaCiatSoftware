@@ -54,7 +54,7 @@ namespace MinaToMVC.DAL
         }
         public async Task<ModelResponse> DeleteRfid(long id)
         {
-            var result = await RequestAsync<object>($"api/Rfid/{id}", HttpMethod.Delete, null,
+            var result = await RequestAsync<object>($"api/Rfid/{id}", HttpMethod.Post, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;

@@ -41,7 +41,7 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-        [Route("{id:long}"), HttpDelete]
+        [Route("{id:long}"), HttpPost]
         public async Task<ModelResponse> DeleteClientePublicoGral(long id)
         {
             var result = wrapper.DeleteClientePublicoGral(id);

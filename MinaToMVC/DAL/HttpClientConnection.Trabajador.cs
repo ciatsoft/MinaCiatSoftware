@@ -91,7 +91,7 @@ namespace MinaToMVC.DAL
         }
         public async Task<ModelResponse> DeleteEmpleadoById(long Id)
         {
-            var result = await RequestAsync($"api/Trabajador/{Id}", HttpMethod.Delete, null,
+            var result = await RequestAsync($"api/Trabajador/{Id}", HttpMethod.Post, null,
                 new Func<string, string>((responseString) =>
                 {
                     return responseString;
@@ -165,7 +165,7 @@ namespace MinaToMVC.DAL
 
         public async Task<ModelResponse> DeleteConceptosEmpleadosById(long Id)
         {
-            var result = await RequestAsync($"api/Trabajador/ConceptosEmpleados/{Id}", HttpMethod.Delete, null,
+            var result = await RequestAsync($"api/Trabajador/ConceptosEmpleados/{Id}", HttpMethod.Post, null,
                 new Func<string, string>((responseString) =>
                 {
                     return responseString;

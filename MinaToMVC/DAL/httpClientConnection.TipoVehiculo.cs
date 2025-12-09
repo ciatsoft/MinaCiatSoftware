@@ -77,7 +77,7 @@ namespace MinaToMVC.DAL
         {
             var result = await RequestAsync<object>(
                 $"api/TipoVehiculo/{id}",
-                HttpMethod.Delete,
+                HttpMethod.Post,
                 null,
                 new Func<string, string>((responseString) =>
                 {

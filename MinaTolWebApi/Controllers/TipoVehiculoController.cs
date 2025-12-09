@@ -35,7 +35,7 @@ namespace MinaTolWebApi.Controllers
         }
 
         // DELETE: api/TipoVehiculo/5
-        [HttpDelete, Route("{id:long}")]
+        [HttpPost, Route("{id:long}")]
         public IHttpActionResult DeleteTipoVehiculo(long id)
         {
             var result = wrapper.DeleteTipoVehiculo(id);

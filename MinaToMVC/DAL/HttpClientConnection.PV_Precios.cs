@@ -55,7 +55,7 @@ namespace MinaToMVC.DAL
         }
         public async Task<ModelResponse> DeletePV_Precio(long id)
         {
-            var result = await RequestAsync<ModelResponse>($"api/PV_Precio/Delete/{id}", HttpMethod.Delete, null,
+            var result = await RequestAsync<ModelResponse>($"api/PV_Precio/Delete/{id}", HttpMethod.Post, null,
             (responseString) =>
             {
                 return JsonConvert.DeserializeObject<ModelResponse>(responseString);
