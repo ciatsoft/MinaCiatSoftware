@@ -131,7 +131,7 @@ function SaveOrUpdatePrestamos() {
             nombre: "Nombre",
             nombreTrabajador: $("#nombreTrabajador").val(),
             descripcion: $("#descripcion").val(),
-            Monto: $("#monto").val(),
+            Monto: $("#monto").val().replace(/[^\d.]/g, ''),
             Fecha: $("#fecha").val(),
             UsuarioName: $("#encargado").val(),
             IdTrabajador: $("#ddlTransportistas").val(),

@@ -113,7 +113,12 @@ document.getElementById("btnFiltrar2").addEventListener("click", function () {
 
     // Validar que fecha2 no sea menor que fecha1
     if (date2 < date1) {
-        alert("Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.");
+        Swal.fire({
+            title: 'Error en fechas',
+            text: 'Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
         return;
     }
     GetAllViajeLocalByDatesFacturado(fecha1, fecha2);

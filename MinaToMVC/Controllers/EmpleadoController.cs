@@ -264,6 +264,19 @@ namespace MinaToMVC.Controllers
 
         public async Task<string> SaveOrupdateSalario(DtoSalario s)
         {
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+            s.UpdatedBy = usuarioAutenticado?.UserName.ToString();
+            s.CreatedBy = usuarioAutenticado?.UserName.ToString();
             //t.FechaContratacion = DateTime.Now;
             httpClientConnection.MappingColumSecurity(s);
             var result = await httpClientConnection.SaveOrUpdateSalario(s);

@@ -92,7 +92,7 @@ function SaveOrUpdateConceptosEmpleados() {
             id: $("#id").val(),
             nombre: $("#nombre").val(),
             descripcion: $("#descripcion").val(),
-            valor: $("#valor").val(),
+            valor: $("#valor").val().replace(/[^\d.]/g, ''),
             aumento: $("#aumentoCheckbox").val(),
             Estatus: $("#estatus").val(),
             CreatedBy: $("#createdBy").val(),

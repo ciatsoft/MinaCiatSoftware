@@ -50,12 +50,12 @@
                 <div class="row">
                     <div class="col-lg-4">
                         <label>Valor:</label>
-                        @Html.TextBoxFor(x => x.Valor, new { @class = "form-control", @id = "valor", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @required = "required" })
+                        @Html.TextBoxFor(x => x.Valor, new { @class = "form-control", @id = "valor", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @required = "required", @type = "text" })
                     </div>
 
                     <div class="col-lg-4">
                         <label>Total Neto:</label>
-                        @Html.TextBoxFor(x => x.TotalNeto, new { @class = "form-control", @id = "totalNeto", @readonly = "readonly", @required = "required" })
+                        @Html.TextBoxFor(x => x.TotalNeto, new { @class = "form-control", @id = "totalNeto", @type = "text", @readonly = "readonly", @required = "required" })
                     </div>
 
                     <div class="col-lg-4">
@@ -83,7 +83,156 @@
 
 <script>
     $(document).ready(function () {
+        // Función para formatear como moneda MXN
+        function formatCurrency(value) {
+            if (value === '' || value === null || value === undefined) return '';
 
+            let num = parseFloat(value);
+            if (isNaN(num)) return value;
+
+            return num.toLocaleString('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        // Función para quitar el formato de moneda
+        function unformatCurrency(value) {
+            if (!value) return '';
+            return value.toString().replace(/[^\d.-]/g, '');
+        }
+
+        // Función para validar entrada numérica para cantidad (entero)
+        function validateCantidadInput(input) {
+            let value = input.val();
+
+            // Remover todo excepto números (sin punto decimal para cantidad)
+            let cleaned = value.replace(/[^0-9]/g, '');
+
+            return cleaned;
+        }
+
+        // Función para validar entrada numérica para valor y total (decimal)
+        function validateDecimalInput(input) {
+            let value = input.val();
+            let unformatted = unformatCurrency(value);
+
+            // Remover todo excepto números y un punto decimal
+            let cleaned = unformatted.replace(/[^0-9.]/g, '');
+
+            // Permitir solo un punto decimal
+            let parts = cleaned.split('.');
+            if (parts.length > 2) {
+                cleaned = parts[0] + '.' + parts.slice(1).join('');
+            }
+
+            // Limitar a 2 decimales
+            if (parts.length > 1 && parts[1].length > 2) {
+                cleaned = parts[0] + '.' + parts[1].substring(0, 2);
+            }
+
+            return cleaned;
+        }
+
+        // Función para actualizar el cálculo del total de manera instantánea
+        function calcularTotalInstantaneo() {
+            var cantidadStr = $('#cantidad').val().replace(/[^\d]/g, ''); // Solo números para cantidad
+            var valorStr = unformatCurrency($('#valor').val());
+
+            var cantidad = parseFloat(cantidadStr) || 0;
+            var valor = parseFloat(valorStr) || 0;
+            var total = cantidad * valor;
+
+            // Actualizar el campo totalNeto con formato monetario
+            $('#totalNeto').val(formatCurrency(total));
+        }
+
+        // Configurar eventos para CANTIDAD (entero sin formato monetario)
+        $('#cantidad').on('input', function () {
+            var $input = $(this);
+            var cleanedValue = validateCantidadInput($input);
+
+            // Guardar la posición del cursor
+            var cursorPosition = this.selectionStart;
+
+            // Actualizar el valor sin formato
+            $input.val(cleanedValue);
+
+            // Restaurar la posición del cursor
+            this.setSelectionRange(cursorPosition, cursorPosition);
+
+            // Calcular total instantáneamente
+            calcularTotalInstantaneo();
+        });
+
+        // Configurar eventos para VALOR (con formato monetario)
+        $('#valor').on('input', function () {
+            var $input = $(this);
+            var cleanedValue = validateDecimalInput($input);
+
+            // Guardar la posición del cursor
+            var cursorPosition = this.selectionStart;
+
+            // Actualizar el valor sin formato
+            $input.val(cleanedValue);
+
+            // Restaurar la posición del cursor
+            this.setSelectionRange(cursorPosition, cursorPosition);
+
+            // Calcular total instantáneamente
+            calcularTotalInstantaneo();
+        });
+
+        // Evento blur para formatear VALOR como moneda cuando pierde el foco
+        $('#valor').on('blur', function () {
+            var $input = $(this);
+            var cleanedValue = unformatCurrency($input.val());
+
+            if (cleanedValue && cleanedValue.trim() !== '') {
+                $input.val(formatCurrency(cleanedValue));
+            }
+        });
+
+        // Evento blur para TOTALNETO (solo formatear, no editar directamente)
+        $('#totalNeto').on('blur', function () {
+            var $input = $(this);
+            var cleanedValue = unformatCurrency($input.val());
+
+            if (cleanedValue && cleanedValue.trim() !== '') {
+                $input.val(formatCurrency(cleanedValue));
+            }
+        });
+
+        // Evento focus para VALOR - quitar formato y permitir edición
+        $('#valor').on('focus', function () {
+            var $input = $(this);
+            var cleanedValue = unformatCurrency($input.val());
+            $input.val(cleanedValue);
+        });
+
+        // Evento focus para CANTIDAD - mantener como número entero
+        $('#cantidad').on('focus', function () {
+            var $input = $(this);
+            var cleanedValue = $input.val().replace(/[^\d]/g, '');
+            $input.val(cleanedValue);
+        });
+
+        // TOTALNETO solo lectura - no permitir edición directa
+        $('#totalNeto').prop('readonly', true);
+
+        // Para enviar al servidor - convertir a valores numéricos apropiados
+        $('form').on('submit', function () {
+            // Cantidad como entero
+            $('#cantidad').val($('#cantidad').val().replace(/[^\d]/g, ''));
+
+            // Valor y TotalNeto como decimales sin formato
+            $('#valor').val(unformatCurrency($('#valor').val()));
+            $('#totalNeto').val(unformatCurrency($('#totalNeto').val()));
+        });
+
+        // Validación del formulario
         $('form').submit(function (e) {
             if ($('#ddlConceptoEmpleado').val() === '') {
                 e.preventDefault();
@@ -92,23 +241,8 @@
             }
         });
 
-        // Función para calcular el total automáticamente
-        function calcularTotal() {
-            var cantidad = parseFloat($('#cantidad').val()) || 0;
-            var valor = parseFloat($('#valor').val()) || 0;
-            var total = cantidad * valor;
-
-            // Formatear el total a 2 decimales
-            $('#totalNeto').val(total.toFixed(2));
-        }
-
-        // Eventos para los campos cantidad y valor
-        $('#cantidad').on('input', function () {
-            calcularTotal();
-        });
-        $('#valor').on('input', function () {
-            calcularTotal();
-        });
+        // Inicializar el cálculo al cargar la página
+        calcularTotalInstantaneo();
 
         // Pasamos la lista completa a JS
         var conceptos = @Html.Raw(ViewBag.ConceptosJson);
@@ -122,10 +256,16 @@
 
             var concepto = conceptos.find(c => c.Id == selectedId);
             var valor = concepto ? concepto.Valor : '';
-            var aumento = concepto ? concepto.Aumento : false; // Capturar el valor de Aumento (true/false)
+            var aumento = concepto ? concepto.Aumento : false;
 
             $('#nombreConceptoEmpleado').val(selectedText);
-            $('#valor').val(valor);
+
+            // Formatear el valor con signo de pesos MXN
+            if (valor) {
+                $('#valor').val(formatCurrency(valor));
+            } else {
+                $('#valor').val('');
+            }
 
             // Convertir el valor booleano a texto "Aumento" o "Descuento"
             var tipoCargo = aumento ? 'Aumento' : 'Descuento';
@@ -155,8 +295,12 @@
                     $('#valor').prop('readonly', true);
                 }
             }
+
+            // Recalcular el total después de cambiar el valor
+            calcularTotalInstantaneo();
         });
 
+        // Configuración de DataTable
         $("#tblConceptosEmpleado").DataTable({
             data: [],
             columns: [
@@ -164,25 +308,40 @@
                 { data: 'idTrabajador', title: 'Id Trabajador', visible: false },
                 { data: 'idConceptoEmpleado', title: 'Id Concepto Empleado', visible: false },
                 { data: 'nombreConceptoEmpleado', title: 'Nombre del Concepto' },
-                { data: 'cantidad', title: 'Cantidad' },
                 {
-                    data: 'valor', title: 'Valor', render: function (data) {
-                        return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
+                    data: 'cantidad',
+                    title: 'Cantidad',
+                    render: function (data) {
+                        // Cantidad como número entero sin decimales
+                        return data ? parseInt(data).toLocaleString('es-MX') : '0';
                     }
                 },
                 {
-                    data: 'totalNeto', title: 'Total Neto', render: function (data) {
-                        return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
+                    data: 'valor',
+                    title: 'Valor',
+                    render: function (data) {
+                        return formatCurrency(data);
                     }
                 },
                 {
-                    data: 'fecha', title: 'Fecha', render: function (data) {
+                    data: 'totalNeto',
+                    title: 'Total Neto',
+                    render: function (data) {
+                        return formatCurrency(data);
+                    }
+                },
+                {
+                    data: 'fecha',
+                    title: 'Fecha',
+                    render: function (data) {
                         return data ? new Date(data).toISOString().split('T')[0] : '';
                     }
                 },
                 { data: 'tipoCargo', title: 'Tipo de Cargo' },
                 {
-                    data: "id", title: "Acciones", render: function (data) {
+                    data: "id",
+                    title: "Acciones",
+                    render: function (data) {
                         return ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarConceptoEmpleado(' + data + ')"/>';
                     }
                 },
@@ -194,7 +353,7 @@
                 "processing": "Procesando...",
                 "lengthMenu": "Mostrar _MENU_ entradas",
                 "zeroRecords": "No se encontraron resultados",
-                "emptyTable": "Ningun dato disponible en esta tabla",
+                "emptyTable": "Ningún dato disponible en esta tabla",
                 "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
                 "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
                 "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -213,26 +372,39 @@
             }
         });
 
+        // Validación del formulario
         $("#frmConceptoEmpleado").validate({
             rules: {
                 nombreConceptoEmpleado: "required",
                 nombre: "required",
                 tipoCargo: "required",
-                cantidad: "required",
-                valor: "required",
+                cantidad: {
+                    required: true,
+                    digits: true  // Solo números enteros
+                },
+                valor: {
+                    required: true,
+                    number: true  // Números decimales permitidos
+                },
                 totalNeto: "required",
             },
             messages: {
                 nombreConceptoEmpleado: "Por favor ingresa un Concepto",
                 nombre: "Por favor ingresa un Nombre",
                 tipoCargo: "Por favor ingresa un Tipo de Cargo",
-                cantidad: "Por favor ingresa una Cantidad",
-                valor: "Por favor ingresa un Valor",
-                totalNeto: "Por favor ingresa un Calculo",
+                cantidad: {
+                    required: "Por favor ingresa una Cantidad",
+                    digits: "La cantidad debe ser un número entero"
+                },
+                valor: {
+                    required: "Por favor ingresa un Valor",
+                    number: "El valor debe ser un número válido"
+                },
+                totalNeto: "Por favor ingresa un Cálculo",
             }
         });
 
-        GetAllConceptoEmpleadoByIdEmpleado(@trabajadorId)
+        GetAllConceptoEmpleadoByIdEmpleado(@trabajadorId);
     });
 
     function GetAllConceptoEmpleadoByIdEmpleado(id) {
@@ -266,9 +438,20 @@
                 } else {
                     var salarioActual = r.Response.monto;
 
+                    // Formatear el salario con signo de pesos MXN
+                    var formattedSalario = parseFloat(salarioActual).toLocaleString('es-MX', {
+                        style: 'currency',
+                        currency: 'MXN',
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+
                     // Establecer el valor en el input y bloquearlo
-                    $('#valor').val(salarioActual);
+                    $('#valor').val(formattedSalario);
                     $('#valor').prop('readonly', true);
+
+                    // Recalcular el total
+                    calcularTotalInstantaneo();
                 }
             } else {
                 Swal.fire({
@@ -284,21 +467,27 @@
     function SaveOrUpdateConceptoEmpleadoByIdEmpleado() {
         if ($("#frmConceptoEmpleado").valid()) {
 
+            // Función auxiliar para obtener valores sin formato
+            function getUnformattedValue(selector) {
+                var value = $(selector).val();
+                return value ? value.toString().replace(/[^\d.-]/g, '') : '';
+            }
+
             var parametro = {
                 id: $("#id").val(),
                 idTrabajador: $("#idTrabajador").val(),
-                idConceptoEmpleado: $("#ddlConceptoEmpleado").val(), // Cambiado para obtener del dropdown
-                tipoCargo: $("#TipoCargo").val(), // Cambiado para obtener del dropdown
+                idConceptoEmpleado: $("#ddlConceptoEmpleado").val(),
+                tipoCargo: $("#TipoCargo").val(),
                 nombreConceptoEmpleado: $("#nombreConceptoEmpleado").val(),
-                cantidad: $("#cantidad").val(),
-                valor: $("#valor").val(),
-                totalNeto: $("#totalNeto").val(),
+                cantidad: $("#cantidad").val().replace(/[^\d]/g, ''), // Solo números para cantidad
+                valor: getUnformattedValue('#valor'),
+                totalNeto: getUnformattedValue('#totalNeto'),
                 fecha: $("#fecha").val(),
-                estatus: $("#Estatus").val(), // Asumiendo que existe este campo hidden
+                estatus: $("#Estatus").val(),
                 createdBy: $("#createdBy").val(),
-                createdDt: $("#CreatedDt").val(), // Corregido el ID
+                createdDt: $("#CreatedDt").val(),
                 updatedBy: $("#updatedBy").val(),
-                updatedDt: $("#UpdatedDt").val() // Corregido el ID
+                updatedDt: $("#UpdatedDt").val()
             };
 
             PostMVC('/RH/SaveOrUpdateConceptoEmpleadoByIdEmpleado', parametro, function (r) {
@@ -330,7 +519,6 @@
     }
 
     function EliminarConceptoEmpleado(id) {
-        // Confirmar eliminación
         Swal.fire({
             title: '¿Estás seguro?',
             text: "¿Quieres eliminar este registro?",
@@ -342,12 +530,11 @@
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Aquí va tu lógica para eliminar el documento
                 GetMVC("/RH/DeleteConceptoEmpleadoById?id=" + id, function (r) {
                     if (r.IsSuccess) {
                         Swal.fire(
                             'Eliminado!',
-                            'El documento ha sido eliminado.',
+                            'El concepto ha sido eliminado.',
                             'success'
                         );
                         setTimeout(function () {
@@ -355,16 +542,33 @@
                         }, 2000);
                     } else {
                         Swal.fire(
-                            'Eliminado!',
-                            'El documento ha sido eliminado.',
-                            'success'
+                            'Error!',
+                            'Hubo un error al eliminar el concepto.',
+                            'error'
                         );
-                        setTimeout(function () {
-                            $("#genericModal").modal("hide");
-                        }, 2000);
                     }
                 });
             }
         });
+    }
+
+    // Función global para calcular total
+    function calcularTotalInstantaneo() {
+        var cantidadStr = $('#cantidad').val().replace(/[^\d]/g, '');
+        var valorStr = $('#valor').val().replace(/[^\d.-]/g, '');
+
+        var cantidad = parseFloat(cantidadStr) || 0;
+        var valor = parseFloat(valorStr) || 0;
+        var total = cantidad * valor;
+
+        // Formatear el total como moneda MXN
+        var formattedTotal = total.toLocaleString('es-MX', {
+            style: 'currency',
+            currency: 'MXN',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+        $('#totalNeto').val(formattedTotal);
     }
 </script>

@@ -13,7 +13,7 @@ $(document).ready(function () {
 
     // También puedes inicializar el valor si ya hay una selección al cargar la página
     if ($("#ddlCategoriaInventario").val() !== "") {
-        var initialText = $("#ddlCategoriaInventario option:selected").text();
+        var initialText = $("#ddlCategoriaInventario option:selected").text();x
         $("#nombreCategoria").val(initialText);
     }
 
@@ -223,7 +223,7 @@ function SaveOrUpdateInventario() {
             Marca: $("#marca").val(),
             CodigoFabricante: $("#codigoFabricante").val(),
             CantidadExistente: $("#cantidadExistencia").val(),
-            PrecioCompra: $("#precioCompra").val(),
+            PrecioCompra: $("#precioCompra").val().replace(/[^\d.]/g, ''),
             UbicacionAlmacen: $("#ubicacionAlmacen").val(),
             Proveedor: $("#proveedor").val(),
             Estatus: $("#estatus").val(),

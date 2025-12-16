@@ -68,22 +68,22 @@
                 <div class="row" style="margin-top: 20px;">
                     <div class="col-lg-4">
                         <label>Salario Semanal:</label>
-                        @Html.TextBoxFor(x => x.SalarioSemanal, new { @class = "form-control", @id = "salarioSemanal", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly" })
+                        @Html.TextBoxFor(x => x.SalarioSemanal, new { @class = "form-control", @id = "salarioSemanal", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly", @type = "text" })
                     </div>
                     <div class="col-lg-4">
                         <label>Total de Aumento:</label>
-                        @Html.TextBoxFor(x => x.Aumento, new { @class = "form-control", @id = "aumento", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly" })
+                        @Html.TextBoxFor(x => x.Aumento, new { @class = "form-control", @id = "aumento", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly", @type = "text" })
                     </div>
                     <div class="col-lg-4">
                         <label>Total de Descuento:</label>
-                        @Html.TextBoxFor(x => x.Descuento, new { @class = "form-control", @id = "descuento", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly" })
+                        @Html.TextBoxFor(x => x.Descuento, new { @class = "form-control", @id = "descuento", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly", @type = "text" })
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-lg-4">
                         <label>Salario Final Semanal:</label>
-                        @Html.TextBoxFor(x => x.SalarioFinal, new { @class = "form-control", @id = "salarioFinal", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly" })
+                        @Html.TextBoxFor(x => x.SalarioFinal, new { @class = "form-control", @id = "salarioFinal", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly", @type = "text" })
                     </div> 
                 </div>
 
@@ -255,13 +255,129 @@
         // Calcular salario final
         var salarioFinal = salarioSemanal + totalAumento - descuentoFinal;
 
-        // Actualizar los inputs
-        $('#aumento').val(totalAumento.toFixed(2));
-        $('#descuento').val(descuentoFinal.toFixed(2));
-        $('#salarioFinal').val(salarioFinal.toFixed(2));
+        // Función para formatear como moneda MXN (dentro de la función principal)
+        function formatCurrency(value) {
+            if (value === '' || value === null || value === undefined) return '';
 
-        // Formatear visualmente
-        formatearMonedaVisual();
+            let num = parseFloat(value);
+            if (isNaN(num)) return value;
+
+            return num.toLocaleString('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        // Función para quitar formato de moneda (dentro de la función principal)
+        function unformatCurrency(value) {
+            if (!value) return '';
+            return value.toString().replace(/[^\d.-]/g, '');
+        }
+
+        // Actualizar los inputs con formato MXN inmediatamente
+        $('#aumento').val(formatCurrency(totalAumento));
+        $('#descuento').val(formatCurrency(descuentoFinal));
+        $('#salarioFinal').val(formatCurrency(salarioFinal));
+
+        // Configurar eventos para salarioSemanal (si es editable)
+        $('#salarioSemanal').off('input blur focus').on('input', function () {
+            // Permitir números y un punto decimal
+            let input = $(this).val();
+
+            // Remover todo excepto números y un punto decimal
+            let value = input.replace(/[^0-9.]/g, '');
+
+            // Permitir solo un punto decimal
+            let parts = value.split('.');
+            if (parts.length > 2) {
+                value = parts[0] + '.' + parts.slice(1).join('');
+            }
+
+            // Limitar a 2 decimales
+            if (parts.length > 1 && parts[1].length > 2) {
+                value = parts[0] + '.' + parts[1].substring(0, 2);
+            }
+
+            $(this).val(value);
+
+            // Recalcular automáticamente si se modifica
+            setTimeout(function () {
+                calcularSumatoriasYSalario();
+            }, 100);
+        }).on('blur', function () {
+            let value = $(this).val();
+            if (value && value.trim() !== '') {
+                let num = parseFloat(value);
+                if (!isNaN(num)) {
+                    $(this).val(formatCurrency(num));
+                }
+            }
+        }).on('focus', function () {
+            let value = unformatCurrency($(this).val());
+            $(this).val(value);
+        });
+
+        // Hacer que los campos de resultado sean de solo lectura
+        $('#aumento, #descuento, #salarioFinal').prop('readonly', true);
+
+        // Configurar eventos de formato para campos de resultados
+        $('#aumento').off('blur focus').on('blur', function () {
+            let value = $(this).val();
+            if (value && value.trim() !== '') {
+                let num = parseFloat(unformatCurrency(value));
+                if (!isNaN(num)) {
+                    $(this).val(formatCurrency(num));
+                }
+            }
+        }).on('focus', function () {
+            let value = unformatCurrency($(this).val());
+            $(this).val(value);
+        });
+
+        $('#descuento').off('blur focus').on('blur', function () {
+            let value = $(this).val();
+            if (value && value.trim() !== '') {
+                let num = parseFloat(unformatCurrency(value));
+                if (!isNaN(num)) {
+                    $(this).val(formatCurrency(num));
+                }
+            }
+        }).on('focus', function () {
+            let value = unformatCurrency($(this).val());
+            $(this).val(value);
+        });
+
+        $('#salarioFinal').off('blur focus').on('blur', function () {
+            let value = $(this).val();
+            if (value && value.trim() !== '') {
+                let num = parseFloat(unformatCurrency(value));
+                if (!isNaN(num)) {
+                    $(this).val(formatCurrency(num));
+                }
+            }
+        }).on('focus', function () {
+            let value = unformatCurrency($(this).val());
+            $(this).val(value);
+        });
+
+        // Para enviar al servidor - quitar formato antes de enviar
+        $('form').off('submit').on('submit', function () {
+            $('#aumento').val(unformatCurrency($('#aumento').val()));
+            $('#descuento').val(unformatCurrency($('#descuento').val()));
+            $('#salarioFinal').val(unformatCurrency($('#salarioFinal').val()));
+            $('#salarioSemanal').val(unformatCurrency($('#salarioSemanal').val()));
+        });
+
+        // También formatear salarioSemanal si tiene valor
+        var salarioSemanalFormatted = $('#salarioSemanal').val();
+        if (salarioSemanalFormatted && salarioSemanalFormatted.trim() !== '') {
+            var salarioNum = parseFloat(unformatCurrency(salarioSemanalFormatted));
+            if (!isNaN(salarioNum)) {
+                $('#salarioSemanal').val(formatCurrency(salarioNum));
+            }
+        }
     }
 
     // Función para formatear visualmente como moneda
@@ -480,9 +596,9 @@
             FechaFinal: $("#fechaFinalRazor").val(),
             DiaNomina: $("#diaNominaHidden").val() || "5",
             SalarioSemanal: parseFloat(limpiarFormatoMoneda($("#salarioSemanal").val())) || 0,
-            Aumento: parseFloat(limpiarFormatoMoneda($("#aumento").val())) || 0,
-            Descuento: parseFloat(limpiarFormatoMoneda($("#descuento").val())) || 0,
-            SalarioFinal: parseFloat(limpiarFormatoMoneda($("#salarioFinal").val())) || 0,
+            Aumento: parseFloat(limpiarFormatoMoneda($("#aumento").val().replace(/[^\d.]/g, ''))) || 0,
+            Descuento: parseFloat(limpiarFormatoMoneda($("#descuento").val().replace(/[^\d.]/g, ''))) || 0,
+            SalarioFinal: parseFloat(limpiarFormatoMoneda($("#salarioFinal").val().replace(/[^\d.]/g, ''))) || 0,
             Estatus: true,
             CreatedBy: $("#createdBy").val(),
             CreatedDt: $("#createdDt").val(),
