@@ -37,11 +37,8 @@
                     <div class="col-lg-4">
                         <label for="txtPrecioActivo">Precio Menudeo:</label>
                         <div class="row">
-                            <div class="col-lg-2">
-                                <label>$</label>
-                            </div>
-                            <div class="col-lg-10">
-                                @Html.TextBoxFor(x => x.PrecioMenudeo, new { @class = "form-control", @type = "number", @min = "0", @step = "any", oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
+                            <div class="col-lg-12">
+                                @Html.TextBoxFor(x => x.PrecioMenudeo, new { @class = "form-control", @type = "text", @step = "any", oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @id = "precioMenudeotxt" })
                             </div>
                         </div>
                     </div>
@@ -52,11 +49,8 @@
                     <div class="col-lg-4">
                         <label for="txtPrecioActivo">Precio Mayoreo:</label>
                         <div class="row">
-                            <div class="col-lg-2">
-                                <label>$</label>
-                            </div>
-                            <div class="col-lg-10">
-                                @Html.TextBoxFor(x => x.PrecioMayoreo, new { @class = "form-control", @type = "number", @min = "0", @step = "any", oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
+                            <div class="col-lg-12">
+                                @Html.TextBoxFor(x => x.PrecioMayoreo, new { @class = "form-control", @type = "text", @step = "any", oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @id = "precioMayoreotxt" })
                             </div>
                         </div>
                     </div>

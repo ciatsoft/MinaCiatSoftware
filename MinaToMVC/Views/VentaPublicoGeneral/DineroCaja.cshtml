@@ -7,22 +7,25 @@
 }
 <link href="@Url.Content("~/Assets/css/EstilosBtnCambios/EstiloBtn.css")" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<script src="~/Scripts/sweetalert.min.js"></script>
 
-@using (Html.BeginForm("SaveOrUpdatePV_CorteCaja", "VentaPublicoGeneral", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmPrecioMaterial", @id = "frmPrecioMaterial" }))
-{
-    @Html.HiddenFor(x => x.Estatus)
-    @Html.TextBox("CreatedDt", DateTime.Now.ToString("yyyy-MM-ddTHH:mm"), new { @class = "form-control", type = "datetime-local", style = "display:none;" })
-    @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy" })
-    @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy" })
-    @Html.TextBox("UpdatedDt", DateTime.Now.ToString("yyyy-MM-ddTHH:mm"), new { @class = "form-control", type = "datetime-local", style = "display:none;" })
-    //Usuario Autenticado
-    @Html.DropDownListFor(x => x.Usuario.Id, (IEnumerable<SelectListItem>)ViewBag.Usuarios, new { @class = "form-control", id = "usuarioDrop", style = "display:none;" })
-    @Html.HiddenFor(x => x.UsuarioName, new { id = "usuarioName" })
-    @Html.Hidden("idcortecaja", "0", new { id = "txtidcortecaja", @class = "form-control" })
+<div class="content">
+    @using (Html.BeginForm("SaveOrUpdatePV_CorteCaja", "VentaPublicoGeneral", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmPrecioMaterial", @id = "frmPrecioMaterial" }))
+    {
+        @Html.HiddenFor(x => x.Estatus)
+        @Html.TextBox("CreatedDt", DateTime.Now.ToString("yyyy-MM-ddTHH:mm"), new { @class = "form-control", type = "datetime-local", style = "display:none;" })
+        @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy" })
+        @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy" })
+        @Html.TextBox("UpdatedDt", DateTime.Now.ToString("yyyy-MM-ddTHH:mm"), new { @class = "form-control", type = "datetime-local", style = "display:none;" })
+        //Usuario Autenticado
+        @Html.DropDownListFor(x => x.Usuario.Id, (IEnumerable<SelectListItem>)ViewBag.Usuarios, new { @class = "form-control", id = "usuarioDrop", style = "display:none;" })
+        @Html.HiddenFor(x => x.UsuarioName, new { id = "usuarioName" })
+        @Html.Hidden("idcortecaja", "0", new { id = "txtidcortecaja", @class = "form-control" })
 
-    <div class="content">
+
         <br>
         <center><h1>Dinero en Caja</h1></center>
+        @Html.HiddenFor(x => x.Id, new { @class = "form-control", @Value = "0", @id = "idtxt" })
         <div class="tabla-consultas-roll">
             <div class="rectangulos" style="width: 100%;">
                 <div class="row">
@@ -31,94 +34,98 @@
                         @Html.TextBox("Fecha", DateTime.Now.ToString("yyyy-MM-dd"), new { @class = "form-control", type = "date", @readonly = "readonly" })
                     </div>
                     <div class="col-lg-3">
-                        <label>Venta de Vales:</label>
-                        @Html.DropDownListFor(x => x.VentaVale, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control" })
+                        <label>Cantidad de Venta por Vales:</label>
+                        @Html.DropDownListFor(x => x.VentaVale, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control", required = "required" })
                     </div>
                     <div class="col-lg-3">
-                        <label>Venta por Transferencia:</label>
-                        @Html.DropDownListFor(x => x.VentaTransferencia, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control" })
+                        <label>Cantidad de Venta por Transferencia:</label>
+                        @Html.DropDownListFor(x => x.VentaTransferencia, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control", required = "required" })
                     </div>
                     <div class="col-lg-3">
-                        <label>Venta en Efectivo:</label>
-                        @Html.DropDownListFor(x => x.VentaEfectivo, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control" })
+                        <label>Cantidad de Venta en Efectivo:</label>
+                        @Html.DropDownListFor(x => x.VentaEfectivo, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control", required = "required" })
                     </div>
                     <div class="col-lg-3">
                         <label>Ingreso:</label>
-                        @Html.TextBoxFor(x => x.Ingreso, new { @class = "form-control" })
+                        @Html.TextBoxFor(x => x.Ingreso, new { @class = "form-control", @id = "ingresotxt", required = "required" })
                     </div>
                     <div class="col-lg-3">
                         <label>Egreso:</label>
-                        @Html.TextBoxFor(x => x.Egreso, new { @class = "form-control" })
+                        @Html.TextBoxFor(x => x.Egreso, new { @class = "form-control", @id = "egresotxt", required = "required" })
                     </div>
                     <div class="col-lg-3">
                         <label>Total Unidad:</label>
-                        @Html.TextBoxFor(x => x.TotalUtilidad, new { @class = "form-control" })
+                        @Html.TextBoxFor(x => x.TotalUtilidad, new { @class = "form-control", @id = "totalUtilidadtxt", required = "required" })
                     </div>
                     <div class="col-lg-3">
                         <label>Comentario:</label>
-                        @Html.TextBoxFor(x => x.Comentarios, new { @class = "form-control" })
+                        @Html.TextBoxFor(x => x.Comentarios, new { @class = "form-control", required = "required" })
                     </div>
                     <div class="col-lg-3">
                         <label>MontoTotal:</label>
-                        @Html.TextBoxFor(x => x.MontoTotal, new { @class = "form-control" })
+                        @Html.TextBoxFor(x => x.MontoTotal, new { @class = "form-control", @id = "montoTotaltxt", required = "required" })
                     </div>
                     <div class="col-lg-3">
                         <label>BILLETES DE 1000:</label>
-                        @Html.DropDownListFor(x => x.B1000, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control" })
+                        @Html.DropDownListFor(x => x.B1000, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control", required = "required" })
                     </div>
                     <div class="col-lg-3">
                         <label>BILLETES DE 500:</label>
-                        @Html.DropDownListFor(x => x.B500, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control" })
+                        @Html.DropDownListFor(x => x.B500, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control", required = "required" })
                     </div>
                     <div class="col-lg-3">
                         <label>BILLETES DE 200:</label>
-                        @Html.DropDownListFor(x => x.B200, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control" })
+                        @Html.DropDownListFor(x => x.B200, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control", required = "required" })
                     </div>
                     <div class="col-lg-3">
                         <label>BILLETES DE 100:</label>
-                        @Html.DropDownListFor(x => x.B100, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control" })
+                        @Html.DropDownListFor(x => x.B100, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control", required = "required" })
                     </div>
                     <div class="col-lg-3">
                         <label>BILLETES DE 50:</label>
-                        @Html.DropDownListFor(x => x.B50, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control" })
+                        @Html.DropDownListFor(x => x.B50, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control", required = "required" })
                     </div>
                     <div class="col-lg-3">
                         <label>BILLETES DE 20:</label>
-                        @Html.DropDownListFor(x => x.B20, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control" })
+                        @Html.DropDownListFor(x => x.B20, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control", required = "required" })
                     </div>
                     <div class="col-lg-3">
                         <label>MONEDAS DE 10:</label>
-                        @Html.DropDownListFor(x => x.M10, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control" })
+                        @Html.DropDownListFor(x => x.M10, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control", required = "required" })
                     </div>
                     <div class="col-lg-3">
                         <label>MONEDAS DE 5:</label>
-                        @Html.DropDownListFor(x => x.M5, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control" })
+                        @Html.DropDownListFor(x => x.M5, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control", required = "required" })
                     </div>
                     <div class="col-lg-3">
                         <label>MONEDAS DE 2:</label>
-                        @Html.DropDownListFor(x => x.M2, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control" })
+                        @Html.DropDownListFor(x => x.M2, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control", required = "required" })
                     </div>
                     <div class="col-lg-3">
                         <label>MONEDAS DE 1:</label>
-                        @Html.DropDownListFor(x => x.M1, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control" })
+                        @Html.DropDownListFor(x => x.M1, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control", required = "required" })
                     </div>
                     <div class="col-lg-3">
                         <label>MONEDAS DE 50C:</label>
-                        @Html.DropDownListFor(x => x.M050, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control" })
+                        @Html.DropDownListFor(x => x.M050, (IEnumerable<SelectListItem>)ViewBag.Rango1a50, "Selecciona", new { @class = "form-control", required = "required" })
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
                         <input type="submit" value="Guardar" onclick="" class="btn btn-success" />
-                        <a href="/VentaPublicoGeneral/CorteCaja" class="btn btn-custom-cancel">Cancelar</a>
-                        <input type="button" value="Eliminar" id="btnEliminar" class="btn btn-danger" disabled onclick="" />
+                        <input type="button" value="Eliminar" id="btnEliminar" class="btn btn-custom-cancel btnEliminar" disabled onclick="" />
                     </div>
                 </div>
             </div>
         </div>
-        <br />
-        <table id="tblDineroCaja" class="table table-bordered table-striped" style="width: 100%;"></table>
+    }
+    <div class="row">
+        <div class="col-md-12">
+            <a href="/VentaPublicoGeneral/DineroCaja" class="btn btn-custom-cancel">Cancelar</a>
+        </div>
     </div>
-}
+    <br />
+    <table id="tblDineroCaja" class="table table-bordered table-striped" style="width: 100%;"></table>
+</div>
 
 <script src="@(Url.StaticFile("Scripts/VentaPublicoGeneral/CorteCaja.js"))"></script>
