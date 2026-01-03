@@ -259,5 +259,77 @@ namespace Catalogs.Proxy
             return list;
         }
         #endregion
+
+        #region RolPermission
+        public static List<RolPermission> MappAllRolPermission(DataTable dto)
+        {
+            // Si dto es null lanzamos excepción indicando que no fue posible obtener valores
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto), "No fue posible obtener valores desde el DataTable.");
+
+            var list = new List<RolPermission>();
+
+            // Si no tiene filas regresamos lista vacía
+            if (dto.Rows.Count == 0)
+                return list;
+
+            foreach (DataRow row in dto.Rows)
+            {
+                // Obtener valores de forma segura (si la columna no existe o es DBNull, usar valores por defecto)
+                long id = 0;
+                if (dto.Columns.Contains("Id") && row["Id"] != DBNull.Value)
+                {
+                    try { id = Convert.ToInt64(row["Id"]); } catch { id = 0; }
+                }
+
+                long idRol = 0;
+                if (dto.Columns.Contains("IdRol") && row["IdRol"] != DBNull.Value)
+                {
+                    try { idRol = Convert.ToInt64(row["IdRol"]); } catch { idRol = 0; }
+                }
+
+                long permisoId = 0;
+                if (dto.Columns.Contains("PermisoId") && row["PermisoId"] != DBNull.Value)
+                {
+                    try { permisoId = Convert.ToInt64(row["PermisoId"]); } catch { permisoId = 0; }
+                }
+
+                string menuType = dto.Columns.Contains("TipoMenu") && row["TipoMenu"] != DBNull.Value
+                    ? row["TipoMenu"].ToString()
+                    : string.Empty;
+
+                string name = dto.Columns.Contains("Nombre") && row["Nombre"] != DBNull.Value
+                    ? row["Nombre"].ToString()
+                    : string.Empty;
+
+                bool estatus = dto.Columns.Contains("Estatus") && row["Estatus"] != DBNull.Value
+                    ? Convert.ToBoolean(row["Estatus"])
+                    : false;
+
+                string createdBy = dto.Columns.Contains("CreatedBy") && row["CreatedBy"] != DBNull.Value
+                    ? row["CreatedBy"].ToString()
+                    : string.Empty;
+
+                DateTime createdDt = dto.Columns.Contains("CreatedDt") && row["CreatedDt"] != DBNull.Value
+                    ? Convert.ToDateTime(row["CreatedDt"])
+                    : DateTime.MinValue;
+
+                string updatedBy = dto.Columns.Contains("UpdatedBy") && row["UpdatedBy"] != DBNull.Value
+                    ? row["UpdatedBy"].ToString()
+                    : string.Empty;
+
+                DateTime updatedDt = dto.Columns.Contains("UpdatedDt") && row["UpdatedDt"] != DBNull.Value
+                    ? Convert.ToDateTime(row["UpdatedDt"])
+                    : DateTime.MinValue;
+
+                // Crear nuevo RolPermission por cada fila usando el método estático Create
+                var item = RolPermission.Create(id, idRol, permisoId, menuType, name, createdBy, createdDt, updatedBy, updatedDt);
+                if (item != null)
+                    list.Add(item);
+            }
+
+            return list;
+        }
+        #endregion
     }
 }

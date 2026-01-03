@@ -92,4 +92,25 @@ namespace Catalogs.Messages
     }
     #endregion
 
+    #region RolPermission
+    public class RolPermissionListResponse
+    {
+        public List<RolPermission> RolPermissions { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class RolPermissionResponse
+    {
+        public RolPermission RolPermission { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class SaveOrUpdateRolPermissionResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    public class DeleteRolPermissionResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    #endregion
+
 }

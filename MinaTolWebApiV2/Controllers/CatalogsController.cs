@@ -316,5 +316,83 @@ namespace MinaTolWebApiV2.Controllers
             return response;
         }
         #endregion
+
+        #region RolPermission
+        /// <summary>
+        /// Método que regresa un listado de areas de trabajo
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetAllRolPermission")]
+        public RolPermissionListResponse GetAllRolPermission()
+        {
+            var response = new RolPermissionListResponse();
+            List<RolPermission> list = _catalogApp.GetAllRolPermission(out OperationResult result);
+            response.RolPermissions = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que regresa un area de trabajo por Id
+        /// </summary>
+        /// <param name="id">Identificador del area de trabajo</param>
+        /// <returns></returns>
+        [HttpPost("GetRolPermissionById")]
+        public RolPermissionResponse GetRolPermissionById(long id)
+        {
+            var response = new RolPermissionResponse();
+            RolPermission list = _catalogApp.GetRolPermissionById(id, out OperationResult result);
+            response.RolPermission = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que guarda o actualiza un area de trabajo
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="desciption"></param>
+        /// <param name="estatus"></param>
+        /// <param name="createdBy"></param>
+        /// <param name="createdDt"></param>
+        /// <param name="updatedBy"></param>
+        /// <param name="updatedDt"></param>
+        /// <returns></returns>
+        [HttpPost("SaveOrUpdateRolPermission")]
+        public SaveOrUpdateRolPermissionResponse SaveOrUpdateRolPermission([FromBody] RolPermission obj)
+        {
+            _catalogApp.SaveOrUpdateRolPermission(obj.Id, obj.IdRol, obj.permisoId, obj.Estatus, obj.CreatedBy, obj.CreatedDt, obj.UpdatedBy, obj.UpdatedDt, out OperationResult result);
+
+            var response = new SaveOrUpdateRolPermissionResponse()
+            {
+                Result = result
+            };
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que elimina logicamente el area de trabajo
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="desciption"></param>
+        /// <returns></returns>
+        [HttpDelete("DeleteRolPermission")]
+        public DeleteRolPermissionResponse DeleteRolPermission(int id, int idRol)
+        {
+            _catalogApp.DeleteRolPermission(id, idRol, out OperationResult result);
+
+            var response = new DeleteRolPermissionResponse()
+            {
+                Result = result
+            };
+
+            return response;
+        }
+        #endregion
     }
 }

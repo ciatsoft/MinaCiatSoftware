@@ -36,7 +36,13 @@ namespace Catalogs.Application
         public TypeExpense GetTypeExpenseById(long id, out OperationResult result);
         public void SaveOrUpdateTypeExpense(long id, string name, string description, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, out OperationResult result);
         public void DeleteTypeExpense(int id, out OperationResult result);
+        #endregion
 
+        #region RolPermission
+        public List<RolPermission> GetAllRolPermission(out OperationResult result);
+        public RolPermission GetRolPermissionById(long id, out OperationResult result);
+        public void SaveOrUpdateRolPermission(long id, long idRol, long permisoId, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, out OperationResult result);
+        public void DeleteRolPermission(int id, int idRol, out OperationResult result);
         #endregion
     }
 }

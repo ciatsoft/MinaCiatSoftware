@@ -35,7 +35,14 @@ namespace Catalogs.Proxy
         DataTable GetAllTypeExpense();
         DataTable GetTypeExpenseById(long id);
         int SaveOrUpdateTypeExpense(long id, string name, string description, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt);
-        int DeleteTypeExpense(long id); 
+        int DeleteTypeExpense(long id);
+        #endregion
+
+        #region RolPermission
+        DataTable GetAllRolPermission();
+        DataTable GetRolPermissionById(long id);
+        int SaveOrUpdateRolPermission(long id, long idRol, long permisoId, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt);
+        int DeleteRolPermission(long id, long idRol);
         #endregion
     }
 }

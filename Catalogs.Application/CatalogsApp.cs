@@ -376,7 +376,6 @@ namespace Catalogs.Application
 
             return response;
         }
-
         public TypeExpense GetTypeExpenseById(long id, out OperationResult result)
         {
             result = new() { Successful = true };
@@ -443,6 +442,107 @@ namespace Catalogs.Application
                     throw new ArgumentException("El argumento debe ser un número positivo mayor a cero.", nameof(id));
 
                 _catalogsProxy.DeleteTypeExpense(id);
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                {
+                    result.SystemMessages = new List<SystemMessage>();
+                }
+                result.SystemMessages.Add(new SystemMessage() { Message = "No es posible realizar el eliminado de los datos." });
+            }
+        }
+        #endregion
+
+        #region RolPermission
+        public List<RolPermission> GetAllRolPermission(out OperationResult result)
+        {
+            result = new() { Successful = true, SystemMessages = new List<SystemMessage>() };
+            List<RolPermission> response = new List<RolPermission>();
+            try
+            {
+                DataTable responseDT = _catalogsProxy.GetAllRolPermission();
+                response = CatalogsMapp.MappAllRolPermission(responseDT) ?? new List<RolPermission>();
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                    result.SystemMessages = new List<SystemMessage>();
+
+                result.SystemMessages.Add(new SystemMessage() { Message = "Ocurrio un error al obtener las soruces y fondos del participante." });
+            }
+
+            return response;
+        }
+
+        public RolPermission GetRolPermissionById(long id, out OperationResult result)
+        {
+            result = new() { Successful = true };
+            RolPermission response = null;
+
+            try
+            {
+                if (id <= 0) { throw new ArgumentException("El argumento debe ser mayor a cero.", nameof(id)); }
+
+                DataTable responseDt = _catalogsProxy.GetRolPermissionById(id);
+                response = CatalogsMapp.MappAllRolPermission(responseDt).First();
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                    result.SystemMessages = new List<SystemMessage>();
+
+                result.SystemMessages.Add(new SystemMessage() { Message = "Ocurrio un error al obtener las soruces y fondos del participante." });
+            }
+
+            return response;
+        }
+
+        public void SaveOrUpdateRolPermission(long id, long idRol, long permisoId, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, out OperationResult result)
+        {
+            result = new() { Successful = true };
+
+            try
+            {
+                if (id < 0) { throw new ArgumentException("El argumento no debe ser menor a 0.", nameof(id)); }
+                if (idRol < 0) { throw new ArgumentException("El argumento no debe ser menor a 0 para un Rol.", nameof(idRol)); }
+                if (permisoId < 0) { throw new ArgumentException("El argumento no debe ser menor a 0 para un Permiso.", nameof(permisoId)); }
+                if (estatus == false) { throw new ArgumentException("El argumento no debe ser inactivo.", nameof(estatus)); }
+                if (string.IsNullOrEmpty(createdBy)) { throw new ArgumentException("El autor del registro no puede ser nulo.", nameof(createdBy)); }
+                if (createdBy?.Length > 80) { throw new ArgumentException("El argumento no debe ser mayor a 80 caracteres ni vacio.", nameof(createdBy)); }
+                if (createdDt == DateTime.MinValue) { throw new ArgumentException("El argumento no puede ser vacio.", nameof(createdDt)); }
+                if (string.IsNullOrEmpty(updatedBy)) { throw new ArgumentException("El autor del registro no puede ser nulo.", nameof(updatedBy)); }
+                if (updatedBy?.Length > 80) { throw new ArgumentException("El argumento no debe ser mayor a 80 caracteres ni vacio.", nameof(updatedBy)); }
+                if (updatedDt == DateTime.MinValue) { throw new ArgumentException("El argumento no puede ser vacio.", nameof(createdDt)); }
+
+
+                _catalogsProxy.SaveOrUpdateRolPermission(id, idRol, permisoId, estatus, createdBy, createdDt, updatedBy, updatedDt);
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                {
+                    result.SystemMessages = new List<SystemMessage>();
+                }
+                result.SystemMessages.Add(new SystemMessage() { Message = ex.Message });
+            }
+        }
+
+        public void DeleteRolPermission(int id, int idRol, out OperationResult result)
+        {
+            result = new() { Successful = true };
+
+            try
+            {
+                // Validaciones estrictas para eliminación
+                if (id <= 0 || idRol <= 0)
+                    throw new ArgumentException("El argumento debe ser un número positivo mayor a cero.", nameof(id));
+
+                _catalogsProxy.DeleteRolPermission(id, idRol);
             }
             catch (Exception ex)
             {

@@ -208,5 +208,51 @@ namespace Catalogs.Proxy
             return Convert.ToInt32(result);
         }
         #endregion
+
+        #region RolPermission
+        public DataTable GetAllRolPermission()
+        {
+            DataTable result = GetObject("GetAllTipoGastos", CommandType.StoredProcedure);
+            return result;
+        }
+        public DataTable GetRolPermissionById(long id)
+        {
+            var parameter = new[]
+            {
+                new SqlParameter("@Id", id),
+            };
+
+            DataTable result = GetObject("GetPermisosByIdRol", CommandType.StoredProcedure, parameter);
+            return result;
+        }
+        public int SaveOrUpdateRolPermission(long id, long idRol, long permisoId,bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt)
+        {
+            var parameters = new[]
+            {
+                new SqlParameter("@Id", id),
+                new SqlParameter("@IdRol", idRol),
+                new SqlParameter("@PermisoId", permisoId),
+                new SqlParameter("@Estatus", estatus),
+                new SqlParameter("@CreatedBy", createdBy),
+                new SqlParameter("@CreatedDt", createdDt),
+                new SqlParameter("@UpdatedBy", createdBy),
+                new SqlParameter("@UpdatedDt", createdDt)
+            };
+
+            var result = ExecuteScalar("SaveOrUpdatePermisosRol", CommandType.StoredProcedure, parameters);
+            return Convert.ToInt32(result);
+        }
+        public int DeleteRolPermission(long id, long idRol)
+        {
+            var parameter = new[]
+            {
+                new SqlParameter("@Id", id),
+                new SqlParameter("@IdRol", idRol)
+            };
+
+            var result = ExecuteScalar("DeletePermiso", CommandType.StoredProcedure, parameter);
+            return Convert.ToInt32(result);
+        }
+        #endregion
     }
 }
