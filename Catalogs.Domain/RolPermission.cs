@@ -18,7 +18,7 @@ namespace Catalogs.Domain
         [JsonPropertyName("IdRol")]
         public long IdRol => _idRol;
         [JsonPropertyName("PermisoId")]
-        public long permisoId => _permisoId;
+        public long PermisoId => _permisoId;
         [JsonPropertyName("TipoMenu")]
         public string MenuType => _menuType;
         [JsonPropertyName("Nombre")]
@@ -37,16 +37,14 @@ namespace Catalogs.Domain
             UpdatedDt = updatedDt;
         }
 
-        // Constructor para JSON
         [JsonConstructor]
-        public RolPermission(long id, long idRol, long permisoId, string nombre, string tipoMenu, bool estatus,
-                          string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt)
+        public RolPermission(long id, long idRol, long permisoId, string menuType, string name, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt)
         {
             Id = id;
             _idRol = idRol;
             _permisoId = permisoId;
-            _menuType = tipoMenu;
-            _name = nombre;
+            _menuType = menuType;
+            _name = name;
             Estatus = estatus;
             CreatedBy = createdBy;
             CreatedDt = createdDt;

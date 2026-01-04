@@ -353,8 +353,8 @@ namespace MinaTolWebApiV2.Controllers
         /// Método que guarda o actualiza un area de trabajo
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="name"></param>
-        /// <param name="desciption"></param>
+        /// <param name="idrol"></param>
+        /// <param name="permisoid"></param>
         /// <param name="estatus"></param>
         /// <param name="createdBy"></param>
         /// <param name="createdDt"></param>
@@ -364,7 +364,7 @@ namespace MinaTolWebApiV2.Controllers
         [HttpPost("SaveOrUpdateRolPermission")]
         public SaveOrUpdateRolPermissionResponse SaveOrUpdateRolPermission([FromBody] RolPermission obj)
         {
-            _catalogApp.SaveOrUpdateRolPermission(obj.Id, obj.IdRol, obj.permisoId, obj.Estatus, obj.CreatedBy, obj.CreatedDt, obj.UpdatedBy, obj.UpdatedDt, out OperationResult result);
+            _catalogApp.SaveOrUpdateRolPermission(obj.Id, obj.IdRol, obj.PermisoId, obj.Estatus, obj.CreatedBy, obj.CreatedDt, obj.UpdatedBy, obj.UpdatedDt, out OperationResult result);
 
             var response = new SaveOrUpdateRolPermissionResponse()
             {

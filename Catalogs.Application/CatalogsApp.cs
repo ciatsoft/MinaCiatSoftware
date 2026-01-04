@@ -508,8 +508,8 @@ namespace Catalogs.Application
             try
             {
                 if (id < 0) { throw new ArgumentException("El argumento no debe ser menor a 0.", nameof(id)); }
-                if (idRol < 0) { throw new ArgumentException("El argumento no debe ser menor a 0 para un Rol.", nameof(idRol)); }
-                if (permisoId < 0) { throw new ArgumentException("El argumento no debe ser menor a 0 para un Permiso.", nameof(permisoId)); }
+                if (idRol <= 0) { throw new ArgumentException("El argumento no debe ser menor a 0 para un Rol.", nameof(idRol)); }
+                if (permisoId <= 0) { throw new ArgumentException("El argumento no debe ser menor a 0 para un Permiso.", nameof(permisoId)); }
                 if (estatus == false) { throw new ArgumentException("El argumento no debe ser inactivo.", nameof(estatus)); }
                 if (string.IsNullOrEmpty(createdBy)) { throw new ArgumentException("El autor del registro no puede ser nulo.", nameof(createdBy)); }
                 if (createdBy?.Length > 80) { throw new ArgumentException("El argumento no debe ser mayor a 80 caracteres ni vacio.", nameof(createdBy)); }
