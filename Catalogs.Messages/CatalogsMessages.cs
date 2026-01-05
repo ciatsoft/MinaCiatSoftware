@@ -113,4 +113,25 @@ namespace Catalogs.Messages
     }
     #endregion
 
+    #region PaymentMethod
+    public class PaymentMethodListResponse
+    {
+        public List<PaymentMethod> PaymentMethod { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class PaymentMethodResponse
+    {
+        public List<PaymentMethod> PaymentMethod { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class SaveOrUpdatePaymentMethodResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    public class DeletePaymentMethodResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    #endregion
+
 }

@@ -44,5 +44,12 @@ namespace Catalogs.Application
         public void SaveOrUpdateRolPermission(long id, long idRol, long permisoId, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, out OperationResult result);
         public void DeleteRolPermission(int id, int idRol, out OperationResult result);
         #endregion
+
+        #region PaymentMethod
+        public List<PaymentMethod> GetAllPaymentMethod(out OperationResult result);
+        public List<PaymentMethod> GetPaymentMethodById(long id, out OperationResult result);
+        public void SaveOrUpdatePaymentMethod(long id, string name, string description, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, out OperationResult result);
+        public void DeletePaymentMethod(int id, out OperationResult result);
+        #endregion
     }
 }

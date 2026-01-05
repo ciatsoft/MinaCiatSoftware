@@ -44,5 +44,12 @@ namespace Catalogs.Proxy
         int SaveOrUpdateRolPermission(long id, long idRol, long permisoId, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt);
         int DeleteRolPermission(long id, long idRol);
         #endregion
+
+        #region PaymentMethod
+        DataTable GetAllPaymentMethod();
+        DataTable GetPaymentMethodById(long id);
+        int SaveOrUpdatePaymentMethod(long id, string name, string description, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt);
+        int DeletePaymentMethod(long id);
+        #endregion
     }
 }

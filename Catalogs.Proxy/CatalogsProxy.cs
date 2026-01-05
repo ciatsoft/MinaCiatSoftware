@@ -254,5 +254,50 @@ namespace Catalogs.Proxy
             return Convert.ToInt32(result);
         }
         #endregion
+
+        #region PaymentMethod
+        public DataTable GetAllPaymentMethod()
+        {
+            DataTable result = GetObject("GetAllMetodoPago", CommandType.StoredProcedure);
+            return result;
+        }
+        public DataTable GetPaymentMethodById(long id)
+        {
+            var parameter = new[]
+            {
+                new SqlParameter("@Id", id)
+            };
+
+            DataTable result = GetObject("GetMetodoPagoById", CommandType.StoredProcedure, parameter);
+            return result;
+        }
+        public int SaveOrUpdatePaymentMethod(long Id, string name, string description, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt)
+        {
+            var parameters = new[]
+            {
+                new SqlParameter("@Id", Id),
+                new SqlParameter("@Nombre", name),
+                new SqlParameter("@Descripcion", description),
+                new SqlParameter("@Estatus", estatus),
+                new SqlParameter("@CreatedBy", createdBy),
+                new SqlParameter("@CreatedDt", createdDt),
+                new SqlParameter("@UpdatedBy", createdBy),
+                new SqlParameter("@UpdatedDt", createdDt)
+            };
+
+            var result = ExecuteScalar("SaveOrUpdateMetodoPago", CommandType.StoredProcedure, parameters);
+            return Convert.ToInt32(result);
+        }
+        public int DeletePaymentMethod(long id)
+        {
+            var parameter = new[]
+            {
+                new SqlParameter("@Id", id)
+            };
+
+            var result = ExecuteScalar("DeleteMetodoPago", CommandType.StoredProcedure, parameter);
+            return Convert.ToInt32(result);
+        }
+        #endregion
     }
 }

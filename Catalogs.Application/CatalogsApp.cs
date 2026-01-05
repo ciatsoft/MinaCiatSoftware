@@ -10,6 +10,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Catalogs.Application
 {
@@ -147,7 +148,6 @@ namespace Catalogs.Application
 
             return response;
         }
-
         public List<LoansCatalog> GetLoansCatalogByIdWorkerDates(long id, DateTime dateStart, DateTime dateEnd, out OperationResult result)
         {
             result = new() { Successful = true };
@@ -192,7 +192,6 @@ namespace Catalogs.Application
 
             return response;
         }
-
         public void SaveOrUpdateLoansCatalog(long idLoansCatalog, long idWorker, string nameWorker, string name, string description, decimal monto, DateTime date, string userName, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, out OperationResult result)
         {
             result = new() { Successful = true };
@@ -552,6 +551,111 @@ namespace Catalogs.Application
                     result.SystemMessages = new List<SystemMessage>();
                 }
                 result.SystemMessages.Add(new SystemMessage() { Message = "No es posible realizar el eliminado de los datos." });
+            }
+        }
+        #endregion
+
+        #region PaymentMethod
+        public List<PaymentMethod> GetAllPaymentMethod(out OperationResult result)
+        {
+            result = new() { Successful = true, SystemMessages = new List<SystemMessage>() };
+            List<PaymentMethod> response = new List<PaymentMethod>();
+            try
+            {
+                DataTable responseDT = _catalogsProxy.GetAllPaymentMethod();
+                response = CatalogsMapp.MappAllPaymentMethod(responseDT) ?? new List<PaymentMethod>();
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                    result.SystemMessages = new List<SystemMessage>();
+
+                result.SystemMessages.Add(new SystemMessage() { Message = "Ocurrio un error al obtener las soruces y fondos del participante." });
+            }
+
+            return response;
+        }
+
+        public List<PaymentMethod> GetPaymentMethodById(long id, out OperationResult result)
+        {
+            result = new() { Successful = true };
+            List<PaymentMethod> response = new List<PaymentMethod>();
+
+            try
+            {
+                // Validación del ID
+                if (id <= 0)
+                {
+                    throw new ArgumentException("El ID del metodo de pago debe ser mayor a cero.", nameof(id));
+                }
+
+                DataTable responseDT = _catalogsProxy.GetPaymentMethodById(id);
+                response = CatalogsMapp.MappAllPaymentMethod(responseDT) ?? new List<PaymentMethod>();
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                    result.SystemMessages = new List<SystemMessage>();
+
+                result.SystemMessages.Add(new SystemMessage() { Message = ex.Message });
+            }
+
+            return response;
+        }
+
+        public void SaveOrUpdatePaymentMethod(long id, string name, string description, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, out OperationResult result)
+        {
+            result = new() { Successful = true };
+
+            try
+            {
+                if (id < 0) { throw new ArgumentException("El argumento no debe ser menor a 0.", nameof(id)); }
+                if (name?.Length > 50) { throw new ArgumentException("El argumento del nombre no puede ser vacio y mayo de 50 caracteres.", nameof(name)); }
+                if (description?.Length > 250) { throw new ArgumentException("El argumento de la descripcion no puede ser vacia o mayo de 250 caracteres.", nameof(description)); }
+                if (string.IsNullOrEmpty(createdBy)) { throw new ArgumentException("El autor del registro no puede ser nulo.", nameof(createdBy)); }
+                if (createdBy?.Length > 80) { throw new ArgumentException("El argumento no debe ser mayor a 80 caracteres ni vacio.", nameof(createdBy)); }
+                if (createdDt == DateTime.MinValue) { throw new ArgumentException("El argumento no puede ser vacio.", nameof(createdDt)); }
+                if (string.IsNullOrEmpty(updatedBy)) { throw new ArgumentException("El autor del registro no puede ser nulo.", nameof(updatedBy)); }
+                if (updatedBy?.Length > 80) { throw new ArgumentException("El argumento no debe ser mayor a 80 caracteres ni vacio.", nameof(updatedBy)); }
+                if (updatedDt == DateTime.MinValue) { throw new ArgumentException("El argumento no puede ser vacio.", nameof(createdDt)); }
+                if (estatus == false) { throw new ArgumentException("El argumento no debe ser inactivo.", nameof(estatus)); }
+
+
+                _catalogsProxy.SaveOrUpdatePaymentMethod(id, name, description, estatus, createdBy, createdDt, updatedBy, updatedDt);
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                {
+                    result.SystemMessages = new List<SystemMessage>();
+                }
+                result.SystemMessages.Add(new SystemMessage() { Message = ex.Message });
+            }
+        }
+
+        public void DeletePaymentMethod(int id, out OperationResult result)
+        {
+            result = new() { Successful = true };
+
+            try
+            {
+                // Validaciones estrictas para eliminación
+                if (id <= 0)
+                    throw new ArgumentException("El argumento debe ser un número positivo mayor a cero.", nameof(id));
+
+                _catalogsProxy.DeletePaymentMethod(id);
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                {
+                    result.SystemMessages = new List<SystemMessage>();
+                }
+                result.SystemMessages.Add(new SystemMessage() { Message = ex.Message });
             }
         }
         #endregion

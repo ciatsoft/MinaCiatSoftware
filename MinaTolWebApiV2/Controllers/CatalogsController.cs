@@ -394,5 +394,73 @@ namespace MinaTolWebApiV2.Controllers
             return response;
         }
         #endregion
+
+        #region PaymentMethod
+        /// <summary>
+        /// Método que regresa un listado de areas de trabajo
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetAllPaymentMethod")]
+        public PaymentMethodListResponse GetAllPaymentMethod()
+        {
+            var response = new PaymentMethodListResponse();
+            List<PaymentMethod> list = _catalogApp.GetAllPaymentMethod(out OperationResult result);
+            response.PaymentMethod = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que regresa un area de trabajo por Id
+        /// </summary>
+        /// <param name="id">Identificador del area de trabajo</param>
+        /// <returns></returns>
+        [HttpPost("GetPaymentMethodById")]
+        public PaymentMethodResponse GetPaymentMethodById(long id)
+        {
+            var response = new PaymentMethodResponse();
+            List<PaymentMethod> list = _catalogApp.GetPaymentMethodById(id, out OperationResult result);
+            response.PaymentMethod = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que guarda o actualiza un prestamo
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("SaveOrUpdatePaymentMethod")]
+        public SaveOrUpdatePaymentMethodResponse SaveOrUpdatePaymentMethod([FromBody] PaymentMethod obj)
+        {
+            _catalogApp.SaveOrUpdatePaymentMethod(obj.Id, obj.Name, obj.Description, obj.Estatus, obj.CreatedBy, obj.CreatedDt, obj.UpdatedBy, obj.UpdatedDt, out OperationResult result);
+
+            var response = new SaveOrUpdatePaymentMethodResponse()
+            {
+                Result = result
+            };
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que elimina logicamente el prestamo
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("DeletePaymentMethod")]
+        public DeletePaymentMethodResponse DeletePaymentMethod(int id)
+        {
+            _catalogApp.DeletePaymentMethod(id, out OperationResult result);
+
+            var response = new DeletePaymentMethodResponse()
+            {
+                Result = result
+            };
+
+            return response;
+        }
+        #endregion
     }
 }
