@@ -24,6 +24,13 @@ namespace Catalogs.Proxy
         int DeleteLoansCatalog(long id);
         #endregion
 
+        #region Location
+        DataTable GetAllLocation();
+        DataTable GetLocationById(long id);
+        int SaveOrUpdateLocation(long idLocation, string nameLocation, string description, bool isInternal, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt);
+        int DeleteLocation(long id);
+        #endregion
+
         #region Roll
         DataTable GetAllRoll();
         DataTable GetRollById(long id);
@@ -35,7 +42,21 @@ namespace Catalogs.Proxy
         DataTable GetAllTypeExpense();
         DataTable GetTypeExpenseById(long id);
         int SaveOrUpdateTypeExpense(long id, string name, string description, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt);
-        int DeleteTypeExpense(long id); 
+        int DeleteTypeExpense(long id);
+        #endregion
+
+        #region RolPermission
+        DataTable GetAllRolPermission();
+        DataTable GetRolPermissionById(long id);
+        int SaveOrUpdateRolPermission(long id, long idRol, long permisoId, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt);
+        int DeleteRolPermission(long id, long idRol);
+        #endregion
+
+        #region PaymentMethod
+        DataTable GetAllPaymentMethod();
+        DataTable GetPaymentMethodById(long id);
+        int SaveOrUpdatePaymentMethod(long id, string name, string description, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt);
+        int DeletePaymentMethod(long id);
         #endregion
     }
 }

@@ -161,6 +161,74 @@ namespace MinaTolWebApiV2.Controllers
         }
         #endregion
 
+        #region Location
+        /// <summary>
+        /// Método que regresa un listado de areas de trabajo
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetAllLocation")]
+        public LocationListResponse GetAllLocation()
+        {
+            var response = new LocationListResponse();
+            List<Location> list = _catalogApp.GetAllLocation(out OperationResult result);
+            response.Location = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que regresa un area de trabajo por Id
+        /// </summary>
+        /// <param name="id">Identificador del area de trabajo</param>
+        /// <returns></returns>
+        [HttpPost("GetLocationById")]
+        public LocationResponse GetLocationById(long id)
+        {
+            var response = new LocationResponse();
+            List<Location> list = _catalogApp.GetLocationById(id, out OperationResult result);
+            response.Location = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que guarda o actualiza un prestamo
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("SaveOrUpdateLocation")]
+        public SaveOrUpdateLocationResponse SaveOrUpdateLocation([FromBody] Location obj)
+        {
+            _catalogApp.SaveOrUpdateLocation(obj.Id, obj.NameLocation, obj.DescriptionLocation, obj.IsInternal, obj.Estatus, obj.CreatedBy, obj.CreatedDt, obj.UpdatedBy, obj.UpdatedDt, out OperationResult result);
+
+            var response = new SaveOrUpdateLocationResponse()
+            {
+                Result = result
+            };
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que elimina logicamente el prestamo
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("DeleteLocation")]
+        public DeleteLocationResponse DeleteLocation(int id)
+        {
+            _catalogApp.DeleteLocation(id, out OperationResult result);
+
+            var response = new DeleteLocationResponse()
+            {
+                Result = result
+            };
+
+            return response;
+        }
+        #endregion
+
         #region Roll
         /// <summary>
         /// Método que regresa un listado de roles
@@ -309,6 +377,152 @@ namespace MinaTolWebApiV2.Controllers
             _catalogApp.DeleteTypeExpense(id, out OperationResult result);
 
             var response = new DeleteTypeExpenseResponse()
+            {
+                Result = result
+            };
+
+            return response;
+        }
+        #endregion
+
+        #region RolPermission
+        /// <summary>
+        /// Método que regresa un listado de areas de trabajo
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetAllRolPermission")]
+        public RolPermissionListResponse GetAllRolPermission()
+        {
+            var response = new RolPermissionListResponse();
+            List<RolPermission> list = _catalogApp.GetAllRolPermission(out OperationResult result);
+            response.RolPermissions = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que regresa un area de trabajo por Id
+        /// </summary>
+        /// <param name="id">Identificador del area de trabajo</param>
+        /// <returns></returns>
+        [HttpPost("GetRolPermissionById")]
+        public RolPermissionResponse GetRolPermissionById(long id)
+        {
+            var response = new RolPermissionResponse();
+            RolPermission list = _catalogApp.GetRolPermissionById(id, out OperationResult result);
+            response.RolPermission = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que guarda o actualiza un area de trabajo
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="idrol"></param>
+        /// <param name="permisoid"></param>
+        /// <param name="estatus"></param>
+        /// <param name="createdBy"></param>
+        /// <param name="createdDt"></param>
+        /// <param name="updatedBy"></param>
+        /// <param name="updatedDt"></param>
+        /// <returns></returns>
+        [HttpPost("SaveOrUpdateRolPermission")]
+        public SaveOrUpdateRolPermissionResponse SaveOrUpdateRolPermission([FromBody] RolPermission obj)
+        {
+            _catalogApp.SaveOrUpdateRolPermission(obj.Id, obj.IdRol, obj.PermisoId, obj.Estatus, obj.CreatedBy, obj.CreatedDt, obj.UpdatedBy, obj.UpdatedDt, out OperationResult result);
+
+            var response = new SaveOrUpdateRolPermissionResponse()
+            {
+                Result = result
+            };
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que elimina logicamente el area de trabajo
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="desciption"></param>
+        /// <returns></returns>
+        [HttpDelete("DeleteRolPermission")]
+        public DeleteRolPermissionResponse DeleteRolPermission(int id, int idRol)
+        {
+            _catalogApp.DeleteRolPermission(id, idRol, out OperationResult result);
+
+            var response = new DeleteRolPermissionResponse()
+            {
+                Result = result
+            };
+
+            return response;
+        }
+        #endregion
+
+        #region PaymentMethod
+        /// <summary>
+        /// Método que regresa un listado de areas de trabajo
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetAllPaymentMethod")]
+        public PaymentMethodListResponse GetAllPaymentMethod()
+        {
+            var response = new PaymentMethodListResponse();
+            List<PaymentMethod> list = _catalogApp.GetAllPaymentMethod(out OperationResult result);
+            response.PaymentMethod = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que regresa un area de trabajo por Id
+        /// </summary>
+        /// <param name="id">Identificador del area de trabajo</param>
+        /// <returns></returns>
+        [HttpPost("GetPaymentMethodById")]
+        public PaymentMethodResponse GetPaymentMethodById(long id)
+        {
+            var response = new PaymentMethodResponse();
+            List<PaymentMethod> list = _catalogApp.GetPaymentMethodById(id, out OperationResult result);
+            response.PaymentMethod = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que guarda o actualiza un prestamo
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("SaveOrUpdatePaymentMethod")]
+        public SaveOrUpdatePaymentMethodResponse SaveOrUpdatePaymentMethod([FromBody] PaymentMethod obj)
+        {
+            _catalogApp.SaveOrUpdatePaymentMethod(obj.Id, obj.Name, obj.Description, obj.Estatus, obj.CreatedBy, obj.CreatedDt, obj.UpdatedBy, obj.UpdatedDt, out OperationResult result);
+
+            var response = new SaveOrUpdatePaymentMethodResponse()
+            {
+                Result = result
+            };
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que elimina logicamente el prestamo
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("DeletePaymentMethod")]
+        public DeletePaymentMethodResponse DeletePaymentMethod(int id)
+        {
+            _catalogApp.DeletePaymentMethod(id, out OperationResult result);
+
+            var response = new DeletePaymentMethodResponse()
             {
                 Result = result
             };

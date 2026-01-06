@@ -1,5 +1,7 @@
 ﻿using Catalogs.Application;
 using Catalogs.Proxy;
+using Branches.Application;
+using Branches.Proxy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,8 +18,15 @@ namespace MinaTolWebApiV2
 
         public void ConfigureServices(IServiceCollection services)
         {
+            #region Catalogs
             services.AddScoped<ICatalogsApp, CatalogsApp>();
             services.AddScoped<ICatalogsProxy, CatalogsProxy>();
+            #endregion
+
+            #region Branches
+            services.AddScoped<IBranchesApp, BranchesApp>();
+            services.AddScoped<IBranchesProxy, BranchesProxy>();
+            #endregion
 
             services.AddControllers();
 

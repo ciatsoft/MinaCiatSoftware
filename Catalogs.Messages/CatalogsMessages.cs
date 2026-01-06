@@ -50,6 +50,27 @@ namespace Catalogs.Messages
     }
     #endregion
 
+    #region Location
+    public class LocationListResponse
+    {
+        public List<Location> Location { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class LocationResponse
+    {
+        public List<Location> Location { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class SaveOrUpdateLocationResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    public class DeleteLocationResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    #endregion
+
     #region Roll
     public class RollListResponse
     {
@@ -87,6 +108,48 @@ namespace Catalogs.Messages
         public OperationResult Result { get; set; }
     }
     public class DeleteTypeExpenseResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    #endregion
+
+    #region RolPermission
+    public class RolPermissionListResponse
+    {
+        public List<RolPermission> RolPermissions { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class RolPermissionResponse
+    {
+        public RolPermission RolPermission { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class SaveOrUpdateRolPermissionResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    public class DeleteRolPermissionResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    #endregion
+
+    #region PaymentMethod
+    public class PaymentMethodListResponse
+    {
+        public List<PaymentMethod> PaymentMethod { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class PaymentMethodResponse
+    {
+        public List<PaymentMethod> PaymentMethod { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class SaveOrUpdatePaymentMethodResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    public class DeletePaymentMethodResponse
     {
         public OperationResult Result { get; set; }
     }
