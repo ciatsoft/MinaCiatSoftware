@@ -45,7 +45,6 @@ namespace Catalogs.Application
 
             return response;
         }
-
         public WorkAreaObj GetWorkAreaById(long id, out OperationResult result)
         {
             result = new() { Successful = true };
@@ -69,7 +68,6 @@ namespace Catalogs.Application
 
             return response;
         }
-
         public void SaveOrUpdateWorkArea(long id, string name, string description, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, out OperationResult result)
         {
             result = new() { Successful = true };
@@ -102,7 +100,6 @@ namespace Catalogs.Application
                 result.SystemMessages.Add(new SystemMessage() { Message = "No es posible realizar el salvado/actualización de los datos." });
             }
         }
-
         public void DeleteWorkArea(int id, out OperationResult result)
         {
             result = new() { Successful = true };

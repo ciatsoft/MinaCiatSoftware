@@ -12,6 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Branches.Application\Branches.Application.csproj" />
+    <ProjectReference Include="..\Branches.Messages\Branches.Messages.csproj" />
     <ProjectReference Include="..\Catalogs.Application\Catalogs.Application.csproj" />
     <ProjectReference Include="..\Catalogs.Messages\Catalogs.Messages.csproj" />
   </ItemGroup>
