@@ -251,6 +251,110 @@ namespace Catalogs.Application
         }
         #endregion
 
+        #region Location
+        public List<Location> GetAllLocation(out OperationResult result)
+        {
+            result = new() { Successful = true, SystemMessages = new List<SystemMessage>() };
+            List<Location> response = new List<Location>();
+            try
+            {
+                DataTable responseDT = _catalogsProxy.GetAllLocation();
+                response = CatalogsMapp.MappAllLocation(responseDT) ?? new List<Location>();
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                    result.SystemMessages = new List<SystemMessage>();
+
+                result.SystemMessages.Add(new SystemMessage() { Message = "Ocurrio un error al obtener las soruces y fondos del participante." });
+            }
+
+            return response;
+        }
+
+        public List<Location> GetLocationById(long id, out OperationResult result)
+        {
+            result = new() { Successful = true };
+            List<Location> response = new List<Location>();
+
+            try
+            {
+                // Validación del ID
+                if (id <= 0)
+                {
+                    throw new ArgumentException("El ID de la ubicacion debe ser mayor a cero.", nameof(id));
+                }
+
+                DataTable responseDT = _catalogsProxy.GetLocationById(id);
+                response = CatalogsMapp.MappAllLocation(responseDT) ?? new List<Location>();
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                    result.SystemMessages = new List<SystemMessage>();
+
+                result.SystemMessages.Add(new SystemMessage() { Message = ex.Message });
+            }
+
+            return response;
+        }
+        public void SaveOrUpdateLocation(long idLocation, string nameLocation, string descriptionLocation, bool isInternal, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, out OperationResult result)
+        {
+            result = new() { Successful = true };
+
+            try
+            {
+                if (idLocation < 0) { throw new ArgumentException("El argumento no debe ser menor a 0.", nameof(idLocation)); }
+                if (nameLocation?.Length > 50) { throw new ArgumentException("El argumento del nombre de la ubicacion no puede ser vacio y mayo de 50 caracteres.", nameof(nameLocation)); }
+                if (descriptionLocation?.Length > 250) { throw new ArgumentException("El argumento de la descripcion no puede ser vacia o mayo de 250 caracteres.", nameof(descriptionLocation)); }
+                if (string.IsNullOrEmpty(createdBy)) { throw new ArgumentException("El autor del registro no puede ser nulo.", nameof(createdBy)); }
+                if (createdBy?.Length > 80) { throw new ArgumentException("El argumento no debe ser mayor a 80 caracteres ni vacio.", nameof(createdBy)); }
+                if (createdDt == DateTime.MinValue) { throw new ArgumentException("El argumento no puede ser vacio.", nameof(createdDt)); }
+                if (string.IsNullOrEmpty(updatedBy)) { throw new ArgumentException("El autor del registro no puede ser nulo.", nameof(updatedBy)); }
+                if (updatedBy?.Length > 80) { throw new ArgumentException("El argumento no debe ser mayor a 80 caracteres ni vacio.", nameof(updatedBy)); }
+                if (updatedDt == DateTime.MinValue) { throw new ArgumentException("El argumento no puede ser vacio.", nameof(createdDt)); }
+                if (estatus == false) { throw new ArgumentException("El argumento no debe ser inactivo.", nameof(estatus)); }
+
+
+                _catalogsProxy.SaveOrUpdateLocation(idLocation, nameLocation, descriptionLocation, isInternal, estatus, createdBy, createdDt, updatedBy, updatedDt);
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                {
+                    result.SystemMessages = new List<SystemMessage>();
+                }
+                result.SystemMessages.Add(new SystemMessage() { Message = ex.Message });
+            }
+        }
+
+        public void DeleteLocation(int id, out OperationResult result)
+        {
+            result = new() { Successful = true };
+
+            try
+            {
+                // Validaciones estrictas para eliminación
+                if (id <= 0)
+                    throw new ArgumentException("El argumento debe ser un número positivo mayor a cero.", nameof(id));
+
+                _catalogsProxy.DeleteLocation(id);
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                if (result.SystemMessages == null)
+                {
+                    result.SystemMessages = new List<SystemMessage>();
+                }
+                result.SystemMessages.Add(new SystemMessage() { Message = ex.Message });
+            }
+        }
+        #endregion
+
         #region Roll
         public List<RollObj> GetAllRoll(out OperationResult result)
         {

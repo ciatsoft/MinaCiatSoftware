@@ -24,6 +24,13 @@ namespace Catalogs.Proxy
         int DeleteLoansCatalog(long id);
         #endregion
 
+        #region Location
+        DataTable GetAllLocation();
+        DataTable GetLocationById(long id);
+        int SaveOrUpdateLocation(long idLocation, string nameLocation, string description, bool isInternal, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt);
+        int DeleteLocation(long id);
+        #endregion
+
         #region Roll
         DataTable GetAllRoll();
         DataTable GetRollById(long id);

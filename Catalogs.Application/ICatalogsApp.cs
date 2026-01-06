@@ -24,6 +24,13 @@ namespace Catalogs.Application
         public void DeleteLoansCatalog(int id, out OperationResult result);
         #endregion
 
+        #region Location
+        public List<Location> GetAllLocation(out OperationResult result);
+        public List<Location> GetLocationById(long id, out OperationResult result);
+        public void SaveOrUpdateLocation(long idLocation, string nameLocation, string description, bool isInternal, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, out OperationResult result);
+        public void DeleteLocation(int id, out OperationResult result);
+        #endregion
+
         #region Roll
         public List<RollObj> GetAllRoll(out OperationResult result);
         public RollObj GetRollById(long id, out OperationResult result);

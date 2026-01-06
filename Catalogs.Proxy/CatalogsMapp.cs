@@ -144,6 +144,66 @@ namespace Catalogs.Proxy
         }
         #endregion
 
+        #region Location
+        public static List<Location> MappAllLocation(DataTable dto)
+        {
+            // Si dto es null lanzamos excepción indicando que no fue posible obtener valores
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto), "No fue posible obtener valores desde el DataTable.");
+
+            var list = new List<Location>();
+
+            // Si no tiene filas regresamos lista vacía
+            if (dto.Rows.Count == 0)
+                return list;
+
+            foreach (DataRow row in dto.Rows)
+            {
+                // Obtener valores de forma segura (si la columna no existe o es DBNull, usar valores por defecto)
+                long id = 0;
+                if (dto.Columns.Contains("Id") && row["Id"] != DBNull.Value)
+                {
+                    try { id = Convert.ToInt64(row["Id"]); } catch { id = 0; }
+                }
+
+                string nameLocation = dto.Columns.Contains("NombreUbicacion") && row["NombreUbicacion"] != DBNull.Value
+                    ? row["NombreUbicacion"].ToString()
+                    : string.Empty;
+
+                string description = dto.Columns.Contains("DescripcionUbicacion") && row["DescripcionUbicacion"] != DBNull.Value
+                    ? row["DescripcionUbicacion"].ToString()
+                    : string.Empty;
+
+                bool isInternal = dto.Columns.Contains("EsInterna") && row["EsInterna"] != DBNull.Value
+                    ? Convert.ToBoolean(row["EsInterna"])
+                    : false;
+
+                string createdBy = dto.Columns.Contains("CreatedBy") && row["CreatedBy"] != DBNull.Value
+                    ? row["CreatedBy"].ToString()
+                    : string.Empty;
+
+                DateTime createdDt = dto.Columns.Contains("CreatedDt") && row["CreatedDt"] != DBNull.Value
+                    ? Convert.ToDateTime(row["CreatedDt"])
+                    : DateTime.MinValue;
+
+                string updatedBy = dto.Columns.Contains("UpdatedBy") && row["UpdatedBy"] != DBNull.Value
+                    ? row["UpdatedBy"].ToString()
+                    : string.Empty;
+
+                DateTime updatedDt = dto.Columns.Contains("UpdatedDt") && row["UpdatedDt"] != DBNull.Value
+                    ? Convert.ToDateTime(row["UpdatedDt"])
+                    : DateTime.MinValue;
+
+                // Crear nuevo WorkAreaObj por cada fila
+                var item = Location.Create(id, nameLocation, description, isInternal, createdBy, createdDt, updatedBy, updatedDt);
+                if (item != null)
+                    list.Add(item);
+            }
+
+            return list;
+        }
+        #endregion
+
         #region Roll
         public static List<RollObj> MappAllRoll(DataTable dto)
         {

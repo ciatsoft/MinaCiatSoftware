@@ -50,6 +50,27 @@ namespace Catalogs.Messages
     }
     #endregion
 
+    #region Location
+    public class LocationListResponse
+    {
+        public List<Location> Location { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class LocationResponse
+    {
+        public List<Location> Location { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class SaveOrUpdateLocationResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    public class DeleteLocationResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    #endregion
+
     #region Roll
     public class RollListResponse
     {

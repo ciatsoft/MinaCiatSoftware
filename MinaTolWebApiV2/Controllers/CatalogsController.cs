@@ -161,6 +161,74 @@ namespace MinaTolWebApiV2.Controllers
         }
         #endregion
 
+        #region Location
+        /// <summary>
+        /// Método que regresa un listado de areas de trabajo
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetAllLocation")]
+        public LocationListResponse GetAllLocation()
+        {
+            var response = new LocationListResponse();
+            List<Location> list = _catalogApp.GetAllLocation(out OperationResult result);
+            response.Location = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que regresa un area de trabajo por Id
+        /// </summary>
+        /// <param name="id">Identificador del area de trabajo</param>
+        /// <returns></returns>
+        [HttpPost("GetLocationById")]
+        public LocationResponse GetLocationById(long id)
+        {
+            var response = new LocationResponse();
+            List<Location> list = _catalogApp.GetLocationById(id, out OperationResult result);
+            response.Location = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que guarda o actualiza un prestamo
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("SaveOrUpdateLocation")]
+        public SaveOrUpdateLocationResponse SaveOrUpdateLocation([FromBody] Location obj)
+        {
+            _catalogApp.SaveOrUpdateLocation(obj.Id, obj.NameLocation, obj.DescriptionLocation, obj.IsInternal, obj.Estatus, obj.CreatedBy, obj.CreatedDt, obj.UpdatedBy, obj.UpdatedDt, out OperationResult result);
+
+            var response = new SaveOrUpdateLocationResponse()
+            {
+                Result = result
+            };
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que elimina logicamente el prestamo
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("DeleteLocation")]
+        public DeleteLocationResponse DeleteLocation(int id)
+        {
+            _catalogApp.DeleteLocation(id, out OperationResult result);
+
+            var response = new DeleteLocationResponse()
+            {
+                Result = result
+            };
+
+            return response;
+        }
+        #endregion
+
         #region Roll
         /// <summary>
         /// Método que regresa un listado de roles

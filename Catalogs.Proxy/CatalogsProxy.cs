@@ -78,7 +78,6 @@ namespace Catalogs.Proxy
             DataTable result = GetObject("GetAllPrestamosByIdEmpleadoDates", CommandType.StoredProcedure, parameter);
             return result;
         }
-
         public int SaveOrUpdateLoansCatalog(long idLoansCatalog, long idWorker, string nameWorker, string name, string description, decimal monto, DateTime date, string userName, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, bool estatus)
         {
             var parameters = new[]
@@ -112,6 +111,52 @@ namespace Catalogs.Proxy
             return Convert.ToInt32(result);
         }
 
+        #endregion
+
+        #region Location
+        public DataTable GetAllLocation()
+        {
+            DataTable result = GetObject("GetAllUbicacion", CommandType.StoredProcedure);
+            return result;
+        }
+        public DataTable GetLocationById(long id)
+        {
+            var parameter = new[]
+            {
+                new SqlParameter("@Id", id),
+            };
+
+            DataTable result = GetObject("GetUbicacionById", CommandType.StoredProcedure, parameter);
+            return result;
+        }
+        public int SaveOrUpdateLocation(long idLocation, string nameLocation, string description, bool isInternal, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt)
+        {
+            var parameters = new[]
+            {
+                new SqlParameter("@Id", idLocation),
+                new SqlParameter("@NombreUbicacion", nameLocation),
+                new SqlParameter("@DescripcionUbicacion", description),
+                new SqlParameter("@Estatus", estatus),
+                new SqlParameter("@CreatedBy", createdBy),
+                new SqlParameter("@CreatedDt", createdDt),
+                new SqlParameter("@UpdatedBy", createdBy),
+                new SqlParameter("@UpdatedDt", createdDt),
+                new SqlParameter("@EsInterna", isInternal),
+            };
+
+            var result = ExecuteScalar("SaveOrUpdateUbicacion", CommandType.StoredProcedure, parameters);
+            return Convert.ToInt32(result);
+        }
+        public int DeleteLocation(long id)
+        {
+            var parameter = new[]
+            {
+                new SqlParameter("@Id", id)
+            };
+
+            var result = ExecuteScalar("DeleteUbicacion", CommandType.StoredProcedure, parameter);
+            return Convert.ToInt32(result);
+        }
         #endregion
 
         #region Roll
