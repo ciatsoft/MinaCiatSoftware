@@ -1,4 +1,5 @@
-﻿using Common.Domain;
+﻿using Catalogs.Domain;
+using Common.Domain;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -57,6 +58,14 @@ namespace Catalogs.Proxy
         DataTable GetPaymentMethodById(long id);
         int SaveOrUpdatePaymentMethod(long id, string name, string description, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt);
         int DeletePaymentMethod(long id);
+        #endregion
+
+        #region Permissions
+        DataTable GetAllPermissions();
+        DataTable GetPermissionsById(long id);
+        int SaveOrUpdatePermissions(long id, string URLVentana, string nombre, string descripcion, string tipoMenu, long permisoPadre, int orden, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt);
+        int DeletePermissions(long id);
+
         #endregion
     }
 }

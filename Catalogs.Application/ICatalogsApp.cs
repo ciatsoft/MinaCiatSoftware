@@ -58,5 +58,13 @@ namespace Catalogs.Application
         public void SaveOrUpdatePaymentMethod(long id, string name, string description, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, out OperationResult result);
         public void DeletePaymentMethod(int id, out OperationResult result);
         #endregion
+
+        #region Permissions
+        public List<Permissions> GetAllPermissions(out OperationResult result);
+        public Permissions GetPermissionsById(long id, out OperationResult result);
+        public void SaveOrUpdatePermissions(long id, string urlWindow, string name, string description, string typeMenu, long parentPermission, int order, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, out OperationResult result);
+        public void DeletePermissions(int id, out OperationResult result);
+
+        #endregion
     }
 }

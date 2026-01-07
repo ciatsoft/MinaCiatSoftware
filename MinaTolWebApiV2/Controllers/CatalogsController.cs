@@ -530,5 +530,88 @@ namespace MinaTolWebApiV2.Controllers
             return response;
         }
         #endregion
+
+        #region Permissions
+        /// <summary>
+        /// Método que regresa un listado de areas de trabajo
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetAllPermissions")]
+        public PermissionsListResponse GetAllPermissions()
+        {
+            var response = new PermissionsListResponse();
+            List<Permissions> list = _catalogApp.GetAllPermissions(out OperationResult result);
+            response.Permissions = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que regresa un area de trabajo por Id
+        /// </summary>
+        /// <param name="id">Identificador del area de trabajo</param>
+        /// <returns></returns>
+        [HttpPost("GetPermissionsById")]
+        public PermissionsResponse GetPermissionsById(long id)
+        {
+            var response = new PermissionsResponse();
+            Permissions list = _catalogApp.GetPermissionsById(id, out OperationResult result);
+            response.Permissions = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que guarda o actualiza un permiso
+        /// </summary>
+        [HttpPost("SaveOrUpdatePermissions")]
+        public SaveOrUpdatePermissionsResponse SaveOrUpdatePermissions([FromBody] Permissions obj)
+        {
+            long parentPermissionId = obj.ParentPermissionId ?? 0;
+
+            _catalogApp.SaveOrUpdatePermissions(
+                obj.Id,
+                obj.URLWindow,
+                obj.Name,
+                obj.Description,
+                obj.TypeMenu,
+                parentPermissionId,
+                obj.Order,
+                obj.Estatus,
+                obj.CreatedBy,
+                obj.CreatedDt,
+                obj.UpdatedBy,
+                obj.UpdatedDt,
+                out OperationResult result
+            );
+
+            return new SaveOrUpdatePermissionsResponse
+            {
+                Result = result
+            };
+        }
+
+        /// <summary>
+        /// Método que elimina logicamente el area de trabajo
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="desciption"></param>
+        /// <returns></returns>
+        [HttpDelete("DeletePermissions")]
+        public DeletePermissionsResponse DeletePermissions(int id)
+        {
+            _catalogApp.DeletePermissions(id, out OperationResult result);
+
+            var response = new DeletePermissionsResponse()
+            {
+                Result = result
+            };
+
+            return response;
+        }
+        #endregion
     }
 }

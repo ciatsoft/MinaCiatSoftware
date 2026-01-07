@@ -447,5 +447,154 @@ namespace Catalogs.Proxy
             return list;
         }
         #endregion
+
+        #region Permissions
+        public static List<Permissions> MappAllPermissions(DataTable dto)
+        {
+            // Si dto es null lanzamos excepción indicando que no fue posible obtener valores
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto), "No fue posible obtener valores desde el DataTable.");
+
+            var list = new List<Permissions>();
+
+            // Si no tiene filas regresamos lista vacía
+            if (dto.Rows.Count == 0)
+                return list;
+
+            // Diccionario para almacenar permisos por ID (para establecer relaciones padre-hijo)
+            var permissionsDict = new Dictionary<long, Permissions>();
+
+            // Primera pasada: crear todos los permisos SIN relaciones padre-hijo
+            foreach (DataRow row in dto.Rows)
+            {
+                // Obtener valores de forma segura (si la columna no existe o es DBNull, usar valores por defecto)
+                long id = 0;
+                if (dto.Columns.Contains("Id") && row["Id"] != DBNull.Value)
+                {
+                    try { id = Convert.ToInt64(row["Id"]); } catch { id = 0; }
+                }
+
+                string urlWindow = dto.Columns.Contains("URLVentana") && row["URLVentana"] != DBNull.Value
+                    ? row["URLVentana"].ToString()
+                    : string.Empty;
+
+                string name = dto.Columns.Contains("Nombre") && row["Nombre"] != DBNull.Value
+                    ? row["Nombre"].ToString()
+                    : string.Empty;
+
+                string description = dto.Columns.Contains("Descripcion") && row["Descripcion"] != DBNull.Value
+                    ? row["Descripcion"].ToString()
+                    : string.Empty;
+
+                string typeMenu = dto.Columns.Contains("TipoMenu") && row["TipoMenu"] != DBNull.Value
+                    ? row["TipoMenu"].ToString()
+                    : string.Empty;
+
+                // Obtener el ID del padre si existe
+                long? parentPermissionId = null;
+                if (dto.Columns.Contains("PermisoPadreId") && row["PermisoPadreId"] != DBNull.Value)
+                {
+                    try
+                    {
+                        long parentId = Convert.ToInt64(row["PermisoPadreId"]);
+                        if (parentId > 0)
+                            parentPermissionId = parentId;
+                    }
+                    catch { }
+                }
+
+                int order = 0;
+                if (dto.Columns.Contains("Orden") && row["Orden"] != DBNull.Value)
+                {
+                    try { order = Convert.ToInt32(row["Orden"]); } catch { order = 0; }
+                }
+
+                string createdBy = dto.Columns.Contains("CreatedBy") && row["CreatedBy"] != DBNull.Value
+                    ? row["CreatedBy"].ToString()
+                    : string.Empty;
+
+                DateTime createdDt = dto.Columns.Contains("CreatedDt") && row["CreatedDt"] != DBNull.Value
+                    ? Convert.ToDateTime(row["CreatedDt"])
+                    : DateTime.MinValue;
+
+                string updatedBy = dto.Columns.Contains("UpdatedBy") && row["UpdatedBy"] != DBNull.Value
+                    ? row["UpdatedBy"].ToString()
+                    : string.Empty;
+
+                DateTime updatedDt = dto.Columns.Contains("UpdatedDt") && row["UpdatedDt"] != DBNull.Value
+                    ? Convert.ToDateTime(row["UpdatedDt"])
+                    : DateTime.MinValue;
+
+                // Obtener estatus si existe
+                bool estatus = true;
+                if (dto.Columns.Contains("Estatus") && row["Estatus"] != DBNull.Value)
+                {
+                    try { estatus = Convert.ToBoolean(row["Estatus"]); } catch { estatus = true; }
+                }
+
+                // Crear permiso con el ID del padre (el objeto padre será null por ahora)
+                var item = new Permissions(
+                    id: id,
+                    URLWindow: urlWindow,
+                    name: name,
+                    description: description,
+                    typeMenu: typeMenu,
+                    parentPermission: null, // null por ahora, lo establecemos después
+                    order: order,
+                    estatus: estatus,
+                    createdBy: createdBy,
+                    createdDt: createdDt,
+                    updatedBy: updatedBy,
+                    updatedDt: updatedDt
+                );
+
+                // Establecer el ID del padre usando reflexión o un método público si lo agregas
+                if (parentPermissionId.HasValue)
+                {
+                    // Usar reflexión temporalmente para establecer el ID del padre
+                    var field = typeof(Permissions).GetField("_parentPermissionId",
+                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    if (field != null)
+                    {
+                        field.SetValue(item, parentPermissionId.Value);
+                    }
+                }
+
+                if (item != null)
+                {
+                    list.Add(item);
+                    permissionsDict[id] = item;
+                }
+            }
+
+            // Segunda pasada: establecer relaciones padre-hijo (objetos completos)
+            foreach (DataRow row in dto.Rows)
+            {
+                long id = 0;
+                if (dto.Columns.Contains("Id") && row["Id"] != DBNull.Value)
+                {
+                    try { id = Convert.ToInt64(row["Id"]); } catch { continue; }
+                }
+
+                if (!permissionsDict.TryGetValue(id, out var currentPermission))
+                    continue;
+
+                // Establecer permiso padre si existe
+                if (dto.Columns.Contains("PermisoPadreId") && row["PermisoPadreId"] != DBNull.Value)
+                {
+                    long parentId = 0;
+                    try { parentId = Convert.ToInt64(row["PermisoPadreId"]); } catch { continue; }
+
+                    if (parentId > 0 && permissionsDict.TryGetValue(parentId, out var parentPermission))
+                    {
+                        // Usar el método público SetParent
+                        currentPermission.SetParent(parentPermission);
+                    }
+                }
+            }
+
+            return list;
+        }
+        #endregion
     }
 }

@@ -1,4 +1,5 @@
-﻿using SqlProxy;
+﻿using Catalogs.Domain;
+using SqlProxy;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -343,6 +344,69 @@ namespace Catalogs.Proxy
             var result = ExecuteScalar("DeleteMetodoPago", CommandType.StoredProcedure, parameter);
             return Convert.ToInt32(result);
         }
+        #endregion
+
+        #region Permissions
+        public DataTable GetAllPermissions()
+        {
+            return GetObject("GetAllPermisos", CommandType.StoredProcedure);
+        }
+
+        public DataTable GetPermissionsById(long id)
+        {
+            var parameters = new[]
+            {
+                new SqlParameter("@Id", id)
+            };
+
+            return GetObject("GetPermisoslById", CommandType.StoredProcedure, parameters);
+        }
+
+        public int SaveOrUpdatePermissions(
+            long id,
+            string urlVentana,
+            string nombre,
+            string descripcion,
+            string tipoMenu,
+            long permisoPadre,
+            int orden,
+            bool estatus,
+            string createdBy,
+            DateTime createdDt,
+            string updatedBy,
+            DateTime updatedDt)
+        {
+            var parameters = new[]
+            {
+                new SqlParameter("@Id", id),
+                new SqlParameter("@URLVentana", urlVentana),
+                new SqlParameter("@Nombre", nombre),
+                new SqlParameter("@Descripcion", descripcion),
+                new SqlParameter("@TipoMenu", tipoMenu),
+                new SqlParameter("@PermisoPadreId", permisoPadre),
+                new SqlParameter("@Orden", orden),
+                new SqlParameter("@Estatus", estatus),
+                new SqlParameter("@CreatedBy", createdBy),
+                new SqlParameter("@CreatedDt", createdDt),
+                new SqlParameter("@UpdatedBy", updatedBy),
+                new SqlParameter("@UpdatedDt", updatedDt)
+            };
+
+            var result = ExecuteScalar("SaveOrUpdatePermisos", CommandType.StoredProcedure, parameters);
+            return Convert.ToInt32(result);
+        }
+
+        public int DeletePermissions(long id)
+        {
+            var parameters = new[]
+            {
+                new SqlParameter("@Id", id)
+            };
+
+            var result = ExecuteScalar("DeletePermisos", CommandType.StoredProcedure, parameters);
+            return Convert.ToInt32(result);
+        }
+
         #endregion
     }
 }

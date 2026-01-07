@@ -760,5 +760,138 @@ namespace Catalogs.Application
             }
         }
         #endregion
+
+        #region Permissions
+        public List<Permissions> GetAllPermissions(out OperationResult result)
+        {
+            result = new() { Successful = true, SystemMessages = new List<SystemMessage>() };
+            List<Permissions> response = new();
+
+            try
+            {
+                DataTable responseDT = _catalogsProxy.GetAllPermissions();
+                response = CatalogsMapp.MappAllPermissions(responseDT);
+            }
+            catch
+            {
+                result.Successful = false;
+                result.SystemMessages.Add(new SystemMessage
+                {
+                    Message = "Ocurrió un error al obtener los permisos."
+                });
+            }
+
+            return response;
+        }
+
+        public Permissions GetPermissionsById(long id, out OperationResult result)
+        {
+            result = new() { Successful = true };
+            Permissions response = null;
+
+            try
+            {
+                if (id <= 0)
+                    throw new ArgumentException(nameof(id));
+
+                DataTable responseDt = _catalogsProxy.GetPermissionsById(id);
+                response = CatalogsMapp.MappAllPermissions(responseDt).FirstOrDefault();
+            }
+            catch
+            {
+                result.Successful = false;
+                result.SystemMessages ??= new List<SystemMessage>();
+                result.SystemMessages.Add(new SystemMessage
+                {
+                    Message = "Ocurrió un error al obtener el permiso."
+                });
+            }
+
+            return response;
+        }
+
+        public void SaveOrUpdatePermissions(
+            long id,
+            string urlWindow,
+            string name,
+            string description,
+            string typeMenu,
+            long parentPermission,
+            int order,
+            bool estatus,
+            string createdBy,
+            DateTime createdDt,
+            string updatedBy,
+            DateTime updatedDt,
+            out OperationResult result)
+        {
+            result = new() { Successful = true };
+
+            try
+            {
+                if (id < 0) throw new ArgumentException(nameof(id));
+                if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException(nameof(name));
+                if (string.IsNullOrWhiteSpace(urlWindow)) throw new ArgumentException(nameof(urlWindow));
+                if (name.Length > 50) throw new ArgumentException(nameof(name));
+                if (description?.Length > 250) throw new ArgumentException(nameof(description));
+                if (typeMenu?.Length > 250) throw new ArgumentException(nameof(typeMenu));
+                if (parentPermission < 0) throw new ArgumentException(nameof(parentPermission));
+                if (order < 0) throw new ArgumentException(nameof(order));
+                if (string.IsNullOrWhiteSpace(createdBy)) throw new ArgumentException(nameof(createdBy));
+                if (createdBy.Length > 80) throw new ArgumentException(nameof(createdBy));
+                if (createdDt == DateTime.MinValue) throw new ArgumentException(nameof(createdDt));
+                if (string.IsNullOrWhiteSpace(updatedBy)) throw new ArgumentException(nameof(updatedBy));
+                if (updatedBy.Length > 80) throw new ArgumentException(nameof(updatedBy));
+                if (updatedDt == DateTime.MinValue) throw new ArgumentException(nameof(updatedDt));
+
+                _catalogsProxy.SaveOrUpdatePermissions(
+                    id,
+                    urlWindow,
+                    name,
+                    description,
+                    typeMenu,
+                    parentPermission,
+                    order,
+                    estatus,
+                    createdBy,
+                    createdDt,
+                    updatedBy,
+                    updatedDt
+                );
+            }
+            catch
+            {
+                result.Successful = false;
+                result.SystemMessages ??= new List<SystemMessage>();
+                result.SystemMessages.Add(new SystemMessage
+                {
+                    Message = "No es posible guardar o actualizar el permiso."
+                });
+            }
+        }
+
+        public void DeletePermissions(int id, out OperationResult result)
+        {
+            result = new() { Successful = true };
+
+            try
+            {
+                if (id <= 0)
+                    throw new ArgumentException(nameof(id));
+
+                _catalogsProxy.DeletePermissions(id);
+            }
+            catch
+            {
+                result.Successful = false;
+                result.SystemMessages ??= new List<SystemMessage>();
+                result.SystemMessages.Add(new SystemMessage
+                {
+                    Message = "No es posible eliminar el permiso."
+                });
+            }
+        }
+
+        #endregion
     }
 }

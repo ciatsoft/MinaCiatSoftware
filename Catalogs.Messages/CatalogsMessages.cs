@@ -155,4 +155,25 @@ namespace Catalogs.Messages
     }
     #endregion
 
+    #region Permissions
+    public class PermissionsListResponse
+    {
+        public List<Permissions> Permissions { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class PermissionsResponse
+    {
+        public Permissions Permissions { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class SaveOrUpdatePermissionsResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    public class DeletePermissionsResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    #endregion
+
 }
