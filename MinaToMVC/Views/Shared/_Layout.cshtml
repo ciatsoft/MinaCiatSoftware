@@ -54,13 +54,9 @@
 
     <link href="~/Assets/css/jquery.dataTables.min.css" rel="stylesheet" />
     <script src="~/Assets/js/jquery.dataTables.min.js"></script>
+    <link rel="icon" href="@Url.Content("~/Assets/img/Logo.ico")" type="image/x-icon" />
 
-
-</head>
-<link rel="icon" href="@Url.Content("~/Assets/img/Logo.ico")" type="image/x-icon" />
-
-
-<style>
+    <style>
     .main_title_html {
         background-color: white;
         font-family: Helvetica Neue;
@@ -94,8 +90,7 @@
     body {
         background-color: #83988e;
     }
-</style>
-<style>
+
     /* Estilos generales */
     .slider_section {
         background: linear-gradient(rgba(2, 2, 2, 0.2), rgba(0, 0, 0, 0.2)), url("@Url.Content("~/Assets/img/minas.png")") fixed center center;
@@ -304,7 +299,8 @@
         border-radius: 100px;
         border: 3px solid black;
     }
-</style>
+    </style>
+</head>
 
 <body>
 
@@ -321,80 +317,44 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+                    <div id="divContentPermission" class="d-flex mx-auto flex-column flex-lg-row align-items-center">
                         <ul class="navbar-nav">
-                            <li class="nav-item active">
-                                <a class="nav-link" data-title="Index" href="@Url.Action("Index", "Home")">Inicio </a>
+                            <li class="nav-item">
+                                <a class="nav-link" data-title="Index" href="@Url.Action("Index", "Home")">Inicio</a>
                             </li>
-
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Administración
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                     <a class="dropdown-item" data-title="Clientes" href="@Url.Action("Clientes", "Administracion")">Clientes</a>
-                                    <!--<a class="dropdown-item" data-title="Solicitudes" href="@Url.Action("Solicitudes", "Administracion")">Solicitudes</a>
-    <!--<a class="dropdown-item" data-title="Precios" href="@Url.Action("Precios", "Administracion")">Precios</a> -->
-                                    <!--<a class="dropdown-item" data-title="Gestion_Img" href="@Url.Action("Gestion_Img", "Administracion")">Imágenes de precios</a>-->
-                                    <!--<a class="dropdown-item" data-title="Ingresos" href="@Url.Action("Ingresos", "Administracion")">Ingresos y egresos</a>
-    <a class="dropdown-item" data-title="General" href="@Url.Action("General", "Administracion")">General</a>-->
-                                    <a class="dropdown-item" data-title="General" href="@Url.Action("Internos", "Viajes")">Venta Publico General</a>
-                                    <a class="dropdown-item" data-title="Catálogos" href="@Url.Action("locales", "Viajes")">Viajes Locales</a>
+                                    <a class="dropdown-item" data-title="Usuarios" href="@Url.Action("Usuarios", "Administracion")">Usuarios</a>
+                                    <a class="dropdown-item" data-title="Catálogos" href="@Url.Action("locales", "Viajes")">Viajes de Almacenes</a>
+                                    <a class="dropdown-item" data-title="Catálogos" href="@Url.Action("Concreteras", "Viajes")">Viajes de Concreteras</a>
+                                    <a class="dropdown-item" data-title="Catálogos" href="@Url.Action("ReportesViajesLocales", "Viajes")">Generar Reportes</a>
+                                    <a class="dropdown-item" data-title="Catálogos" href="@Url.Action("PreFactura", "Viajes")">Pre-Factura</a>
                                 </div>
                             </li>
-                            <!--
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Empleados
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" data-title="Empleados" href="@Url.Action("AltaEdicion", "Empleado")">Empleados</a>
-        </div>
-    </li>
-
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Almacén
+                                    Recursos Humanos
                                 </a>
-                                <!--<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" data-title="Inventario" href="@Url.Action("Inventario", "Almacen")">Inventario</a>
-                <a class="dropdown-item" data-title="SolicitudesProcesadas" href="@Url.Action("SolicitudesProcesadas", "Almacen")">Solicitudes procesadas</a>
-            </div>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" data-title="Empleados" href="@Url.Action("AltaEdicion", "Empleado")">Empleados</a>
+                                    <a class="dropdown-item" data-title="ListaDocumentos" href="@Url.Action("ListaDocumentos", "Empleado")">Catalogo de Documentos</a>
+                                    <a class="dropdown-item" data-title="ListaDocumentos" href="@Url.Action("ConceptosRH", "RH")">Catalogo de Conceptos</a>
+                                    <a class="dropdown-item" data-title="ListaDocumentos" href="@Url.Action("NominaEmpleado", "RH")">Generar Nominas</a>
+                                    <a class="dropdown-item" data-title="ListaDocumentos" href="@Url.Action("BajaEmpleados", "RH")">Historial de Bajas de Empleados</a>
+                                </div>
                             </li>
-
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    R.H.
-                                </a>
-                                <!--
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" data-title="Agregar" href="@Url.Action("Agregar", "RH")">Agregar</a>
-                <a class="dropdown-item" data-title="Editar" href="@Url.Action("Editar", "RH")">Editar</a>
-            </div>
-
-                            </li>
-
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Venta
-                                </a>
-                                <!--
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" data-title="Material" href="@Url.Action("Material", "Venta")">Material</a>
-            <a class="dropdown-item" data-title="Salidas" href="@Url.Action("Salidas", "Venta")">Salidas</a>
-        </div>
-
-                            </li> -->
-
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Taller
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                     <a class="dropdown-item" data-title="Vehiculos" href="@Url.Action("Vehiculos", "Taller")">Vehículos</a>
-                                    <!-- <a class="dropdown-item" data-title="InventarioTaller" href="@Url.Action("Inventario_Taller", "Taller")">Inventario del taller</a>
-             <a class="dropdown-item" data-title="ReportesStock" href="@Url.Action("ReportesCStock", "Taller")">Reportes con stock</a>
-             <a class="dropdown-item" data-title="ReportesSinStock" href="@Url.Action("Reportes_SStock", "Taller")">Reportes sin stock</a> -->
+                                    <a class="dropdown-item" data-title="InventarioTaller" href="@Url.Action("Inventario_Taller", "Taller")">Inventario del taller</a>
+                                    <a class="dropdown-item" data-title="InventarioTaller" href="@Url.Action("CategoriaInventario", "Taller")">Categoria de Inventario</a>
                                 </div>
                             </li>
                             <li class="nav-item dropdown">
@@ -408,7 +368,23 @@
                                     <a class="dropdown-item" data-title="Catálogos" href="@Url.Action("Roll", "Catalog")">Roles</a>
                                     <a class="dropdown-item" data-title="Catálogos" href="@Url.Action("Ubicacion", "Catalog")">Ubicación</a>
                                     <a class="dropdown-item" data-title="Catálogos" href="@Url.Action("TipoMaterialUbicacion", "Catalog")">Tipo de Material</a>
-                                    @*aquí copias y pegas el de arriba, solo le cambias el nombre u el método*@
+                                    <a class="dropdown-item" data-title="Catálogos" href="@Url.Action("TipoGastos", "Catalog")">Tipo de Gastos</a>
+                                    <a class="dropdown-item" data-title="Catálogos" href="@Url.Action("VehiculosPublicoGeneral", "Catalog")">Vehiculos Clientes Publico General</a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    VentaPublicoGeneral
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" data-title="General" href="@Url.Action("Precios", "VentaPublicoGeneral")">Precios</a>
+                                    <a class="dropdown-item" data-title="General" href="@Url.Action("Index", "VentaPublicoGeneral")">Venta</a>
+                                    <a class="dropdown-item" data-title="General" href="@Url.Action("CajaChica", "VentaPublicoGeneral")">CajaChica</a>
+                                    <a class="dropdown-item" data-title="General" href="@Url.Action("DineroCaja", "VentaPublicoGeneral")">Dinero en Caja</a>
+                                    <a class="dropdown-item" data-title="General" href="@Url.Action("CorteDeCaja", "VentaPublicoGeneral")">Reporte Diario</a>
+                                    <a class="dropdown-item" data-title="General" href="@Url.Action("Prestamos", "VentaPublicoGeneral")">Prestamos</a>
+                                    <a class="dropdown-item" data-title="General" href="@Url.Action("ClientePublicoGeneral", "VentaPublicoGeneral")">Clientes Publico General</a>
+                                    <a class="dropdown-item" data-title="General" href="@Url.Action("VentaPorPlanta", "VentaPublicoGeneral")">Venta por Planta</a>
                                 </div>
                             </li>
                         </ul>
@@ -435,20 +411,17 @@
                     <div class="modal-dialog modal-lg">
 
                         <!-- Modal content-->
-                                <div class="modal-content" style=" width: 900px;">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <h4 class="modal-title" id="titleGenerciModal"></h4>
-                                    </div>
-                                    <div class="modal-body" id="boddyGeericModal">
-                                        <p>Some text in the modal.</p>
-                                    </div>
-                                    @*<div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>*@
-                                </div>
+                        <div class="modal-content" style=" width: 900px;">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title" id="titleGenerciModal"></h4>
+                            </div>
+                            <div class="modal-body" id="boddyGeericModal">
+                                <p>Some text in the modal.</p>
+                            </div>
+                        </div>
 
-</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -475,8 +448,10 @@
             <span class="text-muted">© 2024 Desarrollado por CIATSoftware</span>
         </div>
     </footer>
-
-
+    <script>
+        $(document).ready(function () {
+            $("#divContentPermission").empty().load("@Url.Action("PartialMenus", "Home")");
+        });
+    </script>
 </body>
-
 </html>

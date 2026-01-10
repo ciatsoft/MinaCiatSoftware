@@ -1,0 +1,76 @@
+﻿@model MinaTolEntidades.Security.Usuario
+@{
+    ViewBag.Title = "Usuarios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+
+
+<div class="content">
+    @using (Html.BeginForm("SaveOrUpdateUsuario", "Administracion", FormMethod.Post,
+new { enctype = "multipart/form-data", name = "frmUsuario", id = "frmUsuario" }))
+    {
+        @Html.HiddenFor(x => x.Estatus)
+        @Html.HiddenFor(x => x.CreatedDt, new { Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), id = "createdDt" })
+        @Html.HiddenFor(x => x.CreatedBy, new { Value = ViewBag.UserToken.UserName, id = "createdBy" })
+        @Html.HiddenFor(x => x.UpdatedBy, new { Value = ViewBag.UserToken.UserName, id = "updatedBy" })
+        @Html.HiddenFor(x => x.UpdatedDt, new { Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), id = "updatedDt" })
+        <br />
+        <center><h1>Usuarios</h1></center>
+
+        <div class="tabla-consultas-roll">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>ID Usuario:</label>
+                        @Html.TextBoxFor(x => x.Id, new { @class = "form-control", @readonly = "readonly", id = "id" })
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>Nombre:</label>
+                        @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control", id = "nombre" })
+                    </div>
+                    <div class="col-lg-4">
+                        <label>UserName:</label>
+                        @Html.TextBoxFor(x => x.UserName, new { @class = "form-control", id = "username" })
+                    </div>
+                    <div class="col-lg-4">
+                        <label>Email:</label>
+                        @Html.TextBoxFor(x => x.Email, new { @class = "form-control", id = "email" })
+                    </div>
+                    <div class="col-lg-4">
+                        <label>Contraseña:</label>
+                        @Html.PasswordFor(x => x.Password, new { @class = "form-control", id = "password" })
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <input id="btnGuardaru" type="button" value="Guardar" onclick="SaveOrUpdateUsuario()" class="btn btn-success" />
+                        <a href="/Administracion/Usuarios" class="btn btn-custom-cancel">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    @if (ViewBag.EsEdicion == true)
+    {
+        <input id="btnPermisos" type="submit" value="Permisos" class="btn btn-custom-clean" />
+    }
+    <br />
+    <br />
+    <table id="tblUsuarios" class="table table-bordered table-striped" style="width: 100%;"></table>
+</div>
+
+
+<script type="text/javascript">
+    var UsuariosJson = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+</script>
+
+<script src="@(Url.Content("~/Scripts/Seguridad/Usuario.js"))"></script>

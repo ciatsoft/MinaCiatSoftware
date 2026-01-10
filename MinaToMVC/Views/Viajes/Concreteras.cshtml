@@ -1,0 +1,198 @@
+﻿
+@{
+    ViewBag.Title = "Concreteras";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var estatus = new List<string> { "Activo", "Inactivo" };
+
+
+    var tipoMateriales = (List<MinaTolEntidades.DtoClientes.ClienteTipoMaterial>)ViewBag.TipoMaterial;
+    var trabajadores = (List<MinaTolEntidades.DtoSucursales.DtoTrabajador>)ViewBag.Trabajadores;
+    var vehiculos = (List<MinaTolEntidades.DtoClientes.Vehiculo>)ViewBag.Vehiculos;
+    var clientes = (List<MinaTolEntidades.DtoClientes.Cliente>)ViewBag.Clientes;
+    var unidadmedida = (List<MinaTolEntidades.DtoSucursales.UnidadMedida>)ViewBag.UnidadDeMedida;
+    var ubicaciones = (List<MinaTolEntidades.DtoCatalogos.DtoUbicacion>)ViewBag.Ubicaciones;
+
+    var ViajeLocal = (MinaTolEntidades.DtoViajes.DtoViajeLocal)Model;
+}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<link href="~/Assets/css/dataTables.dataTables.min.css" rel="stylesheet" />
+<script src="~/Assets/js/dataTables.min.js"></script>
+
+<style>
+    .btn-success {
+        background-color: #28a745; /* Verde para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-success:hover {
+            background-color: #218838; /* Color verde más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+
+    .btn-custom-cancel {
+        background-color: #FF5733; /*  para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-custom-cancel:hover {
+            background-color: darkred; /* Color  más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+
+    .btn-custom-delete {
+        background-color: #C70039; /*  para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-custom-delete:hover {
+            background-color: darkred; /* Color  más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+
+    .btn-custom-clean {
+        background-color: dodgerblue; /*  para el botón Guardar */
+        color: white;
+        border: none;
+        transition: all 0.3s ease; /* Transición suave para el cambio de tamaño y color */
+    }
+
+        .btn-custom-clean:hover {
+            background-color: deepskyblue; /* Color  más oscuro al pasar el ratón */
+            transform: scale(1.3); /* Aumenta el tamaño del botón */
+            color: white; /* Color de texto blanco */
+        }
+</style>
+
+<form enctype="multipart/form-data" id="frmViajesInternos" method="post" name="frmViajesInternos">
+    <div class="content">
+        <!-- Campos ocultos para los datos automáticos -->
+        <input type="hidden" id="txtCreatedBy" value="@User.Identity.Name" />
+        <input type="hidden" id="txtCreatedDt" value="@DateTime.Now" />
+        <input type="hidden" id="txtUpdatedBy" value="@User.Identity.Name" />
+        <input type="hidden" id="txtUpdatedDt" value="@DateTime.Now" />
+        <input type="hidden" id="txtViajeinterno" />
+        <br>
+        <center><h1>Viajes de Concreteras</h1></center>
+        <div class="tabla-consultas-empleados">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Folio:</label>
+                        <!-- Input oculto para almacenar folio.Id -->
+                        @*<input type="hidden" id="FolioId" name="FolioId" value="@folio.Id" />*@
+
+                        <!-- Input visible para mostrar folio.Consecutivo -->
+                        <input type="text" id="Folio" name="Folio" class="form-control" value="@ViewBag.Folio" disabled />
+                    </div>
+
+                    <div class="col-lg-3">
+                        <label>Ubicación Origen:</label>
+                        <select id="ddlUOrigen" name="ddlUOrigen" class="form-control" disabled>
+                            @foreach (var i in ubicaciones)
+                            {
+                                <option value="@i.Id">@i.NombreUbicacion</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Cliente:</label>
+                        <select id="ddlCliente" class="form-control">
+                            <option value="" disabled selected>Selecciona una opcion</option>
+                            @foreach (var i in clientes.Where(c => c.TipoCliente == 0).OrderBy(c => c.Nombre))
+                            {
+                                <option value="@i.Id">@i.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Tipo de Material:</label>
+                        <select id="ddlTipoMaterial" class="form-control">
+                            <option value="" disabled selected>Selecciona una opcion</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Direccion Destino:</label>
+                        <select id="ddlDireccionesCliente" class="form-control">
+                            <option value="" disabled selected>Selecciona una opcion</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Transportista:</label>
+                        <select id="ddlTransportistas" class="form-control">
+                            @foreach (var i in trabajadores)
+                            {
+                                <option value="@i.Id">@i.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Vehículo:</label>
+                        <select id="ddlVehiculo" class="form-control">
+                            @foreach (var i in vehiculos)
+                            {
+                                <option value="@i.Id">@($"{i.TipoVehiculo.Nombre}, {i.Color}, {i.Placa}")</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-lg-1">
+                        <label>Unidad De Medida:</label>
+                        <select id="ddlUnidadM" class="form-control" disabled>
+                            @foreach (var unidad in unidadmedida)
+                            {
+                                <option value="@unidad.Id">@unidad.Nombre</option>
+                            }
+                        </select>
+
+                    </div>
+                    <div class="col-lg-2">
+                        <label>Fecha del viaje:</label>
+                        <input type="date" id="dtpFechaViaje" name="dtpFechaViaje" class="form-control" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Observaciones:</label>
+                        <textarea name="txtObservaciones" id="txtObservaciones" class="form-control" rows="6"></textarea>
+                    </div>
+                </div>
+                <input type="hidden" id="totalKMRecorridos" value="0" />
+                <input type="hidden" id="totalImporte" value="0" />
+                <div class="row">
+                    <div class="col-lg-12 d-flex justify-content-between">
+                        <!-- Contenedor para los botones de la izquierda -->
+                        <div>
+                            <input id="btnGuardar" href="/Viajes/Locales" type="button" value="Guardar" onclick="SaveOrUpdateViajeLocal()" class="btn btn-success" />
+                            <input id="btnEliminar" href="/Viajes/Locales" type="button" value="Eliminar" class="btn btn-custom-delete" onclick="EliminarViajeLocal()" />
+                        </div>
+                        <!-- Botón cancelar a la derecha -->
+                        <a href="/Viajes/Concreteras" class="btn btn-custom-cancel">Cancelar</a>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <table class="table table-bordered table-striped" id="tblViajesLocales" style="width: 100%;"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script src="@(Url.StaticFile("Scripts/Viajes/Concreteras.js"))"></script>
+<script>
+    var viajeLocalJson = JSON.parse('@Html.Raw((Newtonsoft.Json.JsonConvert.SerializeObject(ViajeLocal)))');
+</script>

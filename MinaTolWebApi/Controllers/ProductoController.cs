@@ -20,6 +20,8 @@ namespace MinaTolWebApi.Controllers
         {
             wrapper = new DbWrapper();
         }
+
+
         [Route("List"), HttpGet]
         public async Task<ModelResponse> GetAllProducto()
         {

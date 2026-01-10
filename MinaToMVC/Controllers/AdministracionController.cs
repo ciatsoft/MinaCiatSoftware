@@ -1,6 +1,9 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoClientes;
+using MinaTolEntidades.DtoEmpleados;
+using MinaTolEntidades.DtoSeguridad;
+using MinaTolEntidades.DtoSucursales;
 using MinaTolEntidades.DtoViajes;
 using MinaTolEntidades.Security;
 using MinaToMVC.Helpers;
@@ -8,8 +11,12 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data.SqlClient;
+using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using System.Web;
@@ -39,6 +46,8 @@ namespace MinaToMVC.Controllers
         {
             var Cliente = new Cliente();
             IEnumerable<ClienteTipoMaterial> materialesPorClientes;
+            IEnumerable<DireccionCliente> direccionporClientes;
+            IEnumerable<DireccionCliente> direccionCliente;
             if (id != 0)
             {
                 var result = await httpClientConnection.GetClienteById(id);
@@ -46,44 +55,52 @@ namespace MinaToMVC.Controllers
 
                 var materialesPorClientesResponse = await httpClientConnection.GetTipoMaterialByCliente(id);
                 materialesPorClientes = JsonConvert.DeserializeObject<List<ClienteTipoMaterial>>(materialesPorClientesResponse.Response.ToString());
-
-
             }
             else
             {
                 materialesPorClientes = Enumerable.Empty<ClienteTipoMaterial>().ToArray();
+                direccionporClientes = Enumerable.Empty<DireccionCliente>().ToArray();
+                direccionCliente = Enumerable.Empty<DireccionCliente>().ToArray();
             }
+            
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
             ViewBag.MaterialesCliente = materialesPorClientes;
+
+            string tipoCliente = ConfigurationManager.AppSettings["TipoCliente"];
+
+            var opcionesCliente = tipoCliente.Split('|')
+                .Select(opt =>
+                {
+                    var parts = opt.Split(':');
+                    return new SelectListItem
+                    {
+                        Value = parts[0],
+                        Text = parts[1]
+                    };
+                }).ToList();
+            ViewBag.TipoCliente = opcionesCliente;
 
             return View(Cliente);
         }
-
-        public async Task<string> SaveOrUpdateClienteTipoMaterial(ClienteTipoMaterial t)
+        public async Task<string> GetDireccionesCliente(long id)
         {
-
-
-            httpClientConnection.MappingColumSecurity(t);
-            var result = await httpClientConnection.SaveOrUpdateClienteTipoMaterial(t);
-            return JsonConvert.SerializeObject(result);
+            var result = await httpClientConnection.GetDireccionesCliente(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-
-        public async Task<string> DeleteClienteTipoMaterial(ClienteTipoMaterial t)
-        {
-
-            httpClientConnection.MappingColumSecurity(t);
-            var result = await httpClientConnection.DeleteClienteTipoMaterial(t);
-            return JsonConvert.SerializeObject(result);
-        }
-
-
-        public string SaveOrUpdateCliente(Cliente t)
-        {
-
-            var result = httpClientConnection.SaveOrUpdateCliente(t);
-            return JsonConvert.SerializeObject(result);
-        }
-
-
         public ActionResult Solicitudes()
         {
             return View();
@@ -104,10 +121,47 @@ namespace MinaToMVC.Controllers
         {
             return View();
         }
+        public async Task<ActionResult> Usuarios(long id = 0)
+        {
+            Usuario user = new Usuario();
+
+            if (id != 0)
+            {
+                var result = await httpClientConnection.GetUsuarioById(id);
+                if (result != null && result.Response != null)
+                {
+                    var usuario = JsonConvert.DeserializeObject<Usuario>(result.Response.ToString());
+                    if (usuario != null)
+                    {
+                        user = usuario;
+                    }
+                }
+            }
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuariosList = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+
+            var usuariosDropdown = MappingPropertiToDropDownList<Usuario>(usuariosList, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.EsEdicion = (id != 0);
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuariosDropdown;
+
+            return View(user);
+        }
         #endregion
 
         #region Partials Views
-        public async Task<ActionResult> PartialConfiguracionCostosCliente(int clienteId, int materialId)
+        public async Task<ActionResult> PartialConfiguracionCostosCliente(long clienteId, int materialId)
         {
             var precios = new List<ClienteTipoMaterial>();
             if (clienteId != 0 && materialId != 0)
@@ -117,6 +171,21 @@ namespace MinaToMVC.Controllers
                 precios = JsonConvert.DeserializeObject<List<ClienteTipoMaterial>>(result.Response.ToString());
             }
 
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
             ViewBag.ClienteId = clienteId;
             ViewBag.MaterialId = materialId;
             ViewBag.Precios = precios;
@@ -125,12 +194,73 @@ namespace MinaToMVC.Controllers
 
             return PartialView(precios);
         }
+        public async Task<ActionResult> PartialdireccionesClientes(long direccionClientebyiD, int clienteId)
+        {
+            var direccion = new List<DireccionCliente>();
+            if (direccionClientebyiD != 0)
+            {
+                var result = await httpClientConnection.GetDireccionClienteByIdDireccion(direccionClientebyiD);
+                direccion = JsonConvert.DeserializeObject<List<DireccionCliente>>(result.Response.ToString());
+            }
 
+            ViewBag.ClienteId = clienteId;
+            ViewBag.ubicacionCliente = direccionClientebyiD;
+            return PartialView(direccion);
 
+        }
+        public ActionResult AbrirModalPermisosUsuario(long id = 0)
+        {
 
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+            ViewBag.UsuarioModalId = id;
+
+            return PartialView();
+        }
+        public async Task<ActionResult> PartialConfigurarCombustible(long id = 0)
+        {
+            PrecioCombustible precioCombustible = new PrecioCombustible();
+
+            if(id != 0)
+            {
+                var response = await httpClientConnection.GetPrecioCombustibleById(id);
+                precioCombustible = JsonConvert.DeserializeObject<PrecioCombustible>(response.Response.ToString());
+            }
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+            ViewBag.UsuarioModalId = id;
+
+            return PartialView(precioCombustible);
+        }
         #endregion
 
         #region Data Acces
+        #region Extras
         [HttpPost]
         public async Task<string> FirstAutentication(string user, string pass)
         {
@@ -170,13 +300,144 @@ namespace MinaToMVC.Controllers
             }
             return JsonConvert.SerializeObject(mr);
         }
+        #endregion
 
+        #region Clientes
+        public string SaveOrUpdateCliente(Cliente t)
+        {
+            var result = httpClientConnection.SaveOrUpdateCliente(t);
+            return JsonConvert.SerializeObject(result);
+        }
         public async Task<string> GetAllCliente()
         {
             var result = await httpClientConnection.GetAllCliente();
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+        public async Task<string> GetAllTipoCliente(long id)
+        {
+            var result = await httpClientConnection.GetAllTipoCliente(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<ActionResult> DeleteCliente(long id)
+        {
+            var result = httpClientConnection.DeleteCliente(id);
+            return Redirect("Clientes");
+        }
+        #endregion
+
+        #region ClienteTipoMaterial
+        public async Task<string> DeleteClienteTipoMaterial(ClienteTipoMaterial t)
+        {
+            httpClientConnection.MappingColumSecurity(t);
+            var result = await httpClientConnection.DeleteClienteTipoMaterial(t);
+            return JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> SaveOrUpdateClienteTipoMaterial(ClienteTipoMaterial t)
+        {
+            httpClientConnection.MappingColumSecurity(t);
+            var result = await httpClientConnection.SaveOrUpdateClienteTipoMaterial(t);
+            return JsonConvert.SerializeObject(result);
+        }
+        public async Task<String> ClienteTipoMaterialByDireccionMaterialAndCliente(long id, long idCliente, long idMaterial)
+        {
+            var resuslt = await httpClientConnection.ClienteTipoMaterialByDireccionMaterialAndCliente(id, idCliente, idMaterial);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(resuslt);
+        }
+        public async Task<String> DeletTipoMaterial(long id)
+        {
+            var result = await httpClientConnection.DeletTipoMaterial(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        #endregion
+
+        #region DireccionCliente
+        public async Task<String> GetDireccionClienteById(long id)
+        {
+            var resuslt = await httpClientConnection.GetDireccionClienteByIdDireccion(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(resuslt);
+        }
+        public async Task<String> DeletDireccionCliente(long id)
+        {
+            var result = await httpClientConnection.DeleteDirreccionCliente(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> SaveOrUpdateDireccionCliente(DireccionCliente t)
+        {
+            httpClientConnection.MappingColumSecurity(t);
+            var result = await httpClientConnection.SaveOrUpdateDireccionCliente(t);
+            return JsonConvert.SerializeObject(result);
+        }
+        #endregion
+
+        #region Usuario
+        #region UsuarioROL
+        public async Task<string> SaveOrUpdateUsuarioRol(UsuarioRol u)
+        {
+            var result = await httpClientConnection.SaveOrUpdateUsuarioRol(u);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> DeleteUsuarioRolById(long id)
+        {
+            var result = await httpClientConnection.DeleteUsuarioRolById(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetAllUsuarioRolByUsuarioId(long id)
+        {
+            var result = await httpClientConnection.GetAllUsuarioRolByUsuarioId(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        #endregion
+
+        #region Usuario
+        public async Task<String> DeleteUsuario(long id)
+        {
+            var result = await httpClientConnection.DeleteUsuario(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<ActionResult> SaveOrUpdateUsuario(Usuario u)
+        {
+            // Extraer y encriptar el password
+            string passwordOld = u.Password;
+            string passwordEncrypted = Cryptography.Encrypt(passwordOld);
+            // Actualizar el valor en el objeto Usuario
+            u.Password = passwordEncrypted;
+            // Ahora el objeto u tiene el password encriptado
+            var r = await httpClientConnection.SaveOrUpdateUsuario(u);
+            return Redirect("Usuarios");
+        }
+        public async Task<string> GetAllUsuario()
+        {
+            var result = await httpClientConnection.GetAllUsuario();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        #endregion
+
+        #endregion
+
+        #region Precio Combustible
+        public string SaveOrUpdatePrecioCombustible(PrecioCombustible t)
+        {
+            var result = httpClientConnection.SaveOrUpdatePrecioCombustible(t);
+            return JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetAllPrecioCombustible()
+        {
+            var result = await httpClientConnection.GetAllPrecioCombustible();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetPrecioActivoCombustible()
+        {
+            var result = await httpClientConnection.GetPrecioActivoCombustible();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<ActionResult> DeletePrecioCombustible(long id)
+        {
+            var result = httpClientConnection.DeletePrecioCombustible(id);
+            return Redirect("Clientes");
+        }
+        #endregion
+
         #endregion
     }
 }

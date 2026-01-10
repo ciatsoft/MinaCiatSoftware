@@ -1,6 +1,7 @@
 ﻿using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoSucursales;
+using MinaTolEntidades.DtoVentaPublicoGeneral;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -48,16 +49,30 @@ namespace MinaTolWebApi.DAL
             return modelResponse;
         }
 
-        public ModelResponse SaveOrUpdateTipoMaterialUbicacion (DtoTipoMaterialUbicacion t)
+        public ModelResponse SaveOrUpdateTipoMaterialUbicacion(DtoTipoMaterialUbicacion t)
         {
             var response = new ModelResponse();
             try
             {
                 response.IsSuccess = true;
-                var parameters = GenerateSQLParameters(t);
-                var tipoMaterialU = ExecuteScalar($"SaveOrUpdateTipoMaterialUbicacion", System.Data.CommandType.StoredProcedure, parameters);
-                t.Id = Convert.ToInt64(tipoMaterialU);
 
+                // Solo los parámetros necesarios para el SP
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@Id", t.Id),
+                    new SqlParameter("@NombreTipoMaterial", t.NombreTipoMaterial ?? (object)DBNull.Value),
+                    new SqlParameter("@DescripcionTipoMaterial", t.DescripcionTipoMaterial ?? (object)DBNull.Value),
+                    new SqlParameter("@UnidadMedida", t.UnidadMedida?.Id ?? 0),
+                    new SqlParameter("@Estatus", t.Estatus),
+                    new SqlParameter("@CreatedBy", t.CreatedBy ?? (object)DBNull.Value),
+                    new SqlParameter("@CreatedDt", t.CreatedDt != DateTime.MinValue ? t.CreatedDt : DateTime.Now),
+                    new SqlParameter("@UpdatedBy", t.UpdatedBy ?? (object)DBNull.Value),
+                    new SqlParameter("@UpdatedDt", t.UpdatedDt != DateTime.MinValue ? t.UpdatedDt : DateTime.Now)
+                };
+
+                // Ejecutar procedimiento
+                var tipoMaterialU = ExecuteScalar("SaveOrUpdateTipoMaterialUbicacion", CommandType.StoredProcedure, parameters);
+                t.Id = Convert.ToInt64(tipoMaterialU);
                 response.Response = t;
             }
             catch (Exception ex)
@@ -66,6 +81,7 @@ namespace MinaTolWebApi.DAL
                 response.Message = ex.Message;
                 response.Enum = Enumeration.ErrorNoControlado;
             }
+
             return response;
         }
 
@@ -125,6 +141,89 @@ namespace MinaTolWebApi.DAL
                 response.Enum = Enumeration.ErrorNoControlado;
             }
 
+            return response;
+        }
+
+        public ModelResponse GetGetMaterialUbicacionByUbicacion(long id)
+        {
+            var response = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("@UbicacionId", id));
+            try
+            {
+                var result = GetList(
+                    "GetMaterialUbicacionByUbicacion",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader => FillEntity<DtoTipoMaterialUbicacion>(reader)
+                );
+
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+        
+        // Guardar relacion 
+        public ModelResponse SaveOrUpdateMaterialUbicacion(DtoTipoMaterialUbicacion t)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+
+                var parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@Id", t.Id),
+                    new SqlParameter("@UbicacionId", t.UbicacionId),
+                    new SqlParameter("@MaterialId", t.MaterialId),
+                    new SqlParameter("@CreatedBy", (object)t.CreatedBy ?? DBNull.Value),
+                    new SqlParameter("@CreatedDt", (object)t.CreatedDt ?? DBNull.Value),
+                    new SqlParameter("@UpdatedBy", (object)t.UpdatedBy ?? DBNull.Value),
+                    new SqlParameter("@UpdatedDt", (object)t.UpdatedDt ?? DBNull.Value),
+                };
+
+                var tipoMaterialU = ExecuteScalar("SaveOrUpdateMaterialUbicacion", CommandType.StoredProcedure, parameters);
+                t.Id = Convert.ToInt64(tipoMaterialU);
+
+                response.Response = t;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+
+        // Quitar relacion
+        public ModelResponse QuitMaterialUbicacion(DtoTipoMaterialUbicacion t)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+
+                var parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@Id", t.Id),
+                };
+
+                var tipoMaterialU = ExecuteScalar("QuitMaterialUbicacion", CommandType.StoredProcedure, parameters);
+                response.Response = t;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
             return response;
         }
     }

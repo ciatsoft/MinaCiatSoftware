@@ -1,0 +1,4 @@
+﻿@model MinaTolEntidades.DtoVentaPublicoGeneral.PV_Precio
+
+<label>Material:</label>
+@Html.DropDownListFor(x => x.Material.Id, (IEnumerable<SelectListItem>)ViewBag.Materiales, new { @class = "form-control" })

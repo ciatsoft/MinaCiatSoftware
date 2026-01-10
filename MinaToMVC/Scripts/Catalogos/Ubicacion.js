@@ -1,10 +1,5 @@
 ﻿$(document).ready(function () {
-    $("#frmubicacion").validate({
-        rules: {
-            "txtNombreUbicacion": "required",
-            "txtDescripcionUbicacion": "required",
-        }
-    });
+
     $("#tableUbicacion").dataTable({
         processing: true,
         destroy: true,
@@ -15,27 +10,26 @@
             { data: "nombreUbicacion", title: "Nombre" },
             { data: "descripcionUbicacion", title: "Descripción" },
             {
-                data: "estatus",
-                title: "Estatus",
+                data: "esInterna",
+                title: "Tipo de mina",
                 render: function (data, type, row) {
-                    return data == 1 ? "Activo" : "Inactivo";
+                    return data == 1 ? "Interna" : "Externa";
                 }
             },
             {
-                data: "id", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarUbicacion(' + data + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarUbicacion(' + data + ', this)" />'; // 'this' se pasa para obtener la fila
+                data: null,
+                render: function (data) {
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarUbicacion(' + data.id + ', \'' + data.nombreUbicacion.replace(/'/g, "\\'") + '\')" />';
                 }
             }
-        ]
-        ,
+        ],
         language: {
             "decimal": ",",
             "thousands": ".",
             "processing": "Procesando...",
             "lengthMenu": "Mostrar _MENU_ entradas",
             "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ning�n dato disponible en esta tabla",
+            "emptyTable": "Ningún dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -43,7 +37,7 @@
             "loadingRecords": "Cargando...",
             "paginate": {
                 "first": "Primero",
-                "last": "�ltimo",
+                "last": "Último",
                 "next": "Siguiente",
                 "previous": "Anterior"
             },
@@ -56,92 +50,85 @@
 
     GetAllUbicacion();
 
-    if (typeof UbicacionJson.Id != 0) {
+    // Al cargar la página, si ya hay un ID (estamos editando)
+    if (UbicacionJson.Id != 0) {
         $("#txtIdUbicacion").val(UbicacionJson.Id);
         $("#txtNombreUbicacion").val(UbicacionJson.NombreUbicacion);
         $("#txtDescripcionUbicacion").val(UbicacionJson.DescripcionUbicacion);
-        $("#chbEstatus").prop('checked', UbicacionJson.Estatus);
+        $("#Estatus").val(UbicacionJson.Estatus);
+        $("#EsInterna").prop('checked', UbicacionJson.EsInterna);
+
+        // Habilitar el botón de eliminar
+        $("#btnEliminarUbicacion").prop('disabled', false);
+        // Guardar el ID en el botón de eliminar
+        $("#btnEliminarUbicacion").data('id', UbicacionJson.Id);
+
+        // Habilitar el botón de Asignacion de Material
+        $("#btnAsociar").prop('disabled', false);
+        // Guardar el ID en el botón de Asignacion de Material
+        $("#btnAsociar").data('id', UbicacionJson.Id);
+
+    }
+
+    // Verificar si hay una bandera para abrir el modal
+    const modalData = sessionStorage.getItem("abrirModalUbicacion");
+    if (modalData) {
+        const datos = JSON.parse(modalData);
+
+        // Llama a la función que abre el modal
+        AbrirModalMateriales(datos.id, datos.nombre);
+
+        // Limpia la bandera para que no se vuelva a ejecutar en futuros reloads
+        sessionStorage.removeItem("abrirModalUbicacion");
     }
 });
 
-// Funci�n que se ejecuta al hacer clic en el bot�n de Guardar
-function SaveOrUpdateUbicacion() {
-    if ($("#frmubicacion").valid()) {
-        var parametro = {
-            Id: $("#txtIdUbicacion").val(),
-            NombreUbicacion: $("#txtNombreUbicacion").val(),
-            DescripcionUbicacion: $("#txtDescripcionUbicacion").val(),
-            Estatus: $("#chbEstatus").is(':checked'),
-            CreatedBy: $("#txtCreatedBy").val(),
-            CreatedDt: $("#txtCreatedDt").val(),
-            UpdatedBy: $("#txtUpdatedBy").val(),
-            UpdatedDt: $("#txtUpdatedDt").val()
-        };
+// Función para editar ubicación
+function EditarUbicacion(id, nombreUbicacion) {
+    // Guardar el ID y el nombre en el botón de asociar materiales
+    $("#btnAsociar").data('id', id);
+    $("#btnAsociar").data('nombre', nombreUbicacion);
+    $("#btnAsociar").prop('disabled', false);
 
-        Swal.fire({
-            title: "Registro guardado!",
-            text: "El registro se ha guardado correctamente.",
-            icon: "success",
-            confirmButtonText: 'OK'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '/Catalog/Ubicacion';
-            }
-        });
+    // Guardar el ID en el botón de eliminar
+    $("#btnEliminarUbicacion").data('id', id);
+    $("#btnEliminarUbicacion").prop('disabled', false);
 
-        console.log(parametro);
-        // Llamada al servidor para guardar o actualizar los datos
-        PostMVC('/Catalog/SaveOrUpdateUbicacion', parametro, function (r) {
-            if (r.IsSuccess) {
-                LimpiarFormulario();
-                alert("Datos guardados exitosamente.");
-            } else {
-                alert("Error al guardar los datos: " + r.ErrorMessage);
-            }
-        });
-    }
+    // Redirigir a la página de edición
+    location.href = "/Catalog/Ubicacion/" + id;
 }
 
-// Funci�n para eliminar el rol con confirmaci�n y actualizaci�n de estatus
-function EliminarUbicacion(id, boton) {
-    // Obtener la fila correspondiente al bot�n de eliminaci�n
-    var row = $(boton).closest("tr");
+// Función para eliminar ubicación
+function EliminarUbicacion() {
+    // Obtener el ID guardado en el botón
+    var id = $("#btnEliminarUbicacion").data('id');
 
-    // Obtener los valores de la fila y almacenarlos en variables
-    var nombre = row.find("td:eq(0)").text();  // Nombre
-    var descripcion = row.find("td:eq(1)").text();  // Descripci�n
+    if (!id || id == 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se ha seleccionado una ubicación para eliminar',
+            confirmButtonText: 'Aceptar'
+        });
+        return;
+    }
 
-    // Confirmaci�n de eliminaci�n
     Swal.fire({
-        title: '¿Está seguro?',
-        text: "¿Desea eliminar la siguiente Ubicación? \nNombre: " + nombre,
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esta acción!",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, eliminar',
+        confirmButtonText: 'Sí, eliminar!',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Actualizamos el estatus a "Inactivo" (0) y preparamos el par�metro
-            var parametro = {
-                Id: id,
-                NombreUbicacion: nombre,
-                DescripcionUbicacion: descripcion,
-                Estatus: 0,  // Cambiamos el estatus a inactivo (0)
-                CreatedBy: $("#txtCreatedBy").val(),
-                CreatedDt: $("#txtCreatedDt").val(),
-                UpdatedBy: $("#txtUpdatedBy").val(),
-                UpdatedDt: new Date().toISOString()
-            };
-            console.log(parametro);
-            window.location.href = '/Catalog/Ubicacion';
-            PostMVC('/Catalog/SaveOrUpdateUbicacion', parametro, function (r) {
-                window.location.href = '/Catalog/Ubicacion';
+            PostMVC('/Catalog/DeleteUbicacion', { id: id }, function (r) {
                 if (r.IsSuccess) {
                     Swal.fire(
-                        'Eliminado',
-                        'La Ubicación ha sido eliminada.',
+                        'Eliminado!',
+                        'La ubicación ha sido eliminada.',
                         'success'
                     ).then(() => {
                         window.location.href = '/Catalog/Ubicacion';
@@ -159,6 +146,47 @@ function EliminarUbicacion(id, boton) {
     });
 }
 
+// Función que se ejecuta al hacer clic en el bot�n de Guardar
+function SaveOrUpdateUbicacion() {
+    if ($("#frmubicacion").valid()) {
+        var parametro = {
+            Id: $("#txtIdUbicacion").val(),
+            NombreUbicacion: $("#txtNombreUbicacion").val(),
+            DescripcionUbicacion: $("#txtDescripcionUbicacion").val(),
+            Estatus: $("#Estatus").val(),
+            CreatedBy: $("#CreatedBy").val(),
+            CreatedDt: $("#CreatedDt").val(),
+            UpdatedBy: $("#UpdatedBy").val(),
+            UpdatedDt: $("#UpdatedDt").val(),
+            EsInterna: $("#EsInterna").is(':checked')
+        };
+
+        console.log(parametro);
+        // Llamada al servidor para guardar o actualizar los datos
+        PostMVC('/Catalog/SaveOrUpdateUbicacion', parametro, function (r) {
+            if (r.IsSuccess) {
+                LimpiarFormulario();
+                Swal.fire({
+                    title: "Registro guardado!",
+                    text: "El registro se ha guardado correctamente.",
+                    icon: "success",
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/Catalog/Ubicacion';
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al guardar los datos: ' + r.ErrorMessage,
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+}
 
 function EditarUbicacion(id) {
     location.href = "/Catalog/Ubicacion/" + id;
@@ -180,5 +208,31 @@ function LimpiarFormulario() {
     $("#txtIdUbicacion").val('');
     $("#txtNombreUbicacion").val('');
     $("#txtDescripcionUbicacion").val('');
-    $("#chbEstatus").prop('checked', false);
+    $("#Estatus").prop('checked', false);
+}
+
+function AbrirModalMateriales(idUbicacion, NombreUbicacion) {
+    var createdBy = $('#CreatedBy').val();
+    var updatedBy = $('#UpdatedBy').val();
+    var createdDt = $('#CreatedDt').val();
+    var updatedDt = $('#UpdatedDt').val();
+
+    // Limpiar completamente el modal antes de cargar nuevo contenido
+    $("#genericModal").removeData('bs.modal');
+    $("#boddyGeericModal").empty();
+
+    $("#titleGenerciModal").text("Configuración de Planta con Materiales: " + NombreUbicacion);
+
+    $("#boddyGeericModal").load("/Catalog/PartialConfigurationUbicacionMaterial" +
+        "?idUbicacion=" + idUbicacion +
+        "&nombreUbicacion=" + encodeURIComponent(NombreUbicacion) +
+        "&createdBy=" + encodeURIComponent(createdBy) +
+        "&updatedBy=" + encodeURIComponent(updatedBy) +
+        "&createdDt=" + encodeURIComponent(createdDt) +
+        "&updatedDt=" + encodeURIComponent(updatedDt),
+        function () {
+            // Asegurarse de que el modal se muestra después de cargar el contenido
+            $("#genericModal").modal("show");
+        }
+    );
 }

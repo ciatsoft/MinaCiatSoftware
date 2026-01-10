@@ -1,39 +1,45 @@
 ﻿$(document).ready(function () {
+    // Validación del formulario
     $("#frmtipovehiculo").validate({
         rules: {
             "txtNombre": "required",
             "txtDescripcion": "required",
+            "txtCapacidad": "required"
         },
         messages: {
             "txtNombre": "Por favor, ingresa el nombre del vehículo",
             "txtDescripcion": "Por favor, ingresa una descripción",
+            "txtCapacidad": "Por favor, ingrsar capacidad del vehiculo"
         },
         errorPlacement: function (error, element) {
-            error.insertAfter(element); // Coloca el mensaje de error después del campo correspondiente
+            error.insertAfter(element);
         }
     });
 
+    // Configuración de la tabla
     $("#tblTipoVehiculo").dataTable({
         processing: true,
         destroy: true,
         paging: true,
         searching: true,
         columns: [
-            { data: "id", "visible": true, title: "Id" },
+            { data: "id", visible: false, title: "Id" },
             { data: "nombre", title: "Nombre" },
             { data: "descripcion", title: "Descripción" },
+            { data: "capacidad", title: "Capacidad" },
             {
                 data: "estatus",
                 title: "Estatus",
-                render: function (data, type, row) {
-                    // Si estatus es 1, muestra "Activo", si es 0, muestra "Inactivo"
+                render: function (data) {
                     return data == 1 ? "Activo" : "Inactivo";
                 }
             },
             {
-                data: "id", title: "Acciones", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarTVehiculo(' + data + ')" />' +
-' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarTVehiculo(' + data + ')" />';
+                data: "id",
+                title: "Acciones",
+                render: function (data) {
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarTipoVehiculo(' + data + ')" />' +
+                     ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarTVehiculo(' + data + ')" />';
                 }
             }
         ],
@@ -62,32 +68,32 @@
         }
     });
 
+    // Carga inicial de datos
     GetAllTipoVehiculo();
 
-    // Verifica si tVehiculoJson tiene un id válido
+    // Si se va a editar un registro, llenar los campos
     if (tVehiculoJson && tVehiculoJson.Id && tVehiculoJson.Id !== 0) {
         $("#txtidtipovehiculo").val(tVehiculoJson.Id);
         $("#txtNombre").val(tVehiculoJson.Nombre);
+        $("#txtCapacidad").val(tVehiculoJson.Capacidad);
         $("#txtDescripcion").val(tVehiculoJson.Descripcion);
         $("#chbEstatus").prop('checked', tVehiculoJson.Estatus);
-        $("#estatusContainer").show(); // Mostrar solo si se está editando
-    } else {
-        $("#estatusContainer").hide(); // No mostrar si no se está editando
     }
 });
 
-
-// Función que se ejecuta al hacer clic en el botón de Guardar
+// Función para guardar o actualizar tipo de vehículo
 function SaveOrUpdateTipoVehiculo() {
-    // Validamos el formulario antes de proceder
     if ($("#frmtipovehiculo").valid()) {
         var parametro = {
             Id: $("#txtidtipovehiculo").val(),
             Nombre: $("#txtNombre").val(),
             Descripcion: $("#txtDescripcion").val(),
-            Estatus: $("#chbEstatus").is(':checked'),  // Booleano directo
-            CreatedDt: $("#txtCreatedDt").val()
+            Capacidad:$("#txtCapacidad").val(),
+            Estatus: $("#chbEstatus").is(':checked'),
+            CreatedDt: $("#txtCreatedDt").val(),
+            Capacidad: $("#txtCapacidad").val()
         };
+
         Swal.fire({
             title: "Registro guardado!",
             text: "El registro se ha guardado correctamente.",
@@ -99,7 +105,6 @@ function SaveOrUpdateTipoVehiculo() {
             }
         });
 
-        // Llamada al servidor para guardar o actualizar los datos
         PostMVC('/Catalog/SaveOrUpdateTipoVehiculo', parametro, function (r) {
             if (r.IsSuccess) {
                 location.href = "/Catalog/TipoVehiculo/" + r.Response.id;
@@ -110,14 +115,11 @@ function SaveOrUpdateTipoVehiculo() {
     }
 }
 
-
-// Función para eliminar el rol con confirmación y actualización de estatus
+// Función para eliminar tipo de vehículo
 function EliminarTVehiculo(id) {
-
-    // Confirmación de eliminación
     Swal.fire({
         title: '¿Está seguro?',
-        text: "¿Desea eliminar la siguiente registro?",
+        text: "¿Desea eliminar el registro seleccionado?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -126,16 +128,14 @@ function EliminarTVehiculo(id) {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Actualizamos el estatus a "Inactivo" (0) y preparamos el parámetro
             var parametro = {
                 Id: id
             };
-            // Llamada para guardar o actualizar el rol
             PostMVC('/Catalog/DeleteTipoVehiculo', parametro, function (r) {
                 if (r.IsSuccess) {
                     Swal.fire(
                         'Eliminado',
-                        'El tipo de vehiculo ha sido eliminada.',
+                        'El tipo de vehículo ha sido eliminado.',
                         'success'
                     ).then(() => {
                         window.location.href = '/Catalog/TipoVehiculo';
@@ -144,7 +144,7 @@ function EliminarTVehiculo(id) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Error al eliminar El tipo de vehiculo: ' + r.ErrorMessage,
+                        text: 'Error al eliminar el tipo de vehículo: ' + r.ErrorMessage,
                         confirmButtonText: 'Aceptar'
                     });
                 }
@@ -153,22 +153,24 @@ function EliminarTVehiculo(id) {
     });
 }
 
-function EditarTVehiculo(id) {
+// Redirección al editar
+function EditarTipoVehiculo(id) {
     location.href = "/Catalog/TipoVehiculo/" + id;
 }
+
+// Limpieza del formulario
 function LimpiarFormulario() {
     $("#txtidtipovehiculo").val('');
     $("#txtNombre").val('');
     $("#txtDescripcion").val('');
-    $("#chbEstatus").prop('checked', false);  // Desmarcar el checkbox
+    $("#txtCapacidad").val('');
+    $("#chbEstatus").prop('checked', false);
 }
 
-
-// Función que llama al servidor para obtener todos los vehículos
+// Obtención de todos los registros
 function GetAllTipoVehiculo() {
     GetMVC("/Catalog/GetAllTipoVehiculo", function (r) {
         if (r.IsSuccess) {
-            // Mapea los datos recibidos a la tabla DataTable
             MapingPropertiesDataTable("tblTipoVehiculo", r.Response);
         } else {
             alert("Error al cargar los vehículos: " + r.ErrorMessage);

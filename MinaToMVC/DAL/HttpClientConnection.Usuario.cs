@@ -85,5 +85,35 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
+
+        #region Usuario MVC
+
+        public async Task<ModelResponse> GetAllUsuario()
+        {
+            var result = await RequestAsync<object>("api/Usuario/List", HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+
+        public async Task<ModelResponse> DeleteUsuario(long id)
+        {
+            var result = await RequestAsync<object>($"api/Usuario/{id}", HttpMethod.Delete, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+
+        }
+
+        #endregion
     }
 }

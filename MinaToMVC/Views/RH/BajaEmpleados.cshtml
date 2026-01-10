@@ -1,0 +1,19 @@
+﻿
+@{
+    ViewBag.Title = "BajaEmpleados";
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+<div class="content">
+    <br />
+    <center><h1>Bajas Empleado</h1></center>
+    <br />
+    <table id="tablaBajasEmpleado" class="table table-bordered table-striped" style="width: 100%;">
+    </table>
+    <br />
+</div>
+
+<script src="@(Url.StaticFile("Scripts/Trabajador/BajaEmpleados.js"))"></script>

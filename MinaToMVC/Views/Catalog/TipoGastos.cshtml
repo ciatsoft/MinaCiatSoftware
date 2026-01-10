@@ -1,0 +1,60 @@
+﻿@model MinaTolEntidades.DtoCatalogos.DtoTipoGasto
+@{
+    ViewBag.Title = "TipoGastos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+@using (Html.BeginForm("SaveOrUpdateTipoGastos", "Catalog", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmTipoGastos", @id = "frmTipoGastos" }))
+{
+    @Html.HiddenFor(x => x.Estatus)
+    @Html.HiddenFor(x => x.CreatedDt, new { @Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") })
+    @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy" })
+    @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy" })
+    @Html.HiddenFor(x => x.UpdatedDt, new { @Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") })
+
+    <div class="content">
+        <br>
+        <center><h1>Tipo de Gastos</h1></center>
+
+        <div class="tabla-consultas-roll">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label id="id">ID TipoGastos:</label>
+                        @Html.TextBoxFor(x => x.Id, new { @class = "form-control", @min = "0", @readonly = "readonly", @Id = "id" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label for="txtPrecioActivo" id="nombre">Nombre:</label>
+                        @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control", @Id = "nombre" })
+                    </div>
+                    <div class="col-lg-8">
+                        <label id="descripcion">Descripcion:</label>
+                        @Html.TextBoxFor(x => x.Descripcion, new { @class = "form-control", @Id = "descripcion" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input id="btnGuardar" type="submit" value="Guardar" class="btn btn-success" />
+                        <a href="/Catalog/TipoGastos" class="btn btn-custom-cancel">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <table id="tblTipoGastos" class="table table-bordered table-striped" style="width: 100%;"></table>
+    </div>
+
+}   
+
+<!-- Antes de cargar el archivo .js -->
+<script type="text/javascript">
+    var TipoGastosJson = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+</script>
+
+<script src="@(Url.StaticFile("Scripts/Catalogos/TipoGastos.js"))"></script>

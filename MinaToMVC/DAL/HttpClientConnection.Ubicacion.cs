@@ -28,6 +28,7 @@ namespace MinaToMVC.DAL
 
         public async Task<ModelResponse> SaveOrUpdateUbicacion(DtoUbicacion u)
         {
+            MappingColumSecurity(u);
             var result = await RequestAsync<object>("api/Ubicacion", HttpMethod.Post, u,
            new Func<string, string>((responseString) =>
            {
@@ -44,8 +45,19 @@ namespace MinaToMVC.DAL
                {
                    return responseString;
                }));
-            var modelResponse =JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
             return modelResponse;
         }
+
+        public async Task<ModelResponse> DeleteUbicacion(long ubicacionId)
+        {
+            var result = await RequestAsync($"api/Ubicacion/{ubicacionId}", HttpMethod.Delete, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+        }
+
     }
 }

@@ -1,0 +1,345 @@
+﻿@{
+    var trabajadorId = (long)ViewBag.TrabajadorId;
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
+    var usuario = @ViewBag.UserToken.UserName;
+}
+
+<input type="hidden" id="trabajadorInput" value="@trabajadorId" readonly />
+<input type="hidden" id="FechaActual" value="@fechaActual" readonly />
+<input type="hidden" id="CreatedDt" value="@fechaActual" readonly />
+<input type="hidden" id="UpdatedDt" value="@fechaActual" readonly />
+<input type="hidden" id="CreatedBy" value="@usuario" readonly />
+<input type="hidden" id="UpdatedBy" value="@usuario" readonly />
+
+<div class="row">
+    <div class="col-md-6">
+        <h4>LISTA DE DOCUMENTOS SOLICITADOS</h4>
+        <div class="row">
+            <div class="col-lg-12">
+                <table class="table table-bordered table-striped" id="tblListaDocumentos" style="width: 100%;"></table>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <h4>DOCUMENTOS CARGADOS</h4>
+        <div class="row">
+            <div class="col-lg-12">
+                <table class="table table-bordered table-striped" id="tblCargarDocumentos" style="width: 100%;"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Variable global para almacenar los documentos cargados
+    var documentosCargados = [];
+
+    $(document).ready(function () {
+        // Configuración de DataTable para lista de documentos disponibles
+        $("#tblListaDocumentos").DataTable({
+            data: [],
+            columns: [
+                { data: 'id', title: 'ID', visible: false },
+                { data: 'nombre', title: 'Nombre' },
+                {
+                    data: "id",
+                    title: "Acciones",
+                    render: function (data, type, row) {
+                        if (documentosCargados.includes(data)) {
+                            return '<span class="text-success">Documento Ya cargado</span>';
+                        } else {
+                            // Escapar comillas en el nombre para evitar errores
+                            var nombreEscapado = row.nombre.replace(/'/g, "\\'").replace(/"/g, '\\"');
+                            return '<input type="button" value="Cargar Documento" class="btn btn-custom-clean" onclick="CargarDocumento(' + data + ', \'' + nombreEscapado + '\')" />';
+                        }
+                    }
+                }
+            ],
+            order: [[1, 'asc']],
+            language: {
+                "decimal": ",",
+                "thousands": ".",
+                "processing": "Procesando...",
+                "lengthMenu": "Mostrar _MENU_ entradas",
+                "zeroRecords": "No se encontraron resultados",
+                "emptyTable": "Ningun dato disponible en esta tabla",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+                "search": "Buscar:",
+                "loadingRecords": "Cargando...",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                    "sortDescending": ": activar para ordenar la columna de manera descendente"
+                }
+            }
+        });
+
+        // Configuración de DataTable para documentos del empleado
+        $("#tblCargarDocumentos").DataTable({
+            data: [],
+            columns: [
+                { data: 'id', title: 'ID', visible: false },
+                { data: 'idTrabajador', title: 'ID Trabajador', visible: false },
+                { data: 'idTipoDocumento', title: 'ID Tipo Documento', visible: false },
+                { data: 'nombreDocumento', title: 'Nombre del Documento' },
+                {
+                    data: "id", title: "Acciones", render: function (data, type, row) {
+                        return ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarDocumento(' + data + ', ' + row.idTipoDocumento + ')" /> ' +
+                               ' <input type="button" value="Descargar" class="btn btn-custom-clean" onclick="BuscarDocumento(' + data + ')" />';
+                    }
+                },
+            ],
+            order: [[3, 'asc']],
+            language: {
+                "decimal": ",",
+                "thousands": ".",
+                "processing": "Procesando...",
+                "lengthMenu": "Mostrar _MENU_ entradas",
+                "zeroRecords": "No se encontraron resultados",
+                "emptyTable": "Ningun dato disponible en esta tabla",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+                "search": "Buscar:",
+                "loadingRecords": "Cargando...",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                    "sortDescending": ": activar para ordenar la columna de manera descendente"
+                }
+            }
+        });
+
+        // Cargar documentos del empleado primero
+        GetAllDocumentosEmpleado(@trabajadorId);
+    });
+
+    // 1. Obtener Lista de Documentos disponibles
+    function GetAllDocumentos() {
+        GetMVC("/Empleado/GetAllDocumentos", function (r) {
+            if (r.IsSuccess) {
+                MapingPropertiesDataTable("tblListaDocumentos", r.Response);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar Documentos: ' + r.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+
+    // 2. Obtener Documentos del Empleado
+    function GetAllDocumentosEmpleado(id) {
+        GetMVC("/Empleado/GetAllDocumentosEmpleadoByIdTrabajador?id=" + id, function (r) {
+            if (r.IsSuccess) {
+                // Extraer los IDs de los documentos ya cargados
+                documentosCargados = r.Response.map(function (doc) {
+                    return doc.idTipoDocumento;
+                });
+
+                MapingPropertiesDataTable("tblCargarDocumentos", r.Response);
+
+                // Ahora cargar los documentos generales
+                GetAllDocumentos();
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar Documentos del empleado: ' + r.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+
+    // 3. Función para Cargar Documento
+    function CargarDocumento(idTipoDocumento, nombre) {
+        // Crear un input de tipo file dinámicamente
+        var fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = '.pdf,.doc,.docx,.jpg,.jpeg,.png'; // Formatos aceptados
+
+        // Cuando se seleccione un archivo
+        fileInput.onchange = function (e) {
+            var file = e.target.files[0];
+            if (!file) return;
+
+            // Crear FormData para enviar el archivo
+            var formData = new FormData();
+            formData.append('archivo', file);
+            formData.append('IdTrabajador', $("#trabajadorInput").val());
+            formData.append('IdTipoDocumento', idTipoDocumento);
+            formData.append('NombreDocumento', nombre);
+            formData.append('Fecha', $("#FechaActual").val());
+            formData.append('Estatus', 1);
+            formData.append('CreatedBy', $("#CreatedBy").val());
+            formData.append('CreatedDt', $("#CreatedDt").val());
+            formData.append('UpdatedBy', $("#UpdatedBy").val());
+            formData.append('UpdatedDt', $("#UpdatedDt").val());
+
+            // Mostrar indicador de carga
+            Swal.fire({
+                title: 'Subiendo documento',
+                text: 'Por favor espere...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Enviar el archivo al servidor
+            $.ajax({
+                url: '/Empleado/SaveOrUpdateDocumentosEmpleado',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    Swal.close();
+
+                    // Parsear la respuesta si es una cadena JSON
+                    var r = typeof response === 'string' ? JSON.parse(response) : response;
+
+                    if (r.IsSuccess) {
+                        // Agregar a documentos cargados y actualizar
+                        documentosCargados.push(idTipoDocumento);
+                        actualizarEstadoDocumentos();
+
+                        // Recargar documentos del empleado
+                        GetAllDocumentosEmpleado($("#trabajadorInput").val());
+
+                        Swal.fire('Éxito', 'Documento guardado exitosamente.', 'success');
+                    } else {
+                        // Manejar el caso donde ErrorMessage podría ser undefined
+                        var errorMsg = r.ErrorMessage || 'Error desconocido al guardar el documento';
+                        Swal.fire(
+                            'Error!',
+                            'Error al guardar el documento: ' + errorMsg,
+                            'error'
+                        );
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.close();
+                    Swal.fire(
+                        'Error!',
+                        'Error al subir el documento: ' + (error || 'Error de conexión'),
+                        'error'
+                    );
+                }
+            });
+        };
+
+        // Disparar el click en el input file
+        fileInput.click();
+    }
+
+    // 4. Función para Eliminar Documento
+    function EliminarDocumento(idDocumento, idTipoDocumento) {
+        // Confirmar eliminación
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¿Quieres eliminar este documento?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Aquí va tu lógica para eliminar el documento
+                GetMVC("/Empleado/DeleteDocumentoEmpleadoById?id=" + idDocumento, function(r) {
+                    if (r.IsSuccess) {
+                        // Remover el ID del array de documentos cargados
+                        documentosCargados = documentosCargados.filter(function(id) {
+                            return id !== idTipoDocumento;
+                        });
+
+                        // Actualizar ambas tablas
+                        actualizarEstadoDocumentos();
+                        GetAllDocumentosEmpleado(@trabajadorId);
+
+                        Swal.fire(
+                            'Eliminado!',
+                            'El documento ha sido eliminado.',
+                            'success'
+                        );
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            'Error al eliminar el documento: ' + r.ErrorMessage,
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }
+
+    // 5. Función para Abrir Documento
+    function BuscarDocumento(idDocumento) {
+        $.ajax({
+            url: '/Empleado/GetDocumentoEmpleadoById?id=' + idDocumento,
+            type: 'GET',
+            success: function (response) {
+                try {
+                    // Siemparseamos la respuesta porque viene como string
+                    const parsedResponse = JSON.parse(response);
+
+                    if (parsedResponse.IsSuccess) {
+                        const datos = parsedResponse.Response;
+
+                        // ⭐ CORRECCIÓN: Usar el endpoint de descarga en lugar de la ruta física
+                        const urlDescarga = '/Empleado/DescargarDocumento?' +
+                            'rutaArchivo=' + encodeURIComponent(datos.rutaArchivo) +
+                            '&nombreArchivo=' + encodeURIComponent(datos.gitDocumento);
+
+                        console.log('URL de descarga: ', urlDescarga);
+
+                        // Abrir el documento en una nueva ventana
+                        window.open(urlDescarga, '_blank');
+                    } else {
+                        console.error('Error del servidor:', parsedResponse.Message);
+                        alert('Error: ' + parsedResponse.Message);
+                    }
+                } catch (error) {
+                    console.error('Error parsing JSON:', error);
+                    alert('Error al procesar la respuesta');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error en la solicitud:', error);
+                alert('Error de conexión');
+            }
+        });
+    }
+
+    // 6. Función para actualizar el estado de los documentos
+    function actualizarEstadoDocumentos() {
+        var table = $("#tblListaDocumentos").DataTable();
+        table.rows().invalidate().draw(); // Forzar redibujado de la tabla
+    }
+
+    // 7. Función MapingPropertiesDataTable (asegúrate de que existe)
+    function MapingPropertiesDataTable(tableId, data) {
+        var table = $("#" + tableId).DataTable();
+        table.clear();
+        table.rows.add(data).draw();
+    }
+</script>

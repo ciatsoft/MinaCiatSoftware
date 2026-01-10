@@ -23,6 +23,8 @@
             color: white; /* Color de texto blanco */
         }
 
+
+
     .btn-custom-cancel {
         background-color: red; /*  para el botón Guardar */
         color: white;
@@ -53,7 +55,13 @@
 
     <form id="frmubicacion" name="frmubicacion" method="post" enctype="multipart/form-data">
         @Html.HiddenFor(x => x.Id)
+        @Html.HiddenFor(x => x.Estatus)
+        @Html.HiddenFor(x => x.CreatedBy)
+        @Html.HiddenFor(x => x.UpdatedBy)
+        @Html.HiddenFor(x => x.CreatedDt)
+        @Html.HiddenFor(x => x.UpdatedDt)
         <br>
+
         <center><h1> Ubicación </h1></center>
         <div class="tabla-consultas-ubicacion">
             <div class="rectangulos" style="width: 100%;">
@@ -71,23 +79,24 @@
                         <input type="text" id="txtDescripcionUbicacion" class="form-control" />
                     </div>
                     <div class=" col-lg-3">
-                        <label>Estatus:</label>
-                        <input type="checkbox" name="chbEstatus" id="chbEstatus" value="" class="form-control" />
+                        <label>Ubicación Interna:</label>
+                        <input type="checkbox" name="EsInterna" id="EsInterna" value="" class="form-control" />
                     </div>
                 </div>
                 <div class="row form-group">
-                    <div class="col-md-12">
-                        <input href="/Catalog/Ubicacion"  type="button" id="btnGuardarUbicacion" value="Guardar" onclick="SaveOrUpdateUbicacion()" class="btn btn-success" />
-                        <a href="/Catalog/Ubicacion" class="btn btn-custom-cancel">Cancelar</a>
+                    <div class="col-md-12 d-flex justify-content-between align-items-center">
+                        <div>
+                            <input href="/Catalog/Ubicacion" type="button" id="btnGuardarUbicacion" value="Guardar" onclick="SaveOrUpdateUbicacion()" class="btn btn-success me-2" />
+                            <a href="/Catalog/Ubicacion" class="btn btn-custom-cancel me-2">Cancelar</a>
+                            <input type="button" value="Eliminar" id="btnEliminarUbicacion" class="btn btn-custom-cancel me-2" disabled onclick="EliminarUbicacion()" />
+                        </div>
+                        <input type="button" value="Asociar Material" id="btnAsociar" class="btn btn-custom-clean" disabled onclick="AbrirModalMateriales($('#txtIdUbicacion').val(),$('#txtNombreUbicacion').val(),$('#CreatedBy').val(),$('#UpdatedBy').val(),$('#CreatedDt').val(),$('#UpdatedDt').val())" />
                     </div>
                 </div>
-                <input type="hidden" id="txtCreatedBy" value="@User.Identity.Name" />
-                <input type="hidden" id="txtCreatedDt" value="@DateTime.Now" />
-                <input type="hidden" id="txtUpdatedBy" value="@User.Identity.Name" />
-                <input type="hidden" id="txtUpdatedDt" value="@DateTime.Now" />
+
             </div>
         </div>
-        <div class="row">
+        <div class="row"> 
             <div class="col-lg-12">
                 <table class="table table-bordered table-striped" id="tableUbicacion" style="width: 100%;"></table>
             </div>
@@ -128,4 +137,4 @@
      var UbicacionJson = JSON.parse('@Html.Raw((Newtonsoft.Json.JsonConvert.SerializeObject(ubicacion)))');
 
 </script>
-<script src="~/Scripts/Catalogos/Ubicacion.js"></script>
+<script src="@(Url.StaticFile("Scripts/Catalogos/Ubicacion.js"))"></script>

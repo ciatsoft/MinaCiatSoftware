@@ -68,7 +68,6 @@
         $("#txtDescripcionTipoMaterial").val(tipoMaterialUbicacionJson.DescripcionTipoMaterial);
         $("#ddlUnidadDeMedida").val(tipoMaterialUbicacionJson.UnidadMedida.Id);
         $("#chbEstatus").prop('checked', tipoMaterialUbicacionJson.Estatus);
-
         $("#btnEliminaru").hide();
         $("#btnGuardaru").show();
         $("#estatusContainer").show(); // Mostrar solo si se está editando
@@ -109,10 +108,9 @@ function SaveOrUpdateTipoMaterialUbicacion() {
             title: 'Datos del tipo de material',
             html: `<strong>Nombre:</strong> ${$("#txtNombreTipoMaterial").val()}<br/>
                    <strong>Descripción:</strong> ${$("#txtDescripcionTipoMaterial").val()}<br/>
-                   <strong>Unidad de Medida:</strong> ${$("#ddlUnidadDeMedida option:selected").text()}<br/>
-                   <strong>Estatus:Activo</strong> `,
+                   <strong>Unidad de Medida:</strong> ${$("#ddlUnidadDeMedida option:selected").text()}<br/>`,
             icon: 'info',
-            showCancelButton: true,
+            showCancelButton: true, 
             confirmButtonText: confirmButtonText,
             cancelButtonText: 'Cancelar'
         }).then((result) => {

@@ -1,0 +1,111 @@
+﻿@model MinaTolEntidades.DtoVentaPublicoGeneral.PV_CorteCaja
+@{
+    ViewBag.Title = "PV_CorteCaja";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var formasPago = (List<string>)ViewBag.FormasPago;
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+}
+<link href="@Url.Content("~/Assets/css/EstilosBtnCambios/EstiloBtn.css")" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+@using (Html.BeginForm("SaveOrUpdatePV_CorteCaja", "VentaPublicoGeneral", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmPrecioMaterial", @id = "frmPrecioMaterial" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    @Html.HiddenFor(x => x.Estatus)
+    @Html.HiddenFor("CreatedDt", DateTime.Now.ToString("yyyy-MM-ddTHH:mm"), new { @class = "form-control", type = "datetime-local", style = "display:none;" })
+    @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy" })
+    @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy" })
+    @Html.TextBox("UpdatedDt", DateTime.Now.ToString("yyyy-MM-ddTHH:mm"), new { @class = "form-control", type = "datetime-local", style = "display:none;" })
+    //Usuario Autenticado
+    @Html.DropDownListFor(x => x.Usuario.Id, (IEnumerable<SelectListItem>)ViewBag.Usuarios, new { @class = "form-control", id = "usuarioDrop", style = "display:none;" })
+    @Html.HiddenFor(x => x.UsuarioName, new { id = "usuarioName" })
+
+    <div class="content">
+        <br>
+        <center><h1>Corte de caja</h1></center>
+        <div class="tabla-consultas-roll">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>ID CorteCaja:</label>
+                        <input type="text" id="txtidcortecaja" name="idcortecaja" class="form-control" disabled />
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Ingreso:</label>
+                        @Html.TextBoxFor(x => x.Ingreso, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Egreso:</label>
+                        @Html.TextBoxFor(x => x.Egreso, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Comentario:</label>
+                        @Html.TextBoxFor(x => x.Comentarios, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>MontoTotal:</label>
+                        @Html.TextBoxFor(x => x.MontoTotal, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>BILLETES DE 500:</label>
+                        @Html.TextBoxFor(x => x.B500, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>BILLETES DE 200:</label>
+                        @Html.TextBoxFor(x => x.B200, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>BILLETES DE 100:</label>
+                        @Html.TextBoxFor(x => x.B100, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>BILLETES DE 50:</label>
+                        @Html.TextBoxFor(x => x.B50, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>BILLETES DE 20:</label>
+                        @Html.TextBoxFor(x => x.B20, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>MONEDAS DE 10:</label>
+                        @Html.TextBoxFor(x => x.M10, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>MONEDAS DE 5:</label>
+                        @Html.TextBoxFor(x => x.M5, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>MONEDAS DE 2:</label>
+                        @Html.TextBoxFor(x => x.M2, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>MONEDAS DE 1:</label>
+                        @Html.TextBoxFor(x => x.M1, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>MONEDAS DE 50C:</label>
+                        @Html.TextBoxFor(x => x.M050, new { @class = "form-control" })
+                    </div>
+
+
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="submit" value="Guardar" onclick="" class="btn btn-success" />
+                        <a href="/VentaPublicoGeneral/CorteCaja" class="btn btn-custom-cancel">Cancelar</a>
+                        <input type="button" value="Eliminar" id="btnEliminar" class="btn btn-danger" disabled onclick="" />
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+        <br />
+        <table id="tblPrecios" class="table table-bordered table-striped" style="width: 100%;"></table>
+    </div>
+}
+
+<script src="@(Url.StaticFile("Scripts/VentaPublicoGeneral/CorteCaja.js"))"></script>

@@ -1,15 +1,15 @@
 ﻿$(document).ready(function () {
-    $("#frmusuario").validate({
+    $("#frmUsuario").validate({
         rules: {
-            "txtNombreUsuario": "required",
-            "txtPassword": "required",
-            "txtNombre": "required",
-            "txtEmail": "required",
+            "nombre": "required",
+            "username": "required",
+            "email": "required",
+            "password": "required",
         }
     });
 
     // Inicialización de la tabla de roles
-    $("#tableUsuario").dataTable({
+    $("#tblUsuarios").dataTable({
         processing: true,
         destroy: true,
         paging: true,
@@ -17,7 +17,7 @@
         columns: [
             { data: "id", "visible": false, title: "Id" },
             { data: "userName", title: "UserName" },
-            { data: "password", title: "Contraseña" },
+            { data: "password", title: "Contraseña", "visible": false },
             { data: "nombre", title: "Nombre" },
             { data: "email", title: "Correo" },
             {
@@ -29,8 +29,8 @@
             },
             {
                 data: "id", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarUnidad(' + data + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarUnidad(' + data + ', this)" />'; // 'this' se pasa para obtener la fila
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarUsuario(' + data + ')" />' +
+                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarUsuario(' + data + ', this)" />'; // 'this' se pasa para obtener la fila
                 }
             }
         ]
@@ -62,87 +62,85 @@
     GetAllUsuario();
 
     if (typeof usuarioJson.Id != 0) {
-        $("#txtUsuario").val(usuarioJson.Id);
-        $("#txtNombreUsuario").val(usuarioJson.txtNombreUsuario);
-        $("#txtPassword").val(usuarioJson.txtPassword);
-        $("#txtNombre").val(usuarioJson.txtNombre);
-        $("#txtEmail").val(usuarioJson.txtEmail);
-        $("#chbEstatus").prop('checked', usuarioJson.Estatus);
+        $("#id").val(usuarioJson.Id);
+        $("#nombre").val(usuarioJson.nombre);
+        $("#username").val(usuarioJson.username);
+        $("#email").val(usuarioJson.email);
+        $("#password").val(usuarioJson.password);
     }
 });
 
 function SaveOrUpdateUsuario() {
-    if ($("#frmusuario").valid()) {
+    if ($("#frmUsuario").valid()) {
         var parametro = {
-            Id: $("#txtUsuario").val(),
-            UserName: $("#txtNombreUsuario").val(),
-            Password: $("#txtPassword").val(),
-            Nombre: $("#txtNombre").val(),
-            Email: $("#txtEmail").val(),
-            Estatus: $("#chbEstatus").is(':checked'),
-            CreatedBy: $("#txtCreatedBy").val(),
-            CreatedDt: $("#txtCreatedDt").val(),
-            UpdatedBy: $("#txtUpdatedBy").val(),
-            UpdatedDt: $("#txtUpdatedDt").val()
+            Id: $("#id").val(),
+            UserName: $("#username").val(),
+            Password: $("#password").val(),
+            Nombre: $("#nombre").val(),
+            Email: $("#email").val(),
+            Estatus: 1,
+            CreatedBy: $("#createdBy").val(),
+            CreatedDt: $("#createdDt").val(),
+            UpdatedBy: $("#updatedBy").val(),
+            UpdatedDt: $("#updatedDt").val()
         };
-        window.location.href = '/Seguridad/Usuario';
         // Llamada al servidor para guardar o actualizar los datos
-        PostMVC('/Seguridad/SaveOrUpdateUsuario', parametro, function (r) {
+        PostMVC('/Administracion/SaveOrUpdateUsuario', parametro, function (r) {
             if (r.IsSuccess) {
-                LimpiarFormulario();
-                alert("Datos guardados exitosamente.");
+                // Mostrar una alerta de éxito con SweetAlert
+                Swal.fire({
+                    title: "Registro guardado!",
+                    text: "El usuario se ha guardado correctamente.",
+                    icon: "success",
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/Administracion/Usuarios';
+                    }
+                });
             } else {
-                alert("Error al guardar los datos: " + r.ErrorMessage);
+                Swal.fire({
+                    title: "Registro guardado!",
+                    text: "El usuario se ha guardado correctamente.",
+                    icon: "success",
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/Administracion/Usuarios';
+                    }
+                });
             }
         });
     }
 }
 
-function EliminarUnidad(id, boton) {
-    // Obtener la fila correspondiente al botón de eliminación
-    var row = $(boton).closest("tr");
-
-    // Obtener los valores de la fila y almacenarlos en variables
-    var nombre = row.find("td:eq(0)").text();  // Nombre
-    var descripcion = row.find("td:eq(1)").text();  // Descripción
-
-    // Confirmación de eliminación
-    if (confirm("¿Usted desea eliminar la siguiente medida? \nNombre: " + nombre + "\nDescripcion: " + descripcion)) {
-        // Actualizamos el estatus a "Inactivo" (0) y preparamos el parámetro
-        var parametro = {
-            Id: id,
-            UserName: userName,
-            Password: password,
-            Nombre: nombre,
-            Email: email,
-            Estatus: 0,  // Cambiamos el estatus a inactivo (0)
-            CreatedBy: $("#txtCreatedBy").val(),
-            CreatedDt: $("#txtCreatedDt").val(),
-            UpdatedBy: $("#txtUpdatedBy").val(),  // Asignamos el valor de quien está actualizando
-            UpdatedDt: new Date().toISOString()  // Asignamos la fecha y hora actual como fecha de actualización
-        };
-
-        window.location.href = '/Seguridad/Usuario';
-        // Llamada para guardar o actualizar el rol
-        PostMVC('/Seguridad/SaveOrUpdateUsuario', parametro, function (r) {
-            if (r.IsSuccess) {
-                alert("Rol eliminado exitosamente.");
-                // Actualiza la interfaz de usuario, por ejemplo, eliminando la fila de la tabla
-            } else {
-                alert("Error al eliminar el rol: " + r.ErrorMessage);
-            }
-        });
-    }
+function EditarUsuario(id) {
+    location.href = "/Administracion/Usuarios/" + id;
 }
 
-function EditarUnidad(id) {
-    location.href = "/Seguridad/Usuario/" + id;
+function EliminarUsuario(id) {
+    PostMVC('/Administracion/DeleteUsuario', { id: id }, function (r) {
+        if (r.IsSuccess) {
+            Swal.fire({
+                title: "Registro Eliminado!",
+                text: "El usuario se ha eliminado correctamente.",
+                icon: "success",
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/Administracion/Usuarios';
+                }
+            });
+        } else {
+            Swal.fire("Error", "No se pudo eliminar el usuario.", "error");
+        }
+    });
 }
 
 function GetAllUsuario() {
-    GetMVC("/Seguridad/GetAllUsuario", function (r) {
+    GetMVC("/Administracion/GetAllUsuario", function (r) {
         if (r.IsSuccess) {
-            MapingPropertiesDataTable("tableUsuario", r.Response);
+            MapingPropertiesDataTable("tblUsuarios", r.Response);
         } else {
             alert("Error al cargar los roles: " + r.ErrorMessage);
         }
@@ -157,5 +155,21 @@ function LimpiarFormulario() {
     $("#txtNombre").val('');
     $("#txtEmail").val('');
     $("#chbEstatus").prop('checked', false);
+}
+
+document.getElementById("btnPermisos").addEventListener("click", function () {
+    var id = $("#id").val();
+    AbrirModalPermisosUsuario(id);
+});
+
+function AbrirModalPermisosUsuario(id) {
+    $("#genericModal").removeData('b s.modal');
+    $("#boddyGeericModal").empty();
+
+    $("#titleGenerciModal").text("Roles para Usuario");
+
+    $("#boddyGeericModal").load("/Administracion/AbrirModalPermisosUsuario/" + id, function () {
+        $("#genericModal").modal("show");
+    });
 }
 

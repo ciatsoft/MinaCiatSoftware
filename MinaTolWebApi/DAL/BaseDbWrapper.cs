@@ -98,6 +98,33 @@ namespace MinaTolWebApi.DAL
                 }
             }
         }
+
+        public List<T> GetList<T>(string storedProcedure, CommandType commandType, List<SqlParameter> parameters, Func<SqlDataReader, T> map)
+        {
+            var list = new List<T>();
+
+            using (var connection = new SqlConnection(SQLConnectionString))
+            using (var command = new SqlCommand(storedProcedure, connection))
+            {
+                command.CommandType = commandType;
+                if (parameters != null)
+                    command.Parameters.AddRange(parameters.ToArray());
+
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var item = map(reader);
+                        list.Add(item);
+                    }
+                }
+            }
+
+            return list;
+        }
+
+
         #endregion
 
         #region ExecuteNonQueryAsync

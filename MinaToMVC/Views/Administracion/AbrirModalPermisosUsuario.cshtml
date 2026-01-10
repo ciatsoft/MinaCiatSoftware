@@ -1,0 +1,192 @@
+﻿@{
+    var usuarioId = (long)ViewBag.UsuarioModalId;
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
+    var usuario = ViewBag.UserToken.UserName;
+}
+
+<input type="hidden" id="trabajadorInput" value="@usuarioId" readonly />
+<input type="hidden" id="FechaActual" value="@fechaActual" readonly />
+<input type="hidden" id="CreatedDt" value="@fechaActual" readonly />
+<input type="hidden" id="UpdatedDt" value="@fechaActual" readonly />
+<input type="hidden" id="CreatedBy" value="@usuario" readonly />
+<input type="hidden" id="UpdatedBy" value="@usuario" readonly />
+
+<div class="row">
+    <div class="col-md-6">
+        <h4>LISTA DE ROLES GENERALES</h4>
+        <table class="table table-bordered table-striped" id="tblListaRolesG" style="width: 100%;"></table>
+    </div>
+    <div class="col-md-6">
+        <h4>ROLES PERMITIDOS</h4>
+        <table class="table table-bordered table-striped" id="tblRolesPermitidos" style="width: 100%;"></table>
+    </div>
+</div>
+
+<script>
+    var rolesCargados = [];
+    var usuarioId = $("#trabajadorInput").val(); // viene del hidden
+
+    $(document).ready(function () {
+        // inicialización de DataTables (igual que antes)
+        $("#tblListaRolesG").DataTable({
+            data: [],
+            columns: [
+                { data: 'id', title: 'ID', visible: false },
+                { data: 'nombre', title: 'Nombre' },
+                {
+                    data: "id",
+                    title: "Acciones",
+                    render: function (data, type, row) {
+                        if (rolesCargados.includes(row.id)) {
+                            return '<span class="text-success fw-bold">Rol ya asignado</span>';
+                        } else {
+                            var nombreEscapado = row.nombre.replace(/'/g, "\\'").replace(/"/g, '\\"');
+                            return '<input type="button" class="btn btn-custom-clean" value="Agregar Rol" onclick="AgregarRol(' + data + ', \'' + nombreEscapado + '\')" />';
+                        }
+                    }
+                }
+            ]
+        });
+
+        $("#tblRolesPermitidos").DataTable({
+            data: [],
+            columns: [
+                { data: 'id', title: 'ID', visible: false },
+                { data: 'usuarioId', title: 'ID Usuario', visible: false },
+                { data: 'rolId', title: 'ID Rol', visible: false },
+                { data: 'nombreRol', title: 'Nombre del Rol' },
+                {
+                    data: "id",
+                    title: "Acciones",
+                    render: function (data, type, row) {
+                        return '<input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarRol(' + data + ')" />';
+                    }
+                }
+            ]
+        });
+
+        GetAllUsuarioRolByUsuarioId(usuarioId);
+    });
+
+    function GetAllRoll() {
+        GetMVC("/Catalog/GetAllRoll", function (r) {
+            if (r.IsSuccess) {
+                MapingPropertiesDataTable("tblListaRolesG", r.Response);
+                actualizarEstadoRoles();
+            } else {
+                Swal.fire("Error", "Error al cargar los Roles: " + r.ErrorMessage, "error");
+            }
+        });
+    }
+
+    function GetAllUsuarioRolByUsuarioId(id) {
+        GetMVC("/Administracion/GetAllUsuarioRolByUsuarioId?id=" + id, function (r) {
+            if (r.IsSuccess) {
+                rolesCargados = r.Response.map(function (doc) { return doc.rolId; });
+                MapingPropertiesDataTable("tblRolesPermitidos", r.Response);
+                GetAllRoll();
+            } else {
+                Swal.fire("Error", "Error al cargar los Roles del Usuario: " + r.ErrorMessage, "error");
+            }
+        });
+    }
+
+    // === Agregar Rol ===
+    function AgregarRol(idRol, nombreRol) {
+        var data = {
+            UsuarioId: usuarioId,
+            RolId: idRol,
+            NombreRol: nombreRol,
+            Estatus: 1,
+            CreatedBy: $("#CreatedBy").val(),
+            CreatedDt: $("#CreatedDt").val(),
+            UpdatedBy: $("#UpdatedBy").val(),
+            UpdatedDt: $("#UpdatedDt").val()
+        };
+
+        Swal.fire({
+            title: 'Asignando rol...',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        $.ajax({
+            url: '/Administracion/SaveOrUpdateUsuarioRol',
+            type: 'POST',
+            data: data,
+            success: function (response) {
+                Swal.close();
+                var r = typeof response === "string" ? JSON.parse(response) : response;
+
+                if (r.IsSuccess) {
+                    rolesCargados.push(idRol);
+                    actualizarEstadoRoles();
+                    GetAllUsuarioRolByUsuarioId(usuarioId);
+                    Swal.fire("Éxito", "Rol asignado exitosamente.", "success");
+                } else {
+                    Swal.fire("Error", r.ErrorMessage || "Error al asignar el rol.", "error");
+                }
+            },
+            error: function (xhr, status, error) {
+                Swal.close();
+                Swal.fire("Error", "Error de conexión: " + error, "error");
+            }
+        });
+    }
+
+    function EliminarRol(idRegistro) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¿Quieres eliminar este rol?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                GetMVC("/Administracion/DeleteUsuarioRolById?id=" + idRegistro, function (r) {
+                    if (r.IsSuccess) {
+                        // Buscar el rol eliminado en la tabla de RolesPermitidos
+                        var table = $("#tblRolesPermitidos").DataTable();
+                        var row = table.rows().data().toArray().find(x => x.id === idRegistro);
+
+                        if (row) {
+                            // Remover el rolId del array de roles cargados
+                            rolesCargados = rolesCargados.filter(function(id) {
+                                return id !== row.rolId;
+                            });
+                        }
+
+                        // Actualizar ambas tablas
+                        actualizarEstadoRoles();
+                        GetAllUsuarioRolByUsuarioId(usuarioId);
+
+                        Swal.fire(
+                            'Eliminado!',
+                            'El rol ha sido eliminado.',
+                            'success'
+                        );
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            'Error al eliminar el rol: ' + r.ErrorMessage,
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }
+
+
+    function actualizarEstadoRoles() {
+        var table = $("#tblListaRolesG").DataTable();
+        table.rows().invalidate().draw();
+    }
+
+    function MapingPropertiesDataTable(tableId, data) {
+        var table = $("#" + tableId).DataTable();
+        table.clear();
+        table.rows.add(data).draw();
+    }
+</script>

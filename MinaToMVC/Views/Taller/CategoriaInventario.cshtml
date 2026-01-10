@@ -1,0 +1,57 @@
+﻿@model MinaTolEntidades.DtoTaller.CategoriaInventario
+@{
+    ViewBag.Title = "CategoriaInventario";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+<div class="content">
+    @using (Html.BeginForm("SaveOrUpdateCategoriaInventario", "Taller", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmCategoriaInventario", @id = "frmCategoriaInventario" }))
+    {
+        @Html.HiddenFor(x => x.Estatus, new { id = "estatus" })
+        @Html.HiddenFor(x => x.CreatedDt, new { id = "createdDt", @Value = fechaActual })
+        @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy", @Value = usuarioToken.UserName })
+        @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy", @Value = usuarioToken.UserName })
+        @Html.HiddenFor(x => x.UpdatedDt, new { id = "updatedDt", @Value = fechaActual })
+
+        <br />
+        <center><h1>Categoria de Inventario</h1></center>
+        <div class="tabla-consultas-empleados">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>ID:</label>
+                        @Html.TextBoxFor(x => x.Id, new { @class = "form-control", @type = "text", id = "id", @readonly = "readonly" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Nombre:</label>
+                        @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control", @type = "text", id = "nombre" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Descripcion:</label>
+                        @Html.TextBoxFor(x => x.Descripccion, new { @class = "form-control", @type = "text", id = "descripccion" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 d-flex justify-content-between">
+                        <div>
+                            <input id="btnGuardar" type="submit" value="Guardar" class="btn btn-success btn-lg-custom" />
+                        </div>
+                        <a href="/Taller/CategoriaInventario" class="btn btn-custom-cancel btn-lg-custom">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <br />
+    <table id="tblCategoriaInventario" class="table table-bordered table-striped" style="width: 100%;"></table>
+</div>
+<div style="margin-top: 400px">
+</div>
+<script src="@(Url.StaticFile("Scripts/Taller/CatalogoInventario.js"))"></script>
+

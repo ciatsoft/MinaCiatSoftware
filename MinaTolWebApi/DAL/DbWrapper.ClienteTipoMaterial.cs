@@ -94,6 +94,7 @@ namespace MinaTolWebApi.DAL
         {
             var response = new ModelResponse();
             var parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("@Id", t.Id));
             parameters.Add(new SqlParameter("@ClienteId", t.Cliente.Id));
             parameters.Add(new SqlParameter("@MaterialId", t.TipoMaterial.Id));
             parameters.Add(new SqlParameter("@Estatus", t.Estatus));
@@ -114,6 +115,11 @@ namespace MinaTolWebApi.DAL
             parameters.Add(new SqlParameter("@Total_Gastos", t.Total_Gastos));
             parameters.Add(new SqlParameter("@Subtotal_Ingreso_Viajes_M3", t.Subtotal_Ingreso_Viajes_M3));
 
+            // Nuevos atributos
+            parameters.Add(new SqlParameter("@IdDireccion", (object)t.IdDireccion ?? DBNull.Value));
+            parameters.Add(new SqlParameter("@Direccion", (object)t.Direccion ?? DBNull.Value));
+            parameters.Add(new SqlParameter("@PrecioActivo", (object)t.PrecioActivo ?? DBNull.Value));
+
             var result = ExecuteScalar("SaveOrUpdateClienteTipoMaterial", CommandType.StoredProcedure, parameters);
             t.Id = Convert.ToInt64(result);
             response.Response = t;
@@ -130,6 +136,111 @@ namespace MinaTolWebApi.DAL
             var result = ExecuteScalar("DeleteClienteTipoMaterial", CommandType.StoredProcedure, parameters);
             t.Id = Convert.ToInt64(result);
             response.Response = t;
+
+            return response;
+        }
+
+        public ModelResponse ClienteTipoMaterialByDireccionMaterialAndCliente(long id, long idCliente, long idMaterial)
+        {
+            var response = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("@Id", id));
+            parameters.Add(new SqlParameter("@ClienteId", idCliente));
+            parameters.Add(new SqlParameter("@MaterialId", idMaterial));
+            try
+            {
+                var result = GetObjects("ClienteTipoMaterialByDireccionMaterialAndCliente", CommandType.StoredProcedure, parameters,
+                     new Func<IDataReader, ClienteTipoMaterial>((reader) =>
+                     {
+                         var r = FillEntity<ClienteTipoMaterial>(reader);
+
+                         r.Cliente = new MinaTolEntidades.DtoClientes.Cliente()
+                         {
+                             Id = MappingProperties<long>(reader["ClienteId"]),
+                             Nombre = MappingProperties<string>(reader["NombreCliente"])
+                         };
+                         r.TipoMaterial = new MinaTolEntidades.DtoCatalogos.DtoTipoMaterialUbicacion()
+                         {
+                             Id = MappingProperties<long>(reader["MaterialId"]),
+                             NombreTipoMaterial = MappingProperties<string>(reader["Material"])
+                         };
+
+                         return r;
+                     }));
+
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
+        public ModelResponse DeletTipoMaterial(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id",
+                    SqlDbType = System.Data.SqlDbType.Int
+                });
+
+                var result = ExecuteNonQuery("DeletTipoMaterial", System.Data.CommandType.StoredProcedure, parameters);
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+        public ModelResponse GetPrecioActivoClienteTipoMaterialByDireccionMaterialAndCliente(long idCliente, long idTipoMaterial, long idDireccion)
+        {
+            var response = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("@Id", idDireccion));
+            parameters.Add(new SqlParameter("@ClienteId", idCliente));
+            parameters.Add(new SqlParameter("@MaterialId", idTipoMaterial));
+            try
+            {
+                var result = GetObjects("GetPrecioActivoClienteTipoMaterialByDireccionMaterialAndCliente", CommandType.StoredProcedure, parameters,
+                     new Func<IDataReader, ClienteTipoMaterial>((reader) =>
+                     {
+                         var r = FillEntity<ClienteTipoMaterial>(reader);
+
+                         r.Cliente = new MinaTolEntidades.DtoClientes.Cliente()
+                         {
+                             Id = MappingProperties<long>(reader["ClienteId"]),
+                             Nombre = MappingProperties<string>(reader["NombreCliente"])
+                         };
+                         r.TipoMaterial = new MinaTolEntidades.DtoCatalogos.DtoTipoMaterialUbicacion()
+                         {
+                             Id = MappingProperties<long>(reader["MaterialId"]),
+                             NombreTipoMaterial = MappingProperties<string>(reader["Material"])
+                         };
+
+                         return r;
+                     }));
+
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
 
             return response;
         }

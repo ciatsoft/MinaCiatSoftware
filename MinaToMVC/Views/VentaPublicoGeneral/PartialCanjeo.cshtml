@@ -1,0 +1,552 @@
+﻿@model MinaTolEntidades.DtoVentas.PV_Ventas
+@{
+    ViewBag.Title = "PartialCanjeo";
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+    var formasPago = ViewBag.FormasPago as List<string>;
+    var fechaActual2 = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+@using (Html.BeginForm("SaveOrUpdateVenta", "VentaPublicoGeneral", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmPrepago" }))
+{
+    @Html.HiddenFor(x => x.Id, new { @id = "id" })
+    @Html.HiddenFor(x => x.Estatus)
+    @Html.HiddenFor(x => x.CreatedBy, new { @Value = usuarioToken.UserName, @id = "createdByModalCanjeo" })
+    @Html.HiddenFor(x => x.UpdatedBy, new { @Value = usuarioToken.UserName, @id = "updatedByModalCanjeo" })
+    @Html.HiddenFor(x => x.UpdatedBy, new { @Value = usuarioToken.UserID, @id = "idUserModalCanjeo" })
+    @Html.HiddenFor(x => x.CreatedDt, new { @Value = fechaActual2, @id = "createdDtModalCanjeo" })
+    @Html.HiddenFor(x => x.UpdatedDt, new { @Value = fechaActual2, @id = "updatedDtModalCanjeo" })
+
+    <br />
+    <h2>Canjear Vale de Prepago</h2>
+    <div class="tabla-consultas-empleados">
+        <div class="rectangulos" style="width: 100%;">
+            <div class="row">
+                <div class="col-lg-3">
+                    <label>Folio:</label>
+                    @Html.TextBoxFor(x => x.Folio, new { @class = "form-control", id = "folioModalCanjeo", value = "" })
+                </div>
+                <div class="col-lg-3">
+                    <label>RFID:</label>
+                    @Html.TextBoxFor(x => x.RFID, new { @class = "form-control", id = "rfidModelCanjeo", @readonly = "readonly" })
+                </div>
+                <div class="col-lg-3">
+                    <label>Nombre Cliente:</label>
+                    @Html.TextBoxFor(x => x.NombreCliente, new { @class = "form-control", id = "nombreClienteModelCanjeo", @readonly = "readonly" })
+                </div>
+                <div class="col-lg-3">
+                    <label>Descripción del transporte:</label>
+                    @Html.HiddenFor(x => x.Transporte, new { @class = "form-control", id = "descripcionVehiculoModelCanjeo" })
+                    <select id="vehiculosDropdownCanjeo" class="form-control">
+                        <option value="">Seleccione un vehículo</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-lg-3">
+                    <label>Placa:</label>
+                    @Html.TextBoxFor(x => x.Placa, new { @class = "form-control", id = "placaModelCanjeo", @readonly = "readonly" })
+                </div>
+                <div class="col-lg-3">
+                    <label>Capacidad en M3:</label>
+                    @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control", type = "number", id = "cantidadM3ModelCanjeo" })
+                </div>
+                <div class="col-lg-3">
+                    <label>Planta:</label>
+                    @Html.DropDownListFor(x => x.Ubicacion.Id, new List<SelectListItem>(), new { @class = "form-control", @id = "Ubicacion_IdModalCanjeo" })
+                </div>
+                <div class="col-lg-3">
+                    <label>Material:</label>
+                    @Html.DropDownListFor(x => x.TipoMaterial.Id, new List<SelectListItem>(), new { @class = "form-control", @id = "TipoMaterial_IdModalCanjeo", @readonly = "readonly" })
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-lg-3">
+                    <label>Forma de pago:</label>
+                    @Html.HiddenFor(x => x.FormaDePago, new { @Value = "P", id = "formaPagoHidden" })
+                    @Html.TextBox("formaPagoDisplay", "Prepago", new
+                    {
+                        @class = "form-control",
+                        id = "formaPagoModelCanjeo",
+                        @readonly = "readonly"
+                    })
+                </div>
+                <div class="col-lg-3">
+                    <label>Total a Pagar:</label>
+                    @Html.HiddenFor(x => x.CantidadRecibida, new { id = "cantidadRecibidaModelCanjeo", @class = "form-control", type = "number", @Value = "0", @readonly = "readonly" })
+                </div>
+                <div class="col-lg-3">
+                    <label>Vendedor:</label>
+                    @Html.DropDownListFor(x => x.Usuario.Id, (IEnumerable<SelectListItem>)ViewBag.Usuarios, new { @class = "form-control" })
+                </div>
+                <div class="col-lg-3">
+                    <label>Fecha:</label>
+                    @{
+                        var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
+                    }
+                    <input class="form-control" type="text" id="fechaModelCanjeo" readonly value="@fechaActual" />
+                    @Html.HiddenFor(x => x.Fecha)
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-lg-3">
+                    <label>Folio de Inicio:</label>
+                    <input class="form-control" type="number" id="folioInicioModelCanjeo" readonly />
+                </div>
+                <div class="col-lg-3">
+                    <label>Folio de Inicio:</label>
+                    <input class="form-control" type="number" id="folioFinalModelCanjeo" readonly />
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <!-- Texto "M3 disponibles" -->
+                <label>
+                    M3 disponibles:
+                    <input class="form-control" type="text" id="montoFaltanteModelCanjeo" readonly />
+                </label>
+            </div>
+            <div style="margin-top: 35px;">
+                <!-- Botón con margen inferior de 30px -->
+                <button id="btnCanjearVale" style="margin-top: -25px; margin-bottom: 30px;" type="button" class="btn btn-success" onclick="canjearVale()">Canjear Vale</button>
+                <a style="margin-top:-55px" href="/VentaPublicoGeneral/Index" class="btn btn-custom-cancel">Cancelar</a>
+                <div id="mensajeEstadoVale" style="color:red; font-weight:bold; margin-top:10px; display:none;"></div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    // Variables globales para almacenar datos
+    var materialPrecargado = null;
+    var ubicacionesDisponibles = [];
+
+    // 1. Establecer fecha actual al cargar
+    function establecerFechaActual() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        $('#fechaModal').val(formattedDate);
+    }
+    establecerFechaActual();
+
+    // Función para cargar ubicaciones basadas en el material
+    function CargarUbicacionesPorMaterial(idMaterial, nombreMaterial) {
+        if (!idMaterial) {
+            $("#Ubicacion_IdModalCanjeo").empty().append('<option value="">Seleccione una ubicación</option>');
+            return;
+        }
+
+        $.ajax({
+            url: '/VentaPublicoGeneral/GetUbicacionesByMaterial/' + idMaterial,
+            type: 'GET',
+            dataType: 'json',
+            success: function (r) {
+
+                // Manejo de mayúsculas/minúsculas en la respuesta
+                const isSuccess = r.IsSuccess !== undefined ? r.IsSuccess : r.isSuccess;
+                const responseData = r.Response !== undefined ? r.Response : r.response;
+                const message = r.Message !== undefined ? r.Message : r.message;
+
+                if (isSuccess) {
+                    ubicacionesDisponibles = responseData || [];
+                    var $ubicacionDropdown = $("#Ubicacion_IdModalCanjeo");
+                    $ubicacionDropdown.empty().append('<option value="">Seleccione una ubicación</option>');
+
+                    if (ubicacionesDisponibles.length > 0) {
+                        $.each(ubicacionesDisponibles, function (index, item) {
+                            // Asegurarse de que el item tenga las propiedades correctas
+                            const ubicacionId = item.ubicacionId || (item.ubicacion && item.ubicacion.ubicacionId);
+                            const nombreUbicacion = item.nombreUbicacion || (item.ubicacion && item.ubicacion.nombreUbicacion);
+
+                            if (ubicacionId && nombreUbicacion) {
+                                $ubicacionDropdown.append(
+                                    $('<option></option>')
+                                        .val(ubicacionId)
+                                        .text(nombreUbicacion)
+                                );
+                            }
+                        });
+
+                        // Precargar el material
+                        var $materialDropdown = $("#TipoMaterial_IdModalCanjeo");
+                        $materialDropdown.empty().append(
+                            $('<option></option>')
+                                .val(idMaterial)
+                                .text(nombreMaterial)
+                                .prop('selected', true)
+                        );
+
+                        // Si solo hay una ubicación, seleccionarla automáticamente
+                        if (ubicacionesDisponibles.length === 1) {
+                            const firstUbicacionId = ubicacionesDisponibles[0].ubicacionId ||
+                                                  (ubicacionesDisponibles[0].ubicacion && ubicacionesDisponibles[0].ubicacion.ubicacionId);
+                            if (firstUbicacionId) {
+                                $ubicacionDropdown.val(firstUbicacionId).trigger('change');
+                            }
+                        }
+                    } else {
+                        console.warn('No se encontraron ubicaciones para el material');
+                        Swal.fire('Advertencia', 'No se encontraron ubicaciones disponibles para este material', 'warning');
+                    }
+                } else {
+                    console.error('Error al obtener ubicaciones:', message);
+                    Swal.fire('Error', message || 'No se pudieron cargar las ubicaciones para este material', 'error');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error en la solicitud AJAX:', error, xhr.responseText);
+                Swal.fire('Error', 'Error al conectar con el servidor: ' + (xhr.responseText || error), 'error');
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        // Configuración inicial
+        $("#TipoMaterial_IdModalCanjeo").prop('disabled', true);
+
+        // Configurar evento para el folio
+        function configurarEventoFolio() {
+            var folioTimeout;
+
+            $("#folioModalCanjeo").on('input', function () {
+                const valorFolio = $(this).val().trim();
+
+                clearTimeout(folioTimeout);
+
+                if (valorFolio.length >= 2) {
+                    folioTimeout = setTimeout(function () {
+                        ObtenerVentaPorFolio(valorFolio);
+                    }, 800);
+                }
+            });
+
+            $("#folioModalCanjeo").on('change', function () {
+                const valorFolio = $(this).val().trim();
+                if (valorFolio.length >= 2) {
+                    ObtenerVentaPorFolio(valorFolio);
+                }
+            });
+        }
+        configurarEventoFolio();
+
+        // Función para obtener venta por folio
+        function ObtenerVentaPorFolio(folio) {
+            $.ajax({
+                url: '@Url.Action("ObtenerVentaPorFolio", "VentaPublicoGeneral")',
+                type: 'GET',
+                data: { folio: folio },
+                dataType: 'json',
+                success: function (respuesta) {
+                    try {
+                        var data = typeof respuesta === 'string' ? JSON.parse(respuesta) : respuesta;
+
+                        const isSuccess = data.IsSuccess !== undefined ? data.IsSuccess : data.isSuccess;
+                        const responseData = data.Response !== undefined ? data.Response : data.response;
+                        const message = data.Message !== undefined ? data.Message : data.message;
+
+                        if (isSuccess && responseData) {
+                            var venta = responseData;
+
+                            // Llenar campos con los datos de la venta
+                            $("#folioModalCanjeo").val(venta.folio || '');
+                            $("#montoFaltanteModelCanjeo").val(venta.m3Faltantes);
+
+                            // Nuevos campos para el rango de folios
+                            $("#folioInicioModelCanjeo").val(venta.folioInicio || venta.folio || '');
+                            $("#folioFinalModelCanjeo").val(venta.folioFinal || venta.folio || '');
+
+                            const rfid = venta.rfId || venta.rfid;
+                            if (rfid) {
+                                $("#rfidModelCanjeo").val(rfid).trigger('change');
+                            } else {
+                                $("#rfidModelCanjeo").val('');
+                            }
+
+                            $("#nombreClienteModelCanjeo").val(venta.nombreCliente || '');
+
+                            const idMaterial = venta.idMaterial || (venta.material && venta.material.id);
+                            const nombreMaterial = venta.nombreMaterial || (venta.material && venta.material.nombre);
+
+                            if (idMaterial && nombreMaterial) {
+                                CargarUbicacionesPorMaterial(idMaterial, nombreMaterial);
+                            }
+
+                            if (rfid) {
+                                buscarClientePorRFID(rfid);
+                            } else {
+                                $('#nombreClienteModelCanjeo').val('');
+                                $('#descripcionVehiculoModelCanjeo').val('');
+                                $('#placaModelCanjeo').val('');
+                                $('#vehiculosDropdownCanjeo').empty().append('<option value="">Seleccione un vehículo</option>');
+                            }
+
+                            // Control del botón y mensaje según Estado
+                            if (venta.estado === 'C') {
+                                $("#btnCanjearVale").prop('disabled', true);
+                                $("#mensajeEstadoVale").text("Este vale ya fue canjeado, revisa el historial").show();
+                            } else {
+                                $("#btnCanjearVale").prop('disabled', false);
+                                $("#mensajeEstadoVale").hide();
+                            }
+                        } else {
+                            console.log("La respuesta no fue exitosa o no contiene datos:", message);
+                            Swal.fire('Error', message || 'No se encontró el vale con ese folio', 'error');
+
+                            // Limpiar campos incluyendo los nuevos inputs
+                            $("#folioModalCanjeo").val('');
+                            $("#montoFaltanteModelCanjeo").val('');
+                            $("#folioInicioModelCanjeo").val('');
+                            $("#folioFinalModelCanjeo").val('');
+                            $("#rfidModelCanjeo").val('');
+                            $("#nombreClienteModelCanjeo").val('');
+                            $("#btnCanjearVale").prop('disabled', false);
+                            $("#mensajeEstadoVale").hide();
+                        }
+                    } catch (e) {
+                        console.error("Error al procesar respuesta:", e);
+                        Swal.fire('Error', 'Error al procesar la respuesta del servidor', 'error');
+
+                        // Limpiar campos en caso de error
+                        $("#folioModalCanjeo").val('');
+                        $("#montoFaltanteModelCanjeo").val('');
+                        $("#folioInicioModelCanjeo").val('');
+                        $("#folioFinalModelCanjeo").val('');
+                        $("#rfidModelCanjeo").val('');
+                        $("#nombreClienteModelCanjeo").val('');
+                        $("#btnCanjearVale").prop('disabled', false);
+                        $("#mensajeEstadoVale").hide();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error en la solicitud AJAX:", {
+                        status: status,
+                        error: error,
+                        responseText: xhr.responseText
+                    });
+                    Swal.fire('Error', 'Error al buscar el vale: ' + (xhr.responseText || error), 'error');
+
+                    // Limpiar todos los campos incluyendo los nuevos
+                    $("#folioModalCanjeo").val('');
+                    $("#montoFaltanteModelCanjeo").val('');
+                    $("#folioInicioModelCanjeo").val('');
+                    $("#folioFinalModelCanjeo").val('');
+                    $("#rfidModelCanjeo").val('');
+                    $("#nombreClienteModelCanjeo").val('');
+                    $("#btnCanjearVale").prop('disabled', false);
+                    $("#mensajeEstadoVale").hide();
+                }
+            });
+        }
+
+        // Función para buscar cliente por RFID
+        function buscarClientePorRFID(rfid) {
+            const $nombreCliente = $('#nombreClienteModelCanjeo');
+            const $descripcionVehiculo = $('#descripcionVehiculoModelCanjeo');
+            const $placa = $('#placaModelCanjeo');
+            const $cantidadRecibida = $('#cantidadM3ModelCanjeo');
+            const $dropdown = $('#vehiculosDropdownCanjeo');
+
+            // Limpiar todo si no hay RFID
+            if (!rfid) {
+                $nombreCliente.val('');
+                $descripcionVehiculo.val('');
+                $placa.val('');
+                $cantidadRecibida.val('');
+                $dropdown.empty().append('<option value="">Seleccione un vehículo</option>');
+                return;
+            }
+
+            $.ajax({
+                url: '/VentaPublicoGeneral/SearchClienteByRFID',
+                type: 'GET',
+                data: { rfid: rfid },
+                dataType: 'json',
+                success: function(respuesta) {
+                    try {
+                        // Manejo de mayúsculas/minúsculas
+                        const isSuccess = respuesta.IsSuccess !== undefined ? respuesta.IsSuccess : respuesta.isSuccess;
+                        const responseData = respuesta.Response !== undefined ? respuesta.Response : respuesta.response;
+                        const message = respuesta.Message !== undefined ? respuesta.Message : respuesta.message;
+
+                        if (isSuccess && responseData) {
+                            const cliente = responseData;
+                            $nombreCliente.val(cliente.nombre || '');
+
+                            // Buscar vehículos del cliente
+                            $.ajax({
+                                url: '/VentaPublicoGeneral/GetVehiculosPublicoGralByIdCliente',
+                                type: 'GET',
+                                data: { id: cliente.id },
+                                dataType: 'json',
+                                success: function(respuesta2) {
+                                    try {
+                                        $dropdown.empty();
+
+                                        // Manejo de mayúsculas/minúsculas
+                                        const isSuccess2 = respuesta2.IsSuccess !== undefined ? respuesta2.IsSuccess : respuesta2.isSuccess;
+                                        const responseData2 = respuesta2.Response !== undefined ? respuesta2.Response : respuesta2.response;
+
+                                        if (isSuccess2 && responseData2) {
+                                            const vehiculosArray = Array.isArray(responseData2) ? responseData2 : [responseData2];
+
+                                            if (vehiculosArray.length > 0) {
+                                                $dropdown.append('<option value="">Seleccione un vehiculo</option>');
+
+                                                vehiculosArray.forEach(vehiculo => {
+                                                    $dropdown.append($('<option></option>')
+                                                        .val(vehiculo.nombre || '')
+                                                        .text(vehiculo.nombre || '')
+                                                        .data('placa', vehiculo.placa || '')
+                                                        .data('capacidad', vehiculo.capacidad || ''));
+                                                });
+
+                                                $dropdown.off('change').on('change', function() {
+                                                    const selected = $(this).find('option:selected');
+                                                    if (selected.val()) {
+                                                        $descripcionVehiculo.val(selected.val());
+                                                        $placa.val(selected.data('placa'));
+                                                    } else {
+                                                        $descripcionVehiculo.val('');
+                                                        $placa.val('');
+                                                    }
+                                                });
+
+                                                if (vehiculosArray.length === 1) {
+                                                    $dropdown.val(vehiculosArray[0].nombre || '').trigger('change');
+                                                }
+                                            } else {
+                                                $dropdown.append('<option value="">No hay vehiculos</option>');
+                                            }
+                                        } else {
+                                            $dropdown.append('<option value="">Error al cargar: ' + (respuesta2.Message || respuesta2.message || '') + '</option>');
+                                        }
+                                    } catch (e) {
+                                        console.error("Error al procesar vehículos:", e);
+                                        $dropdown.append('<option value="">Error al procesar</option>');
+                                    }
+                                },
+                                error: function(xhr) {
+                                    console.error("Error al obtener vehículos:", xhr.responseText);
+                                    $dropdown.append('<option value="">Error al cargar</option>');
+                                }
+                            });
+                        } else {
+                            // Limpiar campos si no se encontró cliente
+                            $nombreCliente.val('');
+                            $descripcionVehiculo.val('');
+                            $placa.val('');
+                            $cantidadRecibida.val('');
+                            $dropdown.empty().append('<option value="">' + (message || 'No se encontró cliente') + '</option>');
+                        }
+                    } catch (e) {
+                        console.error("Error al procesar cliente:", e);
+                        Swal.fire('Error', 'Error al procesar datos del cliente', 'error');
+                    }
+                },
+                error: function(xhr) {
+                    console.error("Error en la solicitud AJAX de cliente:", xhr.responseText);
+                    Swal.fire('Error', 'Error al buscar el cliente: ' + (xhr.responseText || ''), 'error');
+                }
+            });
+        }
+    });
+
+    function canjearVale() {
+        // Función auxiliar para obtener valores
+        function getValue(id) {
+            const element = document.getElementById(id);
+            return element ? element.value : '';
+        }
+
+        // Obtener valores numéricos para comparación
+        const montoFaltante = parseFloat(getValue('montoFaltanteModelCanjeo')) || 0;
+        const cantidadIngresada = parseFloat(getValue('cantidadM3ModelCanjeo')) || 0;
+
+        // Validar que la cantidad ingresada no supere el monto faltante
+        if (cantidadIngresada > montoFaltante) {
+            Swal.fire('Error', `No puedes cargar ${cantidadIngresada} M3 porque el monto faltante es de ${montoFaltante} M3`, 'error');
+            return;
+        }
+
+        // Construir objeto con parámetros para el SP
+        const ventaParams = {
+            Id: getValue('id') || 0,
+            Folio: getValue('folioModalCanjeo'),
+            RFID: getValue('rfidModelCanjeo'),
+            NombreCliente: getValue('nombreClienteModelCanjeo'),
+            Transporte: getValue('descripcionVehiculoModelCanjeo'),
+            Placa: getValue('placaModelCanjeo'),
+            Cantidad: cantidadIngresada,
+            PV_PlantaId: getValue('Ubicacion_IdModalCanjeo'),
+            PV_MaterialId: getValue('TipoMaterial_IdModalCanjeo'),
+            FormaDePago: getValue('formaPagoHidden'),
+            UsuarioId: document.querySelector('[name="Usuario.Id"]')?.value || '@usuarioToken.UserID',
+            Fecha: getValue('fechaModelCanjeo'),
+            Estatus: getValue('Estatus'),
+            CreatedBy: '@usuarioToken.UserName',
+            UpdatedBy: '@usuarioToken.UserName',
+            CreatedDt: '@fechaActual2',
+            UpdatedDt: '@fechaActual2',
+            CantidadRecibida: getValue('cantidadRecibidaModelCanjeo') || 0,
+            EstatusVenta: 'E',
+            UnidadMedida: 8,
+            TotalPago: 0,
+            PrecioUnidad: 0,
+            FolioInicio: getValue('folioInicioModelCanjeo') || 0,
+            FolioFinal: getValue('folioFinalModelCanjeo') || 0
+        };
+
+        // Validaciones adicionales
+        if (!ventaParams.Folio || !ventaParams.PV_PlantaId || !ventaParams.PV_MaterialId || ventaParams.Cantidad <= 0) {
+            Swal.fire('Error', 'Complete todos los campos requeridos con valores válidos', 'error');
+            return;
+        }
+
+        // Confirmación
+        Swal.fire({
+            title: 'Confirmar Canje',
+            html: `¿Desea canjear <b>${ventaParams.Cantidad} M3</b> del vale ${ventaParams.Folio}?<br>Monto faltante: ${montoFaltante} M3`,
+            icon: 'question',
+            showCancelButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                enviarCanje(ventaParams);
+            }
+        });
+    }
+
+    function enviarCanje(datos) {
+        $.ajax({
+            url: '/VentaPublicoGeneral/ProcesarCanjeo',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(datos),
+            success: function (response) {
+                if (response.IsSuccess) {
+                    Swal.fire('Éxito', response.Message || 'Operación realizada con éxito', 'success')
+                        .then(() => window.location.reload());
+                } else {
+                    Swal.fire('Error', response.Message || 'Ocurrió un error', 'error');
+                }
+            },
+            error: function (xhr) {
+                Swal.fire('Error', xhr.responseJSON?.Message || 'Error en el servidor', 'error');
+            }
+        });
+    }
+</script>
+
+<style>
+    select[readonly] {
+        background-color: #f8f9fa;
+        cursor: not-allowed;
+    }
+</style>

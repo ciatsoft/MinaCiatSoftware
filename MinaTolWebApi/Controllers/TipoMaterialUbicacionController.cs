@@ -46,5 +46,27 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
+        [HttpGet, Route("MaterialesUbicacion/{id:long}")]
+        public ModelResponse GetGetMaterialUbicacionByUbicacion(long id)
+        {
+            var result = wrapper.GetGetMaterialUbicacionByUbicacion(id);
+            return result;
+        }
+
+        [HttpPost, Route("Agregar")]
+        public ModelResponse SaveOrUpdateMaterialUbicacion(DtoTipoMaterialUbicacion t)
+        {
+            var result = wrapper.SaveOrUpdateMaterialUbicacion(t);
+            return result;
+        }
+
+        [HttpPost, Route("Quitar")]
+        public ModelResponse QuitMaterialUbicacion(DtoTipoMaterialUbicacion t)
+        {
+            var result = wrapper.QuitMaterialUbicacion(t);
+            return result;
+        }
+
+
     }
 }

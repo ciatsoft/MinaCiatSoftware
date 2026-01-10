@@ -1,0 +1,64 @@
+﻿@model List<MinaTolEntidades.DtoCatalogos.Permisos>
+
+@{
+    // Eliminamos duplicados y ordenamos alfabéticamente
+    var permisosUnicos = Model
+        .Where(x => x.TipoMenu.Equals("MenuUnico"))
+        .GroupBy(x => x.Id)
+        .Select(g => g.First())
+        .OrderBy(x => x.Nombre)
+        .ToList();
+
+    var permisosPadres = Model
+        .Where(x => x.TipoMenu.Equals("Menu"))
+        .GroupBy(x => x.Id)
+        .Select(g => g.First())
+        .OrderBy(x => x.Nombre)
+        .ToList();
+
+    var permisosHijos = Model
+        .Where(x => x.TipoMenu.Equals("SubMenu"))
+        .GroupBy(x => x.Id)
+        .Select(g => g.First())
+        .OrderBy(x => x.Nombre)
+        .ToList();
+}
+
+<ul class="navbar-nav">
+    @* Menús únicos *@
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-title="Index" href="@Url.Action("Index", "Home")">Inicio</a>
+        </li>
+    </ul>
+    @foreach (var permiso in permisosUnicos)
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="@Url.Content("~/" + permiso.URLVentana.TrimStart('/'))">
+                @permiso.Nombre
+            </a>
+        </li>
+    }
+
+    @* Menús con hijos *@
+    @foreach (var permisoPadre in permisosPadres)
+    {
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink-@permisoPadre.Id"
+               role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                @permisoPadre.Nombre
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink-@permisoPadre.Id">
+                @foreach (var permisoHijo in permisosHijos
+                              .Where(h => h.PermisoPadre.Id == permisoPadre.Id)
+                              .OrderBy(h => h.Nombre))
+                {
+                    <a class="dropdown-item" data-title="@permisoHijo.Nombre"
+                       href="@Url.Content("~/" + permisoHijo.URLVentana.TrimStart('/'))">
+                        @permisoHijo.Nombre
+                    </a>
+                }
+            </div>
+        </li>
+    }
+</ul>

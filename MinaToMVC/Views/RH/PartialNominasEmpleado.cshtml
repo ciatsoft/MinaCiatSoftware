@@ -1,0 +1,585 @@
+﻿@model MinaTolEntidades.DtoEmpleados.NominaEmpleado
+@{
+    var trabajadorId = (long)ViewBag.TrabajadorId;
+
+    DateTime hoy = DateTime.Today;
+    int diferencia1 = hoy.DayOfWeek - DayOfWeek.Monday;
+    DateTime lunes = hoy.AddDays(-diferencia1);
+    var fechaLunes = lunes.ToString("yyyy-MM-dd");
+
+    DateTime viernes = lunes.AddDays(4);
+    var fechaViernes = viernes.ToString("yyyy-MM-dd");
+
+    DateTime sabado = lunes.AddDays(5);
+    var fechaSabado = sabado.ToString("yyyy-MM-dd");
+
+    var usuario = @ViewBag.UserToken.UserName;
+    var nombreCompleto = ViewBag.NombreTrabajador;
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+<div class="content">
+    <div class="tabla-consultas-roll">
+        <div class="rectangulos" style="width: 100%;">
+            <h2>Generar Nomina para @nombreCompleto</h2>
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-lg-3">
+                    <label>Fecha del Inicio:</label>
+                    <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" value="@fechaLunes" readonly>
+                </div>
+                <div class="col-lg-3">
+                    <label>Fecha de Fin:</label>
+                    <input type="date" class="form-control" id="fechaFinal" name="fechaFinal" value="" readonly>
+                    <input type="hidden" class="form-control" id="diaNomina" name="diaNomina" readonly>
+                </div>
+                <div class="col-lg-5">
+                    <input type="button" value="Calcular Nomina Semanal" onclick="GetAllConceptoEmpleadoByIdEmpleadoDates()" class="btn btn-success" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tabla-consultas-roll">
+        <div class="rectangulos" style="width: 100%;">
+            <h3>Conceptos Acumulados para Nomina Semanal</h3>
+            <br />
+            <table class="table table-bordered table-striped" id="tblConceptosEmpleado" style="width: 100%;"></table>
+            <h3>Prestamos solicitados en la Semana</h3>
+            <br />
+            <table class="table table-bordered table-striped" id="tblPrestamosEmpleado" style="width: 100%;"></table>
+        </div>
+    </div>
+    @using (Html.BeginForm("SaveOrUpdateConceptoEmpleadoByIdEmpleado", "RH", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmConceptoEmpleado" }))
+    {
+        @Html.HiddenFor(x => x.Id, new { @id = "id" })
+        @Html.HiddenFor(x => x.IdTrabajador, new { @id = "idTrabajador", Value = trabajadorId })
+        @Html.HiddenFor(x => x.Estatus, new { @id = "estatus" })
+        @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy", Value = usuario })
+        @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy", Value = usuario })
+        @Html.HiddenFor(x => x.CreatedDt, new { id = "createdDt", Value = fechaActual })
+        @Html.HiddenFor(x => x.UpdatedDt, new { id = "updatedDt", Value = fechaActual })
+        @Html.HiddenFor(x => x.FechaInicio, new { @class = "form-control", @id = "fechaInicioRazor", @readonly = "readonly" })
+        @Html.HiddenFor(x => x.FechaFinal, new { @class = "form-control", @id = "fechaFinalRazor", @readonly = "readonly" })
+        <div class="tabla-consultas-roll">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-lg-4">
+                        <label>Salario Semanal:</label>
+                        @Html.TextBoxFor(x => x.SalarioSemanal, new { @class = "form-control", @id = "salarioSemanal", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly" })
+                    </div>
+                    <div class="col-lg-4">
+                        <label>Total de Aumento:</label>
+                        @Html.TextBoxFor(x => x.Aumento, new { @class = "form-control", @id = "aumento", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly" })
+                    </div>
+                    <div class="col-lg-4">
+                        <label>Total de Descuento:</label>
+                        @Html.TextBoxFor(x => x.Descuento, new { @class = "form-control", @id = "descuento", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly" })
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>Salario Final Semanal:</label>
+                        @Html.TextBoxFor(x => x.SalarioFinal, new { @class = "form-control", @id = "salarioFinal", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly" })
+                    </div> 
+                </div>
+
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12">
+                        <input type="button" value="Guardar" onclick="SearchNominaEmpleadoByDates()" class="btn btn-success" />
+                        <a href="/RH/NominaEmpleado" class="btn btn-custom-cancel">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        ObtenerDatosEmpleadoYSalario(@trabajadorId);
+        // Actualizar al cambiar los inputs date
+        $('#fechaInicio, #fechaFinal').change(function () {
+            $('#fechaInicioRazor').val($('#fechaInicio').val());
+            $('#fechaFinalRazor').val($('#fechaFinal').val());
+        });
+
+        // Establecer valores iniciales
+        $('#fechaInicioRazor').val($('#fechaInicio').val());
+        $('#fechaFinalRazor').val($('#fechaFinal').val());
+
+        $("#tblPrestamosEmpleado").DataTable({
+            processing: true,
+            destroy: true,
+            paging: true,
+            searching: true,
+            columns: [
+                { data: "id", visible: false, title: "Id" },
+                { data: "nombre", title: "Nombre", visible: false },
+                { data: "descripcion", title: "Descripción de Préstamo" },
+                {
+                    data: "monto",
+                    title: "Monto",
+                    render: function (data) {
+                        return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
+                    }
+                },
+                {
+                    data: 'fecha', title: 'Fecha', render: function (data) {
+                        return data ? new Date(data).toISOString().split('T')[0] : '';
+                    }
+                }
+            ],
+            language: {
+                decimal: ",",
+                thousands: ".",
+                processing: "Procesando...",
+                lengthMenu: "Mostrar _MENU_ entradas",
+                zeroRecords: "No se encontraron resultados",
+                emptyTable: "Ningún dato disponible en esta tabla",
+                info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                infoEmpty: "Mostrando 0 a 0 de 0 entradas",
+                infoFiltered: "(filtrado de un total de _MAX_ entradas)",
+                search: "Buscar:",
+                loadingRecords: "Cargando...",
+                paginate: {
+                    first: "Primero",
+                    last: "Último",
+                    next: "Siguiente",
+                    previous: "Anterior"
+                },
+                aria: {
+                    sortAscending: ": activar para ordenar ascendente",
+                    sortDescending: ": activar para ordenar descendente"
+                }
+            },
+        });
+
+        // Inicializar DataTable con la función de cálculo automático
+        $("#tblConceptosEmpleado").DataTable({
+            data: [],
+            columns: [
+                { data: 'id', title: 'ID', visible: false },
+                { data: 'idTrabajador', title: 'Id Trabajador', visible: false },
+                { data: 'idConceptoEmpleado', title: 'Id Concepto Empleado', visible: false },
+                { data: 'nombreConceptoEmpleado', title: 'Nombre del Concepto' },
+                { data: 'cantidad', title: 'Cantidad' },
+                {
+                    data: 'valor', title: 'Valor', render: function (data) {
+                        return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
+                    }
+                },
+                {
+                    data: 'totalNeto', title: 'Total Neto', render: function (data) {
+                        return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
+                    }
+                },
+                {
+                    data: 'fecha', title: 'Fecha', render: function (data) {
+                        return data ? new Date(data).toISOString().split('T')[0] : '';
+                    }
+                },
+                { data: 'tipoCargo', title: 'Tipo de Cargo' },
+            ],
+            order: [[0, 'desc']],
+            language: {
+                "decimal": ",",
+                "thousands": ".",
+                "processing": "Procesando...",
+                "lengthMenu": "Mostrar _MENU_ entradas",
+                "zeroRecords": "No se encontraron resultados",
+                "emptyTable": "Ningun dato disponible en esta tabla",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+                "search": "Buscar:",
+                "loadingRecords": "Cargando...",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                    "sortDescending": ": activar para ordenar la columna de manera descendente"
+                }
+            },
+            // Calcular automáticamente cuando se modifiquen los datos
+            drawCallback: function() {
+                calcularSumatoriasYSalario();
+            }
+        });
+
+        // Actualizar cuando cambie el salario semanal
+        $('#salarioSemanal').on('change', function() {
+            calcularSumatoriasYSalario();
+        });
+    });
+
+    // Función para calcular sumatorias y salario final
+    function calcularSumatoriasYSalario() {
+        var table = $('#tblConceptosEmpleado').DataTable();
+        var data = table.data().toArray();
+
+        var table2 = $('#tblPrestamosEmpleado').DataTable();
+        var data2 = table2.data().toArray();
+
+        var totalAumento = 0;
+        var totalDescuento = 0;
+        var totalPrestamos = 0;
+
+        // Calcular sumatorias por tipo de concepto (Aumento y Descuento)
+        data.forEach(function (row) {
+            if (row.tipoCargo === 'Aumento') {
+                totalAumento += parseFloat(row.totalNeto) || 0;
+            } else if (row.tipoCargo === 'Descuento') {
+                totalDescuento += parseFloat(row.totalNeto) || 0;
+            }
+        });
+
+        // Calcular sumatoria de préstamos (desde la tabla de préstamos)
+        data2.forEach(function (row) {
+            totalPrestamos += parseFloat(row.monto) || 0;
+        });
+
+        // Obtener salario semanal (limpiar formato de moneda)
+        var salarioSemanalTexto = $('#salarioSemanal').val();
+        var salarioSemanal = parseFloat(salarioSemanalTexto.replace(/[$,]/g, '')) || 0;
+
+        // Descuento total (descuentos + préstamos)
+        var descuentoFinal = totalDescuento + totalPrestamos;
+
+        // Calcular salario final
+        var salarioFinal = salarioSemanal + totalAumento - descuentoFinal;
+
+        // Actualizar los inputs
+        $('#aumento').val(totalAumento.toFixed(2));
+        $('#descuento').val(descuentoFinal.toFixed(2));
+        $('#salarioFinal').val(salarioFinal.toFixed(2));
+
+        // Formatear visualmente
+        formatearMonedaVisual();
+    }
+
+    // Función para formatear visualmente como moneda
+    function formatearMonedaVisual() {
+        // Formatear aumento
+        var aumentoValor = parseFloat($('#aumento').val()) || 0;
+        $('#aumento').val(new Intl.NumberFormat('es-MX', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(aumentoValor));
+
+        // Formatear descuento
+        var descuentoValor = parseFloat($('#descuento').val()) || 0;
+        $('#descuento').val(new Intl.NumberFormat('es-MX', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(descuentoValor));
+
+        // Formatear salario final
+        var salarioFinalValor = parseFloat($('#salarioFinal').val()) || 0;
+        $('#salarioFinal').val(new Intl.NumberFormat('es-MX', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(salarioFinalValor));
+
+        // También asegurar que el salario semanal esté formateado correctamente
+        var salarioSemanalValor = parseFloat($('#salarioSemanal').val().replace(/[$,]/g, '')) || 0;
+        $('#salarioSemanal').val(new Intl.NumberFormat('es-MX', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(salarioSemanalValor));
+    }
+
+    // Actualizar cuando cambie el salario semanal (usando input event para mayor compatibilidad)
+    $('#salarioSemanal').on('input change', function () {
+        // Primero formatear el valor
+        var valor = parseFloat($(this).val().replace(/[$,]/g, '')) || 0;
+        $(this).val(new Intl.NumberFormat('es-MX', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(valor));
+
+        // Luego calcular
+        calcularSumatoriasYSalario();
+    });
+
+    function SearchConceptosEmpleado() {
+        // Asegurar que las fechas estén actualizadas
+        $('#fechaInicioRazor').val($('#fechaInicio').val());
+        $('#fechaFinalRazor').val($('#fechaFinal').val());
+    }
+
+    function GetAllConceptoEmpleadoByIdEmpleadoDates() {
+        // Obtener el ID del empleado
+        var idEmpleado = @trabajadorId;
+
+        // Obtener valores de los inputs de fecha
+        var fechaInicio = document.getElementById('fechaInicio').value;
+        var fechaFinal = document.getElementById('fechaFinal').value;
+
+        // Validar que las fechas no estén vacías
+        if (!fechaInicio || !fechaFinal) {
+            Swal.fire({
+                title: 'Advertencia',
+                text: 'Por favor, seleccione ambas fechas',
+                icon: 'warning',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
+
+        // Convertir strings a objetos Date
+        var fechaInicioDate = new Date(fechaInicio);
+        var fechaFinalDate = new Date(fechaFinal);
+
+        // Construir la URL
+        const url = `/RH/GetAllConceptoEmpleadoByIdEmpleadoDates?id=${idEmpleado}&fechaInicio=${fechaInicio}&fechaFinal=${fechaFinal}`;
+
+        GetMVC(url, function (r) {
+            if (r.IsSuccess) {
+                MapingPropertiesDataTable("tblConceptosEmpleado", r.Response);
+                // Llamar a la función de cálculo después de cargar los datos
+                calcularSumatoriasYSalario();
+                GetAllPrestamosByIdEmpleadoDates(idEmpleado, fechaInicio, fechaFinal);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar los Conceptos del Empleado: ' + r.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+
+    function GetAllPrestamosByIdEmpleadoDates(idEmpleado, fechaInicio, fechaFinal) {
+        const url = `/RH/GetAllPrestamosByIdEmpleadoDates?id=${idEmpleado}&fechaInicio=${fechaInicio}&fechaFinal=${fechaFinal}`
+        GetMVC(url, function (r) {
+            if (r.IsSuccess) {
+                MapingPropertiesDataTable("tblPrestamosEmpleado", r.Response);
+                calcularSumatoriasYSalario();
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar los Prestamos del Empleado: ' + r.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+
+    function ObtenerDatosEmpleadoYSalario(id) {
+        GetMVC("/Empleado/ObtenerDatosEmpleado?id=" + id, function (r) {
+            if (r.IsSuccess) {
+                if (r.Response === null || r.Response === undefined) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Error al cargar datos del Empleado.',
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    setTimeout(function () {
+                        $("#genericModal").modal("hide");
+                    }, 3000);
+                } else {
+                    var diaNomina = r.Response.diaNomina;
+                    $('#diaNomina').val(diaNomina);
+
+                    // Usar las fechas calculadas en Razor (pasarlas como variables JavaScript)
+                    var fechaViernes = '@fechaViernes'; // Viernes
+                    var fechaSabado = '@fechaSabado';   // Sábado
+
+                    // Actualizar la fecha final según el día de nómina
+                    if (diaNomina === 'S') {
+                        $('#fechaFinal').val(fechaSabado);
+                    } else if (diaNomina === 'V') {
+                        $('#fechaFinal').val(fechaViernes);
+                    }
+
+                    // Llamar a la función para obtener el salario
+                    GetSalarioActivoByIdEmpleado(id, diaNomina);
+                }
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar el Dia de Nomina del Empleado: ' + r.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+
+    function GetSalarioActivoByIdEmpleado(id, diaNomina) {
+        GetMVC("/RH/GetSalarioActivoByIdEmpleado?id=" + id, function (r) {
+            if (r.IsSuccess) {
+                if (r.Response === null || r.Response === undefined) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'El Empleado no tiene un Salario Activo establecido.',
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    setTimeout(function () {
+                        $("#genericModal").modal("hide");
+                    }, 2000);
+                } else {
+                    var salarioActual = r.Response.monto;
+                    var salarioSemanal;
+
+                    // Aplicar multiplicación según el día de nómina
+                    if (diaNomina === 'V') {
+                        salarioSemanal = salarioActual * 5; // Viernes
+                    } else if (diaNomina === 'S') {
+                        salarioSemanal = salarioActual * 6; // Sábado
+                    } else {
+                        salarioSemanal = salarioActual * 5; // Valor por defecto
+                    }
+
+                    // Establecer el valor en el input y bloquearlo
+                    $('#salarioSemanal').val(
+                        new Intl.NumberFormat('es-MX', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        }).format(parseFloat(salarioSemanal) || 0)
+                    );
+                }
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar el Salario Activo del Empleado: ' + r.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+
+    function SaveOrUpdateNominasByIdEmpleado() {
+        // Función para limpiar formato de moneda
+        function limpiarFormatoMoneda(valor) {
+            if (!valor) return "0";
+            // Remover comas y convertir a número
+            return valor.toString().replace(/,/g, '');
+        }
+
+        // Actualizar campos hidden antes de enviar
+        $("#fechaInicioRazor").val($("#fechaInicio").val());
+        $("#fechaFinalRazor").val($("#fechaFinal").val());
+
+        var parametro = {
+            Id: parseInt($("#id").val()) || 0,
+            IdTrabajador: parseInt($("#idTrabajador").val()) || 0,
+            FechaInicio: $("#fechaInicioRazor").val(),
+            FechaFinal: $("#fechaFinalRazor").val(),
+            DiaNomina: $("#diaNominaHidden").val() || "5",
+            SalarioSemanal: parseFloat(limpiarFormatoMoneda($("#salarioSemanal").val())) || 0,
+            Aumento: parseFloat(limpiarFormatoMoneda($("#aumento").val())) || 0,
+            Descuento: parseFloat(limpiarFormatoMoneda($("#descuento").val())) || 0,
+            SalarioFinal: parseFloat(limpiarFormatoMoneda($("#salarioFinal").val())) || 0,
+            Estatus: true,
+            CreatedBy: $("#createdBy").val(),
+            CreatedDt: $("#createdDt").val(),
+            UpdatedBy: $("#updatedBy").val(),
+            UpdatedDt: $("#updatedDt").val()
+        }
+
+        if (parametro.SalarioFinal == 0) {
+            Swal.fire('Error', 'No se ha calculado la nomina aun.', 'error');
+            return;
+        }
+
+        // Validaciones
+        if (!parametro.IdTrabajador || parametro.IdTrabajador <= 0) {
+            Swal.fire('Error', 'ID de trabajador no válido', 'error');
+            return;
+        }
+
+        if (!parametro.FechaInicio || !parametro.FechaFinal) {
+            Swal.fire('Error', 'Fechas de inicio y fin son requeridas', 'error');
+            return;
+        }
+
+        PostMVC('/RH/SaveOrUpdateNominasByIdEmpleado', parametro, function (r) {
+            if (r.IsSuccess) {
+                Swal.fire({
+                    title: "Registro guardado!",
+                    text: "El registro se ha guardado correctamente.",
+                    icon: "success",
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.reload();
+                });
+            } else {
+                Swal.fire({
+                    title: "Registro guardado!",
+                    text: "El registro se ha guardado correctamente.",
+                    icon: "success",
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.reload();
+                });
+            }
+        });
+    }
+
+    function SearchNominaEmpleadoByDates() {
+        // Obtener el ID del empleado
+        var idEmpleado = @trabajadorId;
+
+        // Obtener valores de los inputs de fecha
+        var fechaInicio = document.getElementById('fechaInicio').value;
+        var fechaFinal = document.getElementById('fechaFinal').value;
+
+        // Validar que las fechas no estén vacías
+        if (!fechaInicio || !fechaFinal) {
+            Swal.fire({
+                title: 'Advertencia',
+                text: 'Por favor, seleccione ambas fechas',
+                icon: 'warning',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
+
+        // Convertir strings a objetos Date
+        var fechaInicioDate = new Date(fechaInicio);
+        var fechaFinalDate = new Date(fechaFinal);
+
+        // Construir la URL
+        const url = `/RH/SearchNominaEmpleadoByDates?id=${idEmpleado}&fechaInicio=${fechaInicio}&fechaFinal=${fechaFinal}`;
+
+        GetMVC(url, function (r) {
+            if (r.IsSuccess) {
+                // CORRECCIÓN: Lógica invertida
+                if (r.Response != null && r.Response.length > 0) {
+                    // Si hay datos en la respuesta, significa que YA EXISTE una nómina
+                    Swal.fire({
+                        title: 'Nómina Ya Generada',
+                        text: 'Ya se generó la nómina semanal, no puedes generar una nueva. Por favor consulta el historial de nóminas del empleado y eliminala si es necesario.',
+                        icon: 'warning',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    return;
+                } else {
+                    // Si NO hay datos, podemos generar una nueva nómina
+                    SaveOrUpdateNominasByIdEmpleado();
+                }
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar los Conceptos del Empleado: ' + r.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+
+</script>

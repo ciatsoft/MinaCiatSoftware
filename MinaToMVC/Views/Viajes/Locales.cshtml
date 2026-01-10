@@ -11,7 +11,7 @@
     var clientes = (List<MinaTolEntidades.DtoClientes.Cliente>)ViewBag.Clientes;
     var unidadmedida = (List<MinaTolEntidades.DtoSucursales.UnidadMedida>)ViewBag.UnidadDeMedida;
     var ubicaciones = (List<MinaTolEntidades.DtoCatalogos.DtoUbicacion>)ViewBag.Ubicaciones;
-    var folio = (MinaTolEntidades.DtoViajes.DtoFoliador)ViewBag.Folio;
+    //var folio = (MinaTolEntidades.DtoViajes.DtoFoliador)ViewBag.Folio;
 
     var ViajeLocal = (MinaTolEntidades.DtoViajes.DtoViajeLocal)Model;
 }
@@ -84,17 +84,17 @@
         <input type="hidden" id="txtUpdatedDt" value="@DateTime.Now" />
         <input type="hidden" id="txtViajeinterno" />
         <br>
-        <center><h1>Viajes Locales</h1></center>
+        <center><h1>Viajes de Almacenes</h1></center>
         <div class="tabla-consultas-empleados">
             <div class="rectangulos" style="width: 100%;">
                 <div class="row">
                     <div class="col-lg-3">
                         <label>Folio:</label>
                         <!-- Input oculto para almacenar folio.Id -->
-                        <input type="hidden" id="FolioId" name="FolioId" value="@folio.Id" />
+                        @*<input type="hidden" id="FolioId" name="FolioId" value="@folio.Id" />*@
 
                         <!-- Input visible para mostrar folio.Consecutivo -->
-                        <input type="text" id="Folio" name="Folio" class="form-control" value="@folio.ConsecutivoString" disabled />
+                        <input type="text" id="Folio" name="Folio" class="form-control" value="@ViewBag.Folio" disabled />
                     </div>
 
                     <div class="col-lg-3">
@@ -108,8 +108,9 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Cliente:</label>
-                        <select id="ddlCliente" class="form-control" onchange="actualizarTiposDeMaterial()">
-                            @foreach (var i in clientes)
+                        <select id="ddlCliente" class="form-control">
+                            <option value="" disabled selected>Selecciona una opcion</option>
+                            @foreach (var i in clientes.Where(c => c.TipoCliente == 1).OrderBy(c => c.Nombre))
                             {
                                 <option value="@i.Id">@i.Nombre</option>
                             }
@@ -118,14 +119,17 @@
                     <div class="col-lg-3">
                         <label>Tipo de Material:</label>
                         <select id="ddlTipoMaterial" class="form-control">
-                            @foreach (var i in tipoMateriales)
-                            {
-                                <option value="@i.TipoMaterial.Id">@i.TipoMaterial.NombreTipoMaterial</option>
-                            }
+                            <option value="" disabled selected>Selecciona una opcion</option>
                         </select>
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-lg-3">
+                        <label>Direccion Destino:</label>
+                        <select id="ddlDireccionesCliente" class="form-control">
+                            <option value="" disabled selected>Selecciona una opcion</option>
+                        </select>
+                    </div>
                     <div class="col-lg-3">
                         <label>Transportista:</label>
                         <select id="ddlTransportistas" class="form-control">
@@ -140,11 +144,11 @@
                         <select id="ddlVehiculo" class="form-control">
                             @foreach (var i in vehiculos)
                             {
-                                <option value="@i.Id">@i.Placa</option>
+                                <option value="@i.Id">@($"{i.TipoVehiculo.Nombre}, {i.Color}, {i.Placa}")</option>
                             }
                         </select>
                     </div>
-                    <div class="col-lg-3">
+                    <div class="col-lg-1">
                         <label>Unidad De Medida:</label>
                         <select id="ddlUnidadM" class="form-control" disabled>
                             @foreach (var unidad in unidadmedida)
@@ -154,7 +158,7 @@
                         </select>
 
                     </div>
-                    <div class="col-lg-3">
+                    <div class="col-lg-2">
                         <label>Fecha del viaje:</label>
                         <input type="date" id="dtpFechaViaje" name="dtpFechaViaje" class="form-control" />
                     </div>
@@ -165,6 +169,8 @@
                         <textarea name="txtObservaciones" id="txtObservaciones" class="form-control" rows="6"></textarea>
                     </div>
                 </div>
+                <input type="hidden" id="totalKMRecorridos" value="0" />
+                <input type="hidden" id="totalImporte" value="0" />
                 <div class="row">
                     <div class="col-lg-12 d-flex justify-content-between">
                         <!-- Contenedor para los botones de la izquierda -->
@@ -183,6 +189,8 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 </form>
 
 <script src="@(Url.StaticFile("Scripts/Viajes/Locales.js"))"></script>

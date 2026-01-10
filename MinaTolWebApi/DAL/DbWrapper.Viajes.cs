@@ -13,7 +13,7 @@ namespace MinaTolWebApi.DAL
     public partial class DbWrapper
     {
         public ModelResponse GetAllViajeInterno()
-        {
+            {
             var modelResponse = new ModelResponse();
             var parameters = new List<SqlParameter>();
 
@@ -60,6 +60,10 @@ namespace MinaTolWebApi.DAL
                         {
                             Id = MappingProperties<long>(reader["UbicacionOrigenId"])
                         };
+                        r.DireccionDestino = new MinaTolEntidades.DtoClientes.DireccionCliente()
+                        {
+                            Id = MappingProperties<long>(reader["DireccionDestinoId"])
+                        };
                         r.TipoMaterial = new MinaTolEntidades.DtoCatalogos.DtoTipoMaterialUbicacion()
                         {
                             Id = MappingProperties<long>(reader["MaterialId"])
@@ -103,6 +107,149 @@ namespace MinaTolWebApi.DAL
             try
             {
                 var user = GetObjects($"GetAllViajeLocal", CommandType.StoredProcedure, parameters,
+                    new Func<IDataReader, DtoViajeLocal>((reader) =>
+                    {
+                        var r = FillEntity<DtoViajeLocal>(reader);
+                        r.UbicacionOrigen.NombreUbicacion = MappingProperties<string>(reader["Origen"]);
+                        r.Transportista.Nombre = MappingProperties<string>(reader["Chofer"]);
+                        r.TipoMaterial.NombreTipoMaterial = MappingProperties<string>(reader["Material"]);
+                        r.Vehiculo.Placa = MappingProperties<string>(reader["Auto"]);
+                        r.Cliente.Nombre = MappingProperties<string>(reader["ClienteNombre"]);
+
+                        // CORRECCIÓN: Asignar TipoCliente directamente al DTO, no al cliente
+                        r.Cliente.TipoCliente = MappingProperties<int>(reader["TipoCliente"]);
+
+                        r.UnidadMedida.Nombre = MappingProperties<string>(reader["Unidad"]);
+
+                        return r;
+                    }));
+
+                modelResponse.Response = user;
+                modelResponse.IsSuccess = true; // Asegurar que IsSuccess sea true en caso de éxito
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
+
+        public ModelResponse GetAllViajeLocalByDates(DateTime fecha1, DateTime fecha2, string tipoCliente)
+        {
+            var modelResponse = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+
+            try
+            {
+                // Agregar los parámetros de fecha a la lista
+                parameters.Add(new SqlParameter("@Fecha1", fecha1));
+                parameters.Add(new SqlParameter("@Fecha2", fecha2));
+                parameters.Add(new SqlParameter("@TipoCliente", tipoCliente));
+
+                var user = GetObjects($"GetAllViajeLocalByDates", CommandType.StoredProcedure, parameters,
+                    new Func<IDataReader, DtoViajeLocal>((reader) =>
+                    {
+                        var r = FillEntity<DtoViajeLocal>(reader);
+                        r.UbicacionOrigen.NombreUbicacion = MappingProperties<string>(reader["Origen"]);
+                        r.Transportista.Nombre = MappingProperties<string>(reader["Chofer"]);
+                        r.TipoMaterial.NombreTipoMaterial = MappingProperties<string>(reader["Material"]);
+                        r.Vehiculo.Placa = MappingProperties<string>(reader["Auto"]);
+                        r.Cliente.Nombre = MappingProperties<string>(reader["ClienteNombre"]);
+                        r.UnidadMedida.Nombre = MappingProperties<string>(reader["Unidad"]);
+
+                        return r;
+                    }));
+
+                modelResponse.Response = user;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
+        public ModelResponse GetAllViajeLocalByDatesFacturado(DateTime fecha1, DateTime fecha2)
+        {
+            var modelResponse = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+
+            try
+            {
+                // Agregar los parámetros de fecha a la lista
+                parameters.Add(new SqlParameter("@Fecha1", fecha1));
+                parameters.Add(new SqlParameter("@Fecha2", fecha2));
+
+                var user = GetObjects($"GetAllViajeLocalByDatesFacturado", CommandType.StoredProcedure, parameters,
+                    new Func<IDataReader, DtoViajeLocal>((reader) =>
+                    {
+                        var r = FillEntity<DtoViajeLocal>(reader);
+                        r.UbicacionOrigen.NombreUbicacion = MappingProperties<string>(reader["Origen"]);
+                        r.Transportista.Nombre = MappingProperties<string>(reader["Chofer"]);
+                        r.TipoMaterial.NombreTipoMaterial = MappingProperties<string>(reader["Material"]);
+                        r.Vehiculo.Placa = MappingProperties<string>(reader["Auto"]);
+                        r.Cliente.Nombre = MappingProperties<string>(reader["ClienteNombre"]);
+                        r.UnidadMedida.Nombre = MappingProperties<string>(reader["Unidad"]);
+
+                        return r;
+                    }));
+
+                modelResponse.Response = user;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
+        public ModelResponse CheckPreFactura(long id, bool facturado)
+        {
+            var modelResponse = new ModelResponse();
+
+            try
+            {
+                // Crear parámetros para el stored procedure
+                var parameters = new[]
+                {
+                    new SqlParameter("@Id", id),
+                    new SqlParameter("@Facturado", facturado)
+                };
+
+                var salarioId = ExecuteScalar($"CheckPreFactura", CommandType.StoredProcedure, parameters);
+
+                modelResponse.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
+        public ModelResponse GetAllViajeLocalByDatesClientDireccion(DateTime fecha1, DateTime fecha2, long idCliente, long idDireccion)
+        {
+            var modelResponse = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+
+            try
+            {
+                // Agregar los parámetros de fecha a la lista
+                parameters.Add(new SqlParameter("@Fecha1", fecha1));
+                parameters.Add(new SqlParameter("@Fecha2", fecha2));
+                parameters.Add(new SqlParameter("@idCliente", idCliente));
+                parameters.Add(new SqlParameter("@idDireccion", idDireccion));
+
+                var user = GetObjects($"GetAllViajeLocalByDatesClientDireccion", CommandType.StoredProcedure, parameters,
                     new Func<IDataReader, DtoViajeLocal>((reader) =>
                     {
                         var r = FillEntity<DtoViajeLocal>(reader);
@@ -202,7 +349,29 @@ namespace MinaTolWebApi.DAL
 
             try
             {
-                var salarioId = ExecuteScalar($"SaveOrUpdateViajeLocal", CommandType.StoredProcedure, GenerateSQLParameters(vi));
+                var parameters = new[]
+                {
+                    new SqlParameter("@Id", vi.Id == 0 ? DBNull.Value : (object)vi.Id),
+                    new SqlParameter("@UbicacionOrigen", vi.UbicacionOrigen.Id),
+                    new SqlParameter("@DireccionDestino", vi.DireccionDestino.Id),
+                    new SqlParameter("@Transportista", vi.Transportista.Id),
+                    new SqlParameter("@TipoMaterial", vi.TipoMaterial.Id),
+                    new SqlParameter("@Vehiculo", vi.Vehiculo.Id),
+                    new SqlParameter("@Cliente", vi.Cliente.Id),
+                    new SqlParameter("@UnidadMedida", vi.UnidadMedida.Id),
+                    new SqlParameter("@FechaViaje", vi.FechaViaje),
+                    new SqlParameter("@Observaciones", vi.Observaciones ?? (object)DBNull.Value),
+                    new SqlParameter("@Estatus", vi.Estatus),
+                    new SqlParameter("@CreatedBy", vi.CreatedBy ?? (object)DBNull.Value),
+                    new SqlParameter("@CreatedDt", vi.CreatedDt),
+                    new SqlParameter("@UpdatedBy", vi.UpdatedBy ?? (object)DBNull.Value),
+                    new SqlParameter("@UpdatedDt", vi.UpdatedDt),
+                    new SqlParameter("@Folio", vi.Folio ?? (object)DBNull.Value),
+                    new SqlParameter("@KilometrosRecorridos", vi.KilometrosRecorridos),
+                    new SqlParameter("@TotalImporte", vi.TotalImporte),
+                };
+
+                var salarioId = ExecuteScalar($"SaveOrUpdateViajeLocal", CommandType.StoredProcedure, parameters);
                 vi.Id = Convert.ToInt64(salarioId);
 
                 modelResponse.Response = vi;
@@ -215,6 +384,32 @@ namespace MinaTolWebApi.DAL
             }
 
             return modelResponse;
+        }
+        public ModelResponse DeleteViajeLocal(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id"
+                });
+
+                var result = ExecuteNonQuery("DeleteViajeLocal", System.Data.CommandType.StoredProcedure, parameters);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
         }
         public ModelResponse UpdateFoliador(string nombre)
         {

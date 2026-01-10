@@ -14,7 +14,7 @@ namespace MinaToMVC.DAL
 {
     public partial class HttpClientConnection
     {
-
+        #region Viajes Locales
         public async Task<ModelResponse> SaveOrUpdateViajeLocal(DtoViajeLocal u)
         {
             MappingColumSecurity(u);
@@ -28,6 +28,15 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
+        public async Task<ModelResponse> DeleteViajeLocal(long Id)
+        {
+            var result = await RequestAsync($"api/Viajes/DeleteViajeLocal/{Id}", HttpMethod.Delete, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+        }
         public async Task<ModelResponse> GetAllViajeLocal(string token)
         {
             var result = await RequestAsync<object>("api/Viajes/Listlocal", HttpMethod.Get, null,
@@ -40,7 +49,114 @@ namespace MinaToMVC.DAL
 
             return modelResponse;
         }
+        public async Task<ModelResponse> GetAllViajeLocalByDates(DateTime fecha1, DateTime fecha2, string tipoCliente)
+        {
+            string url = $"api/Viajes/ListlocalDates/{fecha1.ToString("yyyy-MM-dd")}/{fecha2.ToString("yyyy-MM-dd")}/{tipoCliente}";
 
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        public async Task<ModelResponse> GetAllViajeLocalByDatesFacturado(DateTime fecha1, DateTime fecha2)
+        {
+            string url = $"api/Viajes/ListlocalDatesFacturado/{fecha1.ToString("yyyy-MM-dd")}/{fecha2.ToString("yyyy-MM-dd")}";
+
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        public async Task<ModelResponse> CheckPreFactura(long id, bool facturado)
+        {
+            string url = $"api/Viajes/CheckPreFactura/{id}/{facturado}";
+
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        public async Task<ModelResponse> GetAllViajeLocalByDatesClientDireccion(DateTime fecha1, DateTime fecha2, long idCliente, long idDireccion)
+        {
+            string url = $"api/Viajes/GetAllViajeLocalByDatesClientDireccion/{fecha1.ToString("yyyy-MM-dd")}/{fecha2.ToString("yyyy-MM-dd")}/{idCliente}/{idDireccion}";
+
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        #endregion
+        #region Precio Combustible
+        public async Task<ModelResponse> SaveOrUpdatePrecioCombustible(PrecioCombustible u)
+        {
+            MappingColumSecurity(u);
+            var result = await RequestAsync<object>("api/Viajes/PrecioCombustible", HttpMethod.Post, u,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        public async Task<ModelResponse> GetPrecioActivoCombustible()
+        {
+            var result = await RequestAsync<object>("api/Viajes/PrecioActivoCombustible", HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+        public async Task<ModelResponse> GetAllPrecioCombustible()
+        {
+            var result = await RequestAsync<object>("api/Viajes/PrecioCombustibleList", HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+        public async Task<ModelResponse> GetPrecioCombustibleById(long id)
+        {
+            string url = $"api/Viajes/PrecioCombustible/{id}/";
+
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        public async Task<ModelResponse> DeletePrecioCombustible(long Id)
+        {
+            var result = await RequestAsync($"api/Viajes/DeletePrecioCombustible/{Id}", HttpMethod.Delete, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+        }
+        #endregion
+        #region Viajes Internos
         public async Task<ModelResponse> SaveOrUpdateViajeInterno(DtoViajeInterno u)
         {
             MappingColumSecurity(u);
@@ -54,7 +170,6 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
-
         public async Task<ModelResponse> GetAllViajeInterno(string token)
         {
             var result = await RequestAsync<object>("api/Viajes/List", HttpMethod.Get, null,
@@ -67,7 +182,6 @@ namespace MinaToMVC.DAL
 
             return modelResponse;
         }
-
         public async Task<ModelResponse> GetViajeInternoById(long id)
         {
             var result = await RequestAsync<object>($"api/Viajes/Interno/{id}", HttpMethod.Get, null,
@@ -82,7 +196,6 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
-
         public async Task<ModelResponse> GetViajeLocalById(long id)
         {
             var result = await RequestAsync<object>($"api/Viajes/{id}", HttpMethod.Get, null,
@@ -97,19 +210,6 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
-
-        public async Task<ModelResponse> GetFoliadorByNombre(string Nombre)
-        {
-            var result = await RequestAsync<object>($"api/Foliador/{Nombre}", HttpMethod.Get, null,
-            new Func<string, string>((responseString) =>
-            {
-                return responseString;
-            }));
-            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
-
-            return modelResponse;
-
-        }
-
+        #endregion
     }
 }

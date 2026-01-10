@@ -27,6 +27,13 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
         [AllowAnonymous]
+        [Route("TipoClienteList/{id:long}"), HttpGet]
+        public async Task<ModelResponse> GetAllTipoCliente(long id)
+        {
+            var result = wrapper.GetAllTipoCliente(id);
+            return result;
+        }
+        [AllowAnonymous]
         [HttpGet, Route("{id:long}")]
         public async Task<ModelResponse> GetClienteById(int id)
         {
@@ -38,6 +45,12 @@ namespace MinaTolWebApi.Controllers
         public async Task<ModelResponse> SaveOrUpdateCliente(Cliente c)
         {
             var result = wrapper.SaveOrUpdateCliente(c);
+            return result;
+        }
+        [HttpDelete, Route("{id:long}")]
+        public async Task<ModelResponse> DeleteCliente(long id)
+        {
+            var result = wrapper.DeleteCliente(id);
             return result;
         }
     }

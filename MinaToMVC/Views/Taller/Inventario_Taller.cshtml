@@ -1,43 +1,95 @@
-﻿@{
-    ViewBag.Title = "Inventario_Taller"; // Establece el título de la vista.
+﻿@model MinaTolEntidades.DtoTaller.Inventario
+@{
+    ViewBag.Title = "Inventario_Taller";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
 }
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
 <div class="content">
-    <main class="container mt-4">
-        <!-- Mensaje de agregar o editar -->
+    @using (Html.BeginForm("SaveOrUpdateInventario", "Taller", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmInventario", @id = "frmInventario" }))
+    {
+        @Html.HiddenFor(x => x.Id)
+        @Html.HiddenFor(x => x.Estatus, new { id = "estatus" })
+        @Html.HiddenFor(x => x.CreatedDt, new { id = "createdDt", @Value = fechaActual })
+        @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy", @Value = usuarioToken.UserName })
+        @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy", @Value = usuarioToken.UserName })
+        @Html.HiddenFor(x => x.UpdatedDt, new { id = "updatedDt", @Value = fechaActual })
 
-        <div class="alert alert-custom"></div>
+        <br />
+        <center><h1>Inventario de Taller</h1></center>
+        <div class="tabla-consultas-empleados">
+             <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Nombre:</label>
+                        @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control", @type = "text", id = "nombre", required = "required" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Categoria:</label>
+                        @Html.DropDownListFor(x => x.IdCategoria,
+                            new SelectList((IEnumerable<SelectListItem>)ViewBag.CategoriaInventario, "Value", "Text"),
+                            "Selecciona una categoria",
+                            new { @class = "form-control", id = "ddlCategoriaInventario" })
+                    </div>
+                    @Html.HiddenFor(x => x.NombreCategoria, new { id = "nombreCategoria" })
+                    <div class="col-lg-3">
+                        <label>Marca:</label>
+                        @Html.TextBoxFor(x => x.Marca, new { @class = "form-control", @type = "text", id = "marca", required = "required" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Codigo del Fabricante:</label>
+                        @Html.TextBoxFor(x => x.CodigoFabricante, new { @class = "form-control", @type = "number", id = "codigoFabricante", required = "required" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Cantidad en Existencia:</label>
+                        @Html.TextBoxFor(x => x.CantidadExistente, new { @class = "form-control", @type = "number", id = "cantidadExistencia", required = "required" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Precio de Compra:</label>
+                        @Html.TextBoxFor(x => x.PrecioCompra, new { @class = "form-control", @type = "number", id = "precioCompra", required = "required" })
+                    </div>
 
-        <!-- Sección de agregar al Inventario -->
-        <center><h1>Agregar al inventario</h1></center>
+                    <div class="col-lg-3">
+                        <label>Ubicacion en Almacen:</label>
+                        @Html.TextBoxFor(x => x.UbicacionAlmacen, new { @class = "form-control", @type = "text", id = "ubicacionAlmacen", required = "required" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Proveedor:</label>
+                        @Html.TextBoxFor(x => x.Proveedor, new { @class = "form-control", @type = "text", id = "proveedor", required = "required" })
+                    </div>
 
-        <form method="POST" class="formulario">
-            <input type="hidden" name="id" value="">
-            <div class="form-group">
-                <label for="nombre_producto">Nombre del Producto:</label>
-                <input type="text" id="nombre_producto" name="nombre_producto" value="" required>
+                    <div class="col-lg-3">
+                        <label>Fecha:</label>
+                        <input class="form-control" type="text" id="fecha" value="@fechaActual" readonly />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 d-flex justify-content-between">
+                        <div>
+                            <input id="btnGuardar" type="submit" value="Guardar" class="btn btn-success btn-lg-custom" />
+                        </div>
+                        <a href="/Taller/Inventario_Taller" class="btn btn-custom-cancel btn-lg-custom">Cancelar</a>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="descripcion">Descripción:</label>
-                <textarea id="descripcion" name="descripcion"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="cantidad">Cantidad:</label>
-                <input type="number" id="cantidad" name="cantidad" value="" required min="0">
-            </div>
-            <div class="form-group">
-                <label for="numero_de_parte">Número de Parte:</label>
-                <input type="text" id="numero_de_parte" name="numero_de_parte" value="">
-            </div>
-            <div class="form-group">
-                <label for="marca">Marca:</label>
-                <input type="text" id="marca" name="marca" value="">
-            </div>
-            <div class="form-group botones">
-                <input type="submit" name="guardar" value="Guardar">
-                <br>
-                <a href="procesar_inventario.html" class="btn">Ver Lista de Inventario</a>
-            </div>
-        </form>
-
-    </main>
+        </div>
+    }
+    <br />
+    <table id="tblInventario" class="table table-bordered table-striped" style="width: 100%;"></table>
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+        <div class="mb-2" style="text-align: right;">
+            <button id="btnGenerarPDF" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
+                Generar Reporte PDF
+            </button>
+        </div>
+    </div>
+    <center><h1>Historial de Inventario asignado a Vehiculos</h1></center>
+    <table id="tblComponenteVehiculo" class="table table-bordered table-striped" style="width: 100%;"></table>
 </div>
+<script src="@(Url.StaticFile("Scripts/Taller/InventarioTaller.js"))"></script>

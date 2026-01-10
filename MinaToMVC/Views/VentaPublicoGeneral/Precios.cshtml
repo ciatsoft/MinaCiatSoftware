@@ -1,0 +1,88 @@
+﻿@model MinaTolEntidades.DtoVentaPublicoGeneral.PV_Precio
+@{
+    ViewBag.Title = "PV_Precios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var formasPago = (List<string>)ViewBag.FormasPago;
+
+}
+<link href="@Url.Content("~/Assets/css/EstilosBtnCambios/EstiloBtn.css")" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+@using (Html.BeginForm("SaveOrUpdatePrecioMaterial", "VentaPublicoGeneral", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmPrecioMaterial", @id = "frmPrecioMaterial" }))
+{
+    @Html.HiddenFor(x => x.Estatus)
+    @Html.HiddenFor(x => x.CreatedDt)
+    @Html.HiddenFor(x => x.CreatedBy)
+    @Html.HiddenFor(x => x.UpdatedBy)
+    @Html.HiddenFor(x => x.UpdatedDt)
+
+    <div class="content">
+        <br>
+        <center><h1>Precios</h1></center>
+        <div class="tabla-consultas-roll">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>ID Precio:</label>
+                        @Html.TextBoxFor(x => x.Id, new { @class = "form-control", @min = "0", @readonly = "readonly", @Id = "id" })
+                    </div>
+                    <div class="col-lg-4">
+                        <label>Ubicación:</label>
+                        @Html.DropDownList("ddlUbicacion", (IEnumerable<SelectListItem>)ViewBag.Ubicaciones, new { @class = "form-control", @onchange = "CambioUbicacion()" })
+                    </div>
+                    <div class="col-lg-4" id="divMaterial">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label for="txtPrecioActivo">Precio Menudeo:</label>
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <label>$</label>
+                            </div>
+                            <div class="col-lg-10">
+                                @Html.TextBoxFor(x => x.PrecioMenudeo, new { @class = "form-control", @type = "number", @min = "0", @step = "any", oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <label>Cantidad Minima para Precio Menudeo:</label>
+                        @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control", @type = "number", @min = "0" })
+                    </div>
+                    <div class="col-lg-4">
+                        <label for="txtPrecioActivo">Precio Mayoreo:</label>
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <label>$</label>
+                            </div>
+                            <div class="col-lg-10">
+                                @Html.TextBoxFor(x => x.PrecioMayoreo, new { @class = "form-control", @type = "number", @min = "0", @step = "any", oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-2">
+                        <label for="txtPrecioActivo">Es precio Activo:</label>
+                        @Html.CheckBoxFor(x => x.EsPrecioActivo, new { @style = "width: 30px; height: 30px;" })
+                    </div>
+                    <div class="col-lg-10">
+                        <label>Comentarios:</label>
+                        @Html.TextBoxFor(x => x.Comentario, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input id="btnGuardar" type="submit" value="Guardar" class="btn btn-success" />
+                        <a href="/VentaPublicoGeneral/Precios" class="btn btn-custom-cancel">Cancelar</a>
+                        <input type="button" value="Eliminar" id="btnEliminar" class="btn btn-custom-cancel" data-id="@(Model?.Id ?? 0)" onclick="EliminarPrecio(this)" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <table id="tblPrecios" class="table table-bordered table-striped" style="width: 100%;"></table>
+    </div>
+}
+
+<script src="@(Url.StaticFile("Scripts/VentaPublicoGeneral/Precios.js"))"></script>

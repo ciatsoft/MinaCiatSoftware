@@ -1,0 +1,489 @@
+﻿@model MinaTolEntidades.DtoVentaPublicoGeneral.Prepago
+@{
+    ViewBag.Title = "PartialPrepago";
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+@using (Html.BeginForm("SaveOrUpdatePrepago", "VentaPublicoGeneral", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmPrepago" }))
+{
+    @Html.HiddenFor(x => x.Id, new { @id = "id" })
+    @Html.HiddenFor(x => x.Estatus)
+    @Html.HiddenFor(x => x.CreatedBy, new { @Value = usuarioToken.UserName, @id = "createdByModal" })
+    @Html.HiddenFor(x => x.UpdatedBy, new { @Value = usuarioToken.UserName, @id = "updatedByModal" })
+    @Html.HiddenFor(x => x.CreatedDt, new { @Value = fechaActual, @id = "createdDtModal" })
+    @Html.HiddenFor(x => x.UpdatedDt, new { @Value = fechaActual, @id = "updatedDtModal" })
+
+    <div class="content">
+        <div class="tabla-consultas-roll">
+            <div class="rectangulos" style="width: 100%;">
+                <h2>Crear Valera de Prepago</h2>
+                <!-- Sección de campos de auditoría visibles -->
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-lg-4">
+                        <label>Folio:</label>
+                        @Html.HiddenFor(x => x.Folio, new { @class = "form-control no-select", @type = "number", id = "folioModal", @readonly = "readonly"})
+                    </div>
+                </div>
+                <!-- Campos del formulario -->
+                <div class="row" style="margin-top: 20px;">
+                    <!-- Primera fila -->
+                    <div class="col-lg-4">
+                        <label>Tipo de Material:</label>
+                        @{
+                            var materialesList = new SelectList(ViewBag.Materiales, "Id", "NombreTipoMaterial");
+                            var materialesWithDefault = new List<SelectListItem>();
+                            materialesWithDefault.Add(new SelectListItem { Text = "Selecciona un material", Value = ""});
+                            materialesWithDefault.AddRange(materialesList.Select(m => new SelectListItem { Text = m.Text, Value = m.Value }));
+                        }
+
+                        @Html.DropDownListFor(x => x.IdMaterial,
+                            materialesWithDefault,
+                            new { @class = "form-control", id = "idMaterial" })
+                    </div>
+
+                    <div class="col-lg-4">
+                        <label>Cantidad de M3 Totales:</label>
+                        @Html.TextBoxFor(x => x.CantidadM3, new { @class = "form-control no-select", @type = "number", id = "cantidadM3" })
+                    </div>
+
+                    <div class="col-lg-4">
+                        <label>Precio Por Unidad:</label>
+                        @Html.TextBoxFor(x => x.PrecioUnidad, new { @class = "form-control no-select", @type = "number", id = "precioUnidad", @readonly = "readonly" })
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Segunda fila -->
+                    <div class="col-lg-4">
+                        <label>Total a Pagar:</label>
+                        @Html.TextBoxFor(x => x.ImporteVenta, new { @class = "form-control", @readonly = "readonly", @id = "importeVenta" })
+                    </div>
+
+                    <div class="col-lg-4">
+                        <label>RFID:</label>
+                        @Html.TextBoxFor(x => x.RFID, new { @class = "form-control no-select", id = "rfidModal" })
+                    </div>
+
+                    <div class="col-lg-4">
+                        <label>Cliente:</label>
+                        @Html.TextBoxFor(x => x.NombreCliente, new { @class = "form-control no-select", id = "nombreClienteModal", @readonly = "readonly" })
+                        @Html.HiddenFor(x => x.IdCliente, new { id = "idCliente" })
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Tercera fila -->
+                    <div class="col-lg-4">
+                        <label>Cantidad de Vales:</label>
+                        @Html.TextBoxFor(x => x.CantidadVales, new { @class = "form-control no-select", @type = "number", id = "cantidadVales" })
+                    </div>
+
+                    <div class="col-lg-4">
+                        <label>Fecha:</label>
+                        @Html.TextBoxFor(x => x.Fecha, new { @class = "form-control no-select", id = "fechaModal", @readonly = "readonly" })
+                    </div>
+
+                    <div class="col-lg-4">
+                        <label>Usuario:</label>
+                        <input type="text" class="form-control" value="@usuarioToken.UserName" readonly />
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12">
+                        <input type="button" value="Guardar" id="btnGuardarPrepago" class="btn btn-success" />
+                        <a href="/VentaPublicoGeneral/Index" class="btn btn-custom-cancel">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+$(document).ready(function() {
+    var precioMaterial = 0;
+
+    // 1. Establecer fecha actual al cargar
+    function establecerFechaActual() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        $('#fechaModal').val(formattedDate);
+    }
+    establecerFechaActual();
+
+    // 2. Configuración de eventos RFID
+    function configurarEventosRFID() {
+        var rfidTimeout;
+
+        $("#rfidModal").on('input', function() {
+            const valorRFID = $(this).val().trim();
+
+            clearTimeout(rfidTimeout);
+
+            if(valorRFID.length >= 8) {
+                rfidTimeout = setTimeout(function() {
+                    buscarClientePorRFID(valorRFID);
+                }, 800);
+            }
+        });
+
+        $("#rfidModal").on('change', function() {
+            const valorRFID = $(this).val().trim();
+            if(valorRFID.length >= 8) {
+                buscarClientePorRFID(valorRFID);
+            }
+        });
+    }
+    configurarEventosRFID();
+
+    // Función para buscar cliente por RFID
+    function buscarClientePorRFID(rfid) {
+
+        const $idCliente = $('#idCliente');
+        const $nombreCliente = $('#nombreClienteModal');
+        const $rfidInput = $('#rfidModal');
+
+        $.ajax({
+            url: '@Url.Action("SearchClienteByRFID", "VentaPublicoGeneral")',
+            type: 'GET',
+            data: { rfid: rfid },
+            dataType: 'json',
+            success: function(respuesta) {
+                console.log("Respuesta del servidor (SearchClienteByRFID):", respuesta);
+
+                if (respuesta.IsSuccess && respuesta.Response) {
+                    const cliente = respuesta.Response;
+                    $idCliente.val(cliente.id || '');
+                    $nombreCliente.val(cliente.nombre || '');
+                } else {
+                    $idCliente.val('');
+                    $nombreCliente.val('');
+                    console.warn("No se encontró cliente con RFID:", rfid);
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Aviso',
+                        text: 'No se encontró un cliente con ese RFID',
+                        timer: 3000
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error en la solicitud AJAX:", {
+                    status: status,
+                    error: error,
+                    responseText: xhr.responseText
+                });
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al buscar el cliente. Intente nuevamente.',
+                    timer: 3000
+                });
+            }
+        });
+    }
+
+    // Resto del código original
+    $('#ddlMateriales').change(function() {
+        $('#idMaterial').val($(this).val());
+        ObtenerPrecioMaterial();
+    });
+
+    var initialValue = $('#idMaterial').val();
+    if (initialValue) {
+        $('#ddlMateriales').val(initialValue);
+    }
+
+    $("#cantidadM3").on("input", function() {
+        ObtenerPrecioMaterial();
+    });
+
+    $("#idMaterial").on("change", function() {
+        ObtenerPrecioMaterial();
+    });
+
+    function ObtenerPrecioMaterial() {
+        var materialSeleccionado = $("#idMaterial").val();
+        var cantidadM3 = parseFloat($("#cantidadM3").val()) || 0;
+
+        if (!materialSeleccionado) {
+            console.warn("No hay material seleccionado aún.");
+            $("#precioMaterial").val(0);
+            $("#precioUnidad").val(0);
+            actualizarTotal();
+            return;
+        }
+
+        GetMVC("/VentaPublicoGeneral/GetPreciosBymaterialId/" + materialSeleccionado, function(r) {
+            if (r.IsSuccess && Array.isArray(r.Response) && r.Response.length > 0) {
+                const preciosActivos = r.Response.filter(item => item.esPrecioActivo === true);
+
+                if (preciosActivos.length > 0) {
+                    var datos = preciosActivos[0];
+                    var cantidadMenudeo = parseFloat(datos.cantidad) || 0;
+
+                    precioMaterial = (cantidadM3 > cantidadMenudeo)
+                        ? parseFloat(datos.precioMayoreo) || 0
+                        : parseFloat(datos.precioMenudeo) || 0;
+
+                    $("#precioMaterial").val(precioMaterial);
+                    $("#precioUnidad").val(precioMaterial);
+                } else {
+                    console.warn("No hay precios activos.");
+                    precioMaterial = 0;
+                    $("#precioMaterial").val(0);
+                    $("#precioUnidad").val(0);
+                }
+
+                actualizarTotal();
+            } else {
+                console.error("Error al obtener precios:", r);
+                precioMaterial = 0;
+                $("#precioMaterial").val(0);
+                $("#precioUnidad").val(0);
+                actualizarTotal();
+            }
+        });
+    }
+
+    function actualizarTotal() {
+        var cantidad = parseFloat($("#cantidadM3").val()) || 0;
+        var total = parseFloat(precioMaterial) * cantidad;
+
+        if (!isNaN(total)) {
+            $("#importeVenta").val(total.toFixed(2));
+        } else {
+            $("#importeVenta").val("");
+        }
+    }
+
+    $("#btnGuardarPrepago").click(async function() {
+        try {
+            // Primero obtener el folio base
+            const folioBase = await obtenerUltimoFolio();
+            $('#folioModal').val(folioBase);
+
+            // Validar cantidad de vales
+            var cantidadVales = parseInt($("#cantidadVales").val());
+            if (isNaN(cantidadVales) || cantidadVales <= 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Debe ingresar una cantidad válida de vales (mayor a 0)',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
+
+            // Obtener el folio base
+            var numeroFolio = parseInt(folioBase) || 0;
+
+            // Calcular folio inicial y final
+            var folioInicio = numeroFolio.toString().padStart(5, '0');
+            var folioFinal = (numeroFolio + cantidadVales - 1).toString().padStart(5, '0');
+
+            // Crear array para guardar todos los vales
+            var valesParaGuardar = [];
+
+            for (var i = 0; i < cantidadVales; i++) {
+                var vale = {
+                    Id: $("#id").val(),
+                    Estatus: $("#Estatus").val(),
+                    CreatedBy: $("#createdByModal").val(),
+                    UpdatedBy: $("#updatedByModal").val(),
+                    CreatedDt: $("#createdDtModal").val(),
+                    UpdatedDt: $("#updatedDtModal").val(),
+                    Folio: (numeroFolio + i).toString().padStart(5, '0'),
+                    IdMaterial: $("#idMaterial").val(),
+                    CantidadM3: $("#cantidadM3").val(),
+                    M3Faltantes: $("#cantidadM3").val(),
+                    PrecioUnidad: $("#precioUnidad").val(),
+                    ImporteVenta: $("#importeVenta").val(),
+                    RFID: $("#rfidModal").val(),
+                    IdCliente: $("#idCliente").val(),
+                    NombreCliente: $("#nombreClienteModal").val(),
+                    CantidadVales: cantidadVales.toString(),
+                    Fecha: $("#fechaModal").val(),
+                    NoVale: (i + 1),
+                    NombreMaterial: $("#idMaterial option:selected").text(),
+                    UserName: "@usuarioToken.UserName",
+                    // Agregamos los nuevos campos de auditoría
+                    FolioInicio: folioInicio,
+                    FolioFinal: folioFinal
+                };
+                valesParaGuardar.push(vale);
+            }
+
+            // Deshabilitar botón
+            $("#btnGuardarPrepago").prop("disabled", true).text("Guardando...");
+
+            // Enviar TODOS los vales en un solo arreglo
+            const response = await enviarVales(valesParaGuardar);
+
+            if (!response.success) {
+                throw new Error(response.message || "Error al guardar vales");
+            }
+
+            // Si se guardó correctamente, generar el PDF
+            await generarPDF(valesParaGuardar);
+
+            // Swalfire de generando reporte
+            Swal.fire({
+                title: "Generando reporte...",
+                text: "Por favor espere mientras se genera el PDF",
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+
+                    // Cerrar automáticamente después de 4 segundos
+                    setTimeout(() => {
+                        Swal.close();
+
+                        // Mostrar mensaje de éxito después de cerrar
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Reporte generado!',
+                            text: 'El PDF se ha creado correctamente',
+                            timer: 3000,
+                            showConfirmButton: false,
+                            willClose: () => {
+                                // Redirigir después de cerrar el mensaje de éxito
+                                window.location.href = '/VentaPublicoGeneral/Index';
+                            }
+                        });
+                    }, 4000);
+                }
+            });
+
+        } catch (error) {
+            console.error("Error:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error: ' + error.message,
+                confirmButtonText: 'Aceptar'
+            });
+        } finally {
+            $("#btnGuardarPrepago").prop("disabled", false).text("Guardar");
+        }
+    });
+
+    // Función para enviar todos los vales en un arreglo
+    function enviarVales(vales) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/VentaPublicoGeneral/SaveOrUpdatePrepagos',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ prepagos: vales }),
+                success: function (response) {
+                    if (response.success) {
+                        resolve(response);
+                    } else {
+                        reject(response);
+                    }
+                },
+                error: function (xhr) {
+                    var errorMsg = xhr.responseText || "Error en la solicitud AJAX";
+                    reject({
+                        success: false,
+                        message: errorMsg
+                    });
+                }
+            });
+        });
+    }
+
+    // Función para generar PDF
+    function generarPDF(vales) {
+        return new Promise((resolve, reject) => {
+            const fileName = "vales_prepago_" + new Date().getTime() + ".pdf";
+
+            // Enviar al controlador para convertir a PDF
+            $.ajax({
+                url: '/Pdf/GenerarValesPrepago',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    vales: vales,
+                    fileName: fileName
+                }),
+                success: function (response) {
+                    if (response.success) {
+                        // Crear enlace para descargar el PDF
+                        const byteCharacters = atob(response.pdfBase64);
+                        const byteNumbers = new Array(byteCharacters.length);
+                        for (let i = 0; i < byteCharacters.length; i++) {
+                            byteNumbers[i] = byteCharacters.charCodeAt(i);
+                        }
+                        const byteArray = new Uint8Array(byteNumbers);
+                        const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+                        const link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = fileName;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+
+                        resolve();
+                    } else {
+                        reject(new Error(response.message || "Error al generar PDF"));
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al generar PDF:', error);
+                    reject(error);
+                }
+            });
+        });
+    }
+
+    // Función para obtener el último folio disponible
+    function obtenerUltimoFolio() {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/VentaPublicoGeneral/GetUltimoFolio',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    var ultimoFolio = null;
+
+                    if (response.IsSuccess && Array.isArray(response.Response) && response.Response.length > 0) {
+                        // Tomar el primer elemento del array (que debería ser el último registro)
+                        var ultimoRegistro = response.Response[0];
+
+                        // Extraer el folio del objeto y convertirlo a número
+                        if (ultimoRegistro.folio) {
+                            // Convertir a número, sumar 1, y luego formatear con ceros a la izquierda
+                            var folioNumerico = parseInt(ultimoRegistro.folio) || 0;
+                            ultimoFolio = (folioNumerico + 1).toString().padStart(5, '0');
+                        }
+                    }
+
+                    // Solo resolver si se obtuvo un valor válido
+                    if (ultimoFolio !== null) {
+                        resolve(ultimoFolio);
+                    } else {
+                        console.warn("No se pudo obtener un folio válido de la respuesta:", response);
+                        reject(new Error("No se pudo obtener un folio válido"));
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error al obtener último folio:", error);
+                    reject(error);
+                }
+            });
+        });
+    }
+});
+</script>

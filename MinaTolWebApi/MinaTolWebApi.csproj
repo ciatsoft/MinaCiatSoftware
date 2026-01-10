@@ -110,7 +110,6 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
-
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Http, Version=5.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -128,19 +127,34 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\App_Start.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\BajasEmpleadoController.cs" />
+    <Compile Include="Controllers\CatalogosController.cs" />
+    <Compile Include="Controllers\ClientePublicoGralController.cs" />
+    <Compile Include="Controllers\DocumentosController.cs" />
+    <Compile Include="Controllers\HoraExtraTrabajadorController.cs" />
+    <Compile Include="Controllers\PV_CorteCajaController.cs" />
+    <Compile Include="Controllers\DireccionCliente.cs" />
     <Compile Include="Controllers\AreaTrabajoController.cs" />
     <Compile Include="Controllers\ClienteController.cs" />
     <Compile Include="Controllers\ClienteTipoMaterialController.cs" />
     <Compile Include="Controllers\FoliadorController.cs" />
     <Compile Include="Controllers\PrecioController.cs" />
     <Compile Include="Controllers\ProductoController.cs" />
+    <Compile Include="Controllers\MetodoPagoController.cs" />
+    <Compile Include="Controllers\PV_CajaChicaController.cs" />
+    <Compile Include="Controllers\PV_PrecioController.cs" />
+    <Compile Include="Controllers\PV_VentaController.cs" />
+    <Compile Include="Controllers\Reporte_VentaController.cs" />
+    <Compile Include="Controllers\RfIdController.cs" />
     <Compile Include="Controllers\RollController.cs" />
+    <Compile Include="Controllers\TallerController.cs" />
     <Compile Include="Controllers\TipoMaterialUbicacionController.cs" />
     <Compile Include="Controllers\TrabajadorController.cs" />
     <Compile Include="Controllers\TipoVehiculoController.cs" />
@@ -148,19 +162,39 @@
     <Compile Include="Controllers\UnidadMedidaController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Controllers\VehiculoController.cs" />
+    <Compile Include="Controllers\VentaPublicoGeneralController.cs" />
     <Compile Include="Controllers\ViajesController.cs" />
     <Compile Include="DAL\BaseDbWrapper.cs" />
+    <Compile Include="DAL\DbWrapper.BajaEmpleados.cs" />
+    <Compile Include="DAL\DbWrapper.ClientePublicoGral.cs" />
+    <Compile Include="DAL\DbWrapper.Deducciones.cs" />
+    <Compile Include="DAL\DbWrapper.DireccionCliente.cs" />
     <Compile Include="DAL\DbWrapper.AreaTrabajo.cs" />
     <Compile Include="DAL\DbWrapper.Cliente.cs" />
     <Compile Include="DAL\DbWrapper.ClienteTipoMaterial.cs" />
     <Compile Include="DAL\DbWrapper.cs" />
+    <Compile Include="DAL\DbWrapper.Documentos.cs" />
     <Compile Include="DAL\DbWrapper.Foliador.cs" />
+    <Compile Include="DAL\DbWrapper.HoraExtraTrabajador.cs" />
+    <Compile Include="DAL\DbWrapper.Inventario.cs" />
+    <Compile Include="DAL\DbWrapper.MaterialUbicacion.cs" />
+    <Compile Include="DAL\DbWrapper.MetodoPago.cs" />
+    <Compile Include="DAL\DbWrapper.PrecioCombustible.cs" />
+    <Compile Include="DAL\DbWrapper.Prepago.cs" />
+    <Compile Include="DAL\DbWrapper.Prestamos.cs" />
+    <Compile Include="DAL\DbWrapper.PV_CajaChica.cs" />
+    <Compile Include="DAL\DbWrapper.PV_CorteCaja.cs" />
+    <Compile Include="DAL\DbWrapper.PV_Precio.cs" />
     <Compile Include="DAL\DbWrapper.Precio.cs" />
     <Compile Include="DAL\DbWrapper.Producto.cs" />
     <Compile Include="DAL\DbWrapper.PV_Planta.cs" />
     <Compile Include="DAL\DbWrapper.PV_Material.cs" />
+    <Compile Include="DAL\DbWrapper.PV_Venta.cs" />
+    <Compile Include="DAL\DbWrapper.Reporte_Venta.cs" />
+    <Compile Include="DAL\DbWrapper.Rfid.cs" />
     <Compile Include="DAL\DbWrapper.Salario.cs" />
     <Compile Include="DAL\DbWrapper.Roll.cs" />
+    <Compile Include="DAL\DbWrapper.TipoGastos.cs" />
     <Compile Include="DAL\DbWrapper.TipoMaterialUbicacion.cs" />
     <Compile Include="DAL\DbWrapper.TipoVehiculo.cs" />
     <Compile Include="DAL\DbWrapper.Trabajador.cs" />
@@ -168,6 +202,7 @@
     <Compile Include="DAL\DbWrapper.UnidadMedida.cs" />
     <Compile Include="DAL\DbWrapper.Usuario.cs" />
     <Compile Include="DAL\DbWrapper.Vehiculo.cs" />
+    <Compile Include="DAL\DbWrapper.VehiculosPublicoGral.cs" />
     <Compile Include="DAL\DbWrapper.Viajes.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -176,6 +211,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\web.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -185,7 +224,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Data\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\BajasEmpleado\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MinaTolEntidades\MinaTolEntidades.csproj">

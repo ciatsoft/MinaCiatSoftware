@@ -12,13 +12,13 @@ namespace MinaToMVC.DAL
 {
     public partial class HttpClientConnection
     {
-        public async Task<ModelResponse> GetAllTipoMaterialUbicacion(string token)
+        public async Task<ModelResponse> GetAllTipoMaterialUbicacion()
         {
             var result = await RequestAsync<object>("api/TipoMaterialUbicacion/List", HttpMethod.Get, null,
                 new Func<string, string>((responseString) =>
                 {
                     return responseString;
-                }), token);
+                }), token.Token.access_token);
 
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
 
@@ -57,6 +57,30 @@ namespace MinaToMVC.DAL
                    return responseString;
                }));
             return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+        }
+
+        public async Task<ModelResponse> SaveOrUpdateMaterialUbicacion(DtoTipoMaterialUbicacion tmu)
+        {
+            var result = await RequestAsync<object>("api/TipoMaterialUbicacion/Agregar", HttpMethod.Post, tmu,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+
+        public async Task<ModelResponse> QuitMaterialUbicacion(DtoTipoMaterialUbicacion tmu)
+        {
+                var result = await RequestAsync<object>("api/TipoMaterialUbicacion/Quitar", HttpMethod.Post, tmu,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
         }
     }
 }

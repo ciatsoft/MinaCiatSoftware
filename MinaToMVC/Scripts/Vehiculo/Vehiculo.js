@@ -3,7 +3,9 @@
     $("#frmVehiculoCrud").validate({
         rules: {
             "txtPlaca": "required",
-            "txtColor": "required"
+            "txtColor": "required",
+            "txtEstado": "requerid",
+            
         }
     });
 
@@ -18,7 +20,21 @@
             { data: "tipoVehiculo.nombre", title: "Vehiculo" },
             { data: "placa", title: "Placas" },
             { data: "color", title: "Color" },
-            { data: "Estado", title: "Estado" },
+            {
+                data: "estado",
+                title: "Estado",
+                render: function (valor) {
+                    if (valor == 'En patio') {
+                        return "<span style='display: inline-block; width: 20px; height: 20px; background-color: #51b00b; border-radius: 50%; animation: blink 1s infinite alternate;'></span> En Patio";
+                    } else if (valor == 'En viaje') {
+                        return "<span style='display: inline-block; width: 20px; height: 20px; background-color: yellow; border-radius: 50%; animation: blink 1s infinite alternate;'></span> En Viaje";
+                    } else if (valor == 'En taller') {
+                        return "<span style='display: inline-block; width: 20px; height: 20px; background-color: red; border-radius: 50%; animation: blink 1s infinite alternate;'></span> En Taller";
+                    } else {
+                        return "<span style='display: inline-block; width: 20px; height: 20px; background-color: blue; border-radius: 50%; animation: blink 1s infinite alternate;'></span> Sin estado";
+                    }
+                }
+            },
             {
                 data: "estatus",
                 title: "Estatus",
@@ -78,7 +94,7 @@ function EliminarVehiculo(id) {
             PostMVC('/Vehiculo/EliminarVehiculo', parametro, function (r) {
                 if (r.IsSuccess) {
                     Swal.fire('Eliminado', 'El vehículo ha sido eliminado.', 'success')
-                        .then(() => { window.location.href = '/Vehiculo/GetAllVehiculo'; });
+                        .then(() => { window.location.href = '/Taller/Vehiculos'; });
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -95,10 +111,13 @@ function EliminarVehiculo(id) {
 function SaveOrUpdateVehiculo() {
     if ($("#frmVehiculoCrud").valid()) {
         var parametro = {
-            Id: $("#txtidVehiculo").val(),
+            Id: $("#Id").val(),
             Placa: $("#txtPlaca").val(),
             Color: $("#txtColor").val(),
-            Estado: $("#txtEstado").val()
+            Estado: $("#txtEstado").val(),
+            TipoVehiculo: {
+                Id: $("#TipoVehiculo_Id").val()
+            }
         };
 
         PostMVC('/Vehiculo/SaveOrUpdateVehiculo', parametro, function (r) {
@@ -109,7 +128,10 @@ function SaveOrUpdateVehiculo() {
                     text: "El registro se ha guardado correctamente.",
                     icon: "success",
                     confirmButtonText: 'OK'
-                }).then(() => { window.location.href = '/Vehiculo/GetAllVehiculo'; });
+                }).then(() => {
+                    window.location.reload();
+                });
+
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -138,7 +160,7 @@ function GetAllVehiculo() {
 }
 
 function EditarVehiculo(id) {
-    location.href = "/Vehiculo/EditarVehiculo?id=" + id;
+    location.href = "/Taller/Vehiculos/" + id;
 }
 
 function LimpiarFormulario() {

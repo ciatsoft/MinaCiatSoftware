@@ -1,0 +1,59 @@
+﻿@model MinaTolEntidades.DtoEmpleados.ConceptosEmpleado
+@{
+    ViewBag.Title = "ConceptosRH";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
+}
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+<div class="content">
+    @using (Html.BeginForm("SaveOrUpdateConceptosEmpleados", "RH", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmConceptosEmpleado", @id = "frmConceptosEmpleado" }))
+    {
+        @Html.HiddenFor(x => x.Id, new { id = "id" })
+        @Html.HiddenFor(x => x.Estatus, new { id = "estatus" })
+        @Html.HiddenFor(x => x.CreatedDt, new { id = "createdDt", @Value = fechaActual })
+        @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy", @Value = usuarioToken.UserName })
+        @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy", @Value = usuarioToken.UserName })
+        @Html.HiddenFor(x => x.UpdatedDt, new { id = "updatedDt", @Value = fechaActual })
+
+        <br />
+        <center><h1>Conceptos para Empleados</h1></center>
+        <div class="tabla-consultas-empleados">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Nombre:</label>
+                        @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control", @type = "text", id = "nombre", required = "required" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Descripcion:</label>
+                        @Html.TextBoxFor(x => x.Descripcion, new { @class = "form-control", @type = "text", id = "descripcion", required = "required" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Valor:</label>
+                        @Html.TextBoxFor(x => x.Valor, new { @class = "form-control", @type = "number", id = "valor" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Aumento de Salario:</label>
+                        @Html.CheckBoxFor(x => x.Aumento, new { @class = "form-control", id = "aumentoCheckbox" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 d-flex justify-content-between">
+                    <div>
+                        <input id="btnGuardar" type="submit" value="Guardar" class="btn btn-success btn-lg-custom" />
+                    </div>
+                    <a href="/RH/ConceptosRH" class="btn btn-custom-cancel btn-lg-custom">Cancelar</a>
+                </div>
+            </div>
+        </div>
+    }
+    <br />
+    <br />
+    <table id="tblConceptosRH" class="table table-bordered table-striped" style="width: 100%;"></table>
+</div>
+<script src="@(Url.StaticFile("Scripts/Trabajador/ConceptosRH.js"))"></script>
