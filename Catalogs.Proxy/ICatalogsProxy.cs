@@ -65,7 +65,23 @@ namespace Catalogs.Proxy
         DataTable GetPermissionsById(long id);
         int SaveOrUpdatePermissions(long id, string URLVentana, string nombre, string descripcion, string tipoMenu, long permisoPadre, int orden, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt);
         int DeletePermissions(long id);
+        #endregion
 
+        #region MaterialTypeLocation
+        DataTable GetAllMaterialTypeLocation();
+        DataTable GetMaterialTypeLocationById(long id); // Agregado
+        int SaveOrUpdateMaterialTypeLocation(
+            long id,
+            long materialId, // Agregado
+            string nombreTipoMaterial,
+            string descripciontipoMaterial,
+            long unidadMedidaId,
+            bool estatus,
+            string createdBy,
+            DateTime createdDt,
+            string updatedBy,
+            DateTime updatedDt);
+        int DeleteMaterialTypeLocation(long id);
         #endregion
     }
 }

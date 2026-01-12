@@ -64,7 +64,24 @@ namespace Catalogs.Application
         public Permissions GetPermissionsById(long id, out OperationResult result);
         public void SaveOrUpdatePermissions(long id, string urlWindow, string name, string description, string typeMenu, long parentPermission, int order, bool estatus, string createdBy, DateTime createdDt, string updatedBy, DateTime updatedDt, out OperationResult result);
         public void DeletePermissions(int id, out OperationResult result);
+        #endregion
 
+        #region MaterialTypeLocation
+        public List<MaterialTypeLocation> GetAllMaterialTypeLocation(out OperationResult result);
+        public List<MaterialTypeLocation> GetMaterialTypeLocationById(long id, out OperationResult result);
+        public void SaveOrUpdateMaterialTypeLocation(
+            long id,
+            long materialId,
+            string nameTypeMaterial,
+            string descriptionTypeMaterial,
+            long unitMeasurementId,
+            bool estatus,
+            string createdBy,
+            DateTime createdDt,
+            string updatedBy,
+            DateTime updatedDt,
+            out OperationResult result);
+        public void DeleteMaterialTypeLocation(int id, out OperationResult result);
         #endregion
     }
 }

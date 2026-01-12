@@ -891,7 +891,148 @@ namespace Catalogs.Application
                 });
             }
         }
+        #endregion
 
+        #region MaterialTypeLocation
+        public List<MaterialTypeLocation> GetAllMaterialTypeLocation(out OperationResult result)
+        {
+            result = new() { Successful = true, SystemMessages = new List<SystemMessage>() };
+            List<MaterialTypeLocation> response = new();
+
+            try
+            {
+                DataTable responseDT = _catalogsProxy.GetAllMaterialTypeLocation();
+                response = CatalogsMapp.MappAllMaterialTypeLocation(responseDT);
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                result.SystemMessages.Add(new SystemMessage
+                {
+                    Message = $"Ocurrió un error al obtener los tipos de material: {ex.Message}"
+                });
+            }
+
+            return response;
+        }
+
+        public void SaveOrUpdateMaterialTypeLocation(
+            long id,
+            long materialId,
+            string nameTypeMaterial,
+            string descriptionTypeMaterial,
+            long unitMeasurementId,
+            bool estatus,
+            string createdBy,
+            DateTime createdDt,
+            string updatedBy,
+            DateTime updatedDt,
+            out OperationResult result)
+        {
+            result = new() { Successful = true };
+
+            try
+            {
+                if (id < 0) throw new ArgumentException("Id no válido", nameof(id));
+                if (materialId < 0) throw new ArgumentException("MaterialId no válido", nameof(materialId));
+                if (string.IsNullOrWhiteSpace(nameTypeMaterial))
+                    throw new ArgumentException("Nombre de tipo material requerido", nameof(nameTypeMaterial));
+                if (string.IsNullOrWhiteSpace(descriptionTypeMaterial))
+                    throw new ArgumentException("Descripción requerida", nameof(descriptionTypeMaterial));
+                if (unitMeasurementId <= 0)
+                    throw new ArgumentException("Unidad de medida no válida", nameof(unitMeasurementId));
+                if (string.IsNullOrWhiteSpace(createdBy))
+                    throw new ArgumentException("Creado por requerido", nameof(createdBy));
+                if (createdBy.Length > 80)
+                    throw new ArgumentException("Creado por excede longitud máxima", nameof(createdBy));
+                if (createdDt == DateTime.MinValue)
+                    throw new ArgumentException("Fecha de creación no válida", nameof(createdDt));
+                if (string.IsNullOrWhiteSpace(updatedBy))
+                    throw new ArgumentException("Actualizado por requerido", nameof(updatedBy));
+                if (updatedBy.Length > 80)
+                    throw new ArgumentException("Actualizado por excede longitud máxima", nameof(updatedBy));
+                if (updatedDt == DateTime.MinValue)
+                    throw new ArgumentException("Fecha de actualización no válida", nameof(updatedDt));
+
+                _catalogsProxy.SaveOrUpdateMaterialTypeLocation(
+                    id,
+                    materialId, // ¡Faltaba este parámetro en el proxy!
+                    nameTypeMaterial,
+                    descriptionTypeMaterial,
+                    unitMeasurementId,
+                    estatus,
+                    createdBy,
+                    createdDt,
+                    updatedBy,
+                    updatedDt
+                );
+            }
+            catch (ArgumentException ex)
+            {
+                result.Successful = false;
+                result.SystemMessages ??= new List<SystemMessage>();
+                result.SystemMessages.Add(new SystemMessage
+                {
+                    Message = ex.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                result.SystemMessages ??= new List<SystemMessage>();
+                result.SystemMessages.Add(new SystemMessage
+                {
+                    Message = $"No es posible guardar o actualizar el tipo de material: {ex.Message}"
+                });
+            }
+        }
+
+        public List<MaterialTypeLocation> GetMaterialTypeLocationById(long id, out OperationResult result)
+        {
+            result = new() { Successful = true, SystemMessages = new List<SystemMessage>() };
+            List<MaterialTypeLocation> response = new();
+
+            try
+            {
+                if (id <= 0) throw new ArgumentException("Id no válido", nameof(id));
+
+                // Necesitarás implementar este método en el proxy
+                DataTable responseDT = _catalogsProxy.GetMaterialTypeLocationById(id);
+                response = CatalogsMapp.MappAllMaterialTypeLocation(responseDT);
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                result.SystemMessages.Add(new SystemMessage
+                {
+                    Message = $"Ocurrió un error al obtener el tipo de material: {ex.Message}"
+                });
+            }
+
+            return response;
+        }
+
+        public void DeleteMaterialTypeLocation(int id, out OperationResult result)
+        {
+            result = new() { Successful = true };
+
+            try
+            {
+                if (id <= 0)
+                    throw new ArgumentException("Id no válido", nameof(id));
+
+                _catalogsProxy.DeleteMaterialTypeLocation(id);
+            }
+            catch (Exception ex)
+            {
+                result.Successful = false;
+                result.SystemMessages ??= new List<SystemMessage>();
+                result.SystemMessages.Add(new SystemMessage
+                {
+                    Message = $"No es posible eliminar el tipo de material: {ex.Message}"
+                });
+            }
+        }
         #endregion
     }
 }

@@ -7,6 +7,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Branches.Domain;
 
 namespace Catalogs.Proxy
 {
@@ -590,6 +591,131 @@ namespace Catalogs.Proxy
                         // Usar el método público SetParent
                         currentPermission.SetParent(parentPermission);
                     }
+                }
+            }
+
+            return list;
+        }
+        #endregion
+
+        #region MaterialTypeLocation
+        public static List<MaterialTypeLocation> MappAllMaterialTypeLocation(DataTable dto)
+        {
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto), "No fue posible obtener valores desde el DataTable.");
+
+            var list = new List<MaterialTypeLocation>();
+
+            if (dto.Rows.Count == 0)
+                return list;
+
+            foreach (DataRow row in dto.Rows)
+            {
+                try
+                {
+                    long id = 0;
+                    if (dto.Columns.Contains("Id") && row["Id"] != DBNull.Value)
+                    {
+                        id = Convert.ToInt64(row["Id"]);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+
+                    // Obtener MaterialId (si existe en el DataTable)
+                    long materialId = id; // Por defecto igual al Id
+                    if (dto.Columns.Contains("MaterialId") && row["MaterialId"] != DBNull.Value)
+                    {
+                        try { materialId = Convert.ToInt64(row["MaterialId"]); }
+                        catch { materialId = id; }
+                    }
+
+                    // Obtener LocationId (si existe en el DataTable)
+                    long locationId = id; // Por defecto igual al Id
+                    if (dto.Columns.Contains("LocationId") && row["LocationId"] != DBNull.Value)
+                    {
+                        try { locationId = Convert.ToInt64(row["LocationId"]); }
+                        catch { locationId = id; }
+                    }
+
+                    string nameTypeMaterial = string.Empty;
+                    if (dto.Columns.Contains("NombreTipoMaterial") && row["NombreTipoMaterial"] != DBNull.Value)
+                    {
+                        nameTypeMaterial = row["NombreTipoMaterial"].ToString().Trim();
+                    }
+
+                    string descriptionTypeMaterial = string.Empty;
+                    if (dto.Columns.Contains("DescripcionTipoMaterial") && row["DescripcionTipoMaterial"] != DBNull.Value)
+                    {
+                        descriptionTypeMaterial = row["DescripcionTipoMaterial"].ToString().Trim();
+                    }
+
+                    long? unitMeasurementId = null;
+                    if (dto.Columns.Contains("UnidadMedidaID") && row["UnidadMedidaID"] != DBNull.Value)
+                    {
+                        try
+                        {
+                            long unitId = Convert.ToInt64(row["UnidadMedidaID"]);
+                            if (unitId > 0)
+                                unitMeasurementId = unitId;
+                        }
+                        catch { }
+                    }
+
+                    bool estatus = true;
+                    if (dto.Columns.Contains("Estatus") && row["Estatus"] != DBNull.Value)
+                    {
+                        try { estatus = Convert.ToBoolean(row["Estatus"]); }
+                        catch { estatus = true; }
+                    }
+
+                    string createdBy = string.Empty;
+                    if (dto.Columns.Contains("CreatedBy") && row["CreatedBy"] != DBNull.Value)
+                    {
+                        createdBy = row["CreatedBy"].ToString().Trim();
+                    }
+
+                    DateTime createdDt = DateTime.MinValue;
+                    if (dto.Columns.Contains("CreatedDt") && row["CreatedDt"] != DBNull.Value)
+                    {
+                        try { createdDt = Convert.ToDateTime(row["CreatedDt"]); }
+                        catch { createdDt = DateTime.MinValue; }
+                    }
+
+                    string updatedBy = string.Empty;
+                    if (dto.Columns.Contains("UpdatedBy") && row["UpdatedBy"] != DBNull.Value)
+                    {
+                        updatedBy = row["UpdatedBy"].ToString().Trim();
+                    }
+
+                    DateTime updatedDt = DateTime.MinValue;
+                    if (dto.Columns.Contains("UpdatedDt") && row["UpdatedDt"] != DBNull.Value)
+                    {
+                        try { updatedDt = Convert.ToDateTime(row["UpdatedDt"]); }
+                        catch { updatedDt = DateTime.MinValue; }
+                    }
+
+                    var item = new MaterialTypeLocation(
+                        id: id,
+                        locationId: locationId,
+                        materialId: materialId,
+                        nameTypeMaterial: nameTypeMaterial,
+                        descriptionTypeMaterial: descriptionTypeMaterial,
+                        unitMeasurementId: unitMeasurementId,
+                        estatus: estatus,
+                        createdBy: createdBy,
+                        createdDt: createdDt,
+                        updatedBy: updatedBy,
+                        updatedDt: updatedDt
+                    );
+
+                    list.Add(item);
+                }
+                catch (Exception ex)
+                {
+                    // Log error
+                    continue;
                 }
             }
 

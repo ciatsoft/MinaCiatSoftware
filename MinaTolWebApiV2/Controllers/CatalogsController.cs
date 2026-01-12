@@ -613,5 +613,84 @@ namespace MinaTolWebApiV2.Controllers
             return response;
         }
         #endregion
+
+        #region MaterialTypeLocation
+        /// <summary>
+        /// Método que regresa un listado de areas de trabajo
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetAllMaterialTypeLocation")]
+        public MaterialTypeLocationListResponse GetAllMaterialTypeLocation()
+        {
+            var response = new MaterialTypeLocationListResponse();
+            List<MaterialTypeLocation> list = _catalogApp.GetAllMaterialTypeLocation(out OperationResult result);
+            response.MaterialTypeLocation = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que obtiene un tipo de material por ID
+        /// </summary>
+        [HttpGet("GetMaterialTypeLocationById/{id}")]
+        public MaterialTypeLocationListResponse GetMaterialTypeLocationById(long id)
+        {
+            var response = new MaterialTypeLocationListResponse();
+            List<MaterialTypeLocation> list = _catalogApp.GetMaterialTypeLocationById(id, out OperationResult result);
+            response.MaterialTypeLocation = list;
+            response.Result = result;
+
+            return response;
+        }
+
+        /// <summary>
+        /// Método que guarda o actualiza un permiso
+        /// </summary>
+        [HttpPost("SaveOrUpdateMaterialTypeLocation")]
+        public SaveOrUpdateMaterialTypeLocationResponse SaveOrUpdateMaterialTypeLocation([FromBody] MaterialTypeLocation obj)
+        {
+            long unitMeasurementId = obj.UnitMeasurementId ?? 0;
+
+            _catalogApp.SaveOrUpdateMaterialTypeLocation(
+                obj.Id,
+                obj.MaterialId,
+                obj.NameTypeMaterial,
+                obj.DescriptionTypeMaterial,
+                unitMeasurementId,
+                obj.Estatus,
+                obj.CreatedBy,
+                obj.CreatedDt,
+                obj.UpdatedBy,
+                obj.UpdatedDt,
+                out OperationResult result
+            );
+
+            return new SaveOrUpdateMaterialTypeLocationResponse
+            {
+                Result = result
+            };
+        }
+
+        /// <summary>
+        /// Método que elimina logicamente el area de trabajo
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="desciption"></param>
+        /// <returns></returns>
+        [HttpDelete("DeleteMaterialTypeLocation")]
+        public DeleteMaterialTypeLocationResponse DeleteMaterialTypeLocation(int id)
+        {
+            _catalogApp.DeleteMaterialTypeLocation(id, out OperationResult result);
+
+            var response = new DeleteMaterialTypeLocationResponse()
+            {
+                Result = result
+            };
+
+            return response;
+        }
+        #endregion
     }
 }

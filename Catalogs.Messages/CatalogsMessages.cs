@@ -176,4 +176,25 @@ namespace Catalogs.Messages
     }
     #endregion
 
+    #region MaterialTypeLocation
+    public class MaterialTypeLocationListResponse
+    {
+        public List<MaterialTypeLocation> MaterialTypeLocation { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class MaterialTypeLocationResponse
+    {
+        public MaterialTypeLocation MaterialTypeLocation { get; set; }
+        public OperationResult Result { get; set; }
+    }
+    public class SaveOrUpdateMaterialTypeLocationResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    public class DeleteMaterialTypeLocationResponse
+    {
+        public OperationResult Result { get; set; }
+    }
+    #endregion
+
 }

@@ -408,5 +408,63 @@ namespace Catalogs.Proxy
         }
 
         #endregion
+
+        #region MaterialTypeLocation
+        public DataTable GetAllMaterialTypeLocation()
+        {
+            return GetObject("GetAllTipoMaterialUbicacion", CommandType.StoredProcedure);
+        }
+
+        public DataTable GetMaterialTypeLocationById(long id)
+        {
+            var parameters = new[]
+            {
+                new SqlParameter("@Id", id)
+            };
+
+            return GetObject("GetTipoMaterialUbicacionById", CommandType.StoredProcedure, parameters);
+        }
+
+        public int SaveOrUpdateMaterialTypeLocation(
+            long id,
+            long materialId, // Agregado este parámetro
+            string nombreTipoMaterial,
+            string descripciontipoMaterial,
+            long unidadMedidaId,
+            bool estatus,
+            string createdBy,
+            DateTime createdDt,
+            string updatedBy,
+            DateTime updatedDt)
+        {
+            var parameters = new[]
+            {
+                new SqlParameter("@Id", id),
+                new SqlParameter("@MaterialId", materialId), // Agregado
+                new SqlParameter("@NombreTipoMaterial", nombreTipoMaterial),
+                new SqlParameter("@DescripcionTipoMaterial", descripciontipoMaterial),
+                new SqlParameter("@UnidadMedida", unidadMedidaId),
+                new SqlParameter("@Estatus", estatus),
+                new SqlParameter("@CreatedBy", createdBy),
+                new SqlParameter("@CreatedDt", createdDt),
+                new SqlParameter("@UpdatedBy", updatedBy),
+                new SqlParameter("@UpdatedDt", updatedDt)
+            };
+
+            var result = ExecuteScalar("SaveOrUpdateTipoMaterialUbicacion", CommandType.StoredProcedure, parameters);
+            return Convert.ToInt32(result);
+        }
+
+        public int DeleteMaterialTypeLocation(long id)
+        {
+            var parameters = new[]
+            {
+                new SqlParameter("@Id", id)
+            };
+
+            var result = ExecuteScalar("DeleteTipoMaterialUbicacion", CommandType.StoredProcedure, parameters);
+            return Convert.ToInt32(result);
+        }
+        #endregion
     }
 }
