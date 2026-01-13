@@ -1,54 +1,5 @@
 $(document).ready(function () {
 
-    function formatCurrencyInput(selector) {
-        $(selector).on('input', function () {
-            let input = $(this).val();
-            let value = input.replace(/[^0-9.]/g, '');
-
-            let parts = value.split('.');
-            if (parts.length > 2) {
-                value = parts[0] + '.' + parts.slice(1).join('');
-            }
-
-            if (parts.length > 1 && parts[1].length > 2) {
-                value = parts[0] + '.' + parts[1].substring(0, 2);
-            }
-
-            $(this).val(value);
-        }).on('blur', function () {
-            let value = $(this).val();
-            if (value && value.trim() !== '') {
-                let num = parseFloat(value);
-                if (!isNaN(num)) {
-                    let formatted = '$ ' + num.toLocaleString('es-MX', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
-                    $(this).val(formatted);
-                }
-            }
-        }).on('focus', function () {
-            let value = $(this).val().replace(/[^0-9.]/g, '');
-            $(this).val(value);
-        });
-    }
-
-    // Inicializar para ambos campos
-    formatCurrencyInput('#precioMenudeotxt, #precioMayoreotxt');
-
-    // Para enviar al servidor
-    $('form').on('submit', function (e) {
-        $('#precioMenudeotxt, #precioMayoreotxt').each(function () {
-            let rawValue = $(this).val().replace(/[^0-9.]/g, '');
-            if (rawValue) {
-                let num = parseFloat(rawValue);
-                if (!isNaN(num)) {
-                    $(this).val(num.toFixed(2));
-                }
-            }
-        });
-    });
-
     // Verificar si estamos en modo edición (si hay un ID en el modelo)
     var id = $("#id").val();
     $("#btnEliminar").hide();

@@ -54,7 +54,7 @@
     </div>
     @using (Html.BeginForm("SaveOrUpdateConceptoEmpleadoByIdEmpleado", "RH", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmConceptoEmpleado" }))
     {
-        @Html.HiddenFor(x => x.Id, new { @id = "id", Value = 0 })
+        @Html.HiddenFor(x => x.Id, new { @id = "id" })
         @Html.HiddenFor(x => x.IdTrabajador, new { @id = "idTrabajador", Value = trabajadorId })
         @Html.HiddenFor(x => x.Estatus, new { @id = "estatus" })
         @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy", Value = usuario })
@@ -63,13 +63,6 @@
         @Html.HiddenFor(x => x.UpdatedDt, new { id = "updatedDt", Value = fechaActual })
         @Html.HiddenFor(x => x.FechaInicio, new { @class = "form-control", @id = "fechaInicioRazor", @readonly = "readonly" })
         @Html.HiddenFor(x => x.FechaFinal, new { @class = "form-control", @id = "fechaFinalRazor", @readonly = "readonly" })
-
-        <!-- Agrega estos campos hidden para valores numéricos limpios -->
-        @Html.HiddenFor(x => x.SalarioSemanal, new { @id = "salarioSemanalValue" })
-        @Html.HiddenFor(x => x.Aumento, new { @id = "aumentoValue" })
-        @Html.HiddenFor(x => x.Descuento, new { @id = "descuentoValue" })
-        @Html.HiddenFor(x => x.SalarioFinal, new { @id = "salarioFinalValue" })
-        @Html.Hidden("diaNominaHidden", "", new { @id = "diaNominaHidden" })
         <div class="tabla-consultas-roll">
             <div class="rectangulos" style="width: 100%;">
                 <div class="row" style="margin-top: 20px;">
@@ -91,7 +84,7 @@
                     <div class="col-lg-4">
                         <label>Salario Final Semanal:</label>
                         @Html.TextBoxFor(x => x.SalarioFinal, new { @class = "form-control", @id = "salarioFinal", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly", @type = "text" })
-                    </div>
+                    </div> 
                 </div>
 
                 <div class="row" style="margin-top: 20px;">
@@ -224,20 +217,6 @@
         $('#salarioSemanal').on('change', function() {
             calcularSumatoriasYSalario();
         });
-
-        // Inicializar campos hidden si no tienen valor
-        if (!$('#salarioSemanalValue').val()) {
-            $('#salarioSemanalValue').val(0);
-        }
-        if (!$('#aumentoValue').val()) {
-            $('#aumentoValue').val(0);
-        }
-        if (!$('#descuentoValue').val()) {
-            $('#descuentoValue').val(0);
-        }
-        if (!$('#salarioFinalValue').val()) {
-            $('#salarioFinalValue').val(0);
-        }
     });
 
     // Función para calcular sumatorias y salario final
@@ -276,7 +255,7 @@
         // Calcular salario final
         var salarioFinal = salarioSemanal + totalAumento - descuentoFinal;
 
-        // Función para formatear como moneda MXN
+        // Función para formatear como moneda MXN (dentro de la función principal)
         function formatCurrency(value) {
             if (value === '' || value === null || value === undefined) return '';
 
@@ -291,43 +270,114 @@
             });
         }
 
-        // Función para quitar formato de moneda
+        // Función para quitar formato de moneda (dentro de la función principal)
         function unformatCurrency(value) {
-            if (!value) return '0';
-            // Remover símbolo $, comas y espacios
-            return value.toString()
-                .replace(/[^\d.-]/g, '')
-                .replace(/,/g, '')
-                .trim();
+            if (!value) return '';
+            return value.toString().replace(/[^\d.-]/g, '');
         }
 
-        // ACTUALIZAR CAMPOS HIDDEN CON VALORES NUMÉRICOS
-        $('#salarioSemanalValue').val(salarioSemanal);
-        $('#aumentoValue').val(totalAumento);
-        $('#descuentoValue').val(descuentoFinal);
-        $('#salarioFinalValue').val(salarioFinal);
-
-        // Actualizar los inputs visuales con formato MXN
+        // Actualizar los inputs con formato MXN inmediatamente
         $('#aumento').val(formatCurrency(totalAumento));
         $('#descuento').val(formatCurrency(descuentoFinal));
         $('#salarioFinal').val(formatCurrency(salarioFinal));
 
-        // Formatear salarioSemanal si no está formateado
-        var currentSalario = $('#salarioSemanal').val();
-        if (currentSalario && !currentSalario.includes('$')) {
-            $('#salarioSemanal').val(formatCurrency(salarioSemanal));
-        }
+        // Configurar eventos para salarioSemanal (si es editable)
+        $('#salarioSemanal').off('input blur focus').on('input', function () {
+            // Permitir números y un punto decimal
+            let input = $(this).val();
+
+            // Remover todo excepto números y un punto decimal
+            let value = input.replace(/[^0-9.]/g, '');
+
+            // Permitir solo un punto decimal
+            let parts = value.split('.');
+            if (parts.length > 2) {
+                value = parts[0] + '.' + parts.slice(1).join('');
+            }
+
+            // Limitar a 2 decimales
+            if (parts.length > 1 && parts[1].length > 2) {
+                value = parts[0] + '.' + parts[1].substring(0, 2);
+            }
+
+            $(this).val(value);
+
+            // Recalcular automáticamente si se modifica
+            setTimeout(function () {
+                calcularSumatoriasYSalario();
+            }, 100);
+        }).on('blur', function () {
+            let value = $(this).val();
+            if (value && value.trim() !== '') {
+                let num = parseFloat(value);
+                if (!isNaN(num)) {
+                    $(this).val(formatCurrency(num));
+                }
+            }
+        }).on('focus', function () {
+            let value = unformatCurrency($(this).val());
+            $(this).val(value);
+        });
 
         // Hacer que los campos de resultado sean de solo lectura
         $('#aumento, #descuento, #salarioFinal').prop('readonly', true);
 
-        // Debug: Verificar valores
-        console.log('Valores calculados:', {
-            salarioSemanal: salarioSemanal,
-            aumento: totalAumento,
-            descuento: descuentoFinal,
-            salarioFinal: salarioFinal
+        // Configurar eventos de formato para campos de resultados
+        $('#aumento').off('blur focus').on('blur', function () {
+            let value = $(this).val();
+            if (value && value.trim() !== '') {
+                let num = parseFloat(unformatCurrency(value));
+                if (!isNaN(num)) {
+                    $(this).val(formatCurrency(num));
+                }
+            }
+        }).on('focus', function () {
+            let value = unformatCurrency($(this).val());
+            $(this).val(value);
         });
+
+        $('#descuento').off('blur focus').on('blur', function () {
+            let value = $(this).val();
+            if (value && value.trim() !== '') {
+                let num = parseFloat(unformatCurrency(value));
+                if (!isNaN(num)) {
+                    $(this).val(formatCurrency(num));
+                }
+            }
+        }).on('focus', function () {
+            let value = unformatCurrency($(this).val());
+            $(this).val(value);
+        });
+
+        $('#salarioFinal').off('blur focus').on('blur', function () {
+            let value = $(this).val();
+            if (value && value.trim() !== '') {
+                let num = parseFloat(unformatCurrency(value));
+                if (!isNaN(num)) {
+                    $(this).val(formatCurrency(num));
+                }
+            }
+        }).on('focus', function () {
+            let value = unformatCurrency($(this).val());
+            $(this).val(value);
+        });
+
+        // Para enviar al servidor - quitar formato antes de enviar
+        $('form').off('submit').on('submit', function () {
+            $('#aumento').val(unformatCurrency($('#aumento').val()));
+            $('#descuento').val(unformatCurrency($('#descuento').val()));
+            $('#salarioFinal').val(unformatCurrency($('#salarioFinal').val()));
+            $('#salarioSemanal').val(unformatCurrency($('#salarioSemanal').val()));
+        });
+
+        // También formatear salarioSemanal si tiene valor
+        var salarioSemanalFormatted = $('#salarioSemanal').val();
+        if (salarioSemanalFormatted && salarioSemanalFormatted.trim() !== '') {
+            var salarioNum = parseFloat(unformatCurrency(salarioSemanalFormatted));
+            if (!isNaN(salarioNum)) {
+                $('#salarioSemanal').val(formatCurrency(salarioNum));
+            }
+        }
     }
 
     // Función para formatear visualmente como moneda
@@ -502,32 +552,19 @@
                     // Aplicar multiplicación según el día de nómina
                     if (diaNomina === 'V') {
                         salarioSemanal = salarioActual * 5; // Viernes
-                        $('#diaNominaHidden').val('V');
                     } else if (diaNomina === 'S') {
                         salarioSemanal = salarioActual * 6; // Sábado
-                        $('#diaNominaHidden').val('S');
                     } else {
                         salarioSemanal = salarioActual * 5; // Valor por defecto
-                        $('#diaNominaHidden').val('5');
                     }
 
-                    // Guardar en el campo hidden
-                    $('#salarioSemanalValue').val(salarioSemanal);
-
-                    // Establecer el valor formateado en el input visual
+                    // Establecer el valor en el input y bloquearlo
                     $('#salarioSemanal').val(
                         new Intl.NumberFormat('es-MX', {
-                            style: 'currency',
-                            currency: 'MXN',
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2
-                        }).format(salarioSemanal)
+                        }).format(parseFloat(salarioSemanal) || 0)
                     );
-
-                    // Recalcular después de establecer el salario
-                    setTimeout(function () {
-                        calcularSumatoriasYSalario();
-                    }, 100);
                 }
             } else {
                 Swal.fire({
@@ -541,23 +578,16 @@
     }
 
     function SaveOrUpdateNominasByIdEmpleado() {
+        // Función para limpiar formato de moneda
+        function limpiarFormatoMoneda(valor) {
+            if (!valor) return "0";
+            // Remover comas y convertir a número
+            return valor.toString().replace(/,/g, '');
+        }
+
         // Actualizar campos hidden antes de enviar
         $("#fechaInicioRazor").val($("#fechaInicio").val());
         $("#fechaFinalRazor").val($("#fechaFinal").val());
-
-        // Obtener valores de los campos hidden (valores numéricos limpios)
-        var salarioSemanalVal = parseFloat($("#salarioSemanalValue").val()) || 0;
-        var aumentoVal = parseFloat($("#aumentoValue").val()) || 0;
-        var descuentoVal = parseFloat($("#descuentoValue").val()) || 0;
-        var salarioFinalVal = parseFloat($("#salarioFinalValue").val()) || 0;
-
-        // Debug: Mostrar valores obtenidos
-        console.log('Valores a enviar al servidor:', {
-            salarioSemanal: salarioSemanalVal,
-            aumento: aumentoVal,
-            descuento: descuentoVal,
-            salarioFinal: salarioFinalVal
-        });
 
         var parametro = {
             Id: parseInt($("#id").val()) || 0,
@@ -565,10 +595,10 @@
             FechaInicio: $("#fechaInicioRazor").val(),
             FechaFinal: $("#fechaFinalRazor").val(),
             DiaNomina: $("#diaNominaHidden").val() || "5",
-            SalarioSemanal: salarioSemanalVal,
-            Aumento: aumentoVal,
-            Descuento: descuentoVal,
-            SalarioFinal: salarioFinalVal,
+            SalarioSemanal: parseFloat(limpiarFormatoMoneda($("#salarioSemanal").val())) || 0,
+            Aumento: parseFloat(limpiarFormatoMoneda($("#aumento").val().replace(/[^\d.]/g, ''))) || 0,
+            Descuento: parseFloat(limpiarFormatoMoneda($("#descuento").val().replace(/[^\d.]/g, ''))) || 0,
+            SalarioFinal: parseFloat(limpiarFormatoMoneda($("#salarioFinal").val().replace(/[^\d.]/g, ''))) || 0,
             Estatus: true,
             CreatedBy: $("#createdBy").val(),
             CreatedDt: $("#createdDt").val(),
@@ -576,25 +606,12 @@
             UpdatedDt: $("#updatedDt").val()
         }
 
+        if (parametro.SalarioFinal == 0) {
+            Swal.fire('Error', 'No se ha calculado la nomina aun.', 'error');
+            return;
+        }
+
         // Validaciones
-        if (parametro.SalarioFinal == 0 || isNaN(parametro.SalarioFinal)) {
-            Swal.fire({
-                title: 'Error',
-                text: 'No se ha calculado la nómina aún. Por favor, haga clic en "Calcular Nomina Semanal" primero.',
-                icon: 'error'
-            });
-            return;
-        }
-
-        if (parametro.SalarioSemanal == 0 || isNaN(parametro.SalarioSemanal)) {
-            Swal.fire({
-                title: 'Error',
-                text: 'El salario semanal es inválido. Valor: ' + parametro.SalarioSemanal,
-                icon: 'error'
-            });
-            return;
-        }
-
         if (!parametro.IdTrabajador || parametro.IdTrabajador <= 0) {
             Swal.fire('Error', 'ID de trabajador no válido', 'error');
             return;
@@ -609,7 +626,7 @@
             if (r.IsSuccess) {
                 Swal.fire({
                     title: "Registro guardado!",
-                    text: "La nómina se ha guardado correctamente.",
+                    text: "El registro se ha guardado correctamente.",
                     icon: "success",
                     confirmButtonText: 'OK'
                 }).then(() => {
@@ -618,7 +635,7 @@
             } else {
                 Swal.fire({
                     title: "Registro guardado!",
-                    text: "La nómina se ha guardado correctamente.",
+                    text: "El registro se ha guardado correctamente.",
                     icon: "success",
                     confirmButtonText: 'OK'
                 }).then(() => {

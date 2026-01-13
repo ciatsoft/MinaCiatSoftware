@@ -144,55 +144,32 @@
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Mostrar loading mientras se procesa
-                Swal.fire({
-                    title: 'Eliminando...',
-                    allowOutsideClick: false,
-                    didOpen: () => Swal.showLoading()
-                });
+                PostMVC("/Administracion/DeleteUsuarioRolById?id=" + idRegistro, function (r) {
+                    if (r.IsSuccess) {
+                        // Buscar el rol eliminado en la tabla de RolesPermitidos
+                        var table = $("#tblRolesPermitidos").DataTable();
+                        var row = table.rows().data().toArray().find(x => x.id === idRegistro);
 
-                // Usar AJAX directamente en lugar de PostMVC
-                $.ajax({
-                    url: '/Administracion/DeleteUsuarioRolById?id=' + idRegistro,
-                    type: 'POST',
-                    success: function (response) {
-                        Swal.close();
-                        var r = typeof response === "string" ? JSON.parse(response) : response;
-
-                        if (r.IsSuccess) {
-                            // Buscar el rol eliminado en la tabla de RolesPermitidos
-                            var table = $("#tblRolesPermitidos").DataTable();
-                            var row = table.rows().data().toArray().find(x => x.id === idRegistro);
-
-                            if (row) {
-                                // Remover el rolId del array de roles cargados
-                                rolesCargados = rolesCargados.filter(function (id) {
-                                    return id !== row.rolId;
-                                });
-                            }
-
-                            // Actualizar ambas tablas
-                            actualizarEstadoRoles();
-                            GetAllUsuarioRolByUsuarioId(usuarioId);
-
-                            Swal.fire(
-                                'Eliminado!',
-                                'El rol ha sido eliminado.',
-                                'success'
-                            );
-                        } else {
-                            Swal.fire(
-                                'Error!',
-                                'Error al eliminar el rol: ' + (r.ErrorMessage || 'Error desconocido'),
-                                'error'
-                            );
+                        if (row) {
+                            // Remover el rolId del array de roles cargados
+                            rolesCargados = rolesCargados.filter(function(id) {
+                                return id !== row.rolId;
+                            });
                         }
-                    },
-                    error: function (xhr, status, error) {
-                        Swal.close();
+
+                        // Actualizar ambas tablas
+                        actualizarEstadoRoles();
+                        GetAllUsuarioRolByUsuarioId(usuarioId);
+
+                        Swal.fire(
+                            'Eliminado!',
+                            'El rol ha sido eliminado.',
+                            'success'
+                        );
+                    } else {
                         Swal.fire(
                             'Error!',
-                            'Error en la conexión al eliminar el rol: ' + error,
+                            'Error al eliminar el rol: ' + r.ErrorMessage,
                             'error'
                         );
                     }

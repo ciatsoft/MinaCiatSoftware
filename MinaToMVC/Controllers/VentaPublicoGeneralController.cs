@@ -170,7 +170,7 @@ namespace MinaToMVC.Controllers
             ViewBag.Usuarios = usuarios;
 
             // Genera la lista para todos los dropdowns
-            var rango1a50List = Enumerable.Range(0, 50)
+            var rango1a50List = Enumerable.Range(1, 50)
                 .Select(i => new SelectListItem
                 {
                     Value = i.ToString(),
