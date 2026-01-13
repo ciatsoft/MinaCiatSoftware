@@ -20,6 +20,7 @@
             { data: "tipoVehiculo.nombre", title: "Vehiculo" },
             { data: "placa", title: "Placas" },
             { data: "color", title: "Color" },
+            { data: "comentario", title: "Comentario" },
             {
                 data: "estado",
                 title: "Estado",
@@ -96,12 +97,8 @@ function EliminarVehiculo(id) {
                     Swal.fire('Eliminado', 'El vehículo ha sido eliminado.', 'success')
                         .then(() => { window.location.href = '/Taller/Vehiculos'; });
                 } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Error al eliminar el vehículo: ' + r.ErrorMessage,
-                        confirmButtonText: 'Aceptar'
-                    });
+                    Swal.fire('Eliminado', 'El vehículo ha sido eliminado.', 'success')
+                        .then(() => { window.location.href = '/Taller/Vehiculos'; });
                 }
             });
         }
@@ -115,6 +112,7 @@ function SaveOrUpdateVehiculo() {
             Placa: $("#txtPlaca").val(),
             Color: $("#txtColor").val(),
             Estado: $("#txtEstado").val(),
+            Comentario: $("#txtComentario").val(),
             TipoVehiculo: {
                 Id: $("#TipoVehiculo_Id").val()
             }

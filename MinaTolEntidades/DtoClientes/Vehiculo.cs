@@ -20,7 +20,7 @@ namespace MinaTolEntidades.DtoClientes
         public string Color { get; set; }
         public String Estado { get; set; }
         public TipoVehiculo TipoVehiculo { get; set; }
-        
+        public string Comentario { get; set; }        
 
     }
 }

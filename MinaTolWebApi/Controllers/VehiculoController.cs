@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Xml.XPath;
 
 namespace MinaTolWebApi.Controllers
 {
@@ -36,6 +37,12 @@ namespace MinaTolWebApi.Controllers
         {
             var resutl = wrapper.SaveOrUpdateVehiculo(v);
             return resutl;
+        }
+        [HttpPost, Route("{id:long}")]
+        public async Task<ModelResponse> DeleteVehiculo(long id)
+        {
+            var result = wrapper.DeleteVehiculo(id);
+            return result;
         }
     }
 }
