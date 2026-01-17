@@ -226,6 +226,7 @@
     <Compile Include="Controllers\IngresosRfidController.cs" />
     <Compile Include="Controllers\PdfController.cs" />
     <Compile Include="Controllers\RFIDController.cs" />
+    <Compile Include="Controllers\VehiculoCargaController.cs" />
     <Compile Include="Controllers\VentaPublicoGeneralController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Controllers\VehiculoController.cs" />
@@ -264,6 +265,7 @@
     <Compile Include="DAL\HttpClientConnection.Usuario.cs" />
     <Compile Include="DAL\HttpClientBase.cs" />
     <Compile Include="DAL\HttpClientConnection.cs" />
+    <Compile Include="DAL\HttpClientConnection.VehiculoCarga.cs" />
     <Compile Include="DAL\HttpClientConnection.VentaPublicoGeneral.cs" />
     <Compile Include="DAL\HttpClientConnection.Viajes.cs" />
     <Compile Include="Global.asax.cs">
@@ -363,6 +365,7 @@
     <Content Include="Views\Viajes\Concreteras.cshtml" />
     <Content Include="Views\Administracion\PartialConfigurarCombustible.cshtml" />
     <Content Include="Scripts\jquery-1.9.0.min.map" />
+    <Content Include="Views\VehiculoCarga\VehiculoCarga.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
