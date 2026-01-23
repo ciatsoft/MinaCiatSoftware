@@ -161,6 +161,7 @@
     <Compile Include="Controllers\UbicacionController.cs" />
     <Compile Include="Controllers\UnidadMedidaController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
+    <Compile Include="Controllers\VehiculoCargaController.cs" />
     <Compile Include="Controllers\VehiculoController.cs" />
     <Compile Include="Controllers\VentaPublicoGeneralController.cs" />
     <Compile Include="Controllers\ViajesController.cs" />
@@ -202,6 +203,7 @@
     <Compile Include="DAL\DbWrapper.UnidadMedida.cs" />
     <Compile Include="DAL\DbWrapper.Usuario.cs" />
     <Compile Include="DAL\DbWrapper.Vehiculo.cs" />
+    <Compile Include="DAL\DbWrapper.VehiculoCarga.cs" />
     <Compile Include="DAL\DbWrapper.VehiculosPublicoGral.cs" />
     <Compile Include="DAL\DbWrapper.Viajes.cs" />
     <Compile Include="Global.asax.cs">
