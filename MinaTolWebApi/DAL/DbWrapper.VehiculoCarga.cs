@@ -17,14 +17,14 @@ namespace MinaTolWebApi.DAL
             var parameters = new List<SqlParameter>();
             try
             {
-                var vehiculosCarga = GetObject("GetAllVehiculoCarga", CommandType.StoredProcedure, parameters,
+                var vehiculosCarga = GetObjects("GetAllVehiculoCarga", CommandType.StoredProcedure, parameters,
                     new Func<IDataReader, VehiculoCarga>((reader) =>
                     {
                         var r = FillEntity<VehiculoCarga>(reader);
                         return r;
                     }));
                 modelResponse.Response = vehiculosCarga;
-            }
+            }   
             catch (Exception ex)
             {
                 modelResponse.IsSuccess = false;

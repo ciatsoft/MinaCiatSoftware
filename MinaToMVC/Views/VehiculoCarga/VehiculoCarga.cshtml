@@ -1,8 +1,76 @@
-﻿
+﻿@model MinaTolEntidades.VehiculoCarga.VehiculoCarga
 @{
     ViewBag.Title = "VehiculoCarga";
+    var vehiculoCargaId = (long)ViewBag.VehiculoCargaId;
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
 }
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<input type="hidden" id="trabajadorInput" value="@vehiculoCargaId" readonly />
+<input type="hidden" id="CreatedDt" value="@fechaActual" readonly />
+<input type="hidden" id="UpdatedDt" value="@fechaActual" readonly />
+<input type="hidden" id="CreatedBy" value="@usuarioToken" readonly />
+<input type="hidden" id="UpdatedBy" value="@usuarioToken" readonly />
 
-<h2>VehiculoCarga</h2>
+<div class="content">
+    <br />
+    <center><h1>Vehiculo de Carga</h1></center>
+    <div class="tabla-consultas-empleados">
+        <div class="rectangulos" style="width: 100%;">
+            <div class="row">
+                <div class="col-lg-6">
+                    <label>Descripcion:</label>
+                    <input class="form-control" type="text" id="descripcion" required />
+                </div>
+                <div class="col-lg-3">
+                    <label>Fotografía:</label>
+                    <div>
+                        <!-- Input file oculto -->
+                        <input class="form-control" type="file" id="fotografia" accept="image/*" style="display: none;" />
 
+                        <!-- Botón personalizado -->
+                        <button type="button" class="form-control" onclick="document.getElementById('fotografia').click()">
+                            Seleccionar Foto
+                        </button>
+
+                        <!-- Vista previa de la imagen -->
+                        <div id="preview-container" class="mt-2" style="display: none;">
+                            <img id="preview-image" class="img-thumbnail" style="max-width: 200px; max-height: 200px;" />
+                            <div class="mt-1">
+                                <button type="button" class="form-control btn-danger" onclick="eliminarFoto()">
+                                    Eliminar
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Mensaje cuando no hay imagen -->
+                        <div id="no-image-message" class="text-muted mt-1">
+                            No hay imagen seleccionada
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna adicional para mostrar la imagen actual (si existe) -->
+                <div class="col-lg-3" id="current-photo-container" style="display: none;">
+                    <label>Foto Actual:</label>
+                    <div>
+                        <img id="current-photo" class="img-thumbnail" style="max-width: 200px; max-height: 200px;" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 d-flex justify-content-between">
+                    <div>
+                        <input id="btnGuardar" type="button" value="Guardar" class="btn btn-success btn-lg-custom" onclick="SaveOrUpdateVehiculoCarga()" />
+                    </div>
+                    <a href="/VehiculoCarga/VehiculoCarga" class="btn btn-custom-cancel btn-lg-custom">Cancelar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <table id="tblVehiculoCarga" class="table table-bordered table-striped" style="width: 100%;"></table>
+</div>
+
+<script src="@(Url.StaticFile("Scripts/VehiculoCarga/VehiculoCarga.js"))"></script>
