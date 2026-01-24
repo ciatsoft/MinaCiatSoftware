@@ -77,29 +77,16 @@ namespace MinaToMVC.Controllers
                 var UpdatedDt = Request.Form["UpdatedDt"];
                 var archivo = Request.Files["Foto"];
 
-                // Validar descripción
-                if (string.IsNullOrEmpty(Descripcion))
-                {
-                    return Newtonsoft.Json.JsonConvert.SerializeObject(new
-                    {
-                        IsSuccess = false,
-                        ErrorMessage = "La descripción es requerida"
-                    });
-                }
-
                 // Validar ID
                 if (!long.TryParse(Id, out long vehiculoId))
                 {
                     vehiculoId = 0;
                 }
 
-                // 1. Obtener la ruta raíz del proyecto MVC
+                // Datos del path
                 string projectRootPath = HostingEnvironment.ApplicationPhysicalPath;
-
-                // 2. Crear la ruta completa para la carpeta Attachment
                 string baseAttachmentPath = Path.Combine(projectRootPath, "AttachmentVehiculosCarga");
 
-                // 3. Verificar y crear carpeta Attachment si no existe
                 if (!Directory.Exists(baseAttachmentPath))
                 {
                     Directory.CreateDirectory(baseAttachmentPath);
@@ -108,106 +95,95 @@ namespace MinaToMVC.Controllers
                 string gitArchivo = string.Empty;
                 string rutaArchivo = string.Empty;
 
-                // 5. Procesar archivo si se subió
+                VehiculoCarga vehiculoExistente = null;
+
+                // 1. Si vehiculoId > 0, obtener datos existentes
+                if (vehiculoId > 0)
+                {
+                    var registroEncontrado = await httpClientConnection.GetVehiculoCargaById(vehiculoId);
+                    if (registroEncontrado.Response != null && registroEncontrado.IsSuccess)
+                    {
+                        vehiculoExistente = JsonConvert.DeserializeObject<VehiculoCarga>(registroEncontrado.Response.ToString());
+                    }
+                }
+
+                // Procesar archivo si se subió uno
                 if (archivo != null && archivo.ContentLength > 0)
                 {
-                    // Validar que sea una imagen
-                    if (!archivo.ContentType.StartsWith("image/"))
+                    // CASO 1: Actualización (vehiculoId > 0) - Sobreescribir archivo existente
+                    if (vehiculoId > 0 && vehiculoExistente != null)
                     {
-                        return Newtonsoft.Json.JsonConvert.SerializeObject(new
-                        {
-                            IsSuccess = false,
-                            ErrorMessage = "El archivo debe ser una imagen (JPEG, PNG, etc.)"
-                        });
-                    }
+                        // Mantener el mismo nombre de archivo (sobreescribir)
+                        gitArchivo = vehiculoExistente.GitArchivo;
+                        rutaArchivo = vehiculoExistente.RutaArchivo;
 
-                    // Validar tamaño máximo (5MB)
-                    if (archivo.ContentLength > 5 * 1024 * 1024)
+                        string fullPath = Path.Combine(rutaArchivo, gitArchivo);
+
+                        // Guardar archivo (sobreescribir)
+                        archivo.SaveAs(fullPath);
+                    }
+                    // CASO 2: Registro nuevo (vehiculoId <= 0) - Crear nuevo archivo con consecutivo
+                    else
                     {
-                        return Newtonsoft.Json.JsonConvert.SerializeObject(new
-                        {
-                            IsSuccess = false,
-                            ErrorMessage = "La imagen no debe superar los 5MB"
-                        });
+                        // OBTENER EL PRÓXIMO NÚMERO CONSECUTIVO
+                        int siguienteNumero = ObtenerSiguienteNumeroConsecutivo(baseAttachmentPath);
+
+                        // Obtener la extensión del archivo original
+                        string extension = Path.GetExtension(archivo.FileName);
+
+                        // Generar nombre único para el archivo
+                        string fileName = $"VehiculoCarga_{siguienteNumero}{extension}";
+                        string fullPath = Path.Combine(baseAttachmentPath, fileName);
+
+                        // Guardar archivo en el sistema
+                        archivo.SaveAs(fullPath);
+
+                        gitArchivo = fileName;
+                        rutaArchivo = baseAttachmentPath;
                     }
-
-                    // Si estamos actualizando, eliminar la foto anterior si existe
-                    if (vehiculoId > 0)
-                    {
-                        var existingResponse = await httpClientConnection.GetVehiculoCargaById(vehiculoId);
-
-                        // Parsear la respuesta
-                        var resultObj = JsonConvert.DeserializeObject<dynamic>(existingResponse.Response.ToString());
-                        if (resultObj.IsSuccess && resultObj.Response != null)
-                        {
-                            var existingVc = JsonConvert.DeserializeObject<VehiculoCarga>(resultObj.Response.ToString());
-
-                            if (!string.IsNullOrEmpty(existingVc.GitArchivo))
-                            {
-                                string oldFilePath = Path.Combine(existingVc.RutaArchivo, existingVc.GitArchivo);
-                                if (System.IO.File.Exists(oldFilePath))
-                                {
-                                    System.IO.File.Delete(oldFilePath);
-                                }
-                            }
-                        }
-                    }
-
-                    // OBTENER EL PRÓXIMO NÚMERO CONSECUTIVO BASADO EN LOS ARCHIVOS EXISTENTES
-                    int siguienteNumero = ObtenerSiguienteNumeroConsecutivo(baseAttachmentPath);
-
-                    // Obtener la extensión del archivo original
-                    string extension = Path.GetExtension(archivo.FileName);
-
-                    // Generar nombre único para el archivo
-                    string fileName = $"VehiculoCarga_{siguienteNumero}{extension}";
-                    string fullPath = Path.Combine(baseAttachmentPath, fileName);
-
-                    // Guardar archivo en el sistema
-                    archivo.SaveAs(fullPath);
-
-                    gitArchivo = fileName;
-                    rutaArchivo = baseAttachmentPath; // Solo la ruta SIN el nombre del archivo
                 }
-                else if (vehiculoId > 0)
+                // No se subió archivo
+                else
                 {
-                    // Si no se subió nueva foto pero estamos editando, mantener la existente
-                    var existingResponse = await httpClientConnection.GetVehiculoCargaById(vehiculoId);
-                    var resultObj = JsonConvert.DeserializeObject<dynamic>(existingResponse.Response.ToString());
-
-                    if (resultObj.IsSuccess && resultObj.Response != null)
+                    if (vehiculoId > 0 && vehiculoExistente != null)
                     {
-                        var existingVc = JsonConvert.DeserializeObject<VehiculoCarga>(resultObj.Response.ToString());
-                        gitArchivo = existingVc.GitArchivo;
-                        rutaArchivo = existingVc.RutaArchivo;
+                        // Mantener los datos del archivo existente
+                        gitArchivo = vehiculoExistente.GitArchivo;
+                        rutaArchivo = vehiculoExistente.RutaArchivo;
+                    }
+                    else
+                    {
+                        // Nuevo registro sin archivo
+                        gitArchivo = string.Empty;
+                        rutaArchivo = string.Empty;
                     }
                 }
 
-                // 6. Convertir el valor de Estatus de entero a booleano
+                // Convertir el valor de Estatus
                 bool estatusBool = Estatus == "1";
 
-                // 7. Crear objeto VehiculoCarga
+                // Crear objeto VehiculoCarga
                 var vehiculo = new VehiculoCarga
                 {
                     Id = vehiculoId,
                     Descripcion = Descripcion,
-                    RutaArchivo = rutaArchivo, // Solo la ruta SIN el nombre del archivo
-                    GitArchivo = gitArchivo, // Nombre del archivo con extensión
+                    RutaArchivo = rutaArchivo,
+                    GitArchivo = gitArchivo,
                     Estatus = estatusBool,
-                    CreatedBy = CreatedBy,
-                    CreatedDt = DateTime.Parse(CreatedDt),
+                    CreatedBy = vehiculoId > 0 && vehiculoExistente != null ? vehiculoExistente.CreatedBy : CreatedBy,
+                    CreatedDt = vehiculoId > 0 && vehiculoExistente != null ? vehiculoExistente.CreatedDt : DateTime.Parse(CreatedDt),
                     UpdatedBy = UpdatedBy,
                     UpdatedDt = DateTime.Parse(UpdatedDt)
                 };
 
-                // 8. Guardar en base de datos
+                // Guardar en base de datos
                 var result = await httpClientConnection.SaveOrUpdateVehiculoCarga(vehiculo);
 
-                return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+                return JsonConvert.SerializeObject(result);
             }
             catch (Exception ex)
             {
-                return Newtonsoft.Json.JsonConvert.SerializeObject(new
+                return JsonConvert.SerializeObject(new
                 {
                     IsSuccess = false,
                     ErrorMessage = $"Error al guardar el vehículo: {ex.Message}"
@@ -278,6 +254,11 @@ namespace MinaToMVC.Controllers
         public async Task<string> GetVehiculoCargaById(long id)
         {
             var result = await httpClientConnection.GetVehiculoCargaById(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> DeleteVehiculoCarga(long id)
+        {
+            var result = await httpClientConnection.DeleteVehiculoCarga(id);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
