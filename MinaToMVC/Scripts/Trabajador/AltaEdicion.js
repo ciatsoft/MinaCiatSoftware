@@ -219,6 +219,10 @@ document.getElementById("btnGenerarPDF").addEventListener("click", function () {
     generarReportePDF();
 });
 
+document.getElementById("btnGenerarExcel").addEventListener("click", function () {
+    generarReporteExcelEmpleados();
+});
+
 // Función para generar el reporte PDF
 function generarReportePDF() {
     var table = $('#tblEmpleados').DataTable();
@@ -286,6 +290,106 @@ function generarReportePDF() {
     var form = $('<form>', {
         method: 'POST',
         action: '/Pdf/GenerarReporteEmpleados'
+    });
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'tablaHTML',
+        value: tablaHTML
+    }).appendTo(form);
+
+    form.appendTo('body').submit().remove();
+}
+
+function generarReporteExcelEmpleados() {
+    var table = $('#tblEmpleados').DataTable();
+    var datos = table.data().toArray();
+
+    // Verificar si la tabla está vacía
+    if (datos.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Tabla vacía',
+            text: 'No hay empleados para generar el reporte',
+            confirmButtonText: 'Aceptar'
+        });
+        return;
+    }
+
+    // Swalfire de generando reporte
+    Swal.fire({
+        title: "Generando Excel...",
+        text: "Por favor espere mientras se genera el archivo Excel",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+
+            // Cerrar automáticamente después de 2 segundos
+            setTimeout(() => {
+                Swal.close();
+
+                // Mostrar mensaje de éxito después de cerrar
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Excel generado!',
+                    text: 'El archivo Excel se ha creado correctamente',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            }, 2000);
+        }
+    });
+
+    // Crear tabla HTML manualmente
+    var tablaHTML = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
+
+    // Encabezados
+    tablaHTML += '<thead><tr>';
+    tablaHTML += '<th>Nombre Completo</th>';
+    tablaHTML += '<th>NSS</th>';
+    tablaHTML += '<th>Departamento</th>';
+    tablaHTML += '<th>Telefono</th>';
+    tablaHTML += '<th>Fecha de Contratacion</th>';
+    tablaHTML += '</tr></thead>';
+
+    // Datos
+    tablaHTML += '<tbody>';
+    datos.forEach(function (item) {
+        tablaHTML += '<tr>';
+        // Nombre completo: apellidoPaterno + apellidoMaterno + nombre
+        var nombreCompleto = (item.apellidoPaterno || '') + ' ' +
+            (item.apellidoMaterno || '') + ' ' +
+            (item.nombre || '');
+        tablaHTML += '<td>' + nombreCompleto.trim() + '</td>';
+
+        // NSS - mantener formato original
+        tablaHTML += '<td>' + (item.nss || '') + '</td>';
+
+        // Departamento
+        tablaHTML += '<td>' + (item.nombreDepartamento || '') + '</td>';
+
+        // Teléfono
+        tablaHTML += '<td>' + (item.telefono || '') + '</td>';
+
+        // Fecha de contratación
+        var fechaContratacion = item.fechaContratacion || '';
+        if (fechaContratacion && fechaContratacion.includes('T')) {
+            fechaContratacion = fechaContratacion.split('T')[0];
+            // Convertir a formato dd/MM/yyyy
+            var fechaParts = fechaContratacion.split('-');
+            if (fechaParts.length === 3) {
+                fechaContratacion = fechaParts[2] + '/' + fechaParts[1] + '/' + fechaParts[0];
+            }
+        }
+        tablaHTML += '<td>' + fechaContratacion + '</td>';
+        tablaHTML += '</tr>';
+    });
+    tablaHTML += '</tbody></table>';
+
+    // Crear formulario y enviar
+    var form = $('<form>', {
+        method: 'POST',
+        action: '/Excel/GenerarReporteEmpleados'
     });
 
     $('<input>').attr({

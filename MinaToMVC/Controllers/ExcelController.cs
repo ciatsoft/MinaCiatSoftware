@@ -4,6 +4,7 @@ using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
 using System;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Mvc;
 
@@ -916,7 +917,715 @@ namespace MinaToMVC.Controllers
         }
         #endregion
 
-        #region 
+        #region Empleados
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult GenerarReporteEmpleados(string tablaHTML)
+        {
+            try
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("Empleados");
+
+                // ================= CONFIGURACIÓN DE IMPRESIÓN =================
+                sheet.PrintSetup.Landscape = false;
+                sheet.PrintSetup.PaperSize = (short)PaperSize.A4;
+                sheet.SetMargin(MarginType.TopMargin, 0.5);
+                sheet.SetMargin(MarginType.BottomMargin, 0.5);
+                sheet.SetMargin(MarginType.LeftMargin, 0.4);
+                sheet.SetMargin(MarginType.RightMargin, 0.4);
+
+                // Configurar anchos de columna para 5 columnas
+                sheet.SetColumnWidth(0, 30 * 256);  // Nombre Completo
+                sheet.SetColumnWidth(1, 15 * 256);  // NSS
+                sheet.SetColumnWidth(2, 20 * 256);  // Departamento
+                sheet.SetColumnWidth(3, 15 * 256);  // Teléfono
+                sheet.SetColumnWidth(4, 18 * 256);  // Fecha Contratación
+
+                int rowIndex = 0;
+
+                // ================= ESTILOS =================
+
+                // Empresa
+                ICellStyle companyStyle = workbook.CreateCellStyle();
+                IFont companyFont = workbook.CreateFont();
+                companyFont.FontName = "Calibri";
+                companyFont.FontHeightInPoints = 18;
+                companyFont.IsBold = true;
+                companyFont.Color = IndexedColors.Black.Index;
+                companyStyle.SetFont(companyFont);
+                companyStyle.Alignment = HorizontalAlignment.Center;
+
+                // Título reporte
+                ICellStyle reportTitleStyle = workbook.CreateCellStyle();
+                IFont reportFont = workbook.CreateFont();
+                reportFont.FontName = "Calibri";
+                reportFont.FontHeightInPoints = 14;
+                reportFont.IsBold = true;
+                reportFont.Color = IndexedColors.Black.Index;
+                reportTitleStyle.SetFont(reportFont);
+                reportTitleStyle.Alignment = HorizontalAlignment.Center;
+
+                // Información
+                ICellStyle infoStyle = workbook.CreateCellStyle();
+                IFont infoFont = workbook.CreateFont();
+                infoFont.FontHeightInPoints = 10;
+                infoFont.Color = IndexedColors.Black.Index;
+                infoStyle.SetFont(infoFont);
+                infoStyle.Alignment = HorizontalAlignment.Center;
+
+                // Encabezados tabla
+                ICellStyle headerStyle = workbook.CreateCellStyle();
+                IFont headerFont = workbook.CreateFont();
+                headerFont.FontHeightInPoints = 10;
+                headerFont.IsBold = true;
+                headerFont.Color = IndexedColors.White.Index;
+                headerStyle.SetFont(headerFont);
+                headerStyle.FillForegroundColor = IndexedColors.Grey80Percent.Index;
+                headerStyle.FillPattern = FillPattern.SolidForeground;
+                headerStyle.Alignment = HorizontalAlignment.Center;
+                headerStyle.BorderTop = BorderStyle.Thin;
+                headerStyle.BorderBottom = BorderStyle.Thin;
+                headerStyle.BorderLeft = BorderStyle.Thin;
+                headerStyle.BorderRight = BorderStyle.Thin;
+
+                // Datos
+                ICellStyle dataStyle = workbook.CreateCellStyle();
+                dataStyle.BorderTop = BorderStyle.Thin;
+                dataStyle.BorderBottom = BorderStyle.Thin;
+                dataStyle.BorderLeft = BorderStyle.Thin;
+                dataStyle.BorderRight = BorderStyle.Thin;
+                dataStyle.VerticalAlignment = VerticalAlignment.Center;
+                dataStyle.WrapText = true;
+
+                // Fecha
+                ICellStyle dateStyle = workbook.CreateCellStyle();
+                dateStyle.CloneStyleFrom(dataStyle);
+                dateStyle.Alignment = HorizontalAlignment.Center;
+                dateStyle.DataFormat = workbook.CreateDataFormat().GetFormat("dd/MM/yyyy");
+
+                // Teléfono
+                ICellStyle phoneStyle = workbook.CreateCellStyle();
+                phoneStyle.CloneStyleFrom(dataStyle);
+                phoneStyle.Alignment = HorizontalAlignment.Center;
+
+                // NSS (formato especial)
+                ICellStyle nssStyle = workbook.CreateCellStyle();
+                nssStyle.CloneStyleFrom(dataStyle);
+                nssStyle.Alignment = HorizontalAlignment.Center;
+
+                // Resumen
+                ICellStyle summaryStyle = workbook.CreateCellStyle();
+                IFont summaryFont = workbook.CreateFont();
+                summaryFont.FontHeightInPoints = 10;
+                summaryFont.Color = IndexedColors.Black.Index;
+                summaryStyle.SetFont(summaryFont);
+                summaryStyle.FillForegroundColor = IndexedColors.Grey25Percent.Index;
+                summaryStyle.FillPattern = FillPattern.SolidForeground;
+                summaryStyle.BorderTop = BorderStyle.Thin;
+                summaryStyle.BorderBottom = BorderStyle.Thin;
+                summaryStyle.BorderLeft = BorderStyle.Thin;
+                summaryStyle.BorderRight = BorderStyle.Thin;
+
+                // ================= CONTENIDO =================
+
+                // Empresa
+                IRow companyRow = sheet.CreateRow(rowIndex++);
+                companyRow.CreateCell(0).SetCellValue("MINA SAN MIGUEL");
+                companyRow.GetCell(0).CellStyle = companyStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 4));
+
+                // Reporte
+                IRow reportRow = sheet.CreateRow(rowIndex++);
+                reportRow.CreateCell(0).SetCellValue("REPORTE DE EMPLEADOS");
+                reportRow.GetCell(0).CellStyle = reportTitleStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(1, 1, 0, 4));
+
+                // Fecha generación
+                IRow genRow = sheet.CreateRow(rowIndex++);
+                genRow.CreateCell(0).SetCellValue($"Generado: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
+                genRow.GetCell(0).CellStyle = infoStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(2, 2, 0, 4));
+
+                rowIndex += 2;
+
+                // Encabezados
+                string[] headers = {
+            "NOMBRE COMPLETO",
+            "NSS",
+            "DEPARTAMENTO",
+            "TELÉFONO",
+            "FECHA CONTRATACIÓN"
+        };
+
+                IRow headerRow = sheet.CreateRow(rowIndex++);
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    headerRow.CreateCell(i).SetCellValue(headers[i]);
+                    headerRow.GetCell(i).CellStyle = headerStyle;
+                }
+
+                // ================= DATOS =================
+                int totalEmpleados = 0;
+
+                if (!string.IsNullOrEmpty(tablaHTML))
+                {
+                    // Buscar el cuerpo de la tabla
+                    var tbodyMatch = Regex.Match(tablaHTML, @"<tbody[^>]*>(.*?)</tbody>",
+                        RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                    if (tbodyMatch.Success)
+                    {
+                        var rows = Regex.Matches(tbodyMatch.Groups[1].Value, @"<tr[^>]*>(.*?)</tr>",
+                            RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                        foreach (Match row in rows)
+                        {
+                            var cells = Regex.Matches(row.Groups[1].Value, @"<td[^>]*>(.*?)</td>",
+                                RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                            if (cells.Count >= 5)
+                            {
+                                IRow dataRow = sheet.CreateRow(rowIndex++);
+                                totalEmpleados++;
+
+                                for (int i = 0; i < 5; i++)
+                                {
+                                    string value = Regex.Replace(cells[i].Groups[1].Value, @"<[^>]*>", "");
+                                    value = System.Web.HttpUtility.HtmlDecode(value).Trim();
+
+                                    ICell cell = dataRow.CreateCell(i);
+                                    cell.SetCellValue(value);
+
+                                    // Aplicar estilos según la columna
+                                    if (i == 0) // Nombre completo
+                                    {
+                                        cell.CellStyle = dataStyle;
+                                        cell.CellStyle.Alignment = HorizontalAlignment.Left;
+                                    }
+                                    else if (i == 1) // NSS
+                                    {
+                                        cell.CellStyle = nssStyle;
+
+                                        // Formatear NSS si es un número largo
+                                        if (value.Length == 11 && long.TryParse(value, out long nssNum))
+                                        {
+                                            cell.SetCellValue($"{nssNum:###-##-#####}");
+                                        }
+                                    }
+                                    else if (i == 2) // Departamento
+                                    {
+                                        cell.CellStyle = dataStyle;
+                                        cell.CellStyle.Alignment = HorizontalAlignment.Left;
+                                    }
+                                    else if (i == 3) // Teléfono
+                                    {
+                                        cell.CellStyle = phoneStyle;
+
+                                        // Formatear teléfono si es un número
+                                        if (value.Length == 10 && long.TryParse(value, out long phoneNum))
+                                        {
+                                            cell.SetCellValue($"{phoneNum:(###) ###-####}");
+                                        }
+                                    }
+                                    else if (i == 4) // Fecha Contratación
+                                    {
+                                        cell.CellStyle = dateStyle;
+
+                                        // Intentar parsear como fecha
+                                        if (DateTime.TryParse(value, out DateTime fecha))
+                                        {
+                                            cell.SetCellValue(fecha);
+                                        }
+                                        else if (value.Contains('/'))
+                                        {
+                                            // Intentar parsear formato dd/MM/yyyy
+                                            var partes = value.Split('/');
+                                            if (partes.Length == 3 &&
+                                                int.TryParse(partes[0], out int dia) &&
+                                                int.TryParse(partes[1], out int mes) &&
+                                                int.TryParse(partes[2], out int anio))
+                                            {
+                                                try
+                                                {
+                                                    cell.SetCellValue(new DateTime(anio, mes, dia));
+                                                }
+                                                catch
+                                                {
+                                                    cell.SetCellValue(value);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                cell.SetCellValue(value);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            cell.SetCellValue(value);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // ================= RESUMEN =================
+                rowIndex += 2;
+
+                IRow summaryRow = sheet.CreateRow(rowIndex++);
+                summaryRow.CreateCell(0).SetCellValue($"Total de empleados: {totalEmpleados}");
+                summaryRow.GetCell(0).CellStyle = summaryStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 4));
+
+                // ================= DATOS ADICIONALES =================
+                rowIndex++;
+
+                // Agregar información de la empresa
+                IRow infoRow1 = sheet.CreateRow(rowIndex++);
+                infoRow1.CreateCell(0).SetCellValue("MINA SAN MIGUEL S.A. DE C.V.");
+                infoRow1.GetCell(0).CellStyle = summaryStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 4));
+
+                // ================= GUARDAR =================
+                byte[] excelBytes;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    workbook.Write(ms);
+                    excelBytes = ms.ToArray();
+                }
+
+                workbook.Close();
+
+                return File(
+                    excelBytes,
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    $"Empleados_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx"
+                );
+            }
+            catch (Exception ex)
+            {
+                return Content($"Error al generar Excel: {ex.Message}");
+            }
+        }
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult GenerarReporteConsolidado(string tablaHTML, string totalGeneralSalarios, string totalGeneralConceptos, string fechaInicio, string fechaFin)
+        {
+            try
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("Reporte Consolidado");
+
+                // ================= CONFIGURACIÓN DE IMPRESIÓN =================
+                sheet.PrintSetup.Landscape = true; // Horizontal para más columnas
+                sheet.PrintSetup.PaperSize = (short)PaperSize.A4;
+                sheet.SetMargin(MarginType.TopMargin, 0.5);
+                sheet.SetMargin(MarginType.BottomMargin, 0.5);
+                sheet.SetMargin(MarginType.LeftMargin, 0.4);
+                sheet.SetMargin(MarginType.RightMargin, 0.4);
+
+                int rowIndex = 0;
+
+                // ================= ESTILOS =================
+
+                // Empresa
+                ICellStyle companyStyle = workbook.CreateCellStyle();
+                IFont companyFont = workbook.CreateFont();
+                companyFont.FontName = "Calibri";
+                companyFont.FontHeightInPoints = 18;
+                companyFont.IsBold = true;
+                companyFont.Color = IndexedColors.Black.Index;
+                companyStyle.SetFont(companyFont);
+                companyStyle.Alignment = HorizontalAlignment.Center;
+
+                // Título reporte
+                ICellStyle reportTitleStyle = workbook.CreateCellStyle();
+                IFont reportFont = workbook.CreateFont();
+                reportFont.FontName = "Calibri";
+                reportFont.FontHeightInPoints = 14;
+                reportFont.IsBold = true;
+                reportFont.Color = IndexedColors.Black.Index;
+                reportTitleStyle.SetFont(reportFont);
+                reportTitleStyle.Alignment = HorizontalAlignment.Center;
+
+                // Información
+                ICellStyle infoStyle = workbook.CreateCellStyle();
+                IFont infoFont = workbook.CreateFont();
+                infoFont.FontHeightInPoints = 10;
+                infoFont.Color = IndexedColors.Black.Index;
+                infoStyle.SetFont(infoFont);
+                infoStyle.Alignment = HorizontalAlignment.Center;
+
+                // Encabezados tabla principal
+                ICellStyle headerStyle = workbook.CreateCellStyle();
+                IFont headerFont = workbook.CreateFont();
+                headerFont.FontHeightInPoints = 10;
+                headerFont.IsBold = true;
+                headerFont.Color = IndexedColors.White.Index;
+                headerStyle.SetFont(headerFont);
+                headerStyle.FillForegroundColor = IndexedColors.Grey80Percent.Index;
+                headerStyle.FillPattern = FillPattern.SolidForeground;
+                headerStyle.Alignment = HorizontalAlignment.Center;
+                headerStyle.BorderTop = BorderStyle.Thin;
+                headerStyle.BorderBottom = BorderStyle.Thin;
+                headerStyle.BorderLeft = BorderStyle.Thin;
+                headerStyle.BorderRight = BorderStyle.Thin;
+
+                // Encabezados tabla resumen
+                ICellStyle summaryHeaderStyle = workbook.CreateCellStyle();
+                IFont summaryHeaderFont = workbook.CreateFont();
+                summaryHeaderFont.FontHeightInPoints = 10;
+                summaryHeaderFont.IsBold = true;
+                summaryHeaderFont.Color = IndexedColors.White.Index;
+                summaryHeaderStyle.SetFont(summaryHeaderFont);
+                summaryHeaderStyle.FillForegroundColor = IndexedColors.DarkBlue.Index;
+                summaryHeaderStyle.FillPattern = FillPattern.SolidForeground;
+                summaryHeaderStyle.Alignment = HorizontalAlignment.Center;
+                summaryHeaderStyle.BorderTop = BorderStyle.Thin;
+                summaryHeaderStyle.BorderBottom = BorderStyle.Thin;
+                summaryHeaderStyle.BorderLeft = BorderStyle.Thin;
+                summaryHeaderStyle.BorderRight = BorderStyle.Thin;
+
+                // Datos
+                ICellStyle dataStyle = workbook.CreateCellStyle();
+                dataStyle.BorderTop = BorderStyle.Thin;
+                dataStyle.BorderBottom = BorderStyle.Thin;
+                dataStyle.BorderLeft = BorderStyle.Thin;
+                dataStyle.BorderRight = BorderStyle.Thin;
+                dataStyle.VerticalAlignment = VerticalAlignment.Center;
+                dataStyle.WrapText = true;
+
+                // Moneda
+                ICellStyle currencyStyle = workbook.CreateCellStyle();
+                currencyStyle.CloneStyleFrom(dataStyle);
+                currencyStyle.Alignment = HorizontalAlignment.Right;
+                currencyStyle.DataFormat = workbook.CreateDataFormat().GetFormat("$#,##0.00");
+
+                // Total empleado
+                ICellStyle totalEmpleadoStyle = workbook.CreateCellStyle();
+                IFont totalEmpleadoFont = workbook.CreateFont();
+                totalEmpleadoFont.IsBold = true;
+                totalEmpleadoFont.Color = IndexedColors.DarkRed.Index;
+                totalEmpleadoStyle.SetFont(totalEmpleadoFont);
+                totalEmpleadoStyle.CloneStyleFrom(currencyStyle);
+                totalEmpleadoStyle.FillForegroundColor = IndexedColors.LightYellow.Index;
+                totalEmpleadoStyle.FillPattern = FillPattern.SolidForeground;
+
+                // Total general
+                ICellStyle totalGeneralStyle = workbook.CreateCellStyle();
+                IFont totalGeneralFont = workbook.CreateFont();
+                totalGeneralFont.IsBold = true;
+                totalGeneralFont.FontHeightInPoints = 12;
+                totalGeneralFont.Color = IndexedColors.White.Index;
+                totalGeneralStyle.SetFont(totalGeneralFont);
+                totalGeneralStyle.FillForegroundColor = IndexedColors.Green.Index;
+                totalGeneralStyle.FillPattern = FillPattern.SolidForeground;
+                totalGeneralStyle.Alignment = HorizontalAlignment.Right;
+                totalGeneralStyle.DataFormat = workbook.CreateDataFormat().GetFormat("$#,##0.00");
+
+                // Resumen concepto
+                ICellStyle resumenConceptoStyle = workbook.CreateCellStyle();
+                resumenConceptoStyle.CloneStyleFrom(dataStyle);
+                resumenConceptoStyle.FillForegroundColor = IndexedColors.Grey25Percent.Index;
+                resumenConceptoStyle.FillPattern = FillPattern.SolidForeground;
+
+                // ================= CONTENIDO =================
+
+                // Empresa
+                IRow companyRow = sheet.CreateRow(rowIndex++);
+                companyRow.CreateCell(0).SetCellValue("MINA SAN MIGUEL");
+                companyRow.GetCell(0).CellStyle = companyStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 10));
+
+                // Reporte
+                IRow reportRow = sheet.CreateRow(rowIndex++);
+                reportRow.CreateCell(0).SetCellValue("REPORTE CONSOLIDADO DE NÓMINAS Y CONCEPTOS");
+                reportRow.GetCell(0).CellStyle = reportTitleStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(1, 1, 0, 10));
+
+                // Periodo
+                if (!string.IsNullOrEmpty(fechaInicio) && !string.IsNullOrEmpty(fechaFin))
+                {
+                    IRow periodRow = sheet.CreateRow(rowIndex++);
+                    periodRow.CreateCell(0).SetCellValue($"PERÍODO: {fechaInicio} al {fechaFin}");
+                    periodRow.GetCell(0).CellStyle = infoStyle;
+                    sheet.AddMergedRegion(new CellRangeAddress(2, 2, 0, 10));
+                }
+
+                // Fecha generación
+                IRow genRow = sheet.CreateRow(rowIndex++);
+                genRow.CreateCell(0).SetCellValue($"Generado: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
+                genRow.GetCell(0).CellStyle = infoStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 10));
+
+                rowIndex += 2;
+
+                // ================= PROCESAR TABLA HTML =================
+                if (!string.IsNullOrEmpty(tablaHTML))
+                {
+                    try
+                    {
+                        // Extraer la primera tabla (empleados)
+                        var primeraTablaMatch = Regex.Match(tablaHTML, @"<table[^>]*>(.*?)</table>",
+                            RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                        if (primeraTablaMatch.Success)
+                        {
+                            // Procesar encabezados de la primera tabla
+                            var theadMatch = Regex.Match(primeraTablaMatch.Value, @"<thead[^>]*>(.*?)</thead>",
+                                RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                            if (theadMatch.Success)
+                            {
+                                var headers = Regex.Matches(theadMatch.Groups[1].Value, @"<th[^>]*>(.*?)</th>",
+                                    RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                                // Crear fila de encabezados
+                                IRow headerRow = sheet.CreateRow(rowIndex++);
+                                for (int i = 0; i < headers.Count; i++)
+                                {
+                                    string headerText = Regex.Replace(headers[i].Groups[1].Value, @"<[^>]*>", "");
+                                    headerText = System.Web.HttpUtility.HtmlDecode(headerText).Trim();
+
+                                    ICell headerCell = headerRow.CreateCell(i);
+                                    headerCell.SetCellValue(headerText);
+                                    headerCell.CellStyle = headerStyle;
+                                }
+
+                                // Procesar filas de datos
+                                var tbodyMatch = Regex.Match(primeraTablaMatch.Value, @"<tbody[^>]*>(.*?)</tbody>",
+                                    RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                                if (tbodyMatch.Success)
+                                {
+                                    var rows = Regex.Matches(tbodyMatch.Groups[1].Value, @"<tr[^>]*>(.*?)</tr>",
+                                        RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                                    foreach (Match row in rows)
+                                    {
+                                        var cells = Regex.Matches(row.Groups[1].Value, @"<td[^>]*>(.*?)</td>",
+                                            RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                                        if (cells.Count > 0)
+                                        {
+                                            IRow dataRow = sheet.CreateRow(rowIndex++);
+
+                                            for (int i = 0; i < cells.Count && i < headers.Count; i++)
+                                            {
+                                                string cellValue = Regex.Replace(cells[i].Groups[1].Value, @"<[^>]*>", "");
+                                                cellValue = System.Web.HttpUtility.HtmlDecode(cellValue).Trim();
+
+                                                ICell cell = dataRow.CreateCell(i);
+
+                                                // Verificar si es valor monetario
+                                                if (i > 0 && cellValue != "-") // No es la primera columna (empleado)
+                                                {
+                                                    // Limpiar formato de moneda
+                                                    string cleanValue = cellValue.Replace("$", "")
+                                                                                 .Replace(",", "")
+                                                                                 .Replace("MXN", "")
+                                                                                 .Trim();
+
+                                                    if (decimal.TryParse(cleanValue, out decimal decimalValue))
+                                                    {
+                                                        cell.SetCellValue((double)decimalValue);
+                                                        cell.CellStyle = currencyStyle;
+
+                                                        // Si es la última columna (Total General), aplicar estilo especial
+                                                        if (i == headers.Count - 1)
+                                                        {
+                                                            cell.CellStyle = totalEmpleadoStyle;
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        cell.SetCellValue(cellValue);
+                                                        cell.CellStyle = dataStyle;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    cell.SetCellValue(cellValue);
+                                                    cell.CellStyle = dataStyle;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // ================= TABLA DE CONCEPTOS AGRUPADOS =================
+                        rowIndex += 2;
+
+                        // Extraer la segunda tabla (resumen de conceptos)
+                        var segundaTablaMatch = Regex.Match(tablaHTML, @"Resumen de Conceptos Agrupados.*?<table[^>]*>(.*?)</table>",
+                            RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                        if (segundaTablaMatch.Success)
+                        {
+                            IRow tituloResumenRow = sheet.CreateRow(rowIndex++);
+                            tituloResumenRow.CreateCell(0).SetCellValue("RESUMEN DE CONCEPTOS AGRUPADOS");
+                            tituloResumenRow.GetCell(0).CellStyle = reportTitleStyle;
+                            sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 2));
+
+                            // Encabezados tabla resumen
+                            IRow resumenHeaderRow = sheet.CreateRow(rowIndex++);
+                            resumenHeaderRow.CreateCell(0).SetCellValue("CONCEPTO");
+                            resumenHeaderRow.CreateCell(1).SetCellValue("TOTAL GENERAL");
+
+                            resumenHeaderRow.GetCell(0).CellStyle = summaryHeaderStyle;
+                            resumenHeaderRow.GetCell(1).CellStyle = summaryHeaderStyle;
+
+                            // Procesar filas de la tabla de resumen
+                            var resumenRows = Regex.Matches(segundaTablaMatch.Value, @"<tr[^>]*>(.*?)</tr>",
+                                RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                            decimal totalConceptosAgrupados = 0;
+
+                            foreach (Match row in resumenRows)
+                            {
+                                var cells = Regex.Matches(row.Groups[1].Value, @"<td[^>]*>(.*?)</td>",
+                                    RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                                if (cells.Count >= 2)
+                                {
+                                    IRow resumenDataRow = sheet.CreateRow(rowIndex++);
+
+                                    for (int i = 0; i < 2; i++)
+                                    {
+                                        string cellValue = Regex.Replace(cells[i].Groups[1].Value, @"<[^>]*>", "");
+                                        cellValue = System.Web.HttpUtility.HtmlDecode(cellValue).Trim();
+
+                                        ICell cell = resumenDataRow.CreateCell(i);
+
+                                        if (i == 1) // Columna de total
+                                        {
+                                            // Limpiar formato de moneda
+                                            string cleanValue = cellValue.Replace("$", "")
+                                                                         .Replace(",", "")
+                                                                         .Replace("MXN", "")
+                                                                         .Trim();
+
+                                            if (decimal.TryParse(cleanValue, out decimal decimalValue))
+                                            {
+                                                cell.SetCellValue((double)decimalValue);
+                                                cell.CellStyle = currencyStyle;
+
+                                                // Acumular total
+                                                if (!cellValue.Contains("TOTAL CONCEPTOS AGRUPADOS"))
+                                                {
+                                                    totalConceptosAgrupados += decimalValue;
+                                                }
+                                                else
+                                                {
+                                                    // Es la fila de total
+                                                    cell.CellStyle = totalEmpleadoStyle;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                cell.SetCellValue(cellValue);
+                                                cell.CellStyle = resumenConceptoStyle;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            cell.SetCellValue(cellValue);
+                                            cell.CellStyle = resumenConceptoStyle;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // ================= TOTALES GENERALES =================
+                        rowIndex += 2;
+
+                        IRow tituloTotalesRow = sheet.CreateRow(rowIndex++);
+                        tituloTotalesRow.CreateCell(0).SetCellValue("TOTALES GENERALES");
+                        tituloTotalesRow.GetCell(0).CellStyle = reportTitleStyle;
+                        sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 2));
+
+                        // Total General Salarios
+                        IRow totalSalariosRow = sheet.CreateRow(rowIndex++);
+                        totalSalariosRow.CreateCell(0).SetCellValue("Total General Salarios:");
+                        totalSalariosRow.CreateCell(1).SetCellValue(decimal.TryParse(totalGeneralSalarios, out decimal salarios) ? (double)salarios : 0);
+                        totalSalariosRow.GetCell(0).CellStyle = resumenConceptoStyle;
+                        totalSalariosRow.GetCell(1).CellStyle = currencyStyle;
+
+                        // Total General Conceptos
+                        IRow totalConceptosRow = sheet.CreateRow(rowIndex++);
+                        totalConceptosRow.CreateCell(0).SetCellValue("Total General Conceptos:");
+                        totalConceptosRow.CreateCell(1).SetCellValue(decimal.TryParse(totalGeneralConceptos, out decimal conceptos) ? (double)conceptos : 0);
+                        totalConceptosRow.GetCell(0).CellStyle = resumenConceptoStyle;
+                        totalConceptosRow.GetCell(1).CellStyle = currencyStyle;
+
+                        // Línea separadora
+                        IRow separadorRow = sheet.CreateRow(rowIndex++);
+                        separadorRow.CreateCell(0).SetCellValue("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+                        separadorRow.GetCell(0).CellStyle = infoStyle;
+                        sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 2));
+
+                        // Total General
+                        decimal totalSal = decimal.TryParse(totalGeneralSalarios, out decimal ts) ? ts : 0;
+                        decimal totalCon = decimal.TryParse(totalGeneralConceptos, out decimal tc) ? tc : 0;
+                        decimal totalGeneral = totalSal + totalCon;
+
+                        IRow totalGeneralRow = sheet.CreateRow(rowIndex++);
+                        totalGeneralRow.CreateCell(0).SetCellValue("TOTAL GENERAL:");
+                        totalGeneralRow.CreateCell(1).SetCellValue((double)totalGeneral);
+                        totalGeneralRow.GetCell(0).CellStyle = totalGeneralStyle;
+                        totalGeneralRow.GetCell(1).CellStyle = totalGeneralStyle;
+
+                        // Ajustar anchos de columnas dinámicamente
+                        for (int i = 0; i <= 10; i++)
+                        {
+                            sheet.AutoSizeColumn(i);
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        // Si hay error al procesar HTML, crear una tabla simple con los totales
+                        IRow errorRow = sheet.CreateRow(rowIndex++);
+                        errorRow.CreateCell(0).SetCellValue("Error al procesar datos detallados. Mostrando solo totales:");
+                        sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 2));
+
+                        // Mostrar totales directamente
+                        IRow totalRow = sheet.CreateRow(rowIndex++);
+                        totalRow.CreateCell(0).SetCellValue("Total General:");
+                        totalRow.CreateCell(1).SetCellValue("$ " +
+                            (decimal.TryParse(totalGeneralSalarios, out decimal sal) &&
+                             decimal.TryParse(totalGeneralConceptos, out decimal con) ?
+                             (sal + con).ToString("N2") : "0.00"));
+                        totalRow.GetCell(1).CellStyle = totalGeneralStyle;
+                    }
+                }
+
+                // ================= GUARDAR =================
+                byte[] excelBytes;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    workbook.Write(ms);
+                    excelBytes = ms.ToArray();
+                }
+
+                workbook.Close();
+
+                string fileName = $"ReporteConsolidado_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+                return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+            catch (Exception ex)
+            {
+                return Content($"Error al generar Excel: {ex.Message}");
+            }
+        }
+        #endregion
+
+        #region Taller
 
         #endregion
     }
