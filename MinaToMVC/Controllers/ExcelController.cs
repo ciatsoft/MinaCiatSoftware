@@ -1626,7 +1626,610 @@ namespace MinaToMVC.Controllers
         #endregion
 
         #region Taller
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult GenerarReporteInventario(string tablaHTML)
+        {
+            try
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("Inventario");
 
+                // ================= CONFIGURACIÓN DE IMPRESIÓN =================
+                sheet.PrintSetup.Landscape = true; // Horizontal para 9 columnas
+                sheet.PrintSetup.PaperSize = (short)PaperSize.A4;
+                sheet.SetMargin(MarginType.TopMargin, 0.5);
+                sheet.SetMargin(MarginType.BottomMargin, 0.5);
+                sheet.SetMargin(MarginType.LeftMargin, 0.4);
+                sheet.SetMargin(MarginType.RightMargin, 0.4);
+
+                // Configurar anchos de columna para 9 columnas
+                sheet.SetColumnWidth(0, 25 * 256);  // Nombre
+                sheet.SetColumnWidth(1, 15 * 256);  // Categoría
+                sheet.SetColumnWidth(2, 15 * 256);  // Marca
+                sheet.SetColumnWidth(3, 20 * 256);  // Código Fabricante
+                sheet.SetColumnWidth(4, 15 * 256);  // Estado Inventario
+                sheet.SetColumnWidth(5, 15 * 256);  // Cantidad Existente
+                sheet.SetColumnWidth(6, 15 * 256);  // Precio
+                sheet.SetColumnWidth(7, 20 * 256);  // Ubicación Almacén
+                sheet.SetColumnWidth(8, 20 * 256);  // Proveedor
+
+                int rowIndex = 0;
+
+                // ================= ESTILOS =================
+
+                // Empresa
+                ICellStyle companyStyle = workbook.CreateCellStyle();
+                IFont companyFont = workbook.CreateFont();
+                companyFont.FontName = "Calibri";
+                companyFont.FontHeightInPoints = 18;
+                companyFont.IsBold = true;
+                companyFont.Color = IndexedColors.Black.Index;
+                companyStyle.SetFont(companyFont);
+                companyStyle.Alignment = HorizontalAlignment.Center;
+
+                // Título reporte
+                ICellStyle reportTitleStyle = workbook.CreateCellStyle();
+                IFont reportFont = workbook.CreateFont();
+                reportFont.FontName = "Calibri";
+                reportFont.FontHeightInPoints = 14;
+                reportFont.IsBold = true;
+                reportFont.Color = IndexedColors.Black.Index;
+                reportTitleStyle.SetFont(reportFont);
+                reportTitleStyle.Alignment = HorizontalAlignment.Center;
+
+                // Información
+                ICellStyle infoStyle = workbook.CreateCellStyle();
+                IFont infoFont = workbook.CreateFont();
+                infoFont.FontHeightInPoints = 10;
+                infoFont.Color = IndexedColors.Black.Index;
+                infoStyle.SetFont(infoFont);
+                infoStyle.Alignment = HorizontalAlignment.Center;
+
+                // Encabezados tabla
+                ICellStyle headerStyle = workbook.CreateCellStyle();
+                IFont headerFont = workbook.CreateFont();
+                headerFont.FontHeightInPoints = 10;
+                headerFont.IsBold = true;
+                headerFont.Color = IndexedColors.White.Index;
+                headerStyle.SetFont(headerFont);
+                headerStyle.FillForegroundColor = IndexedColors.Grey80Percent.Index;
+                headerStyle.FillPattern = FillPattern.SolidForeground;
+                headerStyle.Alignment = HorizontalAlignment.Center;
+                headerStyle.BorderTop = BorderStyle.Thin;
+                headerStyle.BorderBottom = BorderStyle.Thin;
+                headerStyle.BorderLeft = BorderStyle.Thin;
+                headerStyle.BorderRight = BorderStyle.Thin;
+
+                // Datos
+                ICellStyle dataStyle = workbook.CreateCellStyle();
+                dataStyle.BorderTop = BorderStyle.Thin;
+                dataStyle.BorderBottom = BorderStyle.Thin;
+                dataStyle.BorderLeft = BorderStyle.Thin;
+                dataStyle.BorderRight = BorderStyle.Thin;
+                dataStyle.VerticalAlignment = VerticalAlignment.Center;
+                dataStyle.WrapText = true;
+
+                // Estilo para cantidad (número entero)
+                ICellStyle cantidadStyle = workbook.CreateCellStyle();
+                cantidadStyle.CloneStyleFrom(dataStyle);
+                cantidadStyle.Alignment = HorizontalAlignment.Center;
+                cantidadStyle.DataFormat = workbook.CreateDataFormat().GetFormat("#,##0");
+
+                // Estilo para precio (moneda)
+                ICellStyle precioStyle = workbook.CreateCellStyle();
+                precioStyle.CloneStyleFrom(dataStyle);
+                precioStyle.Alignment = HorizontalAlignment.Right;
+                precioStyle.DataFormat = workbook.CreateDataFormat().GetFormat("$#,##0.00");
+
+                // Estilo para estado inventario (con colores según condición)
+                // CORRECCIÓN: Cambiar IndexedColors.Rose a IndexedColors.Red
+                ICellStyle estadoAgotadoStyle = workbook.CreateCellStyle();
+                IFont estadoAgotadoFont = workbook.CreateFont();
+                estadoAgotadoFont.Color = IndexedColors.White.Index; // Cambiar texto a blanco para mejor contraste
+                estadoAgotadoStyle.SetFont(estadoAgotadoFont);
+                estadoAgotadoStyle.CloneStyleFrom(dataStyle);
+                estadoAgotadoStyle.Alignment = HorizontalAlignment.Center;
+                estadoAgotadoStyle.FillForegroundColor = IndexedColors.Red.Index; // CAMBIO AQUÍ: Rosa -> Rojo
+                estadoAgotadoStyle.FillPattern = FillPattern.SolidForeground;
+
+                ICellStyle estadoBajoStyle = workbook.CreateCellStyle();
+                IFont estadoBajoFont = workbook.CreateFont();
+                estadoBajoFont.Color = IndexedColors.DarkRed.Index;
+                estadoBajoStyle.SetFont(estadoBajoFont);
+                estadoBajoStyle.CloneStyleFrom(dataStyle);
+                estadoBajoStyle.Alignment = HorizontalAlignment.Center;
+                estadoBajoStyle.FillForegroundColor = IndexedColors.Orange.Index;
+                estadoBajoStyle.FillPattern = FillPattern.SolidForeground;
+
+                ICellStyle estadoNormalStyle = workbook.CreateCellStyle();
+                IFont estadoNormalFont = workbook.CreateFont();
+                estadoNormalFont.Color = IndexedColors.DarkGreen.Index;
+                estadoNormalStyle.SetFont(estadoNormalFont);
+                estadoNormalStyle.CloneStyleFrom(dataStyle);
+                estadoNormalStyle.Alignment = HorizontalAlignment.Center;
+                estadoNormalStyle.FillForegroundColor = IndexedColors.LightGreen.Index;
+                estadoNormalStyle.FillPattern = FillPattern.SolidForeground;
+
+                ICellStyle estadoSuficienteStyle = workbook.CreateCellStyle();
+                IFont estadoSuficienteFont = workbook.CreateFont();
+                estadoSuficienteFont.Color = IndexedColors.DarkBlue.Index;
+                estadoSuficienteStyle.SetFont(estadoSuficienteFont);
+                estadoSuficienteStyle.CloneStyleFrom(dataStyle);
+                estadoSuficienteStyle.Alignment = HorizontalAlignment.Center;
+                estadoSuficienteStyle.FillForegroundColor = IndexedColors.PaleBlue.Index;
+                estadoSuficienteStyle.FillPattern = FillPattern.SolidForeground;
+
+                // Resumen
+                ICellStyle summaryStyle = workbook.CreateCellStyle();
+                IFont summaryFont = workbook.CreateFont();
+                summaryFont.FontHeightInPoints = 10;
+                summaryFont.Color = IndexedColors.Black.Index;
+                summaryStyle.SetFont(summaryFont);
+                summaryStyle.FillForegroundColor = IndexedColors.Grey25Percent.Index;
+                summaryStyle.FillPattern = FillPattern.SolidForeground;
+                summaryStyle.BorderTop = BorderStyle.Thin;
+                summaryStyle.BorderBottom = BorderStyle.Thin;
+                summaryStyle.BorderLeft = BorderStyle.Thin;
+                summaryStyle.BorderRight = BorderStyle.Thin;
+
+                // Total valor inventario
+                ICellStyle totalStyle = workbook.CreateCellStyle();
+                IFont totalFont = workbook.CreateFont();
+                totalFont.IsBold = true;
+                totalFont.FontHeightInPoints = 12;
+                totalFont.Color = IndexedColors.White.Index;
+                totalStyle.SetFont(totalFont);
+                totalStyle.FillForegroundColor = IndexedColors.DarkBlue.Index;
+                totalStyle.FillPattern = FillPattern.SolidForeground;
+                totalStyle.Alignment = HorizontalAlignment.Right;
+                totalStyle.DataFormat = workbook.CreateDataFormat().GetFormat("$#,##0.00");
+
+                // ================= CONTENIDO =================
+
+                // Empresa
+                IRow companyRow = sheet.CreateRow(rowIndex++);
+                companyRow.CreateCell(0).SetCellValue("MINA SAN MIGUEL");
+                companyRow.GetCell(0).CellStyle = companyStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 8));
+
+                // Reporte
+                IRow reportRow = sheet.CreateRow(rowIndex++);
+                reportRow.CreateCell(0).SetCellValue("REPORTE DE INVENTARIO");
+                reportRow.GetCell(0).CellStyle = reportTitleStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(1, 1, 0, 8));
+
+                // Fecha generación
+                IRow genRow = sheet.CreateRow(rowIndex++);
+                genRow.CreateCell(0).SetCellValue($"Generado: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
+                genRow.GetCell(0).CellStyle = infoStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(2, 2, 0, 8));
+
+                rowIndex += 2;
+
+                // Encabezados
+                string[] headers = {
+            "NOMBRE",
+            "CATEGORÍA",
+            "MARCA",
+            "CÓDIGO FABRICANTE",
+            "ESTADO INVENTARIO",
+            "CANTIDAD EXISTENTE",
+            "PRECIO",
+            "UBICACIÓN ALMACÉN",
+            "PROVEEDOR"
+        };
+
+                IRow headerRow = sheet.CreateRow(rowIndex++);
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    headerRow.CreateCell(i).SetCellValue(headers[i]);
+                    headerRow.GetCell(i).CellStyle = headerStyle;
+                }
+
+                // ================= DATOS =================
+                int totalProductos = 0;
+                int totalAgotados = 0;
+                int totalBajos = 0;
+                int totalNormales = 0;
+                int totalSuficientes = 0;
+                decimal valorTotalInventario = 0;
+
+                if (!string.IsNullOrEmpty(tablaHTML))
+                {
+                    // Buscar el cuerpo de la tabla
+                    var tbodyMatch = Regex.Match(tablaHTML, @"<tbody[^>]*>(.*?)</tbody>",
+                        RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                    if (tbodyMatch.Success)
+                    {
+                        var rows = Regex.Matches(tbodyMatch.Groups[1].Value, @"<tr[^>]*>(.*?)</tr>",
+                            RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                        foreach (Match row in rows)
+                        {
+                            var cells = Regex.Matches(row.Groups[1].Value, @"<td[^>]*>(.*?)</td>",
+                                RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                            if (cells.Count >= 9)
+                            {
+                                IRow dataRow = sheet.CreateRow(rowIndex++);
+                                totalProductos++;
+
+                                for (int i = 0; i < 9; i++)
+                                {
+                                    string value = Regex.Replace(cells[i].Groups[1].Value, @"<[^>]*>", "");
+                                    value = System.Web.HttpUtility.HtmlDecode(value).Trim();
+
+                                    ICell cell = dataRow.CreateCell(i);
+
+                                    // Aplicar estilos según la columna
+                                    if (i == 0 || i == 1 || i == 2 || i == 3 || i == 7 || i == 8) // Texto
+                                    {
+                                        cell.SetCellValue(value);
+                                        cell.CellStyle = dataStyle;
+                                        cell.CellStyle.Alignment = HorizontalAlignment.Left;
+                                    }
+                                    else if (i == 4) // Estado Inventario
+                                    {
+                                        cell.SetCellValue(value);
+
+                                        // Aplicar estilo según el estado
+                                        if (value.Contains("Agotado") || value.Contains("agotado"))
+                                        {
+                                            cell.CellStyle = estadoAgotadoStyle;
+                                            totalAgotados++;
+                                        }
+                                        else if (value.Contains("Bajo") || value.Contains("bajo"))
+                                        {
+                                            cell.CellStyle = estadoBajoStyle;
+                                            totalBajos++;
+                                        }
+                                        else if (value.Contains("Normal") || value.Contains("normal"))
+                                        {
+                                            cell.CellStyle = estadoNormalStyle;
+                                            totalNormales++;
+                                        }
+                                        else if (value.Contains("Suficiente") || value.Contains("suficiente"))
+                                        {
+                                            cell.CellStyle = estadoSuficienteStyle;
+                                            totalSuficientes++;
+                                        }
+                                        else
+                                        {
+                                            cell.CellStyle = dataStyle;
+                                            cell.CellStyle.Alignment = HorizontalAlignment.Center;
+                                        }
+                                    }
+                                    else if (i == 5) // Cantidad Existente
+                                    {
+                                        if (int.TryParse(value, out int cantidad))
+                                        {
+                                            cell.SetCellValue(cantidad);
+                                            cell.CellStyle = cantidadStyle;
+                                        }
+                                        else
+                                        {
+                                            cell.SetCellValue(value);
+                                            cell.CellStyle = dataStyle;
+                                            cell.CellStyle.Alignment = HorizontalAlignment.Center;
+                                        }
+                                    }
+                                    else if (i == 6) // Precio
+                                    {
+                                        // Limpiar formato de moneda
+                                        string cleanValue = value.Replace("$", "")
+                                                                 .Replace(",", "")
+                                                                 .Replace("MXN", "")
+                                                                 .Trim();
+
+                                        if (decimal.TryParse(cleanValue, out decimal precio))
+                                        {
+                                            cell.SetCellValue((double)precio);
+                                            cell.CellStyle = precioStyle;
+
+                                            // Calcular valor total del inventario (precio * cantidad)
+                                            if (int.TryParse(Regex.Replace(cells[5].Groups[1].Value, @"<[^>]*>", ""), out int cant))
+                                            {
+                                                valorTotalInventario += precio * cant;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            cell.SetCellValue(value);
+                                            cell.CellStyle = dataStyle;
+                                            cell.CellStyle.Alignment = HorizontalAlignment.Right;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // ================= RESUMEN ESTADÍSTICO (VERSIÓN FORMAL) =================
+                rowIndex += 2;
+
+                // Estilos formales para el resumen
+                ICellStyle summaryHeaderStyle = workbook.CreateCellStyle();
+                IFont summaryHeaderFont = workbook.CreateFont();
+                summaryHeaderFont.FontHeightInPoints = 11;
+                summaryHeaderFont.IsBold = true;
+                summaryHeaderFont.Color = IndexedColors.White.Index;
+                summaryHeaderStyle.SetFont(summaryHeaderFont);
+                summaryHeaderStyle.FillForegroundColor = IndexedColors.DarkBlue.Index;
+                summaryHeaderStyle.FillPattern = FillPattern.SolidForeground;
+                summaryHeaderStyle.Alignment = HorizontalAlignment.Center;
+                summaryHeaderStyle.BorderTop = BorderStyle.Medium;
+                summaryHeaderStyle.BorderBottom = BorderStyle.Medium;
+                summaryHeaderStyle.BorderLeft = BorderStyle.Medium;
+                summaryHeaderStyle.BorderRight = BorderStyle.Medium;
+
+                ICellStyle summarySubHeaderStyle = workbook.CreateCellStyle();
+                IFont summarySubHeaderFont = workbook.CreateFont();
+                summarySubHeaderFont.FontHeightInPoints = 10;
+                summarySubHeaderFont.IsBold = true;
+                summarySubHeaderFont.Color = IndexedColors.DarkBlue.Index;
+                summarySubHeaderStyle.SetFont(summarySubHeaderFont);
+                summarySubHeaderStyle.FillForegroundColor = IndexedColors.Grey25Percent.Index;
+                summarySubHeaderStyle.FillPattern = FillPattern.SolidForeground;
+                summarySubHeaderStyle.Alignment = HorizontalAlignment.Left;
+                summarySubHeaderStyle.BorderTop = BorderStyle.Thin;
+                summarySubHeaderStyle.BorderBottom = BorderStyle.Thin;
+                summarySubHeaderStyle.BorderLeft = BorderStyle.Thin;
+                summarySubHeaderStyle.BorderRight = BorderStyle.Thin;
+
+                ICellStyle summaryDataStyle = workbook.CreateCellStyle();
+                IFont summaryDataFont = workbook.CreateFont();
+                summaryDataFont.FontHeightInPoints = 10;
+                summaryDataStyle.SetFont(summaryDataFont);
+                summaryDataStyle.FillForegroundColor = IndexedColors.White.Index;
+                summaryDataStyle.FillPattern = FillPattern.SolidForeground;
+                summaryDataStyle.Alignment = HorizontalAlignment.Left;
+                summaryDataStyle.BorderTop = BorderStyle.Thin;
+                summaryDataStyle.BorderBottom = BorderStyle.Thin;
+                summaryDataStyle.BorderLeft = BorderStyle.Thin;
+                summaryDataStyle.BorderRight = BorderStyle.Thin;
+
+                ICellStyle summaryTotalStyle = workbook.CreateCellStyle();
+                IFont summaryTotalFont = workbook.CreateFont();
+                summaryTotalFont.FontHeightInPoints = 10;
+                summaryTotalFont.IsBold = true;
+                summaryTotalStyle.SetFont(summaryTotalFont);
+                summaryTotalStyle.FillForegroundColor = IndexedColors.LightCornflowerBlue.Index;
+                summaryTotalStyle.FillPattern = FillPattern.SolidForeground;
+                summaryTotalStyle.Alignment = HorizontalAlignment.Left;
+                summaryTotalStyle.BorderTop = BorderStyle.Thin;
+                summaryTotalStyle.BorderBottom = BorderStyle.Thin;
+                summaryTotalStyle.BorderLeft = BorderStyle.Thin;
+                summaryTotalStyle.BorderRight = BorderStyle.Thin;
+
+                // Título del resumen
+                IRow tituloResumenRow = sheet.CreateRow(rowIndex++);
+                tituloResumenRow.CreateCell(0).SetCellValue("RESUMEN ESTADÍSTICO");
+                tituloResumenRow.GetCell(0).CellStyle = summaryHeaderStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 8));
+
+                // Información general del inventario
+                IRow infoGeneralRow = sheet.CreateRow(rowIndex++);
+                infoGeneralRow.CreateCell(0).SetCellValue("INFORMACIÓN GENERAL");
+                infoGeneralRow.GetCell(0).CellStyle = summarySubHeaderStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 8));
+
+                IRow totalProductosRow = sheet.CreateRow(rowIndex++);
+                totalProductosRow.CreateCell(0).SetCellValue("Total de productos en inventario:");
+                totalProductosRow.CreateCell(1).SetCellValue(totalProductos);
+                totalProductosRow.GetCell(0).CellStyle = summaryDataStyle;
+                totalProductosRow.GetCell(1).CellStyle = summaryDataStyle;
+                totalProductosRow.GetCell(1).CellStyle.Alignment = HorizontalAlignment.Right;
+
+                // Distribución por estado
+                IRow distribucionRow = sheet.CreateRow(rowIndex++);
+                distribucionRow.CreateCell(0).SetCellValue("DISTRIBUCIÓN POR ESTADO");
+                distribucionRow.GetCell(0).CellStyle = summarySubHeaderStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 8));
+
+                // Agotados
+                IRow estadoAgotadoRow = sheet.CreateRow(rowIndex++);
+                estadoAgotadoRow.CreateCell(0).SetCellValue("Productos Agotados:");
+                estadoAgotadoRow.CreateCell(1).SetCellValue(totalAgotados);
+                if (totalProductos > 0)
+                {
+                    double porcentajeAgotado = Math.Round((double)totalAgotados / totalProductos * 100, 2);
+                    estadoAgotadoRow.CreateCell(2).SetCellValue($"{porcentajeAgotado}%");
+                }
+                estadoAgotadoRow.GetCell(0).CellStyle = summaryDataStyle;
+                estadoAgotadoRow.GetCell(1).CellStyle = summaryDataStyle;
+                estadoAgotadoRow.GetCell(1).CellStyle.Alignment = HorizontalAlignment.Right;
+                if (estadoAgotadoRow.GetCell(2) != null)
+                {
+                    estadoAgotadoRow.GetCell(2).CellStyle = summaryDataStyle;
+                    estadoAgotadoRow.GetCell(2).CellStyle.Alignment = HorizontalAlignment.Right;
+                }
+
+                // Bajos
+                IRow estadoBajoRow = sheet.CreateRow(rowIndex++);
+                estadoBajoRow.CreateCell(0).SetCellValue("Productos con Existencia Baja:");
+                estadoBajoRow.CreateCell(1).SetCellValue(totalBajos);
+                if (totalProductos > 0)
+                {
+                    double porcentajeBajo = Math.Round((double)totalBajos / totalProductos * 100, 2);
+                    estadoBajoRow.CreateCell(2).SetCellValue($"{porcentajeBajo}%");
+                }
+                estadoBajoRow.GetCell(0).CellStyle = summaryDataStyle;
+                estadoBajoRow.GetCell(1).CellStyle = summaryDataStyle;
+                estadoBajoRow.GetCell(1).CellStyle.Alignment = HorizontalAlignment.Right;
+                if (estadoBajoRow.GetCell(2) != null)
+                {
+                    estadoBajoRow.GetCell(2).CellStyle = summaryDataStyle;
+                    estadoBajoRow.GetCell(2).CellStyle.Alignment = HorizontalAlignment.Right;
+                }
+
+                // Normales
+                IRow estadoNormalRow = sheet.CreateRow(rowIndex++);
+                estadoNormalRow.CreateCell(0).SetCellValue("Productos con Existencia Normal:");
+                estadoNormalRow.CreateCell(1).SetCellValue(totalNormales);
+                if (totalProductos > 0)
+                {
+                    double porcentajeNormal = Math.Round((double)totalNormales / totalProductos * 100, 2);
+                    estadoNormalRow.CreateCell(2).SetCellValue($"{porcentajeNormal}%");
+                }
+                estadoNormalRow.GetCell(0).CellStyle = summaryDataStyle;
+                estadoNormalRow.GetCell(1).CellStyle = summaryDataStyle;
+                estadoNormalRow.GetCell(1).CellStyle.Alignment = HorizontalAlignment.Right;
+                if (estadoNormalRow.GetCell(2) != null)
+                {
+                    estadoNormalRow.GetCell(2).CellStyle = summaryDataStyle;
+                    estadoNormalRow.GetCell(2).CellStyle.Alignment = HorizontalAlignment.Right;
+                }
+
+                // Suficientes
+                IRow estadoSuficienteRow = sheet.CreateRow(rowIndex++);
+                estadoSuficienteRow.CreateCell(0).SetCellValue("Productos con Existencia Suficiente:");
+                estadoSuficienteRow.CreateCell(1).SetCellValue(totalSuficientes);
+                if (totalProductos > 0)
+                {
+                    double porcentajeSuficiente = Math.Round((double)totalSuficientes / totalProductos * 100, 2);
+                    estadoSuficienteRow.CreateCell(2).SetCellValue($"{porcentajeSuficiente}%");
+                }
+                estadoSuficienteRow.GetCell(0).CellStyle = summaryDataStyle;
+                estadoSuficienteRow.GetCell(1).CellStyle = summaryDataStyle;
+                estadoSuficienteRow.GetCell(1).CellStyle.Alignment = HorizontalAlignment.Right;
+                if (estadoSuficienteRow.GetCell(2) != null)
+                {
+                    estadoSuficienteRow.GetCell(2).CellStyle = summaryDataStyle;
+                    estadoSuficienteRow.GetCell(2).CellStyle.Alignment = HorizontalAlignment.Right;
+                }
+
+                // Total por estado (fila de resumen)
+                IRow totalEstadosRow = sheet.CreateRow(rowIndex++);
+                totalEstadosRow.CreateCell(0).SetCellValue("TOTAL:");
+                totalEstadosRow.CreateCell(1).SetCellValue(totalProductos);
+                totalEstadosRow.CreateCell(2).SetCellValue("100%");
+                totalEstadosRow.GetCell(0).CellStyle = summaryTotalStyle;
+                totalEstadosRow.GetCell(1).CellStyle = summaryTotalStyle;
+                totalEstadosRow.GetCell(1).CellStyle.Alignment = HorizontalAlignment.Right;
+                totalEstadosRow.GetCell(2).CellStyle = summaryTotalStyle;
+                totalEstadosRow.GetCell(2).CellStyle.Alignment = HorizontalAlignment.Right;
+
+                // Valor del inventario
+                IRow valorInventarioRow = sheet.CreateRow(rowIndex++);
+                valorInventarioRow.CreateCell(0).SetCellValue("VALORACIÓN DEL INVENTARIO");
+                valorInventarioRow.GetCell(0).CellStyle = summarySubHeaderStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 8));
+
+                IRow valorTotalRow = sheet.CreateRow(rowIndex++);
+                valorTotalRow.CreateCell(0).SetCellValue("Valor Total del Inventario:");
+                ICell valorTotalCell = valorTotalRow.CreateCell(1);
+                valorTotalCell.SetCellValue((double)valorTotalInventario);
+                valorTotalCell.CellStyle = totalStyle;
+                valorTotalCell.CellStyle.Alignment = HorizontalAlignment.Right;
+                valorTotalRow.GetCell(0).CellStyle = summaryDataStyle;
+
+                // Promedio por producto (si hay productos)
+                if (totalProductos > 0)
+                {
+                    decimal promedioPorProducto = valorTotalInventario / totalProductos;
+                    IRow promedioRow = sheet.CreateRow(rowIndex++);
+                    promedioRow.CreateCell(0).SetCellValue("Valor Promedio por Producto:");
+                    ICell promedioCell = promedioRow.CreateCell(1);
+                    promedioCell.SetCellValue((double)promedioPorProducto);
+                    promedioCell.CellStyle = precioStyle;
+                    promedioRow.GetCell(0).CellStyle = summaryDataStyle;
+                }
+
+                // ================= LEYENDA DE ESTADOS =================
+                rowIndex += 2;
+
+                IRow leyendaRow = sheet.CreateRow(rowIndex++);
+                leyendaRow.CreateCell(0).SetCellValue("LEYENDA DE ESTADOS");
+                leyendaRow.GetCell(0).CellStyle = summaryHeaderStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 8));
+
+                // Leyenda en formato de tabla
+                IRow leyendaHeaderRow = sheet.CreateRow(rowIndex++);
+                leyendaHeaderRow.CreateCell(0).SetCellValue("ESTADO");
+                leyendaHeaderRow.CreateCell(1).SetCellValue("DESCRIPCIÓN");
+                leyendaHeaderRow.CreateCell(2).SetCellValue("CRITERIO");
+                leyendaHeaderRow.GetCell(0).CellStyle = summarySubHeaderStyle;
+                leyendaHeaderRow.GetCell(1).CellStyle = summarySubHeaderStyle;
+                leyendaHeaderRow.GetCell(2).CellStyle = summarySubHeaderStyle;
+
+                IRow leyenda1 = sheet.CreateRow(rowIndex++);
+                leyenda1.CreateCell(0).SetCellValue("Agotado");
+                leyenda1.CreateCell(1).SetCellValue("Sin existencia disponible");
+                leyenda1.CreateCell(2).SetCellValue("Cantidad = 0");
+                // CORRECCIÓN: Cambiado el fondo a rojo y texto a blanco
+                leyenda1.GetCell(0).CellStyle = estadoAgotadoStyle;
+                leyenda1.GetCell(0).CellStyle.Alignment = HorizontalAlignment.Center;
+                leyenda1.GetCell(1).CellStyle = summaryDataStyle;
+                leyenda1.GetCell(2).CellStyle = summaryDataStyle;
+
+                IRow leyenda2 = sheet.CreateRow(rowIndex++);
+                leyenda2.CreateCell(0).SetCellValue("Bajo");
+                leyenda2.CreateCell(1).SetCellValue("Existencia menor al mínimo recomendado");
+                leyenda2.CreateCell(2).SetCellValue("Cantidad ≤ 5");
+                leyenda2.GetCell(0).CellStyle = estadoBajoStyle;
+                leyenda2.GetCell(0).CellStyle.Alignment = HorizontalAlignment.Center;
+                leyenda2.GetCell(1).CellStyle = summaryDataStyle;
+                leyenda2.GetCell(2).CellStyle = summaryDataStyle;
+
+                IRow leyenda3 = sheet.CreateRow(rowIndex++);
+                leyenda3.CreateCell(0).SetCellValue("Normal");
+                leyenda3.CreateCell(1).SetCellValue("Existencia dentro del rango operativo normal");
+                leyenda3.CreateCell(2).SetCellValue("6 ≤ Cantidad ≤ 20");
+                leyenda3.GetCell(0).CellStyle = estadoNormalStyle;
+                leyenda3.GetCell(0).CellStyle.Alignment = HorizontalAlignment.Center;
+                leyenda3.GetCell(1).CellStyle = summaryDataStyle;
+                leyenda3.GetCell(2).CellStyle = summaryDataStyle;
+
+                IRow leyenda4 = sheet.CreateRow(rowIndex++);
+                leyenda4.CreateCell(0).SetCellValue("Suficiente");
+                leyenda4.CreateCell(1).SetCellValue("Existencia óptima para operaciones");
+                leyenda4.CreateCell(2).SetCellValue("Cantidad > 20");
+                leyenda4.GetCell(0).CellStyle = estadoSuficienteStyle;
+                leyenda4.GetCell(0).CellStyle.Alignment = HorizontalAlignment.Center;
+                leyenda4.GetCell(1).CellStyle = summaryDataStyle;
+                leyenda4.GetCell(2).CellStyle = summaryDataStyle;
+
+                // ================= AJUSTES FINALES =================
+                // Ajustar automáticamente el ancho de las columnas del resumen
+                for (int i = 0; i <= 8; i++)
+                {
+                    sheet.AutoSizeColumn(i);
+                }
+
+                // Asegurar que las columnas tengan un ancho mínimo
+                int[] minWidths = { 25, 15, 15, 20, 15, 15, 15, 20, 20 };
+                for (int i = 0; i < minWidths.Length; i++)
+                {
+                    if (sheet.GetColumnWidth(i) < minWidths[i] * 256)
+                    {
+                        sheet.SetColumnWidth(i, minWidths[i] * 256);
+                    }
+                }
+
+                // ================= GUARDAR =================
+                byte[] excelBytes;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    workbook.Write(ms);
+                    excelBytes = ms.ToArray();
+                }
+
+                workbook.Close();
+
+                return File(
+                    excelBytes,
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    $"Inventario_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx"
+                );
+            }
+            catch (Exception ex)
+            {
+                return Content($"Error al generar Excel: {ex.Message}");
+            }
+        }
         #endregion
     }
 }
