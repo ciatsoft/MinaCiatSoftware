@@ -279,6 +279,10 @@ document.getElementById("btnGenerarPDF").addEventListener("click", function () {
     generarReportePDF();
 });
 
+document.getElementById("btnGenerarExcel").addEventListener("click", function () {
+    generarReporteExcelVentaPorPlanta();
+});
+
 function generarReportePDF() {
     // Verificar si hay datos
     var tabla = $('#tableVentaPlanta2').DataTable();
@@ -347,6 +351,85 @@ function generarReportePDF() {
     var form = $('<form>', {
         method: 'POST',
         action: '/Pdf/GenerarReporteVentaPorPlanta'
+    });
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'tablaHTML',
+        value: tablaHTML
+    }).appendTo(form);
+
+    form.appendTo('body').submit().remove();
+}
+
+function generarReporteExcelVentaPorPlanta() {
+    // Verificar si hay datos
+    var tabla = $('#tableVentaPlanta2').DataTable();
+    var datos = tabla.data().toArray();
+
+    if (tabla.data().count() === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Sin datos',
+            text: 'No hay datos para exportar',
+            confirmButtonText: 'Entendido'
+        });
+        return;
+    }
+
+    // Swalfire de generando reporte
+    Swal.fire({
+        title: "Generando Excel...",
+        text: "Por favor espere mientras se genera el archivo Excel",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+
+            // Cerrar automáticamente después de 2 segundos
+            setTimeout(() => {
+                Swal.close();
+
+                // Mostrar mensaje de éxito después de cerrar
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Excel generado!',
+                    text: 'El archivo Excel se ha creado correctamente',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            }, 2000);
+        }
+    });
+
+    // Crear tabla HTML manualmente
+    var tablaHTML = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
+
+    // Encabezados
+    tablaHTML += '<thead><tr>';
+    tablaHTML += '<th>Folio</th>';
+    tablaHTML += '<th>Planta</th>';
+    tablaHTML += '<th>Total Vendido en M3</th>';
+    tablaHTML += '</tr></thead>';
+
+    // Datos
+    tablaHTML += '<tbody>';
+    datos.forEach(function (item) {
+        tablaHTML += '<tr>';
+        tablaHTML += '<td>' + (item.pV_PlantaId || '') + '</td>';
+        tablaHTML += '<td>' + (item.nombreUbicacion || '') + '</td>';
+        tablaHTML += '<td>' + (item.totalVendido ?
+            new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN'
+            }).format(item.totalVendido) : '') + '</td>';
+        tablaHTML += '</tr>';
+    });
+    tablaHTML += '</tbody></table>';
+
+    // Crear formulario y enviar
+    var form = $('<form>', {
+        method: 'POST',
+        action: '/Excel/GenerarReporteVentaPorPlanta'
     });
 
     $('<input>').attr({
