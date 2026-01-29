@@ -346,7 +346,7 @@ function generarExcel(bandera) {
             }
 
             if (datosFiltrados.length === 0) {
-                alert(`No existen vales ${titulo.toLowerCase()} para el período seleccionado.`);
+                alert(`No existen vales ${titulo.toLowerCase()} para el periodo seleccionado.`);
                 return;
             }
 
