@@ -4,6 +4,33 @@ $(document).ready(function () {
         destroy: true,
         paging: true,
         searching: true,
+        // Opciones para responsividad
+        responsive: true,  // Habilita el plugin de responsividad
+        scrollX: true,     // Habilita scroll horizontal
+        scrollCollapse: true, // Permite colapsar el scroll
+        autoWidth: false,  // Desactiva el ancho automático para mejor control
+
+        // Configuración adicional para responsividad
+        columnDefs: [
+            {
+                // Oculta columnas en pantallas pequeñas
+                targets: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19], // Índices de las columnas de billetes/monedas
+                responsivePriority: 2, // Prioridad media para ocultar
+                visible: false // Se ocultan por defecto en móviles
+            },
+            {
+                // Mantiene visibles columnas importantes
+                targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 20], // Columnas principales
+                responsivePriority: 1, // Alta prioridad (se mantienen visibles)
+            }
+        ],
+
+        // Opcional: Configuración específica para diferentes breakpoints
+        initComplete: function () {
+            // Asegurar que el contenedor tenga el estilo adecuado
+            this.api().table().container().style.width = '100%';
+            this.api().table().container().style.overflowX = 'auto';
+        },
         columns: [
             { data: "id", "visible": false, title: "id" },
             {
@@ -122,7 +149,7 @@ $(document).ready(function () {
             "processing": "Procesando...",
             "lengthMenu": "Mostrar _MENU_ entradas",
             "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningún dato disponible en esta tabla",
+            "emptyTable": "Ningun dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de un total de _MAX_ entradas)",

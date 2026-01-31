@@ -165,7 +165,7 @@ $(document).ready(function () {
         columns: [
             { data: 'Id', title: 'Id', visible: false},
             { data: 'nombreGasto', title: 'Tipo de Gasto' },
-            { data: "descripcion", title: "Descripción de la Deducción" },
+            { data: "descripcion", title: "Descripcion de la Deduccion" },
             { data: "usuarioName", title: "Encargado" },
             {
                 data: "monto",
@@ -838,6 +838,10 @@ document.getElementById("btnGenerarPDF").addEventListener("click", function () {
     generarReportePDF();
 });
 
+document.getElementById("btnGenerarExcel").addEventListener("click", function () {
+    generarReporteExcelUtilidades();
+});
+
 function generarReportePDF() {
 
     // Validar si las tablas están vacías (excepto Deducciones)
@@ -1123,4 +1127,198 @@ function InfoReporte(usuarioId, usuarioName, fechaFiltro, estatus, createdBy, cr
             });
         }
     });
+}
+
+function generarReporteExcelUtilidades() {
+    // Validar si las tablas están vacías (excepto Deducciones)
+    const tablasRequeridas = [
+        { id: '#tblCajaChica', nombre: 'Caja Chica' },
+        { id: '#tblVentas_Realizadas', nombre: 'Ventas Realizadas' },
+        { id: '#tblEn_Caja', nombre: 'En Caja' }
+    ];
+
+    for (let tabla of tablasRequeridas) {
+        if ($(tabla.id).DataTable().data().count() === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Sin datos',
+                text: `La tabla "${tabla.nombre}" esta vacia.`,
+                confirmButtonText: 'Entendido'
+            });
+            return;
+        }
+    }
+
+    // Obtener datos de tablas
+    const datosVentas = $('#tblVentas_Realizadas').DataTable().rows().data().toArray();
+    const datosCajaChica = $('#tblCajaChica').DataTable().rows().data().toArray();
+    const datosDeducciones = $('#tblDeducciones').DataTable().rows().data().toArray();
+    const datosEnCaja = $('#tblEn_Caja').DataTable().rows().data().toArray();
+    const datosPrepagos = $('#tblPrepago').DataTable().rows().data().toArray();
+
+    // Función para validar si existen Corte_Id
+    function tieneCorteId(datos) {
+        return datos.some(row => {
+            const corteId = row.corte_Id !== undefined ? row.corte_Id :
+                row.Corte_Id !== undefined ? row.Corte_Id : null;
+            return corteId !== null && !isNaN(corteId) && parseInt(corteId) > 0;
+        });
+    }
+
+    // Verificar si existe algún Corte_Id
+    const existeCorteId = (
+        tieneCorteId(datosVentas) ||
+        tieneCorteId(datosCajaChica) ||
+        tieneCorteId(datosDeducciones) ||
+        tieneCorteId(datosEnCaja) ||
+        tieneCorteId(datosPrepagos)
+    );
+
+    // Si NO hay Corte_Id, ejecuta InfoReporte()
+    if (!existeCorteId && typeof InfoReporte === 'function') {
+        var usuarioId = $("#userId").val();
+        var fechaFiltro = $("#fechaFiltro").val();
+        var usuarioName = $("#userName").val();
+        var estatus = 1;
+        var createdBy = $("#userName").val();
+        var createdDt = new Date().toISOString();
+        var updatedBy = $("#userName").val();
+        var updatedDt = new Date().toISOString();
+
+        InfoReporte(usuarioId, usuarioName, fechaFiltro, estatus, createdBy, createdDt, updatedBy, updatedDt);
+    }
+
+    // Construir el contenido HTML para el Excel
+    const fecha = $("#fechaFiltro").val();
+    const userName = $("#userName").val();
+    const now = new Date();
+    const fechaGeneracion = now.toLocaleDateString('es-MX') + ', ' + now.toLocaleTimeString('es-MX');
+
+    let htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Reporte de Utilidades Diarias</title>
+        </head>
+        <body>
+            <h1>Reporte de Utilidades Diarias</h1>
+            <div class="header-info">
+                <p><strong>Fecha de Reporte:</strong> ${fecha}</p>
+                <p><strong>Usuario:</strong> ${userName}</p>
+                <p><strong>Fecha de Generacion:</strong> ${fechaGeneracion}</p>
+            </div>
+    `;
+
+    // Si ya existe un Corte_Id, agregar leyenda
+    if (existeCorteId) {
+        htmlContent += `<div class="leyenda-existente">Este reporte ya ha sido generado anteriormente.</div>`;
+    }
+
+    // Generar HTML para cada tabla
+    const tablasAExportar = [
+        { id: 'tblVentas_Realizadas', title: 'Ventas Realizadas' },
+        { id: 'tblVentas_Aprobadas', title: 'Resumen de Ventas Aprobadas' },
+        { id: 'tblEn_Caja', title: 'Dinero en Caja' },
+        { id: 'tblDeducciones', title: 'Deducciones' },
+        { id: 'tblPrepago', title: 'Prepagos Realizados' },
+        { id: 'tblCajaChica', title: 'Movimientos de Caja Chica' }
+    ];
+
+    tablasAExportar.forEach(tabla => {
+        const tableElement = document.getElementById(tabla.id);
+        if (tableElement) {
+            // Verificar si la tabla tiene datos (excepto para Deducciones)
+            const dataTable = $(`#${tabla.id}`).DataTable();
+            if (tabla.id !== 'tblDeducciones' && dataTable.data().count() === 0 &&
+                tabla.id !== 'tblPrepago' && dataTable.data().count() === 0) {
+                return; // Saltar esta tabla
+            }
+
+            htmlContent += `
+                <div class="tabla-contenedor">
+                    <h2 class="tabla-titulo">${tabla.title}</h2>
+                    ${tableElement.outerHTML}
+                </div>
+            `;
+        }
+    });
+
+    // Agregar resumen de utilidades
+    htmlContent += `
+        <div class="resumen-utilidades">
+            <h2 class="resumen-titulo">Resumen de Utilidades</h2>
+            <p style="margin: 10px 0;"><strong>Ingresos:</strong> ${document.getElementById('ingreso').value}</p>
+            <p style="margin: 10px 0;"><strong>Caja:</strong> ${document.getElementById('caja').value}</p>
+            <p style="margin: 10px 0;"><strong>Deducciones:</strong> ${document.getElementById('deduccion').value}</p>
+            <p style="margin: 10px 0;"><strong>Prepagos:</strong> ${document.getElementById('valesPrepago').value}</p>
+            <p style="margin: 10px 0; font-weight: bold; font-size: 18px;"><strong>Total Utilidad:</strong> ${document.getElementById('total').value}</p>
+        </div>
+    `;
+
+    htmlContent += `</body></html>`;
+
+    // Swalfire de generando reporte
+    Swal.fire({
+        title: "Generando Excel...",
+        text: "Por favor espere mientras se genera el archivo Excel",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+
+            // Cerrar automáticamente después de 2 segundos
+            setTimeout(() => {
+                Swal.close();
+
+                // Mostrar mensaje de éxito después de cerrar
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Excel generado!',
+                    text: 'El archivo Excel se ha creado correctamente',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            }, 2000);
+        }
+    });
+
+    // Enviar el HTML al servidor para generar el Excel
+    enviarHTMLParaExcel(htmlContent, fecha, userName, existeCorteId);
+}
+
+function enviarHTMLParaExcel(htmlContent, fecha, userName, existeCorteId) {
+    // Crear formulario para enviar los datos al servidor
+    var form = $('<form>', {
+        method: 'POST',
+        action: '/Excel/GenerarReporteUtilidades'
+    });
+
+    // Agregar el HTML como campo oculto
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'htmlContent',
+        value: htmlContent
+    }).appendTo(form);
+
+    // Agregar información adicional
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'fecha',
+        value: fecha
+    }).appendTo(form);
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'userName',
+        value: userName
+    }).appendTo(form);
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'existeCorteId',
+        value: existeCorteId
+    }).appendTo(form);
+
+    // Agregar el formulario al cuerpo y enviarlo
+    form.appendTo('body').submit().remove();
 }

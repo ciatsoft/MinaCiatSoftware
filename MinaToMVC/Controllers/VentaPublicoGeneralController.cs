@@ -198,6 +198,26 @@ namespace MinaToMVC.Controllers
         {
             return View();
         }
+
+        public ActionResult GastosDiarios()
+        {
+            // 6. Usuarios
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken?.UserID ?? 0,
+                    Nombre = usuarioToken?.UserName ?? ""
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+            return View();
+        }
         #endregion
 
         #region Partial View
