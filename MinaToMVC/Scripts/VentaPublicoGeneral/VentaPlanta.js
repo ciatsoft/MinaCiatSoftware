@@ -392,7 +392,7 @@ function generarReporteExcelVentaPorPlanta() {
                 // Mostrar mensaje de éxito después de cerrar
                 Swal.fire({
                     icon: 'success',
-                    title: '¡Excel generado!',
+                    title: 'Excel generado!',
                     text: 'El archivo Excel se ha creado correctamente',
                     timer: 3000,
                     showConfirmButton: false

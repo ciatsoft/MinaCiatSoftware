@@ -1181,5 +1181,44 @@ namespace MinaToMVC.Controllers
                 return Content("Error al generar el reporte PDF. Por favor, intente nuevamente.");
             }
         }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult GenerarReporteGastosGenerales(string htmlContent, string fecha, string userName, string datosDeducciones)
+        {
+            try
+            {
+                // Configurar el convertidor HTML a PDF
+                var htmlToPdf = new HtmlToPdfConverter();
+                htmlToPdf.Orientation = PageOrientation.Default;
+                htmlToPdf.Size = PageSize.Letter;
+                htmlToPdf.Margins = new PageMargins { Top = 15, Bottom = 15, Left = 10, Right = 10 };
+                htmlToPdf.LowQuality = false;
+                htmlToPdf.Quiet = true;
+
+                // Generar el PDF
+                var pdfBytes = htmlToPdf.GeneratePdf(htmlContent);
+
+                // Nombre del archivo
+                var fileName = $"Reporte_Gastos_Generales_{fecha?.Replace("/", "-")}_{userName}.pdf";
+
+                // Devolver el PDF para descarga
+                return File(pdfBytes, "application/pdf", fileName);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error al generar PDF: {ex.Message}");
+
+                // Log completo del error
+                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+
+                // En caso de error, devolver un mensaje JSON para que JavaScript lo maneje
+                return Json(new
+                {
+                    success = false,
+                    message = $"Error al generar el reporte PDF: {ex.Message}"
+                });
+            }
+        }
     }
 }

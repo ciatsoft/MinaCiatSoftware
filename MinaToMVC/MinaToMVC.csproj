@@ -272,6 +272,7 @@
     <Content Include="Scripts\VentaPublicoGeneral\ClientePublicoGral.js" />
     <Content Include="Scripts\VentaPublicoGeneral\CorteCaja.js" />
     <Content Include="Scripts\VentaPublicoGeneral\CorteDeCaja.js" />
+    <Content Include="Scripts\VentaPublicoGeneral\GastosDiarios.js" />
     <Content Include="Scripts\VentaPublicoGeneral\Index.js" />
     <Content Include="Scripts\VentaPublicoGeneral\Precios.js" />
     <Content Include="Scripts\VentaPublicoGeneral\Prestamos.js" />
@@ -433,6 +434,7 @@
     <Content Include="Views\Administracion\PartialConfigurarCombustible.cshtml" />
     <Content Include="Views\VehiculoCarga\VehiculoCarga.cshtml" />
     <Content Include="Scripts\jquery-1.9.0.min.map" />
+    <Content Include="Views\VentaPublicoGeneral\GastosDiarios.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
