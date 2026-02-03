@@ -12,103 +12,141 @@ $(document).ready(function () {
         ObtenerPrecioMaterial();
     });
 
-    // Filtrado RFID cliente venta publico general
+    // Función para manejar la búsqueda por nombre
+    $('#nombreCliente').on('input', function () {
+        const nombreCliente = $(this).val().trim();
+        buscarClienteYVehiculos({ nombre: nombreCliente }, 'nombre');
+    });
+
+    // Función para manejar la búsqueda por RFID
     $('#rfid').on('input', function () {
         const valorRFID = $(this).val().trim();
+        buscarClienteYVehiculos({ rfid: valorRFID }, 'rfid');
+    });
+
+    // Función genérica para buscar cliente y vehículos
+    function buscarClienteYVehiculos(parametrosBusqueda, tipoBusqueda) {
         const $nombreCliente = $('#nombreCliente');
+        const $rfid = $('#rfid');
         const $descripcionVehiculo = $('#descripcionVehiculo');
         const $placa = $('#placa');
         const $cantidadRecibida = $('#cantidadRecibida');
         const $dropdown = $('#vehiculosDropdown');
 
-        // Limpiar todo si no hay RFID
-        if (!valorRFID) {
-            $nombreCliente.val('');
-            $descripcionVehiculo.val('');
-            $placa.val('');
-            $cantidadRecibida.val('');
-            $dropdown.empty().append('<option value="">Seleccione un vehículo</option>');
+        // Determinar qué campo estamos buscando
+        const urlBusqueda = tipoBusqueda === 'nombre'
+            ? '/VentaPublicoGeneral/SearchClienteByNombre'
+            : '/VentaPublicoGeneral/SearchClienteByRFID';
+
+        // Limpiar si no hay valor
+        if (!Object.values(parametrosBusqueda)[0]) {
+            limpiarCamposClienteYVehiculos();
             return;
         }
 
         $.ajax({
-            url: '/VentaPublicoGeneral/SearchClienteByRFID',
+            url: urlBusqueda,
             type: 'GET',
-            data: { rfid: valorRFID },
+            data: parametrosBusqueda,
             dataType: 'json',
             success: function (respuesta) {
                 if (respuesta.IsSuccess && respuesta.Response && Object.keys(respuesta.Response).length > 0) {
                     const cliente = respuesta.Response;
-                    $nombreCliente.val(cliente.nombre || '');
 
-                    // Solo si encontramos cliente, buscamos vehículos
-                    $.ajax({
-                        url: '/VentaPublicoGeneral/GetVehiculosPublicoGralByIdCliente',
-                        type: 'GET',
-                        data: { id: cliente.id },
-                        dataType: 'json',
-                        success: function (respuesta2) {
-                            $dropdown.empty();
+                    // Actualizar campos según el tipo de búsqueda
+                    if (tipoBusqueda === 'nombre') {
+                        $rfid.val(cliente.rfid || '');
+                    } else {
+                        $nombreCliente.val(cliente.nombre || '');
+                    }
 
-                            if (respuesta2.IsSuccess && respuesta2.Response) {
-                                const vehiculosArray = Array.isArray(respuesta2.Response) ?
-                                    respuesta2.Response : [respuesta2.Response];
-
-                                if (vehiculosArray.length > 0) {
-                                    $dropdown.append('<option value="">Seleccione un vehiculo</option>');
-
-                                    vehiculosArray.forEach(vehiculo => {
-                                        $dropdown.append($('<option></option>')
-                                            .val(vehiculo.nombre)
-                                            .text(vehiculo.nombre)
-                                            .data('placa', vehiculo.placa)
-                                            .data('capacidad', vehiculo.capacidad));
-                                    });
-
-                                    $dropdown.on('change', function () {
-                                        const selected = $(this).find('option:selected');
-                                        if (selected.val()) {
-                                            $descripcionVehiculo.val(selected.val());
-                                            $placa.val(selected.data('placa'));
-                                        } else {
-                                            $descripcionVehiculo.val('');
-                                            $placa.val('');
-
-                                        }
-                                    });
-
-                                    if (vehiculosArray.length === 1) {
-                                        $dropdown.val(vehiculosArray[0].nombre).trigger('change');
-                                    }
-                                } else {
-                                    $dropdown.append('<option value="">No hay vehiculos</option>');
-                                    // No limpiamos otros campos si no hay vehículos pero sí cliente
-                                }
-                            } else {
-                                $dropdown.append('<option value="">Error al cargar</option>');
-                                // No limpiamos otros campos si hay error pero sí cliente encontrado
-                            }
-                        },
-                        error: function () {
-                            $dropdown.append('<option value="">Error al cargar</option>');
-                            // No limpiamos campos existentes en error de vehículos
-                        }
-                    });
+                    // Buscar vehículos del cliente
+                    obtenerVehiculosCliente(cliente.id);
                 } else {
-                    // Solo limpiamos si no encontramos cliente
-                    $nombreCliente.val('');
-                    $descripcionVehiculo.val('');
-                    $placa.val('');
-                    $cantidadRecibida.val('');
-                    $dropdown.empty().append('<option value="">No se encontro cliente</option>');
+                    limpiarCamposClienteYVehiculos();
+                    $dropdown.empty().append('<option value="">No se encontró cliente</option>');
                 }
             },
             error: function () {
-                // No limpiamos campos en error de conexión (podría ser temporal)
                 console.error("Error en la solicitud AJAX");
+                // No limpiamos campos en error de conexión
             }
         });
-    });
+
+        function obtenerVehiculosCliente(idCliente) {
+            $.ajax({
+                url: '/VentaPublicoGeneral/GetVehiculosPublicoGralByIdCliente',
+                type: 'GET',
+                data: { id: idCliente },
+                dataType: 'json',
+                success: function (respuesta2) {
+                    $dropdown.empty();
+
+                    if (respuesta2.IsSuccess && respuesta2.Response) {
+                        const vehiculosArray = Array.isArray(respuesta2.Response) ?
+                            respuesta2.Response : [respuesta2.Response];
+
+                        if (vehiculosArray.length > 0) {
+                            $dropdown.append('<option value="">Seleccione un vehículo</option>');
+
+                            vehiculosArray.forEach(vehiculo => {
+                                $dropdown.append($('<option></option>')
+                                    .val(vehiculo.nombre)
+                                    .text(vehiculo.nombre)
+                                    .data('placa', vehiculo.placa)
+                                    .data('capacidad', vehiculo.capacidad));
+                            });
+
+                            // Configurar evento change del dropdown
+                            configurarEventoDropdown($dropdown, $descripcionVehiculo, $placa);
+
+                            if (vehiculosArray.length === 1) {
+                                $dropdown.val(vehiculosArray[0].nombre).trigger('change');
+                            }
+                        } else {
+                            $dropdown.append('<option value="">No hay vehículos</option>');
+                            // Limpiar campos de vehículo pero mantener cliente
+                            $descripcionVehiculo.val('');
+                            $placa.val('');
+                        }
+                    } else {
+                        $dropdown.append('<option value="">Error al cargar vehículos</option>');
+                        $descripcionVehiculo.val('');
+                        $placa.val('');
+                    }
+                },
+                error: function () {
+                    $dropdown.append('<option value="">Error al cargar vehículos</option>');
+                    $descripcionVehiculo.val('');
+                    $placa.val('');
+                }
+            });
+        }
+    }
+
+    // Función para limpiar campos
+    function limpiarCamposClienteYVehiculos() {
+        $('#nombreCliente').val('');
+        $('#rfid').val('');
+        $('#descripcionVehiculo').val('');
+        $('#placa').val('');
+        $('#cantidadRecibida').val('');
+        $('#vehiculosDropdown').empty().append('<option value="">Seleccione un vehículo</option>');
+    }
+
+    // Función para configurar evento del dropdown
+    function configurarEventoDropdown($dropdown, $descripcionVehiculo, $placa) {
+        $dropdown.off('change').on('change', function () {
+            const selected = $(this).find('option:selected');
+            if (selected.val()) {
+                $descripcionVehiculo.val(selected.val());
+                $placa.val(selected.data('placa'));
+            } else {
+                $descripcionVehiculo.val('');
+                $placa.val('');
+            }
+        });
+    }
 
     $("#tablePuntoVenta").dataTable({
         processing: true,
@@ -116,6 +154,12 @@ $(document).ready(function () {
         paging: true,
         searching: true,
         order: [[0, 'desc']],
+        scrollX: true,  // Agrega scroll horizontal
+        responsive: true,  // Hace la tabla responsiva
+        autoWidth: false,  // Mejor control del ancho de columnas
+        columnDefs: [
+            { targets: '_all', className: 'dt-body-center dt-head-center' }  // Centra contenido
+        ],
         columns: [
             { data: "id", "visible": false, title: "id" },
             { data: "folio", title: "Folio" },
@@ -181,7 +225,7 @@ $(document).ready(function () {
                 }
             },
             { data: "nombreUnidadMedida", title: "Unidad Medida", "visible": false },
-            { data: "userName", title: "Vendedor"},
+            { data: "userName", title: "Vendedor" },
             {
                 data: "fecha",
                 title: "Fecha",
@@ -239,13 +283,13 @@ $(document).ready(function () {
                 data: "id",
                 render: function (data, type, row, meta) {
                     return `
-                        <button 
-                            type="button"
-                            onclick="printItem(${meta.row})"
-                            style="background-color: yellow; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
-                            Imprimir
-                        </button>
-                    `;
+                    <button 
+                        type="button"
+                        onclick="printItem(${meta.row})"
+                        style="background-color: yellow; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                        Imprimir
+                    </button>
+                `;
                 }
             },
             {
@@ -254,28 +298,27 @@ $(document).ready(function () {
                 render: function (data, type, row) {  // Añade 'row' para acceder a todas las propiedades de la fila
                     if (data == 0) {
                         return `
-                            <input type="button" value="Cargar" class="btn btn-success" onclick="Cargar(${row.id})" />
-                        `;
-                                } else if (data == 1) {
-                                    return `
-                            <span style="display: inline-flex; align-items: center; gap: 5px;">
-                              <span style="
-                                display: inline-block;
-                                width: 20px;
-                                height: 20px;
-                                background-color: red;
-                                border-radius: 50%;
-                              "></span> 
-                              Ya cargado
-                            </span>
-                        `;
+                        <input type="button" value="Cargar" class="btn btn-success" onclick="Cargar(${row.id})" />
+                    `;
+                    } else if (data == 1) {
+                        return `
+                        <span style="display: inline-flex; align-items: center; gap: 5px;">
+                          <span style="
+                            display: inline-block;
+                            width: 20px;
+                            height: 20px;
+                            background-color: red;
+                            border-radius: 50%;
+                          "></span> 
+                          Ya cargado
+                        </span>
+                    `;
                     } else {
                         return '';
                     }
                 }
             }
-        ]
-        ,
+        ],
         language: {
             "decimal": ",",
             "thousands": ".",
@@ -301,69 +344,69 @@ $(document).ready(function () {
         }
     });
 
-    $("#tableDeducciones").DataTable({
-        processing: true,
-        destroy: true,
-        paging: true,
-        order: [[0, 'desc']],
-        searching: true,
-        columns: [
-            { data: "id", visible: true, title: "Id" },
-            { data: "nombreGasto", title: "Tipo Gasto" },
-            { data: "descripcion", title: "Descripcion de la Deduccion" },
-            { data: "usuarioName", title: "Encargado" },
-            {
-                data: "monto",
-                title: "Monto",
-                render: function (data) {
-                    return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
-                }
-            },
-            {
-                data: "fecha",
-                title: "Fecha",
-                render: function (data) {
-                    return new Date(data).toLocaleDateString('es-MX');
-                }
-            },
-            {
-                data: "id",
-                title: "Acciones",
-                render: function (data) {
-                    return `
-                    <input type="button" value="Cancelar" class="btn btn-custom-cancel" onclick="EliminarDeduccion(${data})" />
-                     <input type="button" value="Imprimir" class="btn btn-custom-cancel" style="background-color: yellow; border:
-                     none; color:black;  padding: 7px 10px; border-radius: 5px; cursor: pointer;" onclick="ImprimirDeduccion(${data})" />
-                     <input type="button" value="Editar" class="btn btn-custom-clean" style="width: 80px;" onclick="AbrirModalDeduccion(${data})" />
-                `;
-                }
-            }
-        ],
-        language: {
-            decimal: ",",
-            thousands: ".",
-            processing: "Procesando...",
-            lengthMenu: "Mostrar _MENU_ entradas",
-            zeroRecords: "No se encontraron resultados",
-            emptyTable: "Ningun dato disponible en esta tabla",
-            info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-            infoEmpty: "Mostrando 0 a 0 de 0 entradas",
-            infoFiltered: "(filtrado de un total de _MAX_ entradas)",
-            search: "Buscar:",
-            loadingRecords: "Cargando...",
-            paginate: {
-                first: "Primero",
-                last: "Último",
-                next: "Siguiente",
-                previous: "Anterior"
-            },
-            aria: {
-                sortAscending: ": activar para ordenar ascendente",
-                sortDescending: ": activar para ordenar descendente"
-            }
-        }
+    //$("#tableDeducciones").DataTable({
+    //    processing: true,
+    //    destroy: true,
+    //    paging: true,
+    //    order: [[0, 'desc']],
+    //    searching: true,
+    //    columns: [
+    //        { data: "id", visible: true, title: "Id" },
+    //        { data: "nombreGasto", title: "Tipo Gasto" },
+    //        { data: "descripcion", title: "Descripcion de la Deduccion" },
+    //        { data: "usuarioName", title: "Encargado" },
+    //        {
+    //            data: "monto",
+    //            title: "Monto",
+    //            render: function (data) {
+    //                return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
+    //            }
+    //        },
+    //        {
+    //            data: "fecha",
+    //            title: "Fecha",
+    //            render: function (data) {
+    //                return new Date(data).toLocaleDateString('es-MX');
+    //            }
+    //        },
+    //        {
+    //            data: "id",
+    //            title: "Acciones",
+    //            render: function (data) {
+    //                return `
+    //                <input type="button" value="Cancelar" class="btn btn-custom-cancel" onclick="EliminarDeduccion(${data})" />
+    //                 <input type="button" value="Imprimir" class="btn btn-custom-cancel" style="background-color: yellow; border:
+    //                 none; color:black;  padding: 7px 10px; border-radius: 5px; cursor: pointer;" onclick="ImprimirDeduccion(${data})" />
+    //                 <input type="button" value="Editar" class="btn btn-custom-clean" style="width: 80px;" onclick="AbrirModalDeduccion(${data})" />
+    //            `;
+    //            }
+    //        }
+    //    ],
+    //    language: {
+    //        decimal: ",",
+    //        thousands: ".",
+    //        processing: "Procesando...",
+    //        lengthMenu: "Mostrar _MENU_ entradas",
+    //        zeroRecords: "No se encontraron resultados",
+    //        emptyTable: "Ningun dato disponible en esta tabla",
+    //        info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+    //        infoEmpty: "Mostrando 0 a 0 de 0 entradas",
+    //        infoFiltered: "(filtrado de un total de _MAX_ entradas)",
+    //        search: "Buscar:",
+    //        loadingRecords: "Cargando...",
+    //        paginate: {
+    //            first: "Primero",
+    //            last: "Último",
+    //            next: "Siguiente",
+    //            previous: "Anterior"
+    //        },
+    //        aria: {
+    //            sortAscending: ": activar para ordenar ascendente",
+    //            sortDescending: ": activar para ordenar descendente"
+    //        }
+    //    }
 
-    });
+    //});
 
     GetAllPV_Ventas();
 });
@@ -724,7 +767,13 @@ function SearchPV_VentasByDate(fecha) {
                 paging: true,
                 searching: true,
                 order: [[0, 'desc']],
+                scrollX: true,  // Agrega scroll horizontal
+                responsive: true,  // Hace la tabla responsiva
+                autoWidth: false,  // Mejor control del ancho de columnas
                 data: data,
+                columnDefs: [
+                    { targets: '_all', className: 'dt-body-center dt-head-center' }  // Centra contenido
+                ],
                 columns: [
                     { data: "id", visible: false, title: "id" },
                     { data: "folio", title: "Folio" },
@@ -765,7 +814,7 @@ function SearchPV_VentasByDate(fecha) {
                         render: $.fn.dataTable.render.number(',', '.', 2, '$')
                     },
                     { data: "nombreUnidadMedida", title: "Unidad Medida", visible: false },
-                    { data: "userName", title: "Vendedor"},
+                    { data: "userName", title: "Vendedor" },
                     {
                         data: "fecha",
                         title: "Fecha",

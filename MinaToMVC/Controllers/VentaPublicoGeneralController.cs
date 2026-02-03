@@ -326,6 +326,11 @@ namespace MinaToMVC.Controllers
             var r = await httpClientConnection.SearchClienteByRFID(rfid);
             return JsonConvert.SerializeObject(r);
         }
+        public async Task<string> SearchClienteByNombre(string nombre)
+        {
+            var r = await httpClientConnection.SearchClienteByNombre(nombre);
+            return JsonConvert.SerializeObject(r);
+        }
         
         public async Task<string> GetVehiculosPublicoGralByIdCliente(long id)
         {
