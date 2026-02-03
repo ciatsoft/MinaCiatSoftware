@@ -32,7 +32,7 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetMetodoPagoById(id);
             return result;
         }
-        [HttpDelete, Route("{id:int}")]
+        [HttpPost, Route("{id:int}")]
         public ModelResponse DeleteMetodoPago(int id)
         {
             var result = wrapper.DeleteMetodoPago(id);

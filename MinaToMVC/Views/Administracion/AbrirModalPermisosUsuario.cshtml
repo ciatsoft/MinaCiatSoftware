@@ -144,7 +144,7 @@
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                GetMVC("/Administracion/DeleteUsuarioRolById?id=" + idRegistro, function (r) {
+                PostMVC("/Administracion/DeleteUsuarioRolById?id=" + idRegistro, function (r) {
                     if (r.IsSuccess) {
                         // Buscar el rol eliminado en la tabla de RolesPermitidos
                         var table = $("#tblRolesPermitidos").DataTable();

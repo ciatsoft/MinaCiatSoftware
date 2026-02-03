@@ -202,7 +202,7 @@ namespace MinaToMVC.DAL
         }
         public async Task<ModelResponse> DeleteDeducciones(long deduccionId)
         {
-            var result = await RequestAsync($"api/PV_Venta/Deducciones/{deduccionId}", HttpMethod.Delete, null,
+            var result = await RequestAsync($"api/PV_Venta/Deducciones/{deduccionId}", HttpMethod.Post, null,
                 new Func<string, string>((responseString) =>
                 {
                     return responseString;

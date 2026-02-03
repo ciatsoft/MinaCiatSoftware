@@ -7,21 +7,22 @@
     <div class="col-lg-12"></div>
 </div>
 <div class="row">
+    <input type="hidden" name="idregistro" id="idRegistro" value="0" class="form-control" />
     <div class="col-lg-3">
         <label>Fecha inicial</label>
-        <input type="date" name="dtpFI" id="dtpFI" value="" class="form-control"/>
+        <input type="date" name="dtpFI" id="dtpFI" value="" class="form-control" />
     </div>
     <div class="col-lg-3">
         <label>Fecha Final</label>
-        <input type="date" name="drpFF" id="drpFF" value="" class="form-control"/>
+        <input type="date" name="drpFF" id="drpFF" value="" class="form-control" />
     </div>
     <div class="col-lg-3">
         <label>Monto</label>
-        <input type="number" name="txtMonto" id="txtMonto" value="" class="form-control"/>
+        <input type="text" name="txtMonto" id="txtMonto" value="" class="form-control" />
     </div>
     <div class="col-lg-3">
         <label>¿Es el salario actual?</label>
-        <input type="checkbox" name="chbEsSalarioActual" id="chbEsSalarioActual" value="" class="form-control" onchange="ChanegChebSalariOActual()"/>
+        <input type="checkbox" name="chbEsSalarioActual" id="chbEsSalarioActual" value="" class="form-control" onchange="ChanegChebSalariOActual()" />
     </div>
 </div>
 <div class="row">
@@ -36,3 +37,58 @@
         </table>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $('#txtMonto').on('input', function () {
+            // Permitir números y un punto decimal
+            let input = $(this).val();
+
+            // Remover todo excepto números y un punto decimal
+            let value = input.replace(/[^0-9.]/g, '');
+
+            // Permitir solo un punto decimal
+            let parts = value.split('.');
+            if (parts.length > 2) {
+                value = parts[0] + '.' + parts.slice(1).join('');
+            }
+
+            // Limitar a 2 decimales
+            if (parts.length > 1 && parts[1].length > 2) {
+                value = parts[0] + '.' + parts[1].substring(0, 2);
+            }
+
+            $(this).val(value);
+
+            // Formatear como moneda cuando pierde el foco
+        }).on('blur', function () {
+            let value = $(this).val();
+            if (value && value.trim() !== '') {
+                // Convertir a número y formatear
+                let num = parseFloat(value);
+                if (!isNaN(num)) {
+                    let formatted = '$ ' + num.toLocaleString('es-MX', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                    $(this).val(formatted);
+                }
+            }
+        }).on('focus', function () {
+            // Al enfocar, quitar el formato para editar
+            let value = $(this).val().replace(/[^0-9.]/g, '');
+            $(this).val(value);
+        });
+
+        // Para enviar al servidor
+        $('form').on('submit', function () {
+            let rawValue = $('#txtMonto').val().replace(/[^0-9.]/g, '');
+            if (rawValue) {
+                let num = parseFloat(rawValue);
+                if (!isNaN(num)) {
+                    $('#txtMonto').val(num.toFixed(2));
+                }
+            }
+        });
+    });
+</script>

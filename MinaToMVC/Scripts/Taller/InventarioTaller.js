@@ -13,7 +13,7 @@ $(document).ready(function () {
 
     // También puedes inicializar el valor si ya hay una selección al cargar la página
     if ($("#ddlCategoriaInventario").val() !== "") {
-        var initialText = $("#ddlCategoriaInventario option:selected").text();
+        var initialText = $("#ddlCategoriaInventario option:selected").text();x
         $("#nombreCategoria").val(initialText);
     }
 
@@ -223,7 +223,7 @@ function SaveOrUpdateInventario() {
             Marca: $("#marca").val(),
             CodigoFabricante: $("#codigoFabricante").val(),
             CantidadExistente: $("#cantidadExistencia").val(),
-            PrecioCompra: $("#precioCompra").val(),
+            PrecioCompra: $("#precioCompra").val().replace(/[^\d.]/g, ''),
             UbicacionAlmacen: $("#ubicacionAlmacen").val(),
             Proveedor: $("#proveedor").val(),
             Estatus: $("#estatus").val(),
@@ -334,6 +334,10 @@ document.getElementById("btnGenerarPDF").addEventListener("click", function () {
     generarReportePDF();
 });
 
+document.getElementById("btnGenerarExcel").addEventListener("click", function () {
+    generarReporteExcelInventario();
+});
+
 // Función para generar el reporte PDF
 function generarReportePDF() {
     var table = $('#tblInventario').DataTable();
@@ -404,6 +408,107 @@ function generarReportePDF() {
     var form = $('<form>', {
         method: 'POST',
         action: '/Pdf/GenerarReporteInventario'
+    });
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'tablaHTML',
+        value: tablaHTML
+    }).appendTo(form);
+
+    form.appendTo('body').submit().remove();
+}
+
+function generarReporteExcelInventario() {
+    var table = $('#tblInventario').DataTable();
+    var datos = table.data().toArray();
+
+    // Verificar si la tabla está vacía
+    if (datos.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Inventario vacío',
+            text: 'No hay productos en el inventario para generar el reporte',
+            confirmButtonText: 'Aceptar'
+        });
+        return;
+    }
+
+    // Función auxiliar para determinar estado del inventario
+    function obtenerEstadoTexto(cantidad) {
+        if (cantidad === 0 || cantidad === "0") return "Agotado";
+        else if (cantidad <= 5) return "Bajo";
+        else if (cantidad <= 20) return "Normal";
+        else return "Suficiente";
+    }
+
+    // Swalfire de generando reporte
+    Swal.fire({
+        title: "Generando Excel...",
+        text: "Por favor espere mientras se genera el archivo Excel",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+
+            // Cerrar automáticamente después de 2 segundos
+            setTimeout(() => {
+                Swal.close();
+
+                // Mostrar mensaje de éxito después de cerrar
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Excel generado!',
+                    text: 'El archivo Excel se ha creado correctamente',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            }, 2000);
+        }
+    });
+
+    // Crear tabla HTML manualmente
+    var tablaHTML = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
+
+    // Encabezados
+    tablaHTML += '<thead><tr>';
+    tablaHTML += '<th>Nombre</th>';
+    tablaHTML += '<th>Categoria</th>';
+    tablaHTML += '<th>Marca</th>';
+    tablaHTML += '<th>Codigo del Fabricante</th>';
+    tablaHTML += '<th>Estado Inventario</th>';
+    tablaHTML += '<th>Cantidad Existente</th>';
+    tablaHTML += '<th>Precio</th>';
+    tablaHTML += '<th>Ubicacion en Almacen</th>';
+    tablaHTML += '<th>Proveedor</th>';
+    tablaHTML += '</tr></thead>';
+
+    // Datos
+    tablaHTML += '<tbody>';
+    datos.forEach(function (item) {
+        var estadoTexto = obtenerEstadoTexto(item.cantidadExistente || 0);
+
+        tablaHTML += '<tr>';
+        tablaHTML += '<td>' + (item.nombre || '') + '</td>';
+        tablaHTML += '<td>' + (item.nombreCategoria || '') + '</td>';
+        tablaHTML += '<td>' + (item.marca || '') + '</td>';
+        tablaHTML += '<td>' + (item.codigoFabricante || '') + '</td>';
+        tablaHTML += '<td>' + estadoTexto + '</td>';
+        tablaHTML += '<td>' + (item.cantidadExistente || '') + '</td>';
+        tablaHTML += '<td>' + (item.precioCompra ?
+            new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN'
+            }).format(item.precioCompra) : '') + '</td>';
+        tablaHTML += '<td>' + (item.ubicacionAlmacen || '') + '</td>';
+        tablaHTML += '<td>' + (item.proveedor || '') + '</td>';
+        tablaHTML += '</tr>';
+    });
+    tablaHTML += '</tbody></table>';
+
+    // Crear formulario y enviar
+    var form = $('<form>', {
+        method: 'POST',
+        action: '/Excel/GenerarReporteInventario'
     });
 
     $('<input>').attr({

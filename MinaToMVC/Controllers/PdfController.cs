@@ -1010,6 +1010,8 @@ namespace MinaToMVC.Controllers
 
             return Json(new { pdf = pdfBase64 });
         }
+
+        // NOMINA EMPLEADO
         [HttpPost]
         public ActionResult GenerarPDF(string htmlContent)
         {
@@ -1034,150 +1036,227 @@ namespace MinaToMVC.Controllers
         }
 
         [HttpPost]
-[ValidateInput(false)]
-public ActionResult GenerarReporteConsolidado(string tablaHTML, decimal totalGeneralSalarios, decimal totalGeneralConceptos, string fechaInicio, string fechaFin)
-{
-    byte[] pdfBytes = null;
+        [ValidateInput(false)]
+        public ActionResult GenerarReporteConsolidado(string tablaHTML, decimal totalGeneralSalarios, decimal totalGeneralConceptos, string fechaInicio, string fechaFin)
+        {
+            byte[] pdfBytes = null;
 
-    try
-    {
-        string fechaGeneracion = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+            try
+            {
+                string fechaGeneracion = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
         
-        string htmlCompleto = $@"
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset='UTF-8'>
-            <title>Reporte Consolidado de Nóminas y Conceptos</title>
-            <style>
-                body {{ 
-                    font-family: Arial, sans-serif; 
-                    margin: 20px; 
-                    font-size: 12px;
-                    color: #333;
-                }}
-                .header {{ 
-                    text-align: center; 
-                    margin-bottom: 25px;
-                    border-bottom: 3px solid #2c3e50;
-                    padding-bottom: 15px;
-                }}
-                h1 {{ 
-                    color: #2c3e50; 
-                    margin: 0 0 8px 0;
-                    font-size: 24px;
-                }}
-                h2 {{
-                    color: #34495e;
-                    font-size: 18px;
-                    margin: 25px 0 12px 0;
-                    padding: 10px;
-                    background-color: #ecf0f1;
-                    border-left: 5px solid #3498db;
-                }}
-                h3 {{
-                    color: #2c3e50;
-                    font-size: 16px;
-                    margin: 20px 0 10px 0;
-                }}
-                .fecha {{
-                    font-size: 14px;
-                    color: #7f8c8d;
-                    font-weight: bold;
-                }}
-                .periodo {{
-                    font-size: 13px;
-                    color: #34495e;
-                    margin: 5px 0;
-                }}
-                table {{ 
-                    width: 100%; 
-                    border-collapse: collapse; 
-                    margin-top: 15px;
-                    font-size: 10px;
-                    page-break-inside: auto;
-                }}
-                th, td {{ 
-                    padding: 8px; 
-                    text-align: left; 
-                    border: 1px solid #bdc3c7; 
-                    word-wrap: break-word;
-                }}
-                th {{ 
-                    background-color: #34495e; 
-                    color: white;
-                    font-weight: bold;
-                    text-align: center;
-                    font-size: 11px;
-                }}
-                tr:nth-child(even) {{ 
-                    background-color: #f8f9fa; 
-                }}
-                .total-row {{
-                    background-color: #2c3e50 !important;
-                    color: white;
-                    font-weight: bold;
-                }}
-                .footer {{ 
-                    text-align: center; 
-                    margin-top: 40px; 
-                    font-size: 10px; 
-                    color: #7f8c8d;
-                    border-top: 1px solid #bdc3c7;
-                    padding-top: 15px;
-                }}
-                .conceptos-section {{
-                    margin-top: 30px;
-                    page-break-before: always;
-                }}
-                .totales-section {{
-                    margin-top: 30px;
-                    padding: 20px;
-                    background-color: #f8f9fa;
-                    border: 2px solid #dee2e6;
-                    border-radius: 8px;
-                }}
-            </style>
-        </head>
-        <body>
-            <div class='header'>
-                <h1>Reporte Consolidado de Nóminas y Conceptos</h1>
-                <p class='fecha'><strong>Fecha de generación:</strong> {fechaGeneracion}</p>
-                <p class='periodo'><strong>Período reportado:</strong> Del {fechaInicio} al {fechaFin}</p>
-            </div>
+                string htmlCompleto = $@"
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset='UTF-8'>
+                    <title>Reporte Consolidado de Nóminas y Conceptos</title>
+                    <style>
+                        body {{ 
+                            font-family: Arial, sans-serif; 
+                            margin: 20px; 
+                            font-size: 12px;
+                            color: #333;
+                        }}
+                        .header {{ 
+                            text-align: center; 
+                            margin-bottom: 25px;
+                            border-bottom: 3px solid #2c3e50;
+                            padding-bottom: 15px;
+                        }}
+                        h1 {{ 
+                            color: #2c3e50; 
+                            margin: 0 0 8px 0;
+                            font-size: 24px;
+                        }}
+                        h2 {{
+                            color: #34495e;
+                            font-size: 18px;
+                            margin: 25px 0 12px 0;
+                            padding: 10px;
+                            background-color: #ecf0f1;
+                            border-left: 5px solid #3498db;
+                        }}
+                        h3 {{
+                            color: #2c3e50;
+                            font-size: 16px;
+                            margin: 20px 0 10px 0;
+                        }}
+                        .fecha {{
+                            font-size: 14px;
+                            color: #7f8c8d;
+                            font-weight: bold;
+                        }}
+                        .periodo {{
+                            font-size: 13px;
+                            color: #34495e;
+                            margin: 5px 0;
+                        }}
+                        table {{ 
+                            width: 100%; 
+                            border-collapse: collapse; 
+                            margin-top: 15px;
+                            font-size: 10px;
+                            page-break-inside: auto;
+                        }}
+                        th, td {{ 
+                            padding: 8px; 
+                            text-align: left; 
+                            border: 1px solid #bdc3c7; 
+                            word-wrap: break-word;
+                        }}
+                        th {{ 
+                            background-color: #34495e; 
+                            color: white;
+                            font-weight: bold;
+                            text-align: center;
+                            font-size: 11px;
+                        }}
+                        tr:nth-child(even) {{ 
+                            background-color: #f8f9fa; 
+                        }}
+                        .total-row {{
+                            background-color: #2c3e50 !important;
+                            color: white;
+                            font-weight: bold;
+                        }}
+                        .footer {{ 
+                            text-align: center; 
+                            margin-top: 40px; 
+                            font-size: 10px; 
+                            color: #7f8c8d;
+                            border-top: 1px solid #bdc3c7;
+                            padding-top: 15px;
+                        }}
+                        .conceptos-section {{
+                            margin-top: 30px;
+                            page-break-before: always;
+                        }}
+                        .totales-section {{
+                            margin-top: 30px;
+                            padding: 20px;
+                            background-color: #f8f9fa;
+                            border: 2px solid #dee2e6;
+                            border-radius: 8px;
+                        }}
+                    </style>
+                </head>
+                <body>
+                    <div class='header'>
+                        <h1>Reporte Consolidado de Nóminas y Conceptos</h1>
+                        <p class='fecha'><strong>Fecha de generación:</strong> {fechaGeneracion}</p>
+                        <p class='periodo'><strong>Período reportado:</strong> Del {fechaInicio} al {fechaFin}</p>
+                    </div>
             
-            <h2>Detalle Consolidado por Empleado</h2>
-            {tablaHTML}
+                    <h2>Detalle Consolidado por Empleado</h2>
+                    {tablaHTML}
             
-            <div class='footer'>
-                <p>Reporte generado por Sistema de Mina San Miguel</p>
-                <p>Documento generado el {DateTime.Now:dd/MM/yyyy HH:mm}</p>
-            </div>
-        </body>
-        </html>";
+                    <div class='footer'>
+                        <p>Reporte generado por Sistema de Mina San Miguel</p>
+                        <p>Documento generado el {DateTime.Now:dd/MM/yyyy HH:mm}</p>
+                    </div>
+                </body>
+                </html>";
 
-        // Configurar el convertidor HTML a PDF
-        var htmlToPdf = new HtmlToPdfConverter();
-        htmlToPdf.Orientation = PageOrientation.Landscape;
-        htmlToPdf.Size = PageSize.Letter;
-        htmlToPdf.Margins = new PageMargins { Top = 15, Bottom = 15, Left = 10, Right = 10 };
+                // Configurar el convertidor HTML a PDF
+                var htmlToPdf = new HtmlToPdfConverter();
+                htmlToPdf.Orientation = PageOrientation.Landscape;
+                htmlToPdf.Size = PageSize.Letter;
+                htmlToPdf.Margins = new PageMargins { Top = 15, Bottom = 15, Left = 10, Right = 10 };
 
-        // Configuraciones adicionales
-        htmlToPdf.LowQuality = false;
-        htmlToPdf.Quiet = true;
+                // Configuraciones adicionales
+                htmlToPdf.LowQuality = false;
+                htmlToPdf.Quiet = true;
 
-        // Generar el PDF
-        pdfBytes = htmlToPdf.GeneratePdf(htmlCompleto);
+                // Generar el PDF
+                pdfBytes = htmlToPdf.GeneratePdf(htmlCompleto);
 
-        // Devolver el PDF para descarga
-        return File(pdfBytes, "application/pdf", $"Reporte_Consolidado_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
-    }
-    catch (Exception ex)
-    {
-        System.Diagnostics.Debug.WriteLine($"Error al generar PDF: {ex.Message}");
-        System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-        return Content("Error al generar el reporte PDF. Por favor, intente nuevamente.");
-    }
-}
+                // Devolver el PDF para descarga
+                return File(pdfBytes, "application/pdf", $"Reporte_Consolidado_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error al generar PDF: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+                return Content("Error al generar el reporte PDF. Por favor, intente nuevamente.");
+            }
+        }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult GenerarReporteGastosGenerales(string htmlContent, string fecha, string userName, string datosDeducciones)
+        {
+            try
+            {
+                // Configurar el convertidor HTML a PDF
+                var htmlToPdf = new HtmlToPdfConverter();
+                htmlToPdf.Orientation = PageOrientation.Default;
+                htmlToPdf.Size = PageSize.Letter;
+                htmlToPdf.Margins = new PageMargins { Top = 15, Bottom = 15, Left = 10, Right = 10 };
+                htmlToPdf.LowQuality = false;
+                htmlToPdf.Quiet = true;
+
+                // Generar el PDF
+                var pdfBytes = htmlToPdf.GeneratePdf(htmlContent);
+
+                // Nombre del archivo
+                var fileName = $"Reporte_Gastos_Generales_{fecha?.Replace("/", "-")}_{userName}.pdf";
+
+                // Devolver el PDF para descarga
+                return File(pdfBytes, "application/pdf", fileName);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error al generar PDF: {ex.Message}");
+
+                // Log completo del error
+                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+
+                // En caso de error, devolver un mensaje JSON para que JavaScript lo maneje
+                return Json(new
+                {
+                    success = false,
+                    message = $"Error al generar el reporte PDF: {ex.Message}"
+                });
+            }
+        }
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult GenerarReporteGastosTipo(string htmlContent, string fecha, string userName, string datosDeduccionesTipo)
+        {
+            try
+            {
+                // Configurar el convertidor HTML a PDF
+                var htmlToPdf = new HtmlToPdfConverter();
+                htmlToPdf.Orientation = PageOrientation.Default;
+                htmlToPdf.Size = PageSize.Letter;
+                htmlToPdf.Margins = new PageMargins { Top = 15, Bottom = 15, Left = 10, Right = 10 };
+                htmlToPdf.LowQuality = false;
+                htmlToPdf.Quiet = true;
+
+                // Generar el PDF
+                var pdfBytes = htmlToPdf.GeneratePdf(htmlContent);
+
+                // Nombre del archivo
+                var fileName = $"Reporte_Gastos_por_Tipo_{fecha?.Replace("/", "-")}_{userName}.pdf";
+
+                // Devolver el PDF para descarga
+                return File(pdfBytes, "application/pdf", fileName);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error al generar PDF: {ex.Message}");
+
+                // Log completo del error
+                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+
+                // En caso de error, devolver un mensaje JSON para que JavaScript lo maneje
+                return Json(new
+                {
+                    success = false,
+                    message = $"Error al generar el reporte PDF: {ex.Message}"
+                });
+            }
+        }
     }
 }

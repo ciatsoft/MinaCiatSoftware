@@ -90,8 +90,14 @@ namespace MinaToMVC.Controllers
 
         #region Data Acces
         [HttpPost]
-        public async Task<string> FirstAutentication(string user, string pass)
+        public async Task<ActionResult> FirstAutentication(string user, string pass)
         {
+            var mr = new // Crea un objeto anónimo para la respuesta
+            {
+                IsSuccess = false,
+                Message = ""
+            };
+
             pass = Cryptography.Encrypt(pass);
 
             Token token = await httpClientConnection.GetToken(user, pass);
@@ -103,9 +109,8 @@ namespace MinaToMVC.Controllers
                 // Verificar si responseAutenticated es null (cuenta eliminada)
                 if (responseAutenticated.Response == null)
                 {
-                    mr.IsSuccess = false;
-                    mr.Message = "Cuenta Eliminada";
-                    return JsonConvert.SerializeObject(mr);
+                    mr = new { IsSuccess = false, Message = "Cuenta Eliminada" };
+                    return Json(mr, JsonRequestBehavior.AllowGet);
                 }
 
                 var userAutenticated = JsonConvert.DeserializeObject<Usuario>(responseAutenticated.Response.ToString());
@@ -119,16 +124,14 @@ namespace MinaToMVC.Controllers
 
                 SessionHelper.CreateSession(JsonConvert.SerializeObject(tokenCookie));
 
-                mr.IsSuccess = true;
-                mr.Message = "Autenticación exitosa";
+                mr = new { IsSuccess = true, Message = "Autenticación exitosa" };
             }
             else
             {
-                mr.IsSuccess = false;
-                mr.Message = "Usuario o Contraseña incorrecto";
+                mr = new { IsSuccess = false, Message = "Usuario o Contraseña incorrecto" };
             }
 
-            return JsonConvert.SerializeObject(mr);
+            return Json(mr, JsonRequestBehavior.AllowGet);
         }
 
         //Comentarios

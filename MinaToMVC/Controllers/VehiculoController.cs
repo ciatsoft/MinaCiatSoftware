@@ -45,6 +45,10 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.SaveOrUpdateVehiculo(f);
             return Redirect("~/Taller/Vehiculos");
         }
-
+        public async Task<ActionResult> EliminarVehiculo(long id)
+        {
+            var r = await httpClientConnection.DeleteVehiculo(id);
+            return Redirect("Inventario_Taller");
+        }
     }
 }

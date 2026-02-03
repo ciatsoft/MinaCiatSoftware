@@ -106,7 +106,7 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-        [HttpDelete, Route("Deducciones/{id:long}")]
+        [HttpPost, Route("Deducciones/{id:long}")]
         public ModelResponse DeleteDeducciones(long id)
         {
             var result = wrapper.DeleteDeducciones(id);

@@ -37,11 +37,8 @@
                     <div class="col-lg-4">
                         <label for="txtPrecioActivo">Precio Menudeo:</label>
                         <div class="row">
-                            <div class="col-lg-2">
-                                <label>$</label>
-                            </div>
-                            <div class="col-lg-10">
-                                @Html.TextBoxFor(x => x.PrecioMenudeo, new { @class = "form-control", @type = "number", @min = "0", @step = "any", oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
+                            <div class="col-lg-12">
+                                @Html.TextBoxFor(x => x.PrecioMenudeo, new { @class = "form-control", @id = "precioMenudeo", @type = "text" })
                             </div>
                         </div>
                     </div>
@@ -52,11 +49,8 @@
                     <div class="col-lg-4">
                         <label for="txtPrecioActivo">Precio Mayoreo:</label>
                         <div class="row">
-                            <div class="col-lg-2">
-                                <label>$</label>
-                            </div>
-                            <div class="col-lg-10">
-                                @Html.TextBoxFor(x => x.PrecioMayoreo, new { @class = "form-control", @type = "number", @min = "0", @step = "any", oninput = "this.value = this.value.replace(/[^0-9.]/g, '')" })
+                            <div class="col-lg-12">
+                                @Html.TextBoxFor(x => x.PrecioMayoreo, new { @class = "form-control", @id = "precioMayoreo", @type = "text" })
                             </div>
                         </div>
                     </div>
@@ -86,3 +80,93 @@
 }
 
 <script src="@(Url.StaticFile("Scripts/VentaPublicoGeneral/Precios.js"))"></script>
+
+<script>
+    $(document).ready(function () {
+        // Seleccionar ambos inputs
+        const $inputs = $('#precioMenudeo, #precioMayoreo');
+
+        $inputs.on('input', function () {
+            // Permitir números y un punto decimal
+            let input = $(this).val();
+
+            // Remover todo excepto números y un punto decimal
+            let value = input.replace(/[^0-9.]/g, '');
+
+            // Permitir solo un punto decimal
+            let parts = value.split('.');
+            if (parts.length > 2) {
+                value = parts[0] + '.' + parts.slice(1).join('');
+            }
+
+            // Limitar a 2 decimales
+            if (parts.length > 1 && parts[1].length > 2) {
+                value = parts[0] + '.' + parts[1].substring(0, 2);
+            }
+
+            $(this).val(value);
+        }).on('blur', function () {
+            let value = $(this).val();
+            if (value && value.trim() !== '') {
+                // Convertir a número y formatear
+                let num = parseFloat(value);
+                if (!isNaN(num)) {
+                    let formatted = '$ ' + num.toLocaleString('es-MX', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                    $(this).val(formatted);
+                }
+            }
+        }).on('focus', function () {
+            // Al enfocar, quitar el formato para editar
+            let value = $(this).val().replace(/[^\d.]/g, '');
+            // Eliminar el símbolo de dólar y espacios
+            value = value.replace(/[^\d.]/g, '');
+            $(this).val(value);
+        });
+
+        // Para enviar al servidor
+        $('form').on('submit', function (e) {
+            // Prevenir envío si quieres ver los valores en consola primero
+            // e.preventDefault();
+
+            $inputs.each(function () {
+                let $input = $(this);
+                let rawValue = $input.val().replace(/[^\d.]/g, '');
+                if (rawValue) {
+                    let num = parseFloat(rawValue);
+                    if (!isNaN(num)) {
+                        // Crear un input hidden o actualizar el valor
+                        $input.val(num.toFixed(2));
+                    }
+                }
+            });
+
+            // Si necesitas guardar los valores sin formato para otro campo
+            // puedes agregar inputs hidden:
+            $inputs.each(function () {
+                let $input = $(this);
+                let rawValue = $input.val().replace(/[^\d.]/g, '');
+                let id = $input.attr('id');
+
+                // Crear o actualizar input hidden
+                let $hidden = $('#' + id + '_raw');
+                if ($hidden.length === 0) {
+                    $hidden = $('<input>')
+                        .attr('type', 'hidden')
+                        .attr('name', id + '_raw')
+                        .attr('id', id + '_raw');
+                    $input.after($hidden);
+                }
+                $hidden.val(rawValue || '');
+            });
+
+            // Para debug: ver valores en consola
+            console.log('Valores enviados:');
+            $inputs.each(function () {
+                console.log($(this).attr('id') + ': ' + $(this).val());
+            });
+        });
+    });
+</script>

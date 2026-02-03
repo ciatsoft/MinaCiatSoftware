@@ -45,7 +45,7 @@ namespace MinaTolWebApi.Controllers
         }
 
         // Eliminar documento por Id
-        [HttpDelete, Route("{id:long}")]
+        [HttpPost, Route("{id:long}")]
         public ModelResponse DeleteDocumentoById(long id)
         {
             var result = wrapper.DeleteDocumentoById(id);
@@ -61,7 +61,7 @@ namespace MinaTolWebApi.Controllers
         }
 
         // Eliminar documento empleado por Id
-        [HttpDelete, Route("DocumentosEmpleado/{id:long}")]
+        [HttpPost, Route("DocumentosEmpleado/{id:long}")]
         public ModelResponse DeleteDocumentoEmpleadoById(long id)
         {
             var result = wrapper.DeleteDocumentoEmpleadoById(id);

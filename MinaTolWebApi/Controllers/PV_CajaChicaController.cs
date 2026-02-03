@@ -31,7 +31,7 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetPV_CajaChicaById(id);
             return result;
         }
-        [HttpDelete, Route("{id:long}")]
+        [HttpPost, Route("{id:long}")]
         public async Task<ModelResponse> DeletePV_CajaChica(int id)
         {
             var result = wrapper.DeletePV_CajaChica(id);

@@ -3,7 +3,7 @@
     ViewBag.Title = "Venta Publico en General";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    var formasPago = (List<string>)ViewBag.FormasPago;
+    var formasPago = ViewBag.FormasPago;
     var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
 }
 
@@ -79,7 +79,7 @@
                     <div class="col-lg-3">
                         <label>Forma de pago:</label>
                         <select id="formaPago" name="FormaDePago" class="form-control">
-                            @foreach (var formaPago in formasPago)
+                            @foreach (var formaPago in ViewBag.FormasPago)
                             {
                                 var splitFormaPago = formaPago.Split(':');
                                 <option value="@splitFormaPago[0]">@splitFormaPago[1]</option>
@@ -88,7 +88,12 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Cantidad Recibida:</label>
-                        @Html.TextBoxFor(x => x.CantidadRecibida, new { @class = "form-control", @type = "number", id = "dineroRecibido" })
+                        @Html.TextBoxFor(x => x.CantidadRecibida, new
+                        {
+                            @class = "form-control",
+                            id = "dineroRecibido",
+                            @type = "number"  // Cambia a text para formato personalizado
+                        })
                     </div>
                     <div class="col-lg-3">
                         <label>Vendedor:</label>
@@ -212,17 +217,3 @@
 </div>
 
 <script src="@(Url.StaticFile("Scripts/VentaPublicoGeneral/Index.js"))"></script>
-<script>
-    window.addEventListener('DOMContentLoaded', () => {
-        const now = new Date();
-        const fechaInput = document.getElementById('fecha');
-
-        // Formatea la fecha a YYYY-MM-DD
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-
-        const formattedDate = `${year}-${month}-${day}`;
-        fechaInput.value = formattedDate;
-    });
-</script>

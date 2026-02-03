@@ -62,7 +62,7 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetTrabajadorById(id);
             return result;
         }
-        [HttpDelete, Route("{id:long}")]
+        [HttpPost, Route("{id:long}")]
         public ModelResponse DeleteEmpleadoById(long id)
         {
             var result = wrapper.DeleteEmpleadoById(id);
@@ -125,7 +125,7 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-        [HttpDelete, Route("ConceptosEmpleados/{id:long}")]
+        [HttpPost, Route("ConceptosEmpleados/{id:long}")]
         public ModelResponse DeleteConceptosEmpleadosById(long id)
         {
             var result = wrapper.DeleteConceptosEmpleadosById(id);

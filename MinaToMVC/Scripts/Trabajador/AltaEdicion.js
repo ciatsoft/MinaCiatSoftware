@@ -219,6 +219,10 @@ document.getElementById("btnGenerarPDF").addEventListener("click", function () {
     generarReportePDF();
 });
 
+document.getElementById("btnGenerarExcel").addEventListener("click", function () {
+    generarReporteExcelEmpleados();
+});
+
 // Función para generar el reporte PDF
 function generarReportePDF() {
     var table = $('#tblEmpleados').DataTable();
@@ -297,6 +301,106 @@ function generarReportePDF() {
     form.appendTo('body').submit().remove();
 }
 
+function generarReporteExcelEmpleados() {
+    var table = $('#tblEmpleados').DataTable();
+    var datos = table.data().toArray();
+
+    // Verificar si la tabla está vacía
+    if (datos.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Tabla vacía',
+            text: 'No hay empleados para generar el reporte',
+            confirmButtonText: 'Aceptar'
+        });
+        return;
+    }
+
+    // Swalfire de generando reporte
+    Swal.fire({
+        title: "Generando Excel...",
+        text: "Por favor espere mientras se genera el archivo Excel",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+
+            // Cerrar automáticamente después de 2 segundos
+            setTimeout(() => {
+                Swal.close();
+
+                // Mostrar mensaje de éxito después de cerrar
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Excel generado!',
+                    text: 'El archivo Excel se ha creado correctamente',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            }, 2000);
+        }
+    });
+
+    // Crear tabla HTML manualmente
+    var tablaHTML = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
+
+    // Encabezados
+    tablaHTML += '<thead><tr>';
+    tablaHTML += '<th>Nombre Completo</th>';
+    tablaHTML += '<th>NSS</th>';
+    tablaHTML += '<th>Departamento</th>';
+    tablaHTML += '<th>Telefono</th>';
+    tablaHTML += '<th>Fecha de Contratacion</th>';
+    tablaHTML += '</tr></thead>';
+
+    // Datos
+    tablaHTML += '<tbody>';
+    datos.forEach(function (item) {
+        tablaHTML += '<tr>';
+        // Nombre completo: apellidoPaterno + apellidoMaterno + nombre
+        var nombreCompleto = (item.apellidoPaterno || '') + ' ' +
+            (item.apellidoMaterno || '') + ' ' +
+            (item.nombre || '');
+        tablaHTML += '<td>' + nombreCompleto.trim() + '</td>';
+
+        // NSS - mantener formato original
+        tablaHTML += '<td>' + (item.nss || '') + '</td>';
+
+        // Departamento
+        tablaHTML += '<td>' + (item.nombreDepartamento || '') + '</td>';
+
+        // Teléfono
+        tablaHTML += '<td>' + (item.telefono || '') + '</td>';
+
+        // Fecha de contratación
+        var fechaContratacion = item.fechaContratacion || '';
+        if (fechaContratacion && fechaContratacion.includes('T')) {
+            fechaContratacion = fechaContratacion.split('T')[0];
+            // Convertir a formato dd/MM/yyyy
+            var fechaParts = fechaContratacion.split('-');
+            if (fechaParts.length === 3) {
+                fechaContratacion = fechaParts[2] + '/' + fechaParts[1] + '/' + fechaParts[0];
+            }
+        }
+        tablaHTML += '<td>' + fechaContratacion + '</td>';
+        tablaHTML += '</tr>';
+    });
+    tablaHTML += '</tbody></table>';
+
+    // Crear formulario y enviar
+    var form = $('<form>', {
+        method: 'POST',
+        action: '/Excel/GenerarReporteEmpleados'
+    });
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'tablaHTML',
+        value: tablaHTML
+    }).appendTo(form);
+
+    form.appendTo('body').submit().remove();
+}
+
 function AsignarSalario(trabajadorId) {
     $("#titleGenerciModal").text("Asignación de salario");
     $("#boddyGeericModal").empty().load("/Empleado/PartialCrudSalario/" + trabajadorId, function () {
@@ -312,10 +416,17 @@ function SaveOrUpdateSalario() {
         var fi = ((dateI.getDate() > 9) ? dateI.getDate() : ('0' + dateI.getDate())) + '/' + ((dateI.getMonth() > 8) ? (dateI.getMonth() + 1) : ('0' + (dateI.getMonth() + 1))) + '/' + dateI.getFullYear();
         var dateF = new Date($("#drpFF").val());
         var ff = ((dateF.getDate() > 9) ? dateF.getDate() : ('0' + dateF.getDate())) + '/' + ((dateF.getMonth() > 8) ? (dateF.getMonth() + 1) : ('0' + (dateF.getMonth() + 1))) + '/' + dateF.getFullYear();
+
+        // Fecha y hora actual en formato ISO (ESTÁNDAR RECOMENDADO)
+        var fechaHoraActual = new Date().toISOString();
+
         var parametros = {
-            FechaInicial: fi,
+            Id: $("#idRegistro").val(),
+            CreatedDt: fechaHoraActual,  // Fecha y hora actual
+            UpdatedDt: fechaHoraActual,  // Fecha y hora actual
+            FechaInicio: fi,
             FechaFinal: ff,
-            Monto: $("#txtMonto").val(),
+            Monto: $("#txtMonto").val().replace(/[^\d.]/g, ''),
             EsSalarioActual: $("#chbEsSalarioActual").is(':checked'),
             Empleado: {
                 Id: $("#txtTrabajadorId").val()
@@ -350,20 +461,108 @@ function CargarTablasalarios() {
                     return formatDate(data);
                 }
             },
-            { data: "fechaFinal", title: "Fecha Termino" },
             {
-                data: "monto", title: "Monto", render: function (data) {
-                    return formatMoney(data);
+                data: "fechaFinal", title: "Fecha Termino", render: function (data) {
+                    return formatDate(data);
                 }
             },
-            { data: "esSalarioActual", title: "Salario Actual" },
-            //{
-            //    data: "id", render: function (data) {
-            //        return '<input type="button" value="Editar" class="btn btn-primary" onclick="EditarTrabajador(' + data + ')" />';
-            //    }
-            //}
+            {
+            data: "monto", title: "Monto", render: function (data) {
+                return formatMoney(data);
+            }
+            },
+            {
+                data: "esSalarioActual",
+                title: "Salario Actual",
+                render: function (data, type, row) {
+                    if (type === 'display') {
+                        const color = data === true || data === 'true' || data === 1 ? 'green' : 'red';
+                        const texto = data === true || data === 'true' || data === 1 ? 'Sí' : 'No';
+
+                        return `
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <svg width="16" height="16">
+                                    <circle cx="8" cy="8" r="6" fill="${color}" />
+                                </svg>
+                                <span>${texto}</span>
+                            </div>
+                        `;
+                    }
+                    return data;
+                }
+            },
+            {
+                data: "id",
+                render: function (data, type, row) {
+                    // Convertir el objeto row a string JSON seguro para HTML
+                    const rowData = encodeURIComponent(JSON.stringify(row));
+                    return '<input type="button" value="Editar" class="btn btn-primary" onclick="EditarSalario(' + data + ', \'' + rowData + '\')" />';
+                }
+            }
         ]
     });
+}
+
+function EditarSalario(id, rowData) {
+    try {
+        // Decodificar y parsear el objeto
+        const row = JSON.parse(decodeURIComponent(rowData));
+        console.log("Editando registro ID:", id);
+        console.log("Datos recibidos:", row);
+
+        // Formatear fechas
+        const formatDate = (dateStr) => {
+            if (!dateStr) return '';
+            try {
+                return dateStr.split('T')[0];
+            } catch {
+                return '';
+            }
+        };
+
+        // Llenar campos
+        $('#idRegistro').val(id);
+        $('#dtpFI').val(formatDate(row.fechaInicio));
+        $('#drpFF').val(formatDate(row.fechaFinal));
+        $('#txtMonto').val(row.monto || 0);
+
+        // MANEJO DEL CHECKBOX - VARIAS OPCIONES
+        const checkbox = $('#chbEsSalarioActual');
+
+        // Opción 1: La más robusta
+        let isChecked = false;
+
+        // Verificar diferentes formatos posibles
+        if (row.esSalarioActual !== undefined && row.esSalarioActual !== null) {
+            if (typeof row.esSalarioActual === 'boolean') {
+                isChecked = row.esSalarioActual;
+            } else if (typeof row.esSalarioActual === 'string') {
+                isChecked = row.esSalarioActual.toLowerCase() === 'true';
+            } else if (typeof row.esSalarioActual === 'number') {
+                isChecked = row.esSalarioActual === 1;
+            }
+        }
+        checkbox.prop('checked', isChecked);
+
+        // Crear o actualizar campo hidden para el ID
+        if ($('#currentEditId').length === 0) {
+            $('<input type="hidden" id="currentEditId" />').appendTo('body');
+        }
+        $('#currentEditId').val(id);
+
+        // Cambiar texto del botón si es necesario
+        $('#btnGuardarSalario').val('Actualizar');
+
+        // Ejecutar función onchange si existe
+        if (typeof ChanegChebSalariOActual === 'function') {
+            setTimeout(() => {
+                ChanegChebSalariOActual();
+            }, 100);
+        }
+
+    } catch (error) {
+        alert('Error al cargar los datos para edición: ' + error.message);
+    }
 }
 
 function GetSalarioByTrabajador() {

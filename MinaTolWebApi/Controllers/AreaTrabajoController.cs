@@ -41,7 +41,7 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.SaveOrUpdateAreaTrabajo(at);
             return result;
         }
-        [HttpDelete, Route("{id:long}")]
+        [HttpPost, Route("{id:long}")]
         public ModelResponse DeleteAreaTrabajo(int id)
         {
             var result = wrapper.DeleteAreaTrabajo(id);
