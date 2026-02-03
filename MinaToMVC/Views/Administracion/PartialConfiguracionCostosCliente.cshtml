@@ -35,17 +35,17 @@
         </div>
         <div class="col-4">
             <label for="p-mat-m3">P. Mat. M3</label>
-            <input type="number" id="p-mat-m3" class="form-control" />
+            <input type="text" id="p-mat-m3" class="form-control" />
         </div>
     </div>
     <div class="row mt-2">
         <div class="col-4">
             <label for="p-flete-m3">P. Flete M3</label>
-            <input type="number" id="p-flete-m3" class="form-control" />
+            <input type="text" id="p-flete-m3" class="form-control" />
         </div>
         <div class="col-4">
             <label for="precio-m3">Precio M3</label>
-            <input type="number" id="precio-m3" class="form-control" readonly />
+            <input type="text" id="precio-m3" class="form-control" readonly/>
         </div>
     </div>
     <div class="row mt-2">
@@ -72,31 +72,31 @@
     <div class="row mt-2">
         <div class="col-4">
             <label for="total-diesel">Total Diesel ($)</label>
-            <input type="number" id="total-diesel" class="form-control" readonly />
+            <input type="text" id="total-diesel" class="form-control" readonly />
         </div>
         <div class="col-4">
             <label for="casetas">Casetas</label>
-            <input type="number" id="casetas" class="form-control" />
+            <input type="text" id="casetas" class="form-control" />
         </div>
     </div>
     <div class="row mt-2">
         <div class="col-4">
             <label for="mano-obra">Mano de Obra</label>
-            <input type="number" id="mano-obra" class="form-control" />
+            <input type="text" id="mano-obra" class="form-control" />
         </div>
         <div class="col-4">
             <label for="material-viajes">Material Viajes (30 M3)</label>
-            <input type="number" id="material-viajes" class="form-control" readonly />
+            <input type="text" id="material-viajes" class="form-control" readonly />
         </div>
     </div>
     <div class="row mt-2">
         <div class="col-4">
             <label for="subtotal-ingreso">Subtotal Ingreso (Viajes 30 M3)</label>
-            <input type="number" id="subtotal-ingreso" class="form-control" readonly />
+            <input type="text" id="subtotal-ingreso" class="form-control" readonly />
         </div>
         <div class="col-4">
             <label for="total-gastos">Total Gastos</label>
-            <input type="number" id="total-gastos" class="form-control" readonly />
+            <input type="text" id="total-gastos" class="form-control" readonly />
         </div>
     </div>
     <div class="row mt-2">
@@ -119,22 +119,201 @@
 </div>
 
 <script>
+    // Variables globales
+    let timeout;
+    let dataTableInitialized = false;
+
+    // Función para formatear números como moneda
+    function formatCurrency(value) {
+        if (isNaN(value) || value === 0) return '$ 0.00';
+        return '$ ' + value.toLocaleString('es-MX', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+
+    // Función para convertir formato moneda a número
+    function currencyToNumber(currencyValue) {
+        if (!currencyValue || currencyValue.trim() === '' || currencyValue === '$ ') return 0;
+        const numericValue = parseFloat(currencyValue.replace(/[^0-9.-]+/g, ''));
+        return isNaN(numericValue) ? 0 : numericValue;
+    }
+
+    // Función para calcular los totales generales
+    function calcularTotales() {
+        try {
+            // Obtener precio de combustible
+            var precioActivoCombustible = parseFloat(document.getElementById('PrecioCombustibleActual').value) || 0;
+
+            // Obtener valores (los campos de moneda ya deben estar como números puros para cálculos)
+            const pMatM3 = parseFloat($('#p-mat-m3').data('raw-value')) || 0;
+            const pFleteM3 = parseFloat($('#p-flete-m3').data('raw-value')) || 0;
+            const kmCargado = parseFloat(document.getElementById('km-cargado').value) || 0;
+            const kmBasio = parseFloat(document.getElementById('km-basio').value) || 0;
+            const cargaDiesel = parseFloat(document.getElementById('carga-diesel').value) || 0;
+            const manoObra = parseFloat($('#mano-obra').data('raw-value')) || 0;
+            const casetas = parseFloat($('#casetas').data('raw-value')) || 0;
+
+            // Cálculos intermedios
+            const totalpreciom3 = pMatM3 + pFleteM3;
+            const totalKmRecorridos = kmCargado + kmBasio;
+            const totalpreciokm = cargaDiesel * precioActivoCombustible;
+            const totalGastos = totalpreciokm + manoObra + casetas;
+
+            // Actualizar campos con formato moneda
+            document.getElementById('precio-m3').value = formatCurrency(totalpreciom3);
+            document.getElementById('total-diesel').value = formatCurrency(totalpreciokm);
+            document.getElementById('total-km-recorridos').value = totalKmRecorridos.toFixed(1);
+            document.getElementById('total-gastos').value = formatCurrency(totalGastos);
+
+            return { totalpreciom3, pMatM3, pFleteM3, totalGastos };
+        } catch (error) {
+            console.error('Error en calcularTotales:', error);
+            return { totalpreciom3: 0, pMatM3: 0, pFleteM3: 0, totalGastos: 0 };
+        }
+    }
+
+    // Función para calcular el subtotal
+    function calcularSubtotal(resultados) {
+        try {
+            const { totalpreciom3, pMatM3, totalGastos } = resultados;
+
+            // Cálculos
+            const materialviajesprecio = pMatM3 * 30;
+            const subtotalIngreso = 30 * totalpreciom3;
+            const totalgasto = totalGastos + (pMatM3 * 30);
+
+            // Actualizar campos
+            document.getElementById('material-viajes').value = formatCurrency(materialviajesprecio);
+            document.getElementById('subtotal-ingreso').value = formatCurrency(subtotalIngreso);
+            document.getElementById('total-gastos').value = formatCurrency(totalgasto);
+        } catch (error) {
+            console.error('Error en calcularSubtotal:', error);
+        }
+    }
+
+    // Función principal de cálculos con debounce
+    function debounceCalculations() {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            const resultados = calcularTotales();
+            calcularSubtotal(resultados);
+        }, 300);
+    }
+
+    // Inicializar eventos para los campos de entrada
+    function inicializarEventos() {
+        // Campos que deben disparar cálculos
+        const camposCalculo = [
+            'p-mat-m3',
+            'p-flete-m3',
+            'km-cargado',
+            'km-basio',
+            'carga-diesel',
+            'mano-obra',
+            'casetas'
+        ];
+
+        // Agregar eventos a todos los campos
+        camposCalculo.forEach(id => {
+            const elemento = document.getElementById(id);
+            if (elemento) {
+                elemento.addEventListener('input', debounceCalculations);
+            }
+        });
+    }
+
+    // Función para formatear campos de entrada como moneda (solo para campos de moneda)
+    function inicializarCamposMoneda() {
+        // Campos que son moneda (inputs de dinero)
+        const camposMonedaInput = ['p-mat-m3', 'p-flete-m3', 'mano-obra', 'casetas'];
+
+        // Campos que son resultados (solo lectura)
+        const camposMonedaResultado = ['precio-m3', 'total-diesel', 'material-viajes', 'subtotal-ingreso', 'total-gastos'];
+
+        // Inicializar campos de entrada
+        camposMonedaInput.forEach(selector => {
+            const $elemento = $('#' + selector);
+
+            // Inicializar valor raw
+            const currentValue = $elemento.val();
+            if (currentValue && !isNaN(parseFloat(currentValue))) {
+                $elemento.data('raw-value', parseFloat(currentValue));
+                $elemento.val(formatCurrency(parseFloat(currentValue)));
+            } else {
+                $elemento.data('raw-value', 0);
+            }
+
+            $elemento.on('input', function () {
+                let value = $(this).val().replace(/[^0-9.]/g, '');
+
+                // Verificar si es un número válido
+                if (value && !isNaN(value) && value !== '') {
+                    const numValue = parseFloat(value);
+                    $(this).data('raw-value', numValue);
+                } else {
+                    $(this).data('raw-value', 0);
+                }
+
+                // Disparar cálculos
+                debounceCalculations();
+            }).on('blur', function () {
+                let rawValue = $(this).data('raw-value') || 0;
+                $(this).val(formatCurrency(rawValue));
+            }).on('focus', function () {
+                let rawValue = $(this).data('raw-value') || 0;
+                $(this).val(rawValue > 0 ? rawValue.toString() : '');
+            });
+        });
+
+        // Inicializar campos de resultado (solo lectura)
+        camposMonedaResultado.forEach(selector => {
+            const elemento = document.getElementById(selector);
+            if (elemento && !elemento.value) {
+                elemento.value = formatCurrency(0);
+            }
+        });
+    }
 
     function BotonesEditarEliminar() {
-        // Inicializar DataTable simplificada
-        // TipoMaterial
+        // Evento delegado para botón Eliminar
         $(document).on('click', '.btnEliminarTipoMaterial', function () {
             const id = $(this).data('id');
-            PostMVC('/Administracion/DeletTipoMaterial/', { Id: id }, function (r) {
-                if (r.IsSuccess) {
-                    location.reload(); // Recarga inmediata
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'No se pudo eliminar el registro',
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esta acción!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    PostMVC('/Administracion/DeletTipoMaterial/', { Id: id }, function (r) {
+                        if (r.IsSuccess) {
+                            // Recargar tabla si hay dirección seleccionada
+                            const idDireccion = $('#idDireccion').val();
+                            if (idDireccion) {
+                                ClienteTipoMaterialByDireccionMaterialAndCliente(idDireccion);
+                            } else {
+                                TablaVacia();
+                            }
+
+                            Swal.fire(
+                                '¡Eliminado!',
+                                'El registro ha sido eliminado.',
+                                'success'
+                            );
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: r.ErrorMessage || 'No se pudo eliminar el registro',
+                            });
+                            console.error(r);
+                        }
                     });
-                    console.error(r);
                 }
             });
         });
@@ -150,47 +329,69 @@
 
             if (registro) {
                 precargarFormulario(registro);
+                // Scroll al formulario
+                $('html, body').animate({
+                    scrollTop: $(".container").offset().top
+                }, 500);
             } else {
-                alert('No se encontró la información del registro seleccionado.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se encontró la información del registro seleccionado.',
+                });
             }
         });
     }
 
     function precargarFormulario(registro) {
         // Campos básicos
-        $('#id').val(registro.id);
-        $('#idDireccion').val(registro.idDireccion);
-        $('#direccion').val(registro.direccion);
+        $('#id').val(registro.id || 0);
+        $('#idDireccion').val(registro.idDireccion || '');
+        $('#direccion').val(registro.direccion || '');
 
-        // Si tu dropdown de direcciones tiene opciones, intenta seleccionar la correcta
-        $('#ddlDirecciones').val(registro.idDireccion);
+        // Seleccionar en dropdown
+        $('#ddlDirecciones').val(registro.idDireccion || '');
 
-        // Campos numéricos
-        $('#p-mat-m3').val(registro.p_Mta_M3);
-        $('#p-flete-m3').val(registro.p_Flete_M3);
-        $('#precio-m3').val(registro.precio_M3);
-        $('#km-cargado').val(registro.kM_Cargado);
-        $('#km-basio').val(registro.kM_Basico);
-        $('#total-km-recorridos').val(registro.total_KM_Recorridos);
-        $('#carga-diesel').val(registro.carga_Disel);
-        $('#total-diesel').val(registro.total_Diesel_Precio_XLT);
-        $('#casetas').val(registro.casetas);
-        $('#mano-obra').val(registro.mano_De_Obra);
-        $('#material-viajes').val(registro.material_Viajes_De_30M3);
-        $('#subtotal-ingreso').val(registro.subtotal_Ingreso_Viajes_M3);
-        $('#total-gastos').val(registro.total_Gastos);
+        // Configurar valores raw para cálculos y mostrar formateados
+        $('#p-mat-m3').data('raw-value', registro.p_Mta_M3 || 0).val(formatCurrency(registro.p_Mta_M3 || 0));
+        $('#p-flete-m3').data('raw-value', registro.p_Flete_M3 || 0).val(formatCurrency(registro.p_Flete_M3 || 0));
+        $('#mano-obra').data('raw-value', registro.mano_De_Obra || 0).val(formatCurrency(registro.mano_De_Obra || 0));
+        $('#casetas').data('raw-value', registro.casetas || 0).val(formatCurrency(registro.casetas || 0));
+
+        // Campos numéricos simples
+        $('#km-cargado').val(registro.kM_Cargado || 0);
+        $('#km-basio').val(registro.kM_Basico || 0);
+        $('#carga-diesel').val(registro.carga_Disel || 0);
+
+        // Campos de resultado (solo lectura)
+        $('#precio-m3').val(formatCurrency(registro.precio_M3 || 0));
+        $('#total-diesel').val(formatCurrency(registro.total_Diesel_Precio_XLT || 0));
+        $('#material-viajes').val(formatCurrency(registro.material_Viajes_De_30M3 || 0));
+        $('#subtotal-ingreso').val(formatCurrency(registro.subtotal_Ingreso_Viajes_M3 || 0));
+        $('#total-gastos').val(formatCurrency(registro.total_Gastos || 0));
+
+        // Campos que no son moneda
+        $('#total-km-recorridos').val(registro.total_KM_Recorridos || 0);
 
         // Checkbox de precio actual
         $('#precioActual').prop('checked', registro.precioActivo === true);
 
         console.log("Formulario precargado con:", registro);
+
+        // Ejecutar cálculos para verificar
+        setTimeout(() => {
+            const resultados = calcularTotales();
+            calcularSubtotal(resultados);
+        }, 100);
     }
 
-
     function TablaVacia() {
-        // Crea una nueva tabla sin datos
+        if ($.fn.DataTable.isDataTable('#tblDireccionMaterial')) {
+            $('#tblDireccionMaterial').DataTable().destroy();
+        }
+
         $('#tblDireccionMaterial').DataTable({
-            data: [], // Array vacío
+            data: [],
             columns: [
                 { title: 'ID', data: 'id', visible: false },
                 { title: 'Dirección', data: 'direccion' },
@@ -220,12 +421,12 @@
                     orderable: false,
                     render: function (data, type, row) {
                         return `
-                <button class="btn btn-sm btn-primary btnEditarTipoMaterial" data-id="${row.id}" title="Editar">
-                    Editar
-                </button>
-                <button class="btn btn-sm btn-danger btnEliminarTipoMaterial" data-id="${row.id}" title="Eliminar">
-                    Eliminar
-                </button>`;
+                            <button class="btn btn-sm btn-primary btnEditarTipoMaterial" data-id="${row.id}" title="Editar">
+                                Editar
+                            </button>
+                            <button class="btn btn-sm btn-danger btnEliminarTipoMaterial" data-id="${row.id}" title="Eliminar">
+                                Eliminar
+                            </button>`;
                     }
                 }
             ],
@@ -236,20 +437,23 @@
             },
             pageLength: 50,
         });
+        dataTableInitialized = true;
     }
 
     function DropListDirecciones() {
-        // Evento cuando cambia la selección del dropdown
-        $('#ddlDirecciones').on('change', function () {
+        $('#ddlDirecciones').off('change').on('change', function () {
             var optionSeleccionada = $(this).find('option:selected');
             var idSeleccionado = optionSeleccionada.val();
             var nombreSeleccionado = optionSeleccionada.text();
 
-            // Insertar el texto en el input
             $('#idDireccion').val(idSeleccionado);
             $('#direccion').val(nombreSeleccionado);
 
-            ClienteTipoMaterialByDireccionMaterialAndCliente(idSeleccionado)
+            if (idSeleccionado) {
+                ClienteTipoMaterialByDireccionMaterialAndCliente(idSeleccionado);
+            } else {
+                TablaVacia();
+            }
         });
     }
 
@@ -257,36 +461,46 @@
         var idCliente = $("#clienteId").val();
         var idMaterial = $("#materialId").val();
 
-        PostMVC('/Administracion/ClienteTipoMaterialByDireccionMaterialAndCliente', { Id: id, IdCliente: idCliente, IdMaterial: idMaterial }, function (r) {
-            if (r.IsSuccess) {
-                var data = r.Response;
-                console.log(data);
-
-                // Inicializar o recargar la DataTable
-                cargarDataTable(data);
+        PostMVC('/Administracion/ClienteTipoMaterialByDireccionMaterialAndCliente',
+            {
+                Id: id,
+                IdCliente: idCliente,
+                IdMaterial: idMaterial
+            },
+            function (r) {
+                if (r.IsSuccess) {
+                    var data = r.Response;
+                    console.log('Datos recibidos:', data);
+                    cargarDataTable(data);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: r.ErrorMessage || 'Error al cargar los datos',
+                    });
+                    TablaVacia();
+                }
             }
-        });
+        );
     }
 
     function cargarDataTable(data) {
-        // Destruir la tabla si ya existe
         if ($.fn.DataTable.isDataTable('#tblDireccionMaterial')) {
             $('#tblDireccionMaterial').DataTable().destroy();
         }
 
-        // Inicializar DataTable simplificada
         $('#tblDireccionMaterial').DataTable({
             data: data,
             columns: [
-                { title: 'ID', data: 'id', visible: false},
-                { title: 'Dirección', data: 'direccion'},
-                { title: 'Material', data: 'tipoMaterial.nombreTipoMaterial'},
-                { title: 'Cliente', data: 'cliente.nombre'},
+                { title: 'ID', data: 'id', visible: false },
+                { title: 'Dirección', data: 'direccion' },
+                { title: 'Material', data: 'tipoMaterial.nombreTipoMaterial' },
+                { title: 'Cliente', data: 'cliente.nombre' },
                 {
                     title: 'Total de Importe',
                     data: 'total_Gastos',
                     render: function (data) {
-                        return '$' + data.toLocaleString('es-MX');
+                        return '$' + (data ? data.toLocaleString('es-MX') : '0');
                     }
                 },
                 {
@@ -306,34 +520,35 @@
                     orderable: false,
                     render: function (data, type, row) {
                         return `
-                        <button class="btn btn-sm btn-primary btnEditarTipoMaterial" data-id="${row.id}" title="Editar">
-                            Editar
-                        </button>
-                        <button class="btn btn-sm btn-danger btnEliminarTipoMaterial" data-id="${row.id}" title="Eliminar">
-                            Eliminar
-                        </button>`;
+                            <button class="btn btn-sm btn-primary btnEditarTipoMaterial" data-id="${row.id}" title="Editar">
+                                Editar
+                            </button>
+                            <button class="btn btn-sm btn-danger btnEliminarTipoMaterial" data-id="${row.id}" title="Eliminar">
+                                Eliminar
+                            </button>`;
                     }
                 }
             ],
-            scrollX: true,           // habilita scroll horizontal
-            responsive: true,        // mejora la experiencia en pantallas pequeñas
-            autoWidth: false,        // evita el autoajuste de ancho que a veces rompe el diseño
+            scrollX: true,
+            responsive: true,
+            autoWidth: false,
             language: {
                 url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-MX.json'
             },
             pageLength: 50,
         });
+        dataTableInitialized = true;
     }
 
     function GetPrecioActivoCombustible() {
         GetMVC('/Administracion/GetPrecioActivoCombustible', function (r) {
             if (r.IsSuccess) {
                 var datos = r.Response;
-                $("#PrecioCombustibleActual").val(datos.precio);
+                $("#PrecioCombustibleActual").val(datos.precio || 0);
             } else {
                 Swal.fire({
                     title: 'Error',
-                    text: 'Error al cargar los materiales: ' + r.ErrorMessage,
+                    text: 'Error al cargar el precio del combustible: ' + (r.ErrorMessage || ''),
                     icon: 'error',
                     confirmButtonText: 'Aceptar'
                 });
@@ -348,7 +563,6 @@
                 const $select = $('#ddlDirecciones');
                 $select.empty();
 
-                // Tu opción por defecto (mejorada)
                 $select.append($('<option>', {
                     value: '',
                     disabled: true,
@@ -356,114 +570,169 @@
                     text: 'Seleccionar Dirección'
                 }));
 
-                // Agregar direcciones
                 $.each(data, function (index, direccion) {
-                    const textoDireccion = `${direccion.calle}, ${direccion.colonia}, ${direccion.municipio}, ${direccion.estado}`;
+                    const textoDireccion = `${direccion.calle || ''}, ${direccion.colonia || ''}, ${direccion.municipio || ''}, ${direccion.estado || ''}`;
 
                     $select.append($('<option>', {
                         value: direccion.id,
                         text: textoDireccion
                     }));
                 });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: r.ErrorMessage || 'Error al cargar las direcciones',
+                });
             }
         });
     }
 
-    // Variables de tiempo para evitar cálculos en cada tecla
-    let timeout;
+   // Función para enviar al servidor
+    function AgregarPreciosMaterialACliente() {
+        // Validaciones básicas
+        const idDireccion = $('#idDireccion').val();
+        if (!idDireccion) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Campo requerido',
+                text: 'Debe seleccionar una dirección',
+            });
+            return;
+        }
 
-    // Función para calcular los totales generales
-    function calcularTotales() {
+        // Obtener IDs
+        const clienteId = $('#clienteId').val();
+        const tipoMaterialId = $('#materialId').val();
 
-        var precioActivoCombustible = parseFloat(document.getElementById('PrecioCombustibleActual').value) || 0;
+        if (!clienteId) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Campo requerido',
+                text: 'No se encontró el ID del cliente',
+            });
+            return;
+        }
 
-        const pMatM3 = parseFloat(document.getElementById('p-mat-m3').value) || 0;
-        const pFleteM3 = parseFloat(document.getElementById('p-flete-m3').value) || 0;
-        const kmCargado = parseFloat(document.getElementById('km-cargado').value) || 0;
-        const kmBasio = parseFloat(document.getElementById('km-basio').value) || 0;
-        const cargaDiesel = parseFloat(document.getElementById('carga-diesel').value) || 0;
-        const manoObra = parseFloat(document.getElementById('mano-obra').value) || 0;
-        const casetas = parseFloat(document.getElementById('casetas').value) || 0;
+        if (!tipoMaterialId) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Campo requerido',
+                text: 'No se encontró el ID del material',
+            });
+            return;
+        }
 
-        // Cálculos intermedios
-        const totalpreciom3 = pMatM3 + pFleteM3;
-        const totalKmRecorridos = kmCargado + kmBasio;
-        const totalpreciokm = cargaDiesel * precioActivoCombustible;
-        const totalGastos = totalpreciom3 + totalpreciokm + manoObra + casetas;
+        // Preparar datos - ENVIAR ID DEL CLIENTE COMO PROPERTY DIRECTA
+        var data = {
+            Id: $('#id').val() || 0,
+            IdDireccion: idDireccion,
+            Direccion: $('#direccion').val(),
+            P_Mta_M3: parseFloat($('#p-mat-m3').data('raw-value')) || 0,
+            P_Flete_M3: parseFloat($('#p-flete-m3').data('raw-value')) || 0,
+            Precio_M3: currencyToNumber($('#precio-m3').val()),
+            KM_Cargado: parseFloat($('#km-cargado').val()) || 0,
+            KM_Basico: parseFloat($('#km-basio').val()) || 0,
+            Total_KM_Recorridos: parseFloat($('#total-km-recorridos').val()) || 0,
+            Carga_Disel: parseFloat($('#carga-diesel').val()) || 0,
+            Total_Diesel_Precio_XLT: currencyToNumber($('#total-diesel').val()),
+            Casetas: parseFloat($('#casetas').data('raw-value')) || 0,
+            Mano_De_Obra: parseFloat($('#mano-obra').data('raw-value')) || 0,
+            Material_Viajes_De_30M3: currencyToNumber($('#material-viajes').val()),
+            Subtotal_Ingreso_Viajes_M3: currencyToNumber($('#subtotal-ingreso').val()),
+            Total_Gastos: currencyToNumber($('#total-gastos').val()),
+            PrecioActivo: $('#precioActual').is(':checked'),
+            Cliente: {
+                Id: clienteId,  // Esto debe funcionar ahora
+                Nombre: '@ViewBag.ClienteNombre' // Si necesitas enviar el nombre también
+            },
+            TipoMaterial: {
+                Id: tipoMaterialId,
+                NombreTipoMaterial: '@ViewBag.MaterialNombre' // Si necesitas enviar el nombre también
+            },
+            CreatedBy: $('#createdBy').val(),
+            UpdatedBy: $('#updatedBy').val(),
+            CreatedDt: $('#createdDt').val(),
+            UpdatedDt: $('#updatedDt').val()
+        };
 
-        // Actualizar los campos intermedios
-        document.getElementById('precio-m3').value = totalpreciom3.toFixed(1);
-        document.getElementById('total-diesel').value = totalpreciokm.toFixed(1);
-        document.getElementById('total-km-recorridos').value = totalKmRecorridos.toFixed(1);
-        document.getElementById('total-gastos').value = totalGastos.toFixed(1);
+        console.log('Datos a enviar:', data);
+
+        // Determinar endpoint
+        const endpoint = '/Administracion/SaveOrUpdateClienteTipoMaterial';
+
+        PostMVC(endpoint, data, function (r) {
+            if (r.IsSuccess) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: data.Id > 0 ? 'Registro actualizado correctamente' : 'Registro guardado correctamente',
+                }).then(() => {
+                    // Recargar la tabla
+                    ClienteTipoMaterialByDireccionMaterialAndCliente(idDireccion);
+                    // Limpiar formulario si era nuevo
+                    if (data.Id === 0) {
+                        limpiarFormulario();
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: r.ErrorMessage || 'Error al guardar el registro',
+                });
+            }
+        });
     }
 
-    // Función para calcular el subtotal después de que el usuario deje de escribir
-    function calcularSubtotal() {
-        const pMatM3 = parseFloat(document.getElementById('p-mat-m3').value) || 0;
-        const pFleteM3 = parseFloat(document.getElementById('p-flete-m3').value) || 0;
-        const totalGastos = parseFloat(document.getElementById('total-gastos').value) || 0;
-
-        // Cálculo de material viajes (30 M3) y subtotal ingreso
-        const materialviajesprecio = pMatM3 * 30; // Material por M3
-        const subtotalIngreso = 30 * (pMatM3 + pFleteM3); // Subtotal con m3 y flete
-
-        const totalgasto = totalGastos + (pMatM3 * 30);
-
-        // Actualizar los campos de Material Viajes, Subtotal y Total Gastos
-        document.getElementById('material-viajes').value = materialviajesprecio.toFixed(1); // Material Viajes
-        document.getElementById('subtotal-ingreso').value = subtotalIngreso.toFixed(1); // Subtotal Ingreso
-        document.getElementById('total-gastos').value = totalgasto.toFixed(1);
+    // Función para limpiar formulario
+    function limpiarFormulario() {
+        $('#id').val('0');
+        $('#p-mat-m3, #p-flete-m3, #mano-obra, #casetas').each(function () {
+            $(this).data('raw-value', 0).val('');
+        });
+        $('#km-cargado, #km-basio, #carga-diesel').val('');
+        $('#precioActual').prop('checked', false);
+        // Resetear campos de resultado
+        $('[id$="-m3"], #total-diesel, #material-viajes, #subtotal-ingreso, #total-gastos, #total-km-recorridos').val('');
+        // Ejecutar cálculos para resetear
+        setTimeout(() => {
+            ejecutarCalculosInmediatos();
+        }, 50);
     }
 
-    // Función que se ejecuta cuando se deja de escribir
-    function debounceCalculations() {
-        clearTimeout(timeout); // Limpiar el tiempo de espera anterior
-        timeout = setTimeout(() => {
-            calcularTotales();
-            calcularSubtotal();
-        }, 500); // 500ms después de que el usuario deje de escribir
-    }
+    // Cuando el documento esté listo
+    $(document).ready(function () {
+        // Remover el onmouseover del contenedor - causa problemas
+        $('.container').off('mouseover');
 
-    // Añadir evento a los campos relevantes
-    document.getElementById('p-mat-m3').addEventListener('input', debounceCalculations);
-    document.getElementById('p-flete-m3').addEventListener('input', debounceCalculations);
-    document.getElementById('km-cargado').addEventListener('input', debounceCalculations);
-    document.getElementById('km-basio').addEventListener('input', debounceCalculations);
-    document.getElementById('carga-diesel').addEventListener('input', debounceCalculations);
-    document.getElementById('mano-obra').addEventListener('input', debounceCalculations);
+        // Inicializar campos moneda
+        inicializarCamposMoneda();
+
+        // Inicializar eventos
+        inicializarEventos();
+
+        // Cargar datos iniciales
+        var clienteId = $("#clienteId").val();
+        if (clienteId) {
+            SearchDireccionesCliente(clienteId);
+        }
+
+        // Obtener precio de combustible
+        GetPrecioActivoCombustible();
+
+        // Inicializar tabla vacía
+        TablaVacia();
+
+        // Inicializar eventos del dropdown
+        DropListDirecciones();
+
+        // Inicializar botones de editar/eliminar
+        BotonesEditarEliminar();
+
+        // Ejecutar cálculos iniciales
+        setTimeout(() => {
+            debounceCalculations();
+        }, 500);
+    });
 </script>
-
-@*<script>
-    var preciosJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(precios))');
-
-    // Convertir ViewBag.precios en un objeto JS
-    var precios = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.precios ?? new List<MinaTolEntidades.DtoClientes.ClienteTipoMaterial>()));
-
-    // Si precios contiene datos, asignarlos a los campos del formulario
-    if (precios.length > 0) {
-        var precio = precios[0]; // Tomar el primer registro, ajusta según tu lógica
-
-        document.getElementById('p-mat-m3').value = precio.P_Mta_M3 ?? 0;
-        document.getElementById('p-flete-m3').value = precio.P_Flete_M3 ?? 0;
-        document.getElementById('km-cargado').value = precio.KM_Cargado ?? 0;
-        document.getElementById('km-basio').value = precio.KM_Basico ?? 0;
-        document.getElementById('carga-diesel').value = precio.Carga_Disel ?? 0;
-        document.getElementById('casetas').value = precio.Casetas ?? 0;
-        document.getElementById('mano-obra').value = precio.Mano_De_Obra ?? 0;
-
-        debounceCalculations();
-
-    } else {
-        // Si no hay datos, dejar todo en 0
-        document.getElementById('p-mat-m3').value = 0;
-        document.getElementById('p-flete-m3').value = 0;
-        document.getElementById('km-cargado').value = 0;
-        document.getElementById('km-basio').value = 0;
-        document.getElementById('carga-diesel').value = 0;
-        document.getElementById('casetas').value = 0;
-        document.getElementById('mano-obra').value = 0;
-        debounceCalculations();
-    }
-    debounceCalculations();
-</script>*@

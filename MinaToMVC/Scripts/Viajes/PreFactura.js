@@ -113,7 +113,12 @@ document.getElementById("btnFiltrar2").addEventListener("click", function () {
 
     // Validar que fecha2 no sea menor que fecha1
     if (date2 < date1) {
-        alert("Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.");
+        Swal.fire({
+            title: 'Error en fechas',
+            text: 'Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
         return;
     }
     GetAllViajeLocalByDatesFacturado(fecha1, fecha2);
@@ -297,4 +302,163 @@ function GenerarPDFPreFacturas(data, bandera) {
     }).appendTo(form);
 
     form.appendTo('body').submit().remove();
+}
+
+// Botón Excel No Facturados
+document.getElementById("btnExcelNoFacturados").addEventListener("click", function () {
+    generarExcel(0); // 0 = No Facturados
+});
+
+// Botón Excel Facturados
+document.getElementById("btnExcelSiFacturados").addEventListener("click", function () {
+    generarExcel(1); // 1 = Facturados
+});
+
+function generarExcel(bandera) {
+    var fecha1 = $("#fechaFiltro1").val();
+    var fecha2 = $("#fechaFiltro2").val();
+
+    if (!fecha1 || !fecha2) {
+        alert("Por favor, seleccione ambas fechas.");
+        return;
+    }
+
+    var date1 = new Date(fecha1);
+    var date2 = new Date(fecha2);
+
+    if (date2 < date1) {
+        alert("La fecha final no puede ser menor que la fecha inicial.");
+        return;
+    }
+
+    GetMVC(`/Viajes/GetAllViajeLocalByDatesFacturado?fecha1=${fecha1}&fecha2=${fecha2}`, function (r) {
+        if (r.IsSuccess) {
+            // Filtrar según bandera
+            var datosFiltrados;
+            var titulo;
+
+            if (bandera === 1) {
+                datosFiltrados = r.Response.filter(item => item.facturado === true || item.facturado === 1);
+                titulo = "FACTURADOS";
+            } else {
+                datosFiltrados = r.Response.filter(item => item.facturado === false || item.facturado === 0);
+                titulo = "NO FACTURADOS";
+            }
+
+            if (datosFiltrados.length === 0) {
+                alert(`No existen vales ${titulo.toLowerCase()} para el periodo seleccionado.`);
+                return;
+            }
+
+            // Generar Excel
+            crearYEnviarExcel(datosFiltrados, titulo, fecha1, fecha2);
+
+        } else {
+            alert("Error al cargar los viajes: " + r.ErrorMessage);
+        }
+    });
+}
+
+function crearYEnviarExcel(datos, titulo, fechaInicio, fechaFin) {
+    // Calcular total
+    var total = 0;
+    datos.forEach(function (item) {
+        if (item.totalImporte) {
+            total += parseFloat(item.totalImporte);
+        }
+    });
+
+    // Mostrar carga
+    Swal.fire({
+        title: "Generando Excel...",
+        text: "Por favor espere",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+    });
+
+    // Crear tabla HTML (igual que para PDF)
+    var tablaHTML = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
+
+    tablaHTML += '<thead><tr>';
+    tablaHTML += '<th>Folio</th>';
+    tablaHTML += '<th>Fecha de transporte</th>';
+    tablaHTML += '<th>Cliente</th>';
+    tablaHTML += '<th>Material</th>';
+    tablaHTML += '<th>Importe</th>';
+    tablaHTML += '</tr></thead>';
+
+    tablaHTML += '<tbody>';
+    datos.forEach(function (item) {
+        tablaHTML += '<tr>';
+        tablaHTML += '<td>' + (item.folio || '') + '</td>';
+
+        // Formatear fecha
+        var fechaFormateada = '';
+        if (item.fechaViaje) {
+            var d = new Date(item.fechaViaje);
+            fechaFormateada = d.getDate().toString().padStart(2, '0') + '-' +
+                (d.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                d.getFullYear();
+        }
+        tablaHTML += '<td>' + fechaFormateada + '</td>';
+
+        tablaHTML += '<td>' + (item.cliente ? item.cliente.nombre || '' : '') + '</td>';
+        tablaHTML += '<td>' + (item.tipoMaterial ? item.tipoMaterial.nombreTipoMaterial || '' : '') + '</td>';
+        tablaHTML += '<td>' + (item.totalImporte ? parseFloat(item.totalImporte).toFixed(2) : '0.00') + '</td>';
+        tablaHTML += '</tr>';
+    });
+    tablaHTML += '</tbody></table>';
+
+    // Determinar endpoint
+    var endpoint = (titulo === "FACTURADOS")
+        ? '/Excel/GenerarExcelPreFacturas1'
+        : '/Excel/GenerarExcelPreFacturas2';
+
+    // Crear formulario (mismo método que PDF)
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = endpoint;
+    form.style.display = 'none';
+
+    // Agregar campos hidden
+    function agregarCampo(nombre, valor) {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = nombre;
+        input.value = valor;
+        form.appendChild(input);
+    }
+
+    agregarCampo('tablaHTML', tablaHTML);
+    agregarCampo('titulo', titulo);
+    agregarCampo('fechaInicio', fechaInicio);
+    agregarCampo('fechaFin', fechaFin);
+    agregarCampo('total', total.toFixed(2));
+
+    // Agregar token anti-falsificación si existe
+    var token = document.querySelector('input[name="__RequestVerificationToken"]');
+    if (token) {
+        var tokenInput = document.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = '__RequestVerificationToken';
+        tokenInput.value = token.value;
+        form.appendChild(tokenInput);
+    }
+
+    // Enviar formulario
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+
+    // Cerrar alerta después de un momento
+    setTimeout(() => {
+        Swal.close();
+        Swal.fire({
+            icon: 'success',
+            title: 'Excel listo',
+            text: 'El archivo se esta descargando',
+            timer: 2000,
+            showConfirmButton: false
+        });
+    }, 500);
 }

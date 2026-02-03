@@ -85,7 +85,7 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.SaveOrUpdateViajeLocal(vl);
             return result;
         }
-        [HttpDelete, Route("DeleteViajeLocal/{id:long}")]
+        [HttpPost, Route("DeleteViajeLocal/{id:long}")]
         public ModelResponse DeleteViajeLocal(long id)
         {
             var result = wrapper.DeleteViajeLocal(id);
@@ -137,7 +137,7 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-        [HttpDelete, Route("DeletePrecioCombustible/{id:long}")]
+        [HttpPost, Route("DeletePrecioCombustible/{id:long}")]
         public ModelResponse DeletePrecioCombustible(long id)
         {
             var result = wrapper.DeletePrecioCombustibleById(id);

@@ -51,7 +51,7 @@ namespace MinaToMVC.DAL
         }
         public async Task<ModelResponse> DeleteAreaTrabajo(long id)
         {
-            var result = await RequestAsync<object>($"api/AreaTrabajo/{id}", HttpMethod.Delete, null,
+            var result = await RequestAsync<object>($"api/AreaTrabajo/{id}", HttpMethod.Post, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;

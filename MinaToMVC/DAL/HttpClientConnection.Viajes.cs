@@ -30,7 +30,7 @@ namespace MinaToMVC.DAL
         }
         public async Task<ModelResponse> DeleteViajeLocal(long Id)
         {
-            var result = await RequestAsync($"api/Viajes/DeleteViajeLocal/{Id}", HttpMethod.Delete, null,
+            var result = await RequestAsync($"api/Viajes/DeleteViajeLocal/{Id}", HttpMethod.Post, null,
                 new Func<string, string>((responseString) =>
                 {
                     return responseString;
@@ -148,7 +148,7 @@ namespace MinaToMVC.DAL
         }
         public async Task<ModelResponse> DeletePrecioCombustible(long Id)
         {
-            var result = await RequestAsync($"api/Viajes/DeletePrecioCombustible/{Id}", HttpMethod.Delete, null,
+            var result = await RequestAsync($"api/Viajes/DeletePrecioCombustible/{Id}", HttpMethod.Post, null,
                 new Func<string, string>((responseString) =>
                 {
                     return responseString;

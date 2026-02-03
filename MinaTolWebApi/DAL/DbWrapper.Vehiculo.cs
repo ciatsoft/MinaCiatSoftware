@@ -86,5 +86,36 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
+        public ModelResponse DeleteVehiculo(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id",
+                    SqlDbType = System.Data.SqlDbType.BigInt
+                });
+
+                var result = GetObject("DeleteVehiculos", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, Vehiculo>((reader) =>
+                    {
+                        var r = FillEntity<Vehiculo>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
     }
 }

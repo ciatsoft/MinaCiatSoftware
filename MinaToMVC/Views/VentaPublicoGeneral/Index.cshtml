@@ -41,7 +41,7 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Nombre Cliente:</label>
-                        @Html.TextBoxFor(x => x.NombreCliente, new { @class = "form-control", id = "nombreCliente", @readonly = "readonly" })
+                        @Html.TextBoxFor(x => x.NombreCliente, new { @class = "form-control", id = "nombreCliente" })
                     </div>
                     <div class="col-lg-3">
                         <label>Descripción del transporte:</label>
@@ -88,7 +88,12 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Cantidad Recibida:</label>
-                        @Html.TextBoxFor(x => x.CantidadRecibida, new { @class = "form-control", @type = "number", id = "dineroRecibido" })
+                        @Html.TextBoxFor(x => x.CantidadRecibida, new
+                        {
+                            @class = "form-control",
+                            id = "dineroRecibido",
+                            @type = "number"  // Cambia a text para formato personalizado
+                        })
                     </div>
                     <div class="col-lg-3">
                         <label>Vendedor:</label>
@@ -183,11 +188,11 @@
         </div>
     </div>
 
-    <div class="rectangulos" style="width: 100%;">
+    <!--<div class="rectangulos" style="width: 100%;">
         <center><h1>Historial de Gastos/Deducciones</h1></center>
-        <div class="row align-items-end">
-            @* FILTRADO POR FECHA *@
-            <div class="col-auto">
+        <div class="row align-items-end">-->
+    @* FILTRADO POR FECHA *@
+    <!--<div class="col-auto">
                 <label for="fechaFiltro" class="form-label">Fecha:</label>
                 <input type="date" id="fechaDeducciones" name="fechaFiltro" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
             </div>
@@ -208,21 +213,19 @@
         <div class="col-lg-12">
             <table class="table table-bordered table-striped" id="tableDeducciones" style="width: 100%;"></table>
         </div>
-    </div>
+    </div>-->
 </div>
 
-<script src="@(Url.StaticFile("Scripts/VentaPublicoGeneral/Index.js"))"></script>
+
 <script>
-    window.addEventListener('DOMContentLoaded', () => {
-        const now = new Date();
-        const fechaInput = document.getElementById('fecha');
+    $(document).ready(function () {
+        const fechaActual = new Date();
+        const dia = String(fechaActual.getDate()).padStart(2, '0');
+        const mes = String(fechaActual.getMonth() + 1).padStart(2, '0'); // Enero es 0
+        const año = fechaActual.getFullYear();
 
-        // Formatea la fecha a YYYY-MM-DD
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-
-        const formattedDate = `${year}-${month}-${day}`;
-        fechaInput.value = formattedDate;
+        $('#fecha').val(`${dia}/${mes}/${año}`);
     });
 </script>
+
+<script src="@(Url.StaticFile("Scripts/VentaPublicoGeneral/Index.js"))"></script>

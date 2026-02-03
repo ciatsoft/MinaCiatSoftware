@@ -45,7 +45,7 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-        [HttpDelete, Route("Prepago/{id:long}")]
+        [HttpPost, Route("Prepago/{id:long}")]
         public IHttpActionResult DeletePrepago(long id)
         {
             var result = wrapper.DeletePrepago(id);

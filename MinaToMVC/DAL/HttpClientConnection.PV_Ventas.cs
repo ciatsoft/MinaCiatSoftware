@@ -158,6 +158,18 @@ namespace MinaToMVC.DAL
 
             return modelResponse;
         }
+        public async Task<ModelResponse> SearchClienteByNombre(string nombre)
+        {
+            var url = $"api/PV_Venta/Nombre/{nombre}";
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
 
         public async Task<ModelResponse> GetVehiculosPublicoGralByIdCliente(long id)
         {
@@ -202,7 +214,7 @@ namespace MinaToMVC.DAL
         }
         public async Task<ModelResponse> DeleteDeducciones(long deduccionId)
         {
-            var result = await RequestAsync($"api/PV_Venta/Deducciones/{deduccionId}", HttpMethod.Delete, null,
+            var result = await RequestAsync($"api/PV_Venta/Deducciones/{deduccionId}", HttpMethod.Post, null,
                 new Func<string, string>((responseString) =>
                 {
                     return responseString;

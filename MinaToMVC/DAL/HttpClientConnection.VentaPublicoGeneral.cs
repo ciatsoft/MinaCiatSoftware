@@ -45,7 +45,7 @@ namespace MinaToMVC.DAL
 
         public async Task<ModelResponse> DeletePrepago(long Id)
         {
-            var result = await RequestAsync($"api/VentaPublicoGeneral/Prepago/{Id}", HttpMethod.Delete, null,
+            var result = await RequestAsync($"api/VentaPublicoGeneral/Prepago/{Id}", HttpMethod.Post, null,
                 new Func<string, string>((responseString) =>
                 {
                     return responseString;

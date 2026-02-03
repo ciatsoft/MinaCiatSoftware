@@ -103,7 +103,10 @@
                     <div class="col-lg-3">
                         <label>Tipo de vehiculo:</label>
                         @Html.DropDownListFor(x => x.TipoVehiculo.Id, tiposVehiculos, new { @class = "form-control", @readonly = "readonly" })
-
+                    </div>
+                    <div class="col-lg-6">
+                        <label>Tipo de vehiculo:</label>
+                        @Html.TextBoxFor(x => x.Comentario, new { @class = "form-control", @id = "txtComentario"})
                     </div>
                 </div>
                 <div class="row">
@@ -111,7 +114,6 @@
                         <div>
                             @*<input type="button" onclick="SaveOrUpdateVehiculo()" value="Guadar" class="btn btn-success" />*@
                             <input type="submit" value="Guadar" class="btn btn-success" />
-                            <input type="button" name="btnEliminar" id="btnEliminar" value="Eliminar" class="btn btn-custom-delete" />
                         </div>
                         <a class="btn btn-custom-cancel" href="">Cancelar</a>
                     </div>

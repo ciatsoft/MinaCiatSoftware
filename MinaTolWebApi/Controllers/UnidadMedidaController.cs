@@ -42,7 +42,7 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-        [HttpDelete, Route("{id:long}")]
+        [HttpPost, Route("{id:long}")]
         public ModelResponse DeleteUnidadMedida(long id)
         {
             var result = wrapper.DeleteUnidadMedida(id);

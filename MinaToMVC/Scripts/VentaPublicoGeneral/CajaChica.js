@@ -30,7 +30,7 @@ $(document).ready(function () {
             "processing": "Procesando...",
             "lengthMenu": "Mostrar _MENU_ entradas",
             "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningún dato disponible en esta tabla",
+            "emptyTable": "Ningun dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de un total de _MAX_ entradas)",

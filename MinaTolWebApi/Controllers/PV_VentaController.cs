@@ -82,6 +82,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.SearchClienteByRFID(rfid);
             return result;
         }
+        [HttpGet, Route("Nombre/{nombre}")]
+        public ModelResponse SearchClienteByNombre(string nombre)
+        {
+            var result = wrapper.SearchClienteByNombre(nombre);
+            return result;
+        }
 
         [HttpGet, Route("VehiculosCliente/{id:long}")]
         public async Task<ModelResponse> GetVehiculosPublicoGralByIdCliente(long id)
@@ -106,7 +112,7 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-        [HttpDelete, Route("Deducciones/{id:long}")]
+        [HttpPost, Route("Deducciones/{id:long}")]
         public ModelResponse DeleteDeducciones(long id)
         {
             var result = wrapper.DeleteDeducciones(id);

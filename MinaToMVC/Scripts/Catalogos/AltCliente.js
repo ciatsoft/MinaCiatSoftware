@@ -4,7 +4,12 @@ $(document).ready(function () {
     $("#frmCliente").validate({
         rules: {
             "txtNombre": "required",
-            "txtDescripcion": "required",
+            "txtTelefono": "required",
+            "txtEmail": "required",
+            "txtRFC": "required",
+            "txtrazon": "required",
+            "ddlTipoCliente": "required",
+            "txtComentarios": "required",
         }
     });
 
@@ -191,13 +196,24 @@ function AgregarMaterialACliente(clienteId, materialId) {
     };
     PostMVC('/Administracion/SaveOrUpdateClienteTipoMaterial', parametro, function (r) {
         if (r.IsSuccess) {
-            Swal.fire("Éxito", "El material se agregó exitosamente al cliente", "success");
+            swal({
+                title: "¡Éxito!",
+                text: "Material Registrado",
+                type: "success",
+                confirmButtonText: "OK"
+            }, function () {
+                window.location.replace('/Administracion/Clientes/' + clienteId);
+            });
         } else {
-            Swal.fire({
+            window.Swal.fire({
                 title: 'Error',
-                text: 'Error al guardar el material: ' + r.ErrorMessage,
+                text: 'Error al guardar el material',
                 icon: 'error',
                 confirmButtonText: 'Aceptar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    location.reload(); // Recarga la página
+                }
             });
         }
     });
@@ -267,10 +283,16 @@ function AgregarPreciosMaterialACliente() {
     PostMVC('/Administracion/SaveOrUpdateClienteTipoMaterial', parametro, function (r) {
         console.log(parametro);
         if (r.IsSuccess) {
-            Swal.fire("Éxito", "Los precios se agregaron exitosamente al cliente", "success");
-            window.location.replace('/Administracion/Clientes/' + clienteId);
+            swal({
+                title: "¡Éxito!",
+                text: "Material Agregado",
+                type: "success",
+                confirmButtonText: "OK"
+            }, function () {
+                window.location.replace('/Administracion/Clientes/' + clienteId);
+            });
         } else {
-            Swal.fire({
+            swal({
                 title: 'Error',
                 text: 'Error al guardar los precios: ' + r.ErrorMessage,
                 icon: 'error',
@@ -292,9 +314,9 @@ function EliminarMaterialDelCliente(clienteId, materialId) {
         
     PostMVC("/Administracion/DeleteClienteTipoMaterial", parametros, function (r) {
         if (r.IsSuccess) {
-            Swal.fire("Éxito", "El material se elimino exitosamente de este cliente", "success");
+            swal("Éxito", "El material se elimino exitosamente de este cliente");
         } else {
-            Swal.fire({
+            swal({
                 title: 'Error',
                 text: 'Error al cargar los materiales: ' + r.ErrorMessage,
                 icon: 'error',
@@ -311,7 +333,7 @@ function GetAllTipoMaterial() {
             tipoMateriaList = r.Response;
             MapingPropertiesDataTable("tableTipodematerial", r.Response);
         } else {
-            Swal.fire({
+            swal({
                 title: 'Error',
                 text: 'Error al cargar los materiales: ' + r.ErrorMessage,
                 icon: 'error',
@@ -340,60 +362,65 @@ function SaveOrUpdateCliente() {
             UpdatedDt: $("#txtUpdatedDt").val(),
         };
 
-        Swal.fire({
+        if (parametro.nombre == null || parametro.Telefono == null || parametro.Email == null || parametro.RFC == null || parametro.Razon_Social == null || parametro.Comentarios == null) {
+            swal({
+                title: "Faltan campos por llenar.",
+                text: "Porfavor de llevar todos los campos",
+                type: "error",
+                confirmButtonText: "OK"
+            }, function () {
+                return;
+            });
+        }
+
+        swal({
             title: "Registro guardado!",
             text: "El cliente se ha guardado correctamente.",
-            icon: "success",
+            type: "success",
             confirmButtonText: 'OK'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '/Administracion/Clientes';
-            }
+        }, function () {
+            LimpiarFormulario();
+            window.location.href = '/Administracion/Clientes';
         });
+
         // Primero hacer el POST al servidor
         PostMVC('/Administracion/SaveOrUpdateCliente', parametro, function (r) {
-            // Solo si el servidor responde con éxito, mostrar alerta y redireccionar
             if (r.IsSuccess) {
-                // Solo si el servidor responde con éxito, mostrar alerta y redireccionar
-                Swal.fire({
+                swal({
                     title: "Registro guardado!",
                     text: "El cliente se ha guardado correctamente.",
-                    icon: "success",
+                    type: "success",
                     confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = '/Administracion/Clientes';
-                    }
+                }, function () {
+                    LimpiarFormulario();
+                    window.location.href = '/Administracion/Clientes';
                 });
-
-                LimpiarFormulario();
             } else {
-                Swal.fire("Error", "Error al guardar los datos: " + r.ErrorMessage, "error");
+                swal("Error", "Error al guardar los datos: " + r.ErrorMessage, "error");
             }
         });
     }
 }
 function EliminarCliente(id) {
-    Swal.fire({
+    swal({
         title: '¿Estas seguro?',
         text: "¿Desea eliminar el siguiente registro?",
-        icon: 'warning',
+        type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
+    }, function (isConfirmed) {
+        if (isConfirmed) {
             var parametro = { Id: id };
 
             PostMVC('/Administracion/DeleteCliente', parametro, function (r) {
+                window.location.href = '/Administracion/Clientes';
                 if (r.IsSuccess) {
-                    Swal.fire('Eliminado', 'El Cliente ha sido eliminado.', 'success')
-                        .then(() => { window.location.reload(); });
+                    window.location.href = '/Administracion/Clientes';
                 } else {
-                    Swal.fire('Eliminado', 'El Cliente ha sido eliminado.', 'success')
-                        .then(() => { window.location.reload(); });
+                    window.location.href = '/Administracion/Clientes';
                 }
             });
         }
@@ -410,7 +437,7 @@ function GetAllCliente() {
         if (r.IsSuccess) {
             MapingPropertiesDataTable("tbCliente", r.Response);
         } else {
-            Swal.fire("Error", "Error al cargar los clientes: " + r.ErrorMessage, "error");
+            swal("Error", "Error al cargar los clientes: " + r.ErrorMessage, "error");
         }
     });
 }
@@ -463,7 +490,7 @@ function GuardarDireccion() {
 
     for (let campo of camposRequeridos) {
         if ($(campo.id).val().trim() === "") {
-            Swal.fire({
+            swal({
                 icon: 'warning',
                 title: 'Campo requerido',
                 text: `Por favor completa el campo: ${campo.nombre}`,
@@ -495,16 +522,21 @@ function GuardarDireccion() {
 
     PostMVC('/Administracion/SaveOrUpdateDireccionCliente', direccion, function (r) {
         if (r.IsSuccess) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Dirección guardada correctamente',
-                showConfirmButton: false,
-                timer: 2000
-            }).then(() => {
+            swal({
+                title: "Registro guardado!",
+                text: "El registro se ha guardado correctamente.",
+                type: "success",
+                confirmButtonText: 'OK'
+            }, function () {
                 location.href = '/Administracion/Clientes/' + direccion.ClienteId;
             });
         } else {
-            alert("Error al guardar la dirección. Ver consola para más detalles.");
+            swal({
+                icon: 'Error',
+                title: 'No se guardo la direccion',
+                text: `Error al guardar la direccion`,
+                confirmButtonText: 'Aceptar'
+            });
         }
     });
 }
@@ -592,16 +624,17 @@ function CargarDatosDireccion(idDireccion) {
                 const fechaFormateada = `${fecha.getFullYear()}-${pad(fecha.getMonth() + 1)}-${pad(fecha.getDate())} ${pad(fecha.getHours())}:${pad(fecha.getMinutes())}:${pad(fecha.getSeconds())}`;
                 $('#updatedDtParcialUbicacion').val(fechaFormateada);
             } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'No se pudo obtener la dirección',
+                swal({
+                    icon: 'Error',
+                    title: 'Error con la direccion',
+                    text: `No se pudo obtener la direccion`,
+                    confirmButtonText: 'Aceptar'
                 });
             }
         },
         error: function (err) {
             console.error(err);
-            Swal.fire({
+            swal({
                 icon: 'error',
                 title: 'Error',
                 text: 'Error al obtener datos del servidor',
@@ -657,7 +690,12 @@ function SearchDireccionesCliente(clienteId) {
                 }
             });
         } else {
-            alert("Error al obtener registros. Ver consola para más detalles.");
+            swal({
+                icon: 'Error',
+                title: 'Error con los registros',
+                text: `Error al obtener los registros. Ver consola para consultar detalles.`,
+                confirmButtonText: 'Aceptar'
+            });
             console.error(r);
         }
     });
@@ -670,7 +708,7 @@ $(document).on('click', '.btnEliminar', function () {
             const clienteId = $('#idCliente').val();
             SearchDireccionesCliente(clienteId);
         } else {
-            Swal.fire({
+            swal({
                 icon: 'error',
                 title: 'Error',
                 text: 'No se pudo eliminar la dirección',
@@ -687,7 +725,7 @@ $(document).on('click', '.btnEliminarTipoMaterial', function () {
         if (r.IsSuccess) {
             location.reload(); // Recarga inmediata
         } else {
-            Swal.fire({
+            swal({
                 icon: 'error',
                 title: 'Error',
                 text: 'No se pudo eliminar la dirección',

@@ -363,6 +363,14 @@ document.getElementById("btnVentasGeneralesFiltradas").addEventListener("click",
     btnGenerarPDFVentasGeneralesFiltradas();
 });
 
+// Excel
+document.getElementById("btnGenerarExcelVentasGenerales").addEventListener("click", function () {
+    btnGenerarExcelVentasGenerales();
+});
+document.getElementById("btnExcelVentasGeneralesFiltradas").addEventListener("click", function () {
+    btnGenerarExcelVentasGeneralesFiltradas();
+});
+
 function btnGenerarPDFVentasGenerales() {
     var table = $('#tblVentasGenerales').DataTable();
     var datos = table.data().toArray();
@@ -574,6 +582,300 @@ function btnGenerarPDFVentasGeneralesFiltradas() {
         name: 'tablaHTML',
         value: tablaHTML
     }).appendTo(form);
+
+    form.appendTo('body').submit().remove();
+}
+
+function btnGenerarExcelVentasGenerales() {
+    var table = $('#tblVentasGenerales').DataTable();
+    var datos = table.data().toArray();
+
+    // Tomar solo los primeros 30 registros
+    var primeros30 = datos.slice(0, 30);
+
+    // Calcular la sumatoria total de totalImporte
+    var sumatoriaTotal = 0;
+    primeros30.forEach(function (item) {
+        if (item.totalImporte) {
+            sumatoriaTotal += parseFloat(item.totalImporte);
+        }
+    });
+
+    // Swalfire de generando reporte
+    Swal.fire({
+        title: "Generando Excel...",
+        text: "Por favor espere mientras se genera el archivo Excel",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+
+            // Cerrar automáticamente después de 4 segundos
+            setTimeout(() => {
+                Swal.close();
+
+                // Mostrar mensaje de éxito después de cerrar
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Excel generado',
+                    text: 'El archivo Excel se ha creado correctamente',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            }, 2000); // Reducido a 2 segundos para Excel
+        }
+    });
+
+    // Crear tabla HTML manualmente (igual que antes)
+    var tablaHTML = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
+
+    // Encabezados
+    tablaHTML += '<thead><tr>';
+    tablaHTML += '<th>Folio</th>';
+    tablaHTML += '<th>Fecha de transporte</th>';
+    tablaHTML += '<th>Cliente</th>';
+    tablaHTML += '<th>Transportista</th>';
+    tablaHTML += '<th>Vehiculo</th>';
+    tablaHTML += '<th>Origen</th>';
+    tablaHTML += '<th>Material</th>';
+    tablaHTML += '<th>Metraje</th>';
+    tablaHTML += '<th>Importe</th>';
+    tablaHTML += '</tr></thead>';
+
+    // Datos - usar solo los primeros 30 registros
+    tablaHTML += '<tbody>';
+    primeros30.forEach(function (item) {
+        tablaHTML += '<tr>';
+        tablaHTML += '<td>' + (item.folio || '') + '</td>';
+        tablaHTML += '<td>' + (item.fechaViaje ? (() => {
+            const d = new Date(item.fechaViaje);
+            return `${d.getDate().toString().padStart(2, '0')}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getFullYear()}`;
+        })() : '') + '</td>';
+        tablaHTML += '<td>' + (item.cliente.nombre || '') + '</td>';
+        tablaHTML += '<td>' + (item.transportista.nombre || '') + '</td>';
+        tablaHTML += '<td>' + (item.vehiculo.placa || '') + '</td>';
+        tablaHTML += '<td>' + (item.ubicacionOrigen.nombreUbicacion || '') + '</td>';
+        tablaHTML += '<td>' + (item.tipoMaterial.nombreTipoMaterial || '') + '</td>';
+        tablaHTML += '<td>' + (item.kilometrosRecorridos || '') + '</td>';
+        tablaHTML += '<td>' +
+            (item.totalImporte
+                ? parseFloat(item.totalImporte).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' })
+                : '$0.00'
+            ) +
+            '</td>';
+        tablaHTML += '</tr>';
+    });
+
+    // Agregar fila de total
+    tablaHTML += '<tr style="font-weight: bold; background-color: #f0f0f0;">';
+    tablaHTML += '<td colspan="8" style="text-align: right;">TOTAL:</td>';
+    tablaHTML += '<td>' +
+        sumatoriaTotal.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) +
+        '</td>';
+    tablaHTML += '</tr>';
+
+    tablaHTML += '</tbody></table>';
+
+    // Crear formulario y enviar al controlador Excel
+    var form = $('<form>', {
+        method: 'POST',
+        action: '/Excel/GenerarReporteVentasGenerales'
+    });
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'tablaHTML',
+        value: tablaHTML
+    }).appendTo(form);
+
+    // Opcional: agregar fechas si están disponibles
+    var fechaInicio = $('#FechaInicio').val();
+    var fechaFin = $('#FechaFin').val();
+
+    if (fechaInicio) {
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'fechaInicio',
+            value: fechaInicio
+        }).appendTo(form);
+    }
+
+    if (fechaFin) {
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'fechaFin',
+            value: fechaFin
+        }).appendTo(form);
+    }
+
+    form.appendTo('body').submit().remove();
+}
+
+function btnGenerarExcelVentasGeneralesFiltradas() {
+    var table = $('#tblVentasGeneralesFiltradas').DataTable();
+    var datos = table.data().toArray();
+
+    // Verificar si la tabla está vacía
+    if (datos.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Tabla vacía',
+            text: 'La tabla está vacía, no se puede generar el Excel',
+            confirmButtonText: 'Aceptar'
+        });
+        return;
+    }
+
+    // Tomar solo los primeros 30 registros
+    var primeros30 = datos.slice(0, 30);
+
+    // Calcular la sumatoria total de totalImporte
+    var sumatoriaTotal = 0;
+    primeros30.forEach(function (item) {
+        if (item.totalImporte) {
+            sumatoriaTotal += parseFloat(item.totalImporte);
+        }
+    });
+
+    // Obtener información de filtros aplicados
+    var filtroAplicado = "";
+
+    // Verificar si hay filtros de búsqueda
+    var searchValue = $('.dataTables_filter input').val();
+    if (searchValue && searchValue.trim() !== "") {
+        filtroAplicado = `Búsqueda: "${searchValue}"`;
+    }
+
+    // Verificar filtros de columnas individuales (si tienes)
+    var columnFilters = [];
+    $('.dt-column-filter').each(function () {
+        var filterValue = $(this).val();
+        if (filterValue && filterValue.trim() !== "") {
+            var columnTitle = $(this).attr('placeholder') || $(this).closest('th').text();
+            columnFilters.push(`${columnTitle}: ${filterValue}`);
+        }
+    });
+
+    if (columnFilters.length > 0) {
+        filtroAplicado += (filtroAplicado ? " | " : "") + columnFilters.join(" | ");
+    }
+
+    // Si no hay filtros específicos, indicar que son datos filtrados
+    if (!filtroAplicado) {
+        filtroAplicado = "Datos filtrados a criterios aplicados";
+    }
+
+    // Swalfire de generando reporte
+    Swal.fire({
+        title: "Generando Excel...",
+        text: "Por favor espere mientras se genera el archivo Excel",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+
+            // Cerrar automáticamente después de 2 segundos
+            setTimeout(() => {
+                Swal.close();
+
+                // Mostrar mensaje de éxito después de cerrar
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Excel generado',
+                    text: 'El archivo Excel se ha creado correctamente',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            }, 2000);
+        }
+    });
+
+    // Crear tabla HTML manualmente
+    var tablaHTML = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
+
+    // Encabezados
+    tablaHTML += '<thead><tr>';
+    tablaHTML += '<th>Folio</th>';
+    tablaHTML += '<th>Fecha de transporte</th>';
+    tablaHTML += '<th>Cliente</th>';
+    tablaHTML += '<th>Transportista</th>';
+    tablaHTML += '<th>Vehiculo</th>';
+    tablaHTML += '<th>Origen</th>';
+    tablaHTML += '<th>Material</th>';
+    tablaHTML += '<th>Metraje</th>';
+    tablaHTML += '<th>Importe</th>';
+    tablaHTML += '</tr></thead>';
+
+    // Datos - usar solo los primeros 30 registros
+    tablaHTML += '<tbody>';
+    primeros30.forEach(function (item) {
+        tablaHTML += '<tr>';
+        tablaHTML += '<td>' + (item.folio || '') + '</td>';
+        tablaHTML += '<td>' + (item.fechaViaje ? (() => {
+            const d = new Date(item.fechaViaje);
+            return `${d.getDate().toString().padStart(2, '0')}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getFullYear()}`;
+        })() : '') + '</td>';
+        tablaHTML += '<td>' + (item.cliente.nombre || '') + '</td>';
+        tablaHTML += '<td>' + (item.transportista.nombre || '') + '</td>';
+        tablaHTML += '<td>' + (item.vehiculo.placa || '') + '</td>';
+        tablaHTML += '<td>' + (item.ubicacionOrigen.nombreUbicacion || '') + '</td>';
+        tablaHTML += '<td>' + (item.tipoMaterial.nombreTipoMaterial || '') + '</td>';
+        tablaHTML += '<td>' + (item.kilometrosRecorridos || '') + '</td>';
+        tablaHTML += '<td>' +
+            (item.totalImporte
+                ? parseFloat(item.totalImporte).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' })
+                : '$0.00'
+            ) +
+            '</td>';
+        tablaHTML += '</tr>';
+    });
+
+    // Agregar fila de total
+    tablaHTML += '<tr style="font-weight: bold; background-color: #f0f0f0;">';
+    tablaHTML += '<td colspan="8" style="text-align: right;">TOTAL:</td>';
+    tablaHTML += '<td>' +
+        sumatoriaTotal.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) +
+        '</td>';
+    tablaHTML += '</tr>';
+
+    tablaHTML += '</tbody></table>';
+
+    // Crear formulario y enviar
+    var form = $('<form>', {
+        method: 'POST',
+        action: '/Excel/GenerarReporteVentasGeneralesFiltradas'
+    });
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'tablaHTML',
+        value: tablaHTML
+    }).appendTo(form);
+
+    // Agregar información del filtro
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'filtroAplicado',
+        value: filtroAplicado
+    }).appendTo(form);
+
+    // Opcional: agregar fechas si están disponibles
+    var fechaInicio = $('#FechaInicio').val();
+    var fechaFin = $('#FechaFin').val();
+
+    if (fechaInicio) {
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'fechaInicio',
+            value: fechaInicio
+        }).appendTo(form);
+    }
+
+    if (fechaFin) {
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'fechaFin',
+            value: fechaFin
+        }).appendTo(form);
+    }
 
     form.appendTo('body').submit().remove();
 }

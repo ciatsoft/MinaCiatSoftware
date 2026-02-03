@@ -52,7 +52,7 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.ClienteTipoMaterialByDireccionMaterialAndCliente(id, idCliente, idMaterial);
             return result;
         }
-        [HttpDelete, Route("DeletTipoMaterial/{id:long}")]
+        [HttpPost, Route("DeletTipoMaterial/{id:long}")]
         public ModelResponse DeletTipoMaterial(long id)
         {
             var result = wrapper.DeletTipoMaterial(id);

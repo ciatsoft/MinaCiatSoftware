@@ -52,7 +52,7 @@ namespace MinaToMVC.DAL
         }
         public async Task<ModelResponse> DeletePV_CorteCaja(long id)
         {
-            var result = await RequestAsync<object>($"api/PV_CorteCaja/{id}", HttpMethod.Delete, null,
+            var result = await RequestAsync<object>($"api/PV_CorteCaja/{id}", HttpMethod.Post, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;

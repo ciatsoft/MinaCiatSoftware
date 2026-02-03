@@ -54,7 +54,7 @@ namespace MinaToMVC.DAL
         }
         public async Task<ModelResponse> DeleteRoll(long id)
         {
-            var result = await RequestAsync<object>($"api/Roll/{id}", HttpMethod.Delete, null,
+            var result = await RequestAsync<object>($"api/Roll/{id}", HttpMethod.Post, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
@@ -155,7 +155,7 @@ namespace MinaToMVC.DAL
 
         public async Task<ModelResponse> DeleteUsuarioRolById(long id)
         {
-            var result = await RequestAsync<object>($"api/Roll/QuitarRolUsuario/{id}", HttpMethod.Delete, null,
+            var result = await RequestAsync<object>($"api/Roll/QuitarRolUsuario/{id}", HttpMethod.Post, null,
             new Func<string, string>((responseString) =>
             {
                 return responseString;
