@@ -385,6 +385,37 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
+        public ModelResponse SearchClienteByNombre(string nombre)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = nombre,
+                    IsNullable = true,
+                    ParameterName = "@Nombre",
+                    SqlDbType = System.Data.SqlDbType.NVarChar
+                });
+
+                var result = GetObject("SearchClienteByName", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, ClientePublicoGral>((reader) =>
+                    {
+                        var r = FillEntity<ClientePublicoGral>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
 
         // Obtener lo vehiculos relacionados al Cliente
         public ModelResponse GetVehiculosPublicoGralByIdCliente(long id)
