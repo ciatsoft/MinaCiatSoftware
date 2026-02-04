@@ -180,25 +180,9 @@ function SaveOrupdateEmpleado() {
             return false;
         }
 
-        // Validar foto en modo edición
-        var esEdicion = $("#id").val() > 0;
-        var fotoInput = document.getElementById('fotografia');
-        var tieneFoto = fotoInput && fotoInput.files && fotoInput.files[0];
-
-        if (esEdicion && !tieneFoto) {
-            // En edición, validar si ya existe una foto previa
-            // Si no hay foto nueva y no había foto anterior, requerir foto
-            // Puedes agregar lógica para verificar si ya existe foto en base de datos
-            Swal.fire({
-                icon: 'warning',
-                title: 'Foto requerida',
-                text: 'En modo edición es necesario seleccionar una fotografía',
-                confirmButtonText: 'Aceptar'
-            });
-            return false;
-        }
-
         var formData = new FormData();
+        var fotoInput = document.getElementById('fotografia');
+        var tieneFotoNueva = fotoInput && fotoInput.files && fotoInput.files[0];
 
         // Crear objeto empleado
         var empleadoData = {
@@ -219,7 +203,6 @@ function SaveOrupdateEmpleado() {
             createdDt: $("#createdDt").val(),
             updatedBy: $("#updatedBy").val(),
             updatedDt: $("#updatedDt").val(),
-            // Estos campos se llenarán en el controlador
             rutaFoto: "",
             gitFoto: ""
         };
@@ -227,27 +210,36 @@ function SaveOrupdateEmpleado() {
         // Agregar el objeto empleado como JSON
         formData.append('empleadoData', JSON.stringify(empleadoData));
 
-        // Agregar la foto si existe (usando el nombre correcto)
-        if (tieneFoto) {
+        // Agregar la foto solo si existe una NUEVA
+        if (tieneFotoNueva) {
             formData.append('fotoEmpleado', fotoInput.files[0]);
         }
 
         // Enviar usando AJAX con FormData
         $.ajax({
-            url: '/Empleado/SaveOrUpdateTrabajador', // Cambia a tu acción real
+            url: '/Empleado/SaveOrUpdateTrabajador',
             type: 'POST',
             data: formData,
             processData: false,
             contentType: false,
             success: function (response) {
-                Swal.fire({
-                    title: "Registro guardado!",
-                    text: "El registro se ha guardado correctamente.",
-                    icon: "success",
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    window.location.href = '/Empleado/AltaEdicion';
-                });
+                if (response.success) {
+                    Swal.fire({
+                        title: "Registro guardado!",
+                        text: response.message || "El registro se ha guardado correctamente.",
+                        icon: "success",
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = '/Empleado/AltaEdicion/';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message || 'Error al guardar los datos',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
             },
             error: function (xhr, status, error) {
                 Swal.fire({
