@@ -19,5 +19,7 @@ namespace MinaTolEntidades.DtoEmpleados
         public long IdDepartamento { get; set; }
         public string NombreDepartamento { get; set; }
         public string Comentario { get; set; }
+        public string RutaFoto { get; set; }
+        public string GitFoto { get; set; }
     }
 }

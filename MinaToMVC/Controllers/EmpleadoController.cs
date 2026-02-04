@@ -185,63 +185,129 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.RecontratarEmpleado(id);
             return JsonConvert.SerializeObject(result);
         }
-        public async Task<ActionResult> SaveOrupdateEmpleado(Empleado t)
+
+        public async Task<ActionResult> SaveOrUpdateTrabajador()
         {
             try
             {
-                bool esNuevoRegistro = t.Id == 0;
+                var empleadoData = Request.Form["empleadoData"];
+                var t = JsonConvert.DeserializeObject<Empleado>(empleadoData);
+                var archivoFoto = Request.Files["fotoEmpleado"];
 
-                // Guardar el empleado
-                var result = await httpClientConnection.SaveOrupdateEmpleado(t);
+                // Obtener ruta base
+                string projectRootPath = HostingEnvironment.ApplicationPhysicalPath;
+                string baseAttachmentPath = Path.Combine(projectRootPath, "Attachment");
 
-                if (result != null && result.IsSuccess)
+                if (!Directory.Exists(baseAttachmentPath))
                 {
-                    // Convertir el Response a Empleado para obtener el ID
-                    var empleadoResponse = JsonConvert.DeserializeObject<Empleado>(result.Response.ToString());
-                    long nuevoId = empleadoResponse.Id;
+                    Directory.CreateDirectory(baseAttachmentPath);
+                }
 
-                    // 1. Obtener la ruta raíz del proyecto MVC (C:\MinaCiat\MinaToMVC)
-                    string projectRootPath = HostingEnvironment.ApplicationPhysicalPath;
+                long empleadoId = t.Id;
+                bool esNuevo = empleadoId == 0;
+                bool tieneFotoNueva = archivoFoto != null && archivoFoto.ContentLength > 0;
 
-                    // 2. Crear la ruta completa para la carpeta Attachment
-                    string baseAttachmentPath = Path.Combine(projectRootPath, "Attachment");
+                // Si es nuevo registro
+                if (esNuevo)
+                {
+                    // Guardar empleado primero para obtener ID
+                    var result = await httpClientConnection.SaveOrupdateEmpleado(t);
 
-                    // 3. Verificar y crear carpeta Attachment si no existe
-                    if (!Directory.Exists(baseAttachmentPath))
+                    if (result == null || !result.IsSuccess)
                     {
-                        Directory.CreateDirectory(baseAttachmentPath);
+                        return Json(new { success = false, message = "Error al guardar empleado" });
                     }
 
-                    // 4. Crear subcarpeta solo si es un NUEVO registro (el ID original era 0)
-                    if (t.Id == 0 && nuevoId > 0)
+                    var empleadoResponse = JsonConvert.DeserializeObject<Empleado>(result.Response.ToString());
+                    empleadoId = empleadoResponse.Id;
+                    t.Id = empleadoId;
+
+                    // Crear estructura de carpetas
+                    string empleadoFolderPath = Path.Combine(baseAttachmentPath, $"Empleado_{empleadoId}");
+                    Directory.CreateDirectory(empleadoFolderPath);
+                    Directory.CreateDirectory(Path.Combine(empleadoFolderPath, "Documentos"));
+                    Directory.CreateDirectory(Path.Combine(empleadoFolderPath, "Fotos"));
+                }
+
+                // Obtener datos actuales si es edición
+                Empleado empleadoActual = null;
+                if (!esNuevo)
+                {
+                    var empleadoActualResponse = await httpClientConnection.ObtenerDatosEmpleado(empleadoId);
+                    if (empleadoActualResponse != null && empleadoActualResponse.IsSuccess)
                     {
-                        string empleadoFolderPath = Path.Combine(baseAttachmentPath, $"Empleado_{nuevoId}");
+                        empleadoActual = JsonConvert.DeserializeObject<Empleado>(empleadoActualResponse.Response.ToString());
 
-                        if (!Directory.Exists(empleadoFolderPath))
+                        // Si no viene foto nueva, mantener las rutas actuales
+                        if (!tieneFotoNueva && empleadoActual != null)
                         {
-                            Directory.CreateDirectory(empleadoFolderPath);
-
-                            // Opcional: Crear subcarpetas dentro del directorio del empleado
-                            string[] subCarpetas = { "Documentos" };
-                            foreach (var carpeta in subCarpetas)
-                            {
-                                string subCarpetaPath = Path.Combine(empleadoFolderPath, carpeta);
-                                if (!Directory.Exists(subCarpetaPath))
-                                {
-                                    Directory.CreateDirectory(subCarpetaPath);
-                                }
-                            }
+                            t.RutaFoto = empleadoActual.RutaFoto;
+                            t.GitFoto = empleadoActual.GitFoto;
                         }
                     }
                 }
 
-                return Redirect("AltaEdicion");
+                // Manejar foto nueva si existe
+                if (tieneFotoNueva)
+                {
+                    string fotosFolderPath = Path.Combine(baseAttachmentPath, $"Empleado_{empleadoId}", "Fotos");
+
+                    // Validar extensión
+                    string extension = Path.GetExtension(archivoFoto.FileName).ToLower();
+                    string[] extensionesPermitidas = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
+
+                    if (!extensionesPermitidas.Contains(extension))
+                    {
+                        return Json(new { success = false, message = "Formato de imagen no válido" });
+                    }
+
+                    // Determinar nombre del archivo
+                    string nombreArchivo = "";
+
+                    if (!esNuevo && empleadoActual != null && !string.IsNullOrEmpty(empleadoActual.GitFoto))
+                    {
+                        // Mantener la misma extensión que la foto actual
+                        string extensionExistente = Path.GetExtension(empleadoActual.GitFoto);
+                        nombreArchivo = $"FotoEmpleado_{empleadoId}{extensionExistente}";
+                    }
+                    else
+                    {
+                        // Usar extensión de la nueva foto
+                        nombreArchivo = $"FotoEmpleado_{empleadoId}{extension}";
+                    }
+
+                    string rutaCompletaArchivo = Path.Combine(fotosFolderPath, nombreArchivo);
+
+                    // Eliminar archivo existente si existe
+                    if (System.IO.File.Exists(rutaCompletaArchivo))
+                    {
+                        System.IO.File.Delete(rutaCompletaArchivo);
+                    }
+
+                    // Guardar nueva foto
+                    archivoFoto.SaveAs(rutaCompletaArchivo);
+
+                    // Actualizar propiedades
+                    t.RutaFoto = Path.GetFullPath(fotosFolderPath + '\\');
+                    t.GitFoto = nombreArchivo;
+                }
+
+                // Guardar/actualizar empleado
+                var finalResult = await httpClientConnection.SaveOrupdateEmpleado(t);
+
+                if (finalResult == null || !finalResult.IsSuccess)
+                {
+                    return Json(new { success = false, message = "Error al guardar los datos finales" });
+                }
+
+                return Json(new { success = true, id = empleadoId, message = "Empleado guardado exitosamente" });
             }
             catch (Exception ex)
             {
-                return Redirect("AltaEdicion");
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
             }
         }
+
         public async Task<ActionResult> DeleteEmpleadoById(long id)
         {
             var r = await httpClientConnection.DeleteEmpleadoById(id);
@@ -251,6 +317,57 @@ namespace MinaToMVC.Controllers
         {
             var result = await httpClientConnection.ObtenerDatosEmpleado(id);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<ActionResult> ObtenerFotoEmpleado(long id)
+        {
+            try
+            {
+                // Obtener el empleado desde el servicio
+                var responseEmpleado = await httpClientConnection.ObtenerDatosEmpleado(id);
+
+                if (responseEmpleado == null || !responseEmpleado.IsSuccess)
+                {
+                    return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+                }
+
+                // Deserializar la respuesta
+                var empleado = JsonConvert.DeserializeObject<Empleado>(responseEmpleado.Response.ToString());
+
+                if (empleado == null || string.IsNullOrEmpty(empleado.RutaFoto) || string.IsNullOrEmpty(empleado.GitFoto))
+                {
+                    return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+                }
+
+                // Combinar ruta y nombre de archivo
+                string rutaCompletaFoto = Path.Combine(empleado.RutaFoto, empleado.GitFoto);
+
+                if (!System.IO.File.Exists(rutaCompletaFoto))
+                {
+                    return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+                }
+
+                // Leer y convertir la imagen
+                byte[] imageBytes = System.IO.File.ReadAllBytes(rutaCompletaFoto);
+                string base64String = Convert.ToBase64String(imageBytes);
+
+                // Usar el tipo MIME adecuado
+                string extension = Path.GetExtension(empleado.GitFoto).ToLower();
+                string mimeType = extension == ".png" ? "image/png" :
+                                 extension == ".gif" ? "image/gif" :
+                                 extension == ".bmp" ? "image/bmp" : "image/jpeg";
+
+                string imageSrc = $"data:{mimeType};base64,{base64String}";
+
+                return Json(new
+                {
+                    success = true,
+                    fotoBase64 = imageSrc
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch
+            {
+                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+            }
         }
         #endregion
 
