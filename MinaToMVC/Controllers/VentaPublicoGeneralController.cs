@@ -788,6 +788,10 @@ namespace MinaToMVC.Controllers
 
         #endregion
 
+        #region HistoricoRFID
+
+        #endregion
+
         #endregion
     }
 }
