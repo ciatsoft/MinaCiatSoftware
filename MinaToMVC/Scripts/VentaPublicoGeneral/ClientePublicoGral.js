@@ -74,6 +74,67 @@ $(document).ready(function () {
         }
     });
 
+    $("#tblHistoricoRFIDCliente").DataTable({
+        processing: true,
+        destroy: true,
+        paging: true,
+        searching: true,
+        responsive: true,
+        autoWidth: false,
+        columns: [
+            { data: "id", visible: false, title: "Id" },
+            { data: "rfiD_Anterior", visible: true, title: "RFID Anterior" },
+            { data: "rfiD_Nuevo", title: "RFID Nuevo" },
+            {
+                data: "fecha_Cambio",
+                title: "Fecha de Cambio",
+                render: function (data) {
+                    if (data) {
+                        var fecha = new Date(data);
+                        // Formato: dd/mm/yyyy HH:MM
+                        return fecha.toLocaleDateString('es-ES') + ', Hora: ' + fecha.toLocaleTimeString('es-ES', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                    }
+                    return '';
+                }
+            },
+            {
+                data: "id",
+                title: "Acciones",
+                render: function (data) {
+                    return `
+                        <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarHistoricoRFID(${data})" />
+                    `;
+                }
+            }
+        ],
+        language: {
+            decimal: ",",
+            thousands: ".",
+            processing: "Procesando...",
+            lengthMenu: "Mostrar _MENU_ entradas",
+            zeroRecords: "No se encontraron resultados",
+            emptyTable: "Ningun dato disponible en esta tabla",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+            infoEmpty: "Mostrando 0 a 0 de 0 entradas",
+            infoFiltered: "(filtrado de un total de _MAX_ entradas)",
+            search: "Buscar:",
+            loadingRecords: "Cargando...",
+            paginate: {
+                first: "Primero",
+                last: "Último",
+                next: "Siguiente",
+                previous: "Anterior"
+            },
+            aria: {
+                sortAscending: ": activar para ordenar ascendente",
+                sortDescending: ": activar para ordenar descendente"
+            }
+        }
+    });
+
     GetAllClientePublicoGral();
 
     if (typeof ClientePublicoGralJson !== "undefined" && ClientePublicoGralJson && ClientePublicoGralJson.Id != 0) {
@@ -86,7 +147,8 @@ $(document).ready(function () {
         $("#rfc").val(ClientePublicoGralJson.RFC);
         $("#razonSocial").val(ClientePublicoGralJson.RazonSocial);
         $("#comentarios").val(ClientePublicoGralJson.Comentarios);
-        
+
+        GetAllHistoricoRFIDByIdCliente(ClientePublicoGralJson.Id);
     } else {
         $("#btnEliminaru").hide();
         $("#btnGuardaru").show();
@@ -100,6 +162,25 @@ function GetAllClientePublicoGral() {
         } else {
             Swal.fire("Error", "Error al cargar los Clientes Venta Publico General: " + r.ErrorMessage, "error");
         }
+    });
+}
+
+function GetAllHistoricoRFIDByIdCliente(id) {
+    GetMVC("/VentaPublicoGeneral/GetAllHistoricoRFIDByIdCliente/" + id, function (r) {
+        if (r.IsSuccess) {
+            var data = r.Response;
+            MapingPropertiesDataTable("tblHistoricoRFIDCliente", r.Response);
+            console.log(data);
+        } else {
+            Swal.fire("Error", "Error al cargar los Datos del Clientes Venta Publico General: " + r.ErrorMessage, "error");
+        }
+    });
+}
+
+function EliminarHistoricoRFID(id) {
+    PostMVC('/VentaPublicoGeneral/DeleteHistoricoRFID', { id: id }, function (r) {
+        Swal.fire('Eliminado', 'El registro ha sido eliminado.', 'success')
+            .then(() => window.location.reload());
     });
 }
 
