@@ -775,20 +775,55 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllClientePublicoGral();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-        public async Task<ActionResult> SaveOrUpdateClientePublicoGral(ClientePublicoGral c)
+        public async Task<string> SaveOrUpdateClientePublicoGral(ClientePublicoGral c)
         {
             var r = await httpClientConnection.SaveOrUpdateClientePublicoGral(c);
-            return Redirect("ClientePublicoGeneral");
+            return Newtonsoft.Json.JsonConvert.SerializeObject(r);
         }
         public async Task<String> DeleteClientePublicoGral(long id)
         {
             var result = await httpClientConnection.DeleteClientePublicoGral(id);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-
+        public async Task<string> GetClientePublicoGralById(long id)
+        {
+            var result = await httpClientConnection.GetClientePublicoGralById(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
         #endregion
 
         #region HistoricoRFID
+
+        public async Task<string> SaveOrUpdateHistoricoRFID(HistoricoRFID c)
+        {
+            var r = await httpClientConnection.SaveOrUpdateHistoricoRFID(c);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(r);
+        }
+        public async Task<string> GetAllHistoricoRFID()
+        {
+            var result = await httpClientConnection.GetAllHistoricoRFID();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetHistoricoRFIDById(long id)
+        {
+            var result = await httpClientConnection.GetHistoricoRFIDById(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetAllHistoricoRFIDByIdCliente(long id)
+        {
+            var result = await httpClientConnection.GetAllHistoricoRFIDByIdCliente(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> TotalHistoricoRFIDByIdCliente(long id)
+        {
+            var result = await httpClientConnection.TotalHistoricoRFIDByIdCliente(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<String> DeleteHistoricoRFID(long id)
+        {
+            var result = await httpClientConnection.DeleteHistoricoRFID(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
 
         #endregion
 
