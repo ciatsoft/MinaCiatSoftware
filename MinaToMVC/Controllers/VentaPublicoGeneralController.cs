@@ -768,6 +768,8 @@ namespace MinaToMVC.Controllers
             ViewBag.UserToken = usuarioAutenticado;
             ViewBag.Usuarios = usuarios;
 
+            ViewBag.EsEdicion = (id != 0);
+
             return View(clientePublicoGral);
         }
         public async Task<string> GetAllClientePublicoGral()

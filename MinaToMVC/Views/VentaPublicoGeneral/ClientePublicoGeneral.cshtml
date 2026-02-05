@@ -16,59 +16,67 @@
     @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy" })
     @Html.HiddenFor(x => x.UpdatedDt, new { @Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), id = "fecha2" })
 
-    <div class="content">
-        <br>
-        <center><h1>Clientes Publico General</h1></center>
+<div class="content">
+    <br>
+    <center><h1>Clientes Publico General</h1></center>
 
-        <div class="tabla-consultas-roll">
-            <div class="rectangulos" style="width: 100%;">
-                <div class="row">
-                    <div class="col-lg-4">
-                        <label>ID Cliente:</label>
-                        @Html.TextBoxFor(x => x.Id, new { @class = "form-control", @readonly = "readonly", @id = "id" })
-                    </div>
-                    <div class="col-lg-4">
-                        <label>RFID Asignado:</label>
-                        @Html.TextBoxFor(x => x.RFID, new { @class = "form-control", @id = "RFID" })
-                    </div>
+    <div class="tabla-consultas-roll">
+        <div class="rectangulos" style="width: 100%;">
+            <div class="row">
+                <div class="col-lg-4">
+                    <label>ID Cliente:</label>
+                    @Html.TextBoxFor(x => x.Id, new { @class = "form-control", @readonly = "readonly", @id = "id" })
                 </div>
-                <div class="row">
-                    <div class="col-lg-4">
-                        <label>Nombre:</label>
-                        @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control", @id = "nombre" })
-                    </div>
-                    <div class="col-lg-4">
-                        <label>Telefono:</label>
-                        @Html.TextBoxFor(x => x.Telefono, new { @class = "form-control", @id = "telefono", @pattern = "\\d{12}", oninput = "this.value = this.value.replace(/[^0-9]/g, '')" })
-                    </div>
-                    <div class="col-lg-4">
-                        <label>Email:</label>
-                        @Html.TextBoxFor(x => x.Email, new { @class = "form-control", @id = "email", @type = "email", @placeholder = "ejemplo@dominio.com" })
-                    </div>
-                    <div class="col-lg-4">
-                        <label>RFC:</label>
-                        @Html.TextBoxFor(x => x.RFC, new { @class = "form-control", @id = "rfc" })
-                    </div>
-                    <div class="col-lg-4">
-                        <label>Razon Social:</label>
-                        @Html.TextBoxFor(x => x.RazonSocial, new { @class = "form-control", @id = "razonSocial" })
-                    </div>
-                    <div class="col-lg-4">
-                        <label>Comentarios:</label>
-                        @Html.TextBoxFor(x => x.Comentarios, new { @class = "form-control", @id = "comentarios" })
-                    </div>
+                <div class="col-lg-4">
+                    <label>RFID Asignado:</label>
+                    @Html.TextBoxFor(x => x.RFID, new { @class = "form-control", @id = "RFID" })
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <input id="btnGuardaru" type="button" value="Guardar" onclick="SaveOrUpdateClientePublicoGral()" class="btn btn-success" />
-                        <a href="/VentaPublicoGeneral/ClientePublicoGeneral" class="btn btn-custom-cancel">Cancelar</a>
-                    </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4">
+                    <label>Nombre:</label>
+                    @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control", @id = "nombre" })
+                </div>
+                <div class="col-lg-4">
+                    <label>Telefono:</label>
+                    @Html.TextBoxFor(x => x.Telefono, new { @class = "form-control", @id = "telefono", @pattern = "\\d{12}", oninput = "this.value = this.value.replace(/[^0-9]/g, '')" })
+                </div>
+                <div class="col-lg-4">
+                    <label>Email:</label>
+                    @Html.TextBoxFor(x => x.Email, new { @class = "form-control", @id = "email", @type = "email", @placeholder = "ejemplo@dominio.com" })
+                </div>
+                <div class="col-lg-4">
+                    <label>RFC:</label>
+                    @Html.TextBoxFor(x => x.RFC, new { @class = "form-control", @id = "rfc" })
+                </div>
+                <div class="col-lg-4">
+                    <label>Razon Social:</label>
+                    @Html.TextBoxFor(x => x.RazonSocial, new { @class = "form-control", @id = "razonSocial" })
+                </div>
+                <div class="col-lg-4">
+                    <label>Comentarios:</label>
+                    @Html.TextBoxFor(x => x.Comentarios, new { @class = "form-control", @id = "comentarios" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <input id="btnGuardaru" type="button" value="Guardar" onclick="SaveOrUpdateClientePublicoGral()" class="btn btn-success" />
+                    <a href="/VentaPublicoGeneral/ClientePublicoGeneral" class="btn btn-custom-cancel">Cancelar</a>
                 </div>
             </div>
         </div>
-        <br />
-        <table id="tblClientesPGral" class="table table-bordered table-striped" style="width: 100%;"></table>
     </div>
+    <br />
+    <table id="tblClientesPGral" class="table table-bordered table-striped" style="width: 100%;"></table>
+
+    @if (ViewBag.EsEdicion == true)
+    {
+        <br>
+        <center><h1>Historial de RFID</h1></center>
+        <br>
+        <table id="tblHistoricoRFIDCliente" class="table table-bordered table-striped" style="width: 100%;"></table>
+    }
+</div>
 }
 
 <script type="text/javascript">
