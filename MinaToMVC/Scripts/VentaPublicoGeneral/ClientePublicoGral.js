@@ -138,14 +138,41 @@ function SaveOrUpdateClientePublicoGral() {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                PostMVC("/VentaPublicoGeneral/SaveOrUpdateClientePublicoGral", parametro, function (success, response) {
-                    if (success) {
-                        Swal.fire('Éxito', isUpdating ? 'Datos actualizados exitosamente.' : 'Datos guardados exitosamente.', 'success')
-                            .then(() => window.location.href = '/VentaPublicoGeneral/ClientePublicoGeneral');
+
+                GetMVC("/VentaPublicoGeneral/GetClientePublicoGralById/" + parametro.Id, function (r) {
+                    if (r.IsSuccess) {
+                        var data = r.Response;
+                        if (parametro.RFID == data.rfid) {
+                            PostMVC("/VentaPublicoGeneral/SaveOrUpdateClientePublicoGral", parametro, function (success, response) {
+                                if (success) {
+                                    Swal.fire('Éxito', isUpdating ? 'Datos actualizados exitosamente.' : 'Datos guardados exitosamente.', 'success')
+                                        .then(() => window.location.href = '/VentaPublicoGeneral/ClientePublicoGeneral');
+                                } else {
+                                    Swal.fire('Error', 'Error al guardar los datos: ' + response.ErrorMessage, 'error');
+                                }
+                            });
+                        }
+                        else {
+                            var objeto = {
+
+                            }
+                            console.log('No es el mismo RFID Vamos a HistoricoRFID');
+                        }
                     } else {
-                        Swal.fire('Error', 'Error al guardar los datos: ' + response.ErrorMessage, 'error');
+                        Swal.fire("Error", "Error al cargar los Datos del Clientes Venta Publico General: " + r.ErrorMessage, "error");
                     }
                 });
+
+
+
+                //PostMVC("/VentaPublicoGeneral/SaveOrUpdateClientePublicoGral", parametro, function (success, response) {
+                //    if (success) {
+                //        Swal.fire('Éxito', isUpdating ? 'Datos actualizados exitosamente.' : 'Datos guardados exitosamente.', 'success')
+                //            .then(() => window.location.href = '/VentaPublicoGeneral/ClientePublicoGeneral');
+                //    } else {
+                //        Swal.fire('Error', 'Error al guardar los datos: ' + response.ErrorMessage, 'error');
+                //    }
+                //});
             }
         });
     } else {
