@@ -84,9 +84,11 @@
     <Compile Include="DtoVentaPublicoGeneral\Canjeo.cs" />
     <Compile Include="DtoVentaPublicoGeneral\ClientePublicoGral.cs" />
     <Compile Include="DtoVentaPublicoGeneral\Deducciones.cs" />
+    <Compile Include="DtoVentaPublicoGeneral\HistoricoRFID.cs" />
     <Compile Include="DtoVentaPublicoGeneral\Prepago.cs" />
     <Compile Include="DtoVentaPublicoGeneral\PV_CajaChica.cs" />
     <Compile Include="DtoVentaPublicoGeneral\PV_CorteCaja.cs" />
+    <Compile Include="DtoVentaPublicoGeneral\Reporte.cs" />
     <Compile Include="DtoVentaPublicoGeneral\Reporte_Venta.cs" />
     <Compile Include="DtoVentaPublicoGeneral\TicketModel.cs" />
     <Compile Include="DtoVentaPublicoGeneral\TotalPlanta.cs" />
