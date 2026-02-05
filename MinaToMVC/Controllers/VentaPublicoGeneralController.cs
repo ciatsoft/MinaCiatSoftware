@@ -775,10 +775,10 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllClientePublicoGral();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-        public async Task<ActionResult> SaveOrUpdateClientePublicoGral(ClientePublicoGral c)
+        public async Task<string> SaveOrUpdateClientePublicoGral(ClientePublicoGral c)
         {
             var r = await httpClientConnection.SaveOrUpdateClientePublicoGral(c);
-            return Redirect("ClientePublicoGeneral");
+            return Newtonsoft.Json.JsonConvert.SerializeObject(r);
         }
         public async Task<String> DeleteClientePublicoGral(long id)
         {
@@ -794,10 +794,10 @@ namespace MinaToMVC.Controllers
 
         #region HistoricoRFID
 
-        public async Task<ActionResult> SaveOrUpdateHistoricoRFID(HistoricoRFID c)
+        public async Task<string> SaveOrUpdateHistoricoRFID(HistoricoRFID c)
         {
             var r = await httpClientConnection.SaveOrUpdateHistoricoRFID(c);
-            return Redirect("ClientePublicoGeneral");
+            return Newtonsoft.Json.JsonConvert.SerializeObject(r);
         }
         public async Task<string> GetAllHistoricoRFID()
         {
