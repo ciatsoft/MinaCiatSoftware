@@ -3455,6 +3455,366 @@ namespace MinaToMVC.Controllers
         }
         [HttpPost]
         [ValidateInput(false)]
+        public ActionResult GenerarReporteDeduccionesExcelFechas(string tablaHTML)
+        {
+            try
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("Deducciones por Rango de Fechas");
+
+                // ================= CONFIGURACIÓN DE IMPRESIÓN =================
+                sheet.PrintSetup.Landscape = false;
+                sheet.PrintSetup.PaperSize = (short)PaperSize.A4;
+                sheet.SetMargin(MarginType.TopMargin, 0.5);
+                sheet.SetMargin(MarginType.BottomMargin, 0.5);
+                sheet.SetMargin(MarginType.LeftMargin, 0.4);
+                sheet.SetMargin(MarginType.RightMargin, 0.4);
+
+                // Configurar anchos de columna
+                sheet.SetColumnWidth(0, 10 * 256);   // ID
+                sheet.SetColumnWidth(1, 20 * 256);   // Tipo Gasto
+                sheet.SetColumnWidth(2, 40 * 256);   // Descripción
+                sheet.SetColumnWidth(3, 20 * 256);   // Encargado
+                sheet.SetColumnWidth(4, 15 * 256);   // Monto
+                sheet.SetColumnWidth(5, 15 * 256);   // Fecha
+
+                int rowIndex = 0;
+
+                // ================= ESTILOS =================
+
+                // Empresa/Encabezado
+                ICellStyle headerStyle = workbook.CreateCellStyle();
+                IFont headerFont = workbook.CreateFont();
+                headerFont.FontName = "Calibri";
+                headerFont.FontHeightInPoints = 16;
+                headerFont.IsBold = true;
+                headerFont.Color = IndexedColors.DarkBlue.Index;
+                headerStyle.SetFont(headerFont);
+                headerStyle.Alignment = HorizontalAlignment.Center;
+
+                // Título reporte
+                ICellStyle titleStyle = workbook.CreateCellStyle();
+                IFont titleFont = workbook.CreateFont();
+                titleFont.FontName = "Calibri";
+                titleFont.FontHeightInPoints = 12;
+                titleFont.IsBold = true;
+                titleFont.Color = IndexedColors.Black.Index;
+                titleStyle.SetFont(titleFont);
+                titleStyle.Alignment = HorizontalAlignment.Center;
+
+                // Información
+                ICellStyle infoStyle = workbook.CreateCellStyle();
+                IFont infoFont = workbook.CreateFont();
+                infoFont.FontHeightInPoints = 10;
+                infoFont.Color = IndexedColors.Black.Index;
+                infoStyle.SetFont(infoFont);
+
+                // ENCABEZADOS TABLA - CORREGIDO: FONDO NEGRO, LETRAS BLANCAS
+                ICellStyle tableHeaderStyle = workbook.CreateCellStyle();
+                IFont tableHeaderFont = workbook.CreateFont();
+                tableHeaderFont.FontHeightInPoints = 10;
+                tableHeaderFont.IsBold = true;
+                tableHeaderFont.Color = IndexedColors.White.Index; // Letras blancas
+                tableHeaderStyle.SetFont(tableHeaderFont);
+                tableHeaderStyle.FillForegroundColor = IndexedColors.Black.Index; // Fondo negro
+                tableHeaderStyle.FillPattern = FillPattern.SolidForeground;
+                tableHeaderStyle.Alignment = HorizontalAlignment.Center;
+                tableHeaderStyle.BorderTop = BorderStyle.Thin;
+                tableHeaderStyle.BorderBottom = BorderStyle.Thin;
+                tableHeaderStyle.BorderLeft = BorderStyle.Thin;
+                tableHeaderStyle.BorderRight = BorderStyle.Thin;
+
+                // Datos
+                ICellStyle dataStyle = workbook.CreateCellStyle();
+                dataStyle.BorderTop = BorderStyle.Thin;
+                dataStyle.BorderBottom = BorderStyle.Thin;
+                dataStyle.BorderLeft = BorderStyle.Thin;
+                dataStyle.BorderRight = BorderStyle.Thin;
+                dataStyle.VerticalAlignment = VerticalAlignment.Center;
+                dataStyle.WrapText = true;
+
+                // ID (centrado)
+                ICellStyle idStyle = workbook.CreateCellStyle();
+                idStyle.CloneStyleFrom(dataStyle);
+                idStyle.Alignment = HorizontalAlignment.Center;
+
+                // Texto normal
+                ICellStyle textStyle = workbook.CreateCellStyle();
+                textStyle.CloneStyleFrom(dataStyle);
+                textStyle.Alignment = HorizontalAlignment.Left;
+
+                // Monto (moneda)
+                ICellStyle currencyStyle = workbook.CreateCellStyle();
+                currencyStyle.CloneStyleFrom(dataStyle);
+                currencyStyle.Alignment = HorizontalAlignment.Right;
+                currencyStyle.DataFormat = workbook.CreateDataFormat().GetFormat("$#,##0.00");
+
+                // Fecha
+                ICellStyle dateStyle = workbook.CreateCellStyle();
+                dateStyle.CloneStyleFrom(dataStyle);
+                dateStyle.Alignment = HorizontalAlignment.Center;
+                dateStyle.DataFormat = workbook.CreateDataFormat().GetFormat("dd/MM/yyyy");
+
+                // Total general
+                ICellStyle totalStyle = workbook.CreateCellStyle();
+                IFont totalFont = workbook.CreateFont();
+                totalFont.IsBold = true;
+                totalFont.FontHeightInPoints = 11;
+                totalFont.Color = IndexedColors.White.Index;
+                totalStyle.SetFont(totalFont);
+                totalStyle.FillForegroundColor = IndexedColors.Green.Index;
+                totalStyle.FillPattern = FillPattern.SolidForeground;
+                totalStyle.Alignment = HorizontalAlignment.Right;
+                totalStyle.BorderTop = BorderStyle.Thin;
+                totalStyle.BorderBottom = BorderStyle.Thin;
+                totalStyle.BorderLeft = BorderStyle.Thin;
+                totalStyle.BorderRight = BorderStyle.Thin;
+                totalStyle.DataFormat = workbook.CreateDataFormat().GetFormat("$#,##0.00");
+
+                // Resumen
+                ICellStyle summaryStyle = workbook.CreateCellStyle();
+                IFont summaryFont = workbook.CreateFont();
+                summaryFont.FontHeightInPoints = 10;
+                summaryFont.IsBold = true;
+                summaryFont.Color = IndexedColors.Black.Index;
+                summaryStyle.SetFont(summaryFont);
+                summaryStyle.FillForegroundColor = IndexedColors.Grey25Percent.Index;
+                summaryStyle.FillPattern = FillPattern.SolidForeground;
+                summaryStyle.BorderTop = BorderStyle.Thin;
+                summaryStyle.BorderBottom = BorderStyle.Thin;
+                summaryStyle.BorderLeft = BorderStyle.Thin;
+                summaryStyle.BorderRight = BorderStyle.Thin;
+
+                // ================= CONTENIDO =================
+
+                // Fila 0: Encabezado
+                IRow headerRow = sheet.CreateRow(rowIndex++);
+                headerRow.CreateCell(0).SetCellValue("REPORTE DE DEDUCCIONES");
+                headerRow.GetCell(0).CellStyle = headerStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 5));
+
+                // Fila 1: Información del reporte
+                IRow fechaRow = sheet.CreateRow(rowIndex++);
+                fechaRow.CreateCell(0).SetCellValue($"Fecha de Generación: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
+                fechaRow.GetCell(0).CellStyle = infoStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(1, 1, 0, 5));
+
+                rowIndex++; // Fila 2: Espacio
+
+                // Fila 3: Encabezados de la tabla (ESTÁTICO - NEGRO CON LETRAS BLANCAS)
+                IRow tableHeaderRow = sheet.CreateRow(rowIndex++);
+
+                // Definir encabezados estáticos
+                string[] headers = {
+            "ID",
+            "TIPO GASTO",
+            "DESCRIPCIÓN",
+            "ENCARGADO",
+            "MONTO",
+            "FECHA"
+        };
+
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    ICell cell = tableHeaderRow.CreateCell(i);
+                    cell.SetCellValue(headers[i]);
+                    cell.CellStyle = tableHeaderStyle; // Aplicar estilo negro con letras blancas
+                }
+
+                // ================= DATOS =================
+                int totalRegistros = 0;
+                decimal totalGeneral = 0;
+
+                if (!string.IsNullOrEmpty(tablaHTML))
+                {
+                    // Extraer datos del HTML
+                    var tbodyMatch = Regex.Match(tablaHTML, @"<tbody[^>]*>(.*?)</tbody>",
+                        RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                    if (tbodyMatch.Success)
+                    {
+                        var rows = Regex.Matches(tbodyMatch.Groups[1].Value, @"<tr[^>]*>(.*?)</tr>",
+                            RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                        foreach (Match row in rows)
+                        {
+                            var cells = Regex.Matches(row.Groups[1].Value, @"<td[^>]*>(.*?)</td>",
+                                RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                            if (cells.Count >= 6)
+                            {
+                                IRow dataRow = sheet.CreateRow(rowIndex++);
+                                totalRegistros++;
+
+                                for (int i = 0; i < 6; i++)
+                                {
+                                    string value = Regex.Replace(cells[i].Groups[1].Value, @"<[^>]*>", "");
+                                    value = System.Web.HttpUtility.HtmlDecode(value).Trim();
+
+                                    ICell cell = dataRow.CreateCell(i);
+
+                                    // Aplicar estilos según la columna
+                                    if (i == 0) // ID
+                                    {
+                                        cell.SetCellValue(value);
+                                        cell.CellStyle = idStyle;
+                                    }
+                                    else if (i == 1 || i == 2 || i == 3) // Tipo Gasto, Descripción, Encargado
+                                    {
+                                        cell.SetCellValue(value);
+                                        cell.CellStyle = textStyle;
+                                    }
+                                    else if (i == 4) // Monto
+                                    {
+                                        // Limpiar formato de moneda
+                                        string cleanValue = value.Replace("$", "")
+                                                                 .Replace(",", "")
+                                                                 .Replace("MXN", "")
+                                                                 .Trim();
+
+                                        if (decimal.TryParse(cleanValue, out decimal monto))
+                                        {
+                                            cell.SetCellValue((double)monto);
+                                            cell.CellStyle = currencyStyle;
+
+                                            // Acumular total general
+                                            totalGeneral += monto;
+                                        }
+                                        else
+                                        {
+                                            cell.SetCellValue(value);
+                                            cell.CellStyle = textStyle;
+                                        }
+                                    }
+                                    else if (i == 5) // Fecha
+                                    {
+                                        // Intentar parsear la fecha
+                                        if (DateTime.TryParseExact(value, "dd/MM/yyyy",
+                                            CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime fecha))
+                                        {
+                                            cell.SetCellValue(fecha);
+                                            cell.CellStyle = dateStyle;
+                                        }
+                                        else
+                                        {
+                                            cell.SetCellValue(value);
+                                            cell.CellStyle = textStyle;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // ================= TOTAL GENERAL =================
+                if (totalRegistros > 0)
+                {
+                    rowIndex++;
+
+                    IRow totalGeneralRow = sheet.CreateRow(rowIndex++);
+
+                    // Combinar celdas para "TOTAL GENERAL:"
+                    ICell totalTextCell = totalGeneralRow.CreateCell(0);
+                    totalTextCell.SetCellValue("TOTAL GENERAL:");
+                    totalTextCell.CellStyle = totalStyle;
+
+                    // Combinar celdas 0-4
+                    sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 4));
+
+                    // Celda con el valor total (columna 5)
+                    ICell totalGeneralCell = totalGeneralRow.CreateCell(5);
+                    totalGeneralCell.SetCellValue((double)totalGeneral);
+                    totalGeneralCell.CellStyle = totalStyle;
+                }
+
+                // ================= RESUMEN ESTADÍSTICO =================
+                rowIndex += 2;
+
+                IRow resumenTitleRow = sheet.CreateRow(rowIndex++);
+                resumenTitleRow.CreateCell(0).SetCellValue("RESUMEN ESTADÍSTICO");
+                resumenTitleRow.GetCell(0).CellStyle = titleStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 5));
+
+                // Total de registros
+                IRow totalRegRow = sheet.CreateRow(rowIndex++);
+                totalRegRow.CreateCell(0).SetCellValue($"Total de deducciones: {totalRegistros}");
+                totalRegRow.GetCell(0).CellStyle = summaryStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 5));
+
+                // Total general
+                IRow totalGenRow = sheet.CreateRow(rowIndex++);
+                totalGenRow.CreateCell(0).SetCellValue($"Total general:");
+                totalGenRow.GetCell(0).CellStyle = summaryStyle;
+
+                ICell totalValorCell = totalGenRow.CreateCell(1);
+                totalValorCell.SetCellValue((double)totalGeneral);
+                totalValorCell.CellStyle = currencyStyle;
+
+                // Combinar celdas 1-5 para el valor
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 1, 5));
+
+                // Promedio por deducción (si hay registros)
+                if (totalRegistros > 0)
+                {
+                    decimal promedioPorDeduccion = totalGeneral / totalRegistros;
+
+                    IRow promedioRow = sheet.CreateRow(rowIndex++);
+                    promedioRow.CreateCell(0).SetCellValue($"Promedio por deducción:");
+                    promedioRow.GetCell(0).CellStyle = summaryStyle;
+
+                    ICell promedioValorCell = promedioRow.CreateCell(1);
+                    promedioValorCell.SetCellValue((double)promedioPorDeduccion);
+                    promedioValorCell.CellStyle = currencyStyle;
+
+                    // Combinar celdas 1-5 para el valor
+                    sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 1, 5));
+                }
+
+                // ================= AJUSTES FINALES =================
+                // Ajustar automáticamente el ancho de las columnas
+                for (int i = 0; i < 6; i++)
+                {
+                    sheet.AutoSizeColumn(i);
+                }
+
+                // Congelar paneles (encabezados hasta la fila 3)
+                //sheet.CreateFreezePane(0, 4, 0, 4);
+
+                // ================= GUARDAR =================
+                byte[] excelBytes;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    workbook.Write(ms);
+                    excelBytes = ms.ToArray();
+                }
+
+                workbook.Close();
+
+                // Nombre del archivo con fecha y hora
+                string fileName = $"Reporte_Deducciones_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+
+                return File(
+                    excelBytes,
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    fileName
+                );
+            }
+            catch (Exception ex)
+            {
+                // Log del error
+                System.Diagnostics.Debug.WriteLine($"Error al generar Excel: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+
+                return Json(new
+                {
+                    success = false,
+                    message = $"Error al generar el archivo Excel: {ex.Message}"
+                });
+            }
+        }
+        [HttpPost]
+        [ValidateInput(false)]
         public ActionResult GenerarReporteDeduccionesTipoExcel(string tablaHTML, string fecha, string userName)
         {
             try

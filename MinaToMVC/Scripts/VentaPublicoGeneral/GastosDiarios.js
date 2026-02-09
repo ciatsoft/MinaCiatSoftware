@@ -186,6 +186,68 @@ $(document).ready(function () {
             $(api.column(3).footer()).html('<strong>Total:</strong>');
         }
     });
+    $("#tableDeduccionesRangoFecha").DataTable({
+        processing: true,
+        destroy: true,
+        paging: true,
+        order: [[0, 'desc']],
+        searching: true,
+        columns: [
+            { data: "id", visible: true, title: "Id" },
+            { data: "nombreGasto", title: "Tipo Gasto" },
+            { data: "descripcion", title: "Descripcion de la Deduccion" },
+            { data: "usuarioName", title: "Encargado" },
+            {
+                data: "monto",
+                title: "Monto",
+                render: function (data) {
+                    return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
+                }
+            },
+            {
+                data: "fecha",
+                title: "Fecha",
+                render: function (data) {
+                    return new Date(data).toLocaleDateString('es-MX');
+                }
+            },
+            {
+                data: "id",
+                title: "Acciones",
+                render: function (data) {
+                    return `
+                    <input type="button" value="Cancelar" class="btn btn-custom-cancel" onclick="EliminarDeduccion(${data})" />
+                     <input type="button" value="Imprimir" class="btn btn-custom-cancel" style="background-color: yellow; border:
+                     none; color:black;  padding: 7px 10px; border-radius: 5px; cursor: pointer;" onclick="ImprimirDeduccion(${data})" />
+                     <input type="button" value="Editar" class="btn btn-custom-clean" style="width: 80px;" onclick="AbrirModalDeduccion(${data})" />
+                `;
+                }
+            }
+        ],
+        language: {
+            decimal: ",",
+            thousands: ".",
+            processing: "Procesando...",
+            lengthMenu: "Mostrar _MENU_ entradas",
+            zeroRecords: "No se encontraron resultados",
+            emptyTable: "Ningun dato disponible en esta tabla",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+            infoEmpty: "Mostrando 0 a 0 de 0 entradas",
+            infoFiltered: "(filtrado de un total de _MAX_ entradas)",
+            search: "Buscar:",
+            loadingRecords: "Cargando...",
+            paginate: {
+                first: "Primero",
+                last: "Último",
+                next: "Siguiente",
+                previous: "Anterior"
+            },
+            aria: {
+                sortAscending: ": activar para ordenar ascendente",
+                sortDescending: ": activar para ordenar descendente"
+            }
+        }
+    });
 
     GetAllDeducciones();
     GetAllDeduccionesTipo();
@@ -201,6 +263,21 @@ document.getElementById("btnDeducciones").addEventListener("click", function () 
         return;
     }
     SearchDeduccionesFecha(fechaDeducciones);
+});
+
+document.getElementById("btnDeduccionesRangoFecha").addEventListener("click", function () {
+    var fechaDeduccionesInicio = $("#fechaDeduccionesInicio").val();
+    var fechaDeduccionesFin = $("#fechaDeduccionesFin").val();
+
+    console.log(fechaDeduccionesInicio);
+    console.log(fechaDeduccionesFin);
+
+
+    if (fechaDeduccionesInicio > fechaDeduccionesFin) {
+        alert("Por favor, seleccione una fecha válida.");
+        return;
+    }
+    SearchDeduccionesRangoFecha(fechaDeduccionesInicio, fechaDeduccionesFin);
 });
 
 // Escucha del botón
@@ -305,6 +382,97 @@ function SearchDeduccionesFecha(fechaDeducciones) {
         } else {
             console.warn("No se recibieron datos válidos o la respuesta no fue exitosa:", r);
             $('#tableDeducciones').html('<div class="alert alert-warning">No se encontraron registros para los criterios seleccionados</div>');
+        }
+    });
+}
+function SearchDeduccionesRangoFecha(fechaDeduccionesInicio, fechaDeduccionesFin) {
+    PostMVC('/VentaPublicoGeneral/SearchDeduccionesByDates', { fechaDeduccionesInicio, fechaDeduccionesFin }, function (r) {
+        if (r.IsSuccess && Array.isArray(r.Response)) {
+            const data = r.Response;
+            const table = $("#tableDeduccionesRangoFecha");
+
+            // Destruir tabla existente
+            if ($.fn.DataTable.isDataTable(table)) {
+                table.DataTable().clear().destroy();
+                table.empty();
+            }
+
+            // Asegurar estructura básica
+            if (table.find('thead').length === 0) {
+                table.append('<thead><tr></tr></thead>');
+            }
+            if (table.find('tbody').length === 0) {
+                table.append('<tbody></tbody>');
+            }
+
+            // Crear DataTable
+            table.DataTable({
+                data: data,
+                processing: true,
+                paging: true,
+                searching: true,
+                columns: [
+                    { data: "id", title: "Id" },
+                    { data: "nombreGasto", title: "Tipo Gasto" },
+                    { data: "descripcion", title: "Descripcion de la Deduccion" },
+                    { data: "usuarioName", title: "Encargado" },
+                    {
+                        data: "monto",
+                        title: "Monto",
+                        render: function (data) {
+                            return new Intl.NumberFormat('es-MX', {
+                                style: 'currency',
+                                currency: 'MXN'
+                            }).format(data);
+                        }
+                    },
+                    {
+                        data: "fecha",
+                        title: "Fecha",
+                        render: function (data) {
+                            return new Date(data).toLocaleDateString('es-MX');
+                        }
+                    },
+                    {
+                        data: "id",
+                        title: "Acciones",
+                        render: function (data) {
+                            return `
+                                <input type="button" value="Cancelar" class="btn btn-custom-cancel" onclick="EliminarDeduccion(${data})" />
+                                <input type="button" value="Imprimir" class="btn btn-custom-cancel" style="background-color: yellow; border:
+                                none; color:black;  padding: 7px 10px; border-radius: 5px; cursor: pointer;" onclick="ImprimirDeduccion(${data})" />
+                                    `;
+                        }
+                    }
+                ],
+                language: {
+                    decimal: ",",
+                    thousands: ".",
+                    processing: "Procesando...",
+                    lengthMenu: "Mostrar _MENU_ entradas",
+                    zeroRecords: "No se encontraron resultados",
+                    emptyTable: "Ningun dato disponible en esta tabla",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                    infoEmpty: "Mostrando 0 a 0 de 0 entradas",
+                    infoFiltered: "(filtrado de un total de _MAX_ entradas)",
+                    search: "Buscar:",
+                    loadingRecords: "Cargando...",
+                    paginate: {
+                        first: "Primero",
+                        last: "Último",
+                        next: "Siguiente",
+                        previous: "Anterior"
+                    },
+                    aria: {
+                        sortAscending: ": activar para ordenar ascendente",
+                        sortDescending: ": activar para ordenar descendente"
+                    }
+                }
+            });
+
+        } else {
+            console.warn("No se recibieron datos válidos o la respuesta no fue exitosa:", r);
+            $('#tableDeduccionesRangoFecha').html('<div class="alert alert-warning">No se encontraron registros para los criterios seleccionados</div>');
         }
     });
 }
@@ -461,6 +629,7 @@ function GetAllDeducciones() {
     GetMVC("/VentaPublicoGeneral/GetAllDeducciones", function (r) {
         if (r.IsSuccess) {
             MapingPropertiesDataTable("tableDeducciones", r.Response);
+            MapingPropertiesDataTable("tableDeduccionesRangoFecha", r.Response);
         } else {
             alert("Error al cargar los gastos: " + r.ErrorMessage);
         }
@@ -760,9 +929,15 @@ function formatearTipoGasto(tipo) {
 document.getElementById("btnGenerarPDF").addEventListener("click", function () {
     generarReportePDF();
 });
+document.getElementById("btnGenerarPDFRangoFecha").addEventListener("click", function () {
+    generarReportePDFFechas();
+});
 
 document.getElementById("btnGenerarExcel").addEventListener("click", function () {
     generarReporteExcel();
+});
+document.getElementById("btnGenerarExcelRangoFecha").addEventListener("click", function () {
+    generarReporteExcelFechas();
 });
 
 document.getElementById("btnGenerarPDFTipoGasto").addEventListener("click", function () {
@@ -1177,7 +1352,7 @@ function generarReportePDF() {
                         <tr>
                             <th>ID</th>
                             <th>Tipo Gasto</th>
-                            <th>Descripción</th>
+                            <th>Descripcion</th>
                             <th>Encargado</th>
                             <th>Monto</th>
                             <th>Fecha</th>
@@ -1256,6 +1431,223 @@ function generarReportePDF() {
         });
     }
 }
+function generarReportePDFFechas() {
+    try {
+        // Verificar si la tabla existe y tiene datos
+        if (!$.fn.DataTable.isDataTable("#tableDeduccionesRangoFecha")) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Tabla no inicializada',
+                text: 'La tabla de deducciones no está inicializada o no existe'
+            });
+            return;
+        }
+
+        // Obtener la instancia de DataTable
+        const table = $("#tableDeduccionesRangoFecha").DataTable();
+
+        // VERIFICAR SI LA TABLA TIENE DATOS - CORRECCIÓN CLAVE
+        // Método 1: Contar filas totales
+        const totalRows = table.rows().count();
+
+        // Método 2: Obtener datos y verificar longitud
+        const datosDeducciones = table.rows().data().toArray();
+
+        // Si no hay datos, mostrar advertencia y salir
+        if (totalRows === 0 || datosDeducciones.length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Tabla vacia',
+                text: 'No hay registros en la tabla para generar el reporte PDF',
+                confirmButtonText: 'Entendido'
+            });
+            return; // IMPORTANTE: Salir de la función
+        }
+
+        // Obtener valores REALES de tu interfaz
+        const fechaInicio = $("#fechaDeduccionesInicio").val();
+        const fechaFin = $("#fechaDeduccionesFin").val();
+        const userName = $("#userNameDeduccionesRango1").val();
+        const now = new Date();
+        const fechaGeneracion = now.toLocaleDateString('es-MX') + ', ' + now.toLocaleTimeString('es-MX');
+
+        let htmlContent = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>Reporte de Deducciones por Rango de Fecha</title>
+                <style>
+                    body { 
+                        font-family: Arial, sans-serif; 
+                        padding: 20px; 
+                        font-size: 12px; 
+                    }
+                    h1 { 
+                        text-align: center; 
+                        margin-bottom: 20px; 
+                        font-size: 22px; 
+                        color: #2c3e50;
+                    }
+                    .header-info { 
+                        margin-bottom: 20px; 
+                        font-size: 14px; 
+                        border-bottom: 1px solid #ddd; 
+                        padding-bottom: 10px;
+                    }
+                    .header-info p { 
+                        margin: 5px 0; 
+                    }
+                    .tabla-contenedor { 
+                        margin-bottom: 30px; 
+                    }
+                    .tabla-titulo { 
+                        margin: 15px 0 8px 0; 
+                        font-size: 16px; 
+                        border-bottom: 1px solid #ddd; 
+                        padding-bottom: 3px; 
+                    }
+                    table { 
+                        width: 100%; 
+                        border-collapse: collapse; 
+                        margin-bottom: 15px;
+                        font-size: 10px;
+                    }
+                    th, td { 
+                        padding: 6px; 
+                        border: 1px solid #ddd; 
+                        text-align: left;
+                    }
+                    th { 
+                        background-color: #34495e; 
+                        color: white; 
+                        font-weight: bold; 
+                        text-align: center;
+                    }
+                    tr:nth-child(even) { 
+                        background-color: #f9f9f9; 
+                    }
+                    .total { 
+                        margin-top: 15px; 
+                        padding: 10px; 
+                        border: 1px solid #ddd; 
+                        border-radius: 5px; 
+                        background-color: #f5f5f5; 
+                        font-size: 14px; 
+                        font-weight: bold;
+                        text-align: right;
+                    }
+                    .sin-datos { 
+                        text-align: center; 
+                        padding: 20px; 
+                        font-style: italic; 
+                        color: #666;
+                        border: 1px dashed #ddd;
+                        margin: 20px 0;
+                    }
+                </style>
+            </head>
+            <body>
+                <h1>Reporte de Deducciones Completas por Rango de Fecha</h1>
+                <div class="header-info">
+                    <p><strong>Fecha de Inicio de Reporte:</strong> ${fechaInicio || 'No especificada'}</p>
+                    <p><strong>Fecha de Fin de Reporte:</strong> ${fechaFin || 'No especificada'}</p>
+                    <p><strong>Usuario:</strong> ${userName || 'No especificado'}</p>
+                    <p><strong>Fecha de Generacion:</strong> ${fechaGeneracion}</p>
+                </div>
+        `;
+
+        // Calcular total
+        let totalDeducciones = 0;
+
+        // Crear tabla HTML manualmente
+        htmlContent += `
+            <div class="tabla-contenedor">
+                <h2 class="tabla-titulo">Deducciones Registradas por Rango de Fecha</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tipo Gasto</th>
+                            <th>Descripcion</th>
+                            <th>Encargado</th>
+                            <th>Monto</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        // Agregar filas con los datos de tu DataTable
+        datosDeducciones.forEach(row => {
+            // Accede a las propiedades según tu estructura de DataTable
+            const id = row.id || '';
+            const nombreGasto = row.nombreGasto || '';
+            const descripcion = row.descripcion || '';
+            const usuarioName = row.usuarioName || '';
+            const monto = parseFloat(row.monto || 0);
+            const fechaRow = row.fecha ? new Date(row.fecha).toLocaleDateString('es-MX') : '';
+
+            totalDeducciones += monto;
+
+            htmlContent += `
+                <tr>
+                    <td>${id}</td>
+                    <td>${nombreGasto}</td>
+                    <td>${descripcion}</td>
+                    <td>${usuarioName}</td>
+                    <td style="text-align: right;">$${monto.toFixed(2)}</td>
+                    <td>${fechaRow}</td>
+                </tr>
+            `;
+        });
+
+        htmlContent += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        // Agregar total
+        if (totalDeducciones > 0) {
+            htmlContent += `
+                <div class="total">
+                    Total de Deducciones: $${totalDeducciones.toFixed(2)}
+                </div>
+            `;
+        }
+
+        htmlContent += `</body></html>`;
+
+        // Mostrar mensaje de carga
+        Swal.fire({
+            title: "Generando reporte...",
+            html: `
+                <div style="text-align: center;">
+                    <p>Procesando ${datosDeducciones.length} registros</p>
+                    <p>Por favor espere...</p>
+                </div>
+            `,
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+
+                // Enviar al controlador después de un breve retraso
+                setTimeout(() => {
+                    enviarDatosParaPDF(htmlContent, fechaInicio, fechaFin, userName, datosDeducciones);
+                }, 500);
+            }
+        });
+
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error al generar el reporte: ' + error.message
+        });
+    }
+}
 
 // Función modificada para enviar al controlador
 function enviarDatosParaPDF(htmlContent, fecha, userName, datosDeducciones) {
@@ -1313,7 +1705,83 @@ function enviarDatosParaPDF(htmlContent, fecha, userName, datosDeducciones) {
             Swal.fire({
                 icon: 'success',
                 title: 'Reporte generado',
-                text: 'El PDF se está descargando',
+                text: 'El PDF se esta descargando',
+                timer: 3000,
+                showConfirmButton: false
+            });
+        }, 1000);
+
+    } catch (error) {
+        Swal.close(); // Cerrar mensaje de carga si hay error
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo enviar el formulario para generar el PDF'
+        });
+    }
+}
+function enviarDatosParaPDFFechas(htmlContent, fechaInicio, fechaFin, userName, datosDeducciones) {
+    try {
+        // Crear formulario para enviar los datos al servidor
+        var form = $('<form>', {
+            method: 'POST',
+            action: '/Pdf/GenerarReporteGastosGeneralesFechas',
+            target: '_blank' // Para abrir en nueva pestaña
+        });
+
+        // Agregar el HTML como campo oculto
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'htmlContent',
+            value: htmlContent
+        }).appendTo(form);
+
+        // Agregar información adicional
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'fechaInicio',
+            value: fechaInicio || ''
+        }).appendTo(form);
+        // Agregar información adicional
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'fechaFin',
+            value: fechaFin || ''
+        }).appendTo(form);
+
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'userName',
+            value: userName || ''
+        }).appendTo(form);
+
+        // Agregar los datos de las deducciones como JSON
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'datosDeducciones',
+            value: JSON.stringify(datosDeducciones || [])
+        }).appendTo(form);
+
+        // Agregar token anti-falsificación si lo usas
+        var token = $('input[name="__RequestVerificationToken"]').val();
+        if (token) {
+            $('<input>').attr({
+                type: 'hidden',
+                name: '__RequestVerificationToken',
+                value: token
+            }).appendTo(form);
+        }
+
+        // Agregar el formulario al cuerpo y enviarlo
+        form.appendTo('body').submit().remove();
+
+        // Cerrar el mensaje de carga después de enviar
+        setTimeout(() => {
+            Swal.close();
+            Swal.fire({
+                icon: 'success',
+                title: 'Reporte generado',
+                text: 'El PDF se esta descargando',
                 timer: 3000,
                 showConfirmButton: false
             });
@@ -1462,7 +1930,119 @@ function generarReporteExcel() {
         });
     }
 }
+function generarReporteExcelFechas() {
+    try {
+        // Verificar si la tabla existe y tiene datos
+        if (!$.fn.DataTable.isDataTable("#tableDeduccionesRangoFecha")) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Tabla no inicializada',
+                text: 'La tabla de deducciones no está inicializada o no existe'
+            });
+            return;
+        }
 
+        // Obtener la instancia de DataTable
+        const table = $("#tableDeduccionesRangoFecha").DataTable();
+
+        // Verificar si hay datos
+        const totalRows = table.rows().count();
+        const datosDeducciones = table.rows().data().toArray();
+
+        if (totalRows === 0 || datosDeducciones.length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Tabla vacia',
+                text: 'No hay registros en la tabla para generar el reporte Excel',
+                confirmButtonText: 'Entendido'
+            });
+            return;
+        }
+
+        // Obtener información adicional
+        const fechaInicio = $("#fechaDeduccionesInicio").val();
+        const fechaFin = $("#fechaDeduccionesFin").val();
+        const userName = $("#userNameDeduccionesRango1").val();
+
+        // Mostrar mensaje de carga
+        Swal.fire({
+            title: "Generando Excel...",
+            html: `
+                <div style="text-align: center;">
+                    <p>Procesando ${datosDeducciones.length} registros</p>
+                    <p>Por favor espere...</p>
+                </div>
+            `,
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+
+                // Crear tabla HTML para enviar al servidor
+                crearTablaHTMLParaExcelFechas(datosDeducciones, fechaInicio, fechaFin, userName);
+            }
+        });
+
+    } catch (error) {
+        console.error("Error al generar Excel:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error al generar el reporte Excel: ' + error.message
+        });
+    }
+}
+
+function crearTablaHTMLParaExcelFechas(datosDeducciones, fechaInicio, fechaFin, userName) {
+    try {
+        // Crear tabla HTML manualmente con estructura simple
+        let tablaHTML = '<table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse;">';
+
+        // Encabezados
+        tablaHTML += '<thead><tr>';
+        tablaHTML += '<th>ID</th>';
+        tablaHTML += '<th>Tipo Gasto</th>';
+        tablaHTML += '<th>Descripción</th>';
+        tablaHTML += '<th>Encargado</th>';
+        tablaHTML += '<th>Monto</th>';
+        tablaHTML += '<th>Fecha</th>';
+        tablaHTML += '</tr></thead>';
+
+        // Datos
+        tablaHTML += '<tbody>';
+
+        datosDeducciones.forEach(row => {
+            const id = row.id || '';
+            const nombreGasto = row.nombreGasto || '';
+            const descripcion = row.descripcion || '';
+            const usuarioName = row.usuarioName || '';
+            const monto = parseFloat(row.monto || 0).toFixed(2);
+            const fechaRow = row.fecha ? new Date(row.fecha).toLocaleDateString('es-MX') : '';
+
+            tablaHTML += '<tr>';
+            tablaHTML += `<td>${id}</td>`;
+            tablaHTML += `<td>${nombreGasto}</td>`;
+            tablaHTML += `<td>${descripcion}</td>`;
+            tablaHTML += `<td>${usuarioName}</td>`;
+            tablaHTML += `<td>$${monto}</td>`;
+            tablaHTML += `<td>${fechaRow}</td>`;
+            tablaHTML += '</tr>';
+        });
+
+        tablaHTML += '</tbody></table>';
+
+        // Enviar al servidor
+        enviarDatosParaExcelFechas(tablaHTML);
+
+    } catch (error) {
+        Swal.close();
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al preparar datos para Excel: ' + error.message
+        });
+    }
+}
 function crearTablaHTMLParaExcel(datosDeducciones, fecha, userName) {
     try {
         // Crear tabla HTML manualmente con estructura simple
@@ -1514,6 +2094,56 @@ function crearTablaHTMLParaExcel(datosDeducciones, fecha, userName) {
     }
 }
 
+function enviarDatosParaExcelFechas(tablaHTML) {
+    try {
+        // Crear formulario para enviar los datos al servidor
+        var form = $('<form>', {
+            method: 'POST',
+            action: '/Excel/GenerarReporteDeduccionesExcelFechas'
+        });
+
+        // Agregar el HTML como campo oculto
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'tablaHTML',
+            value: tablaHTML
+        }).appendTo(form);
+
+        // Agregar token anti-falsificación si lo usas
+        var token = $('input[name="__RequestVerificationToken"]').val();
+        if (token) {
+            $('<input>').attr({
+                type: 'hidden',
+                name: '__RequestVerificationToken',
+                value: token
+            }).appendTo(form);
+        }
+
+        // Agregar el formulario al cuerpo y enviarlo
+        form.appendTo('body').submit().remove();
+
+        // Cerrar el mensaje de carga después de un tiempo
+        setTimeout(() => {
+            Swal.close();
+            Swal.fire({
+                icon: 'success',
+                title: 'Reporte generado',
+                text: 'El archivo Excel se esta descargando',
+                timer: 3000,
+                showConfirmButton: false
+            });
+        }, 2000);
+
+    } catch (error) {
+        console.error("Error al enviar datos:", error);
+        Swal.close();
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo enviar el formulario para generar el Excel'
+        });
+    }
+}
 function enviarDatosParaExcel(tablaHTML) {
     try {
         // Crear formulario para enviar los datos al servidor
