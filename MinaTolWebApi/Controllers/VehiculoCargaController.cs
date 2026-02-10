@@ -45,5 +45,39 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
         #endregion
+
+        #region RFIDCarga
+        [HttpGet, Route("RFIDCarga/List")]
+        public ModelResponse GetAllRFIDCarga()
+        {
+            var result = wrapper.GetAllRFIDCarga();
+            return result;
+        }
+        [HttpGet, Route("RFIDCarga/{id:long}")]
+        public ModelResponse GetRFIDCargaById(long id)
+        {
+            var result = wrapper.GetRFIDCargaById(id);
+            return result;
+        }
+        [HttpGet, Route("RFIDCarga/RFID/{rfid}")]
+        public ModelResponse GetRFIDCargaByRFID(string rfid)
+        {
+            var result = wrapper.GetRFIDCargaByRFID(rfid);
+            return result;
+        }
+        [HttpPost, Route("RFIDCarga/")]
+        public ModelResponse SaveOrUpdateRFIDCarga(RFIDCarga vc)
+        {
+            var result = wrapper.SaveOrUpdateRFIDCarga(vc);
+            return result;
+        }
+        [HttpPost, Route("RFIDCarga/Delete/{id:long}")]
+        public ModelResponse DeleteRFIDCarga(long id)
+        {
+            var result = wrapper.DeleteRFIDCarga(id);
+            return result;
+        }
+
+        #endregion
     }
 }

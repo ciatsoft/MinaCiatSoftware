@@ -107,6 +107,7 @@
     <Compile Include="Security\Token.cs" />
     <Compile Include="Security\TokenCookie.cs" />
     <Compile Include="Security\Usuario.cs" />
+    <Compile Include="VehiculoCarga\RFIDCarga.cs" />
     <Compile Include="VehiculoCarga\VehiculoCarga.cs" />
   </ItemGroup>
   <ItemGroup />
