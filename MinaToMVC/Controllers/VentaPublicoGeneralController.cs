@@ -1,4 +1,4 @@
-﻿    using MinaTolEntidades;
+﻿using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.DtoEmpleados;
@@ -428,6 +428,11 @@ namespace MinaToMVC.Controllers
         public async Task<string> SearchDeduccionesByDate(DateTime fechaDeducciones)
         {
             var result = await httpClientConnection.SearchDeduccionesByDate(fechaDeducciones);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> SearchDeduccionesByDates(DateTime fechaDeduccionesInicio, DateTime fechaDeduccionesFin)
+        {
+            var result = await httpClientConnection.SearchDeduccionesByDates(fechaDeduccionesInicio, fechaDeduccionesFin);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 

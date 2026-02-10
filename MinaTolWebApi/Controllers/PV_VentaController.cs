@@ -75,6 +75,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.SearchDeduccionesByDate(fechaDeducciones);
             return result;
         }
+        [HttpGet, Route("searchDeduccionesFechas")]
+        public async Task<ModelResponse> SearchDeduccionesByDates([FromUri] DateTime fechaDeduccionesInicio, [FromUri] DateTime fechaDeduccionesFin)
+        {
+            var result = wrapper.SearchDeduccionesByDates(fechaDeduccionesInicio, fechaDeduccionesFin);
+            return result;
+        }
 
         [HttpGet, Route("RFID/{rfid}")]
         public ModelResponse SearchClienteByRFID(string rfid)

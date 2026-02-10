@@ -287,6 +287,39 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
+        public ModelResponse SearchDeduccionesByDates(DateTime fechaDeduccionesInicio, DateTime fechaDeduccionesFin)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var fechaSolo1 = fechaDeduccionesInicio.Date;
+                var fechaSolo2 = fechaDeduccionesFin.Date;
+
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@FechaInicio",    SqlDbType.Date)   { Value = fechaSolo1 },
+                    new SqlParameter("@FechaFin",    SqlDbType.Date)   { Value = fechaSolo2 }
+                };
+
+                // CORREGIDO: usar GetList para obtener varios registros
+                var result = GetList(
+                    "SearchDeduccionesByDates",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader => FillEntity<Deducciones>(reader)
+                );
+
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
         
         public ModelResponse TotalPlantaByFecha(DateTime Fecha)
         {
