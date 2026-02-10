@@ -52,6 +52,34 @@ namespace MinaToMVC.Controllers
 
             return View(vc);
         }
+        public async Task<ActionResult> RFIDCarga(long id = 0)
+        {
+            RFIDCarga vc = new RFIDCarga();
+
+            if (id > 0)
+            {
+                var modelResponse = await httpClientConnection.GetRFIDCargaById(id);
+                vc = JsonConvert.DeserializeObject<RFIDCarga>(modelResponse.Response.ToString());
+            }
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+            ViewBag.rfidCargaId = id;
+
+            return View(vc);
+        }
         #endregion
 
         #endregion

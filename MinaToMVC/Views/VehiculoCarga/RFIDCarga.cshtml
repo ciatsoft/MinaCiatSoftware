@@ -1,0 +1,16 @@
+﻿@model MinaTolEntidades.VehiculoCarga.RFIDCarga
+@{
+    ViewBag.Title = "RFIDCarga";
+    var rfidCargaId = (long)ViewBag.rfidCargaId;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<input type="hidden" id="trabajadorInput" value="@rfidCargaId" readonly />
+<input type="hidden" id="CreatedDt" value="@fechaActual" readonly />
+<input type="hidden" id="UpdatedDt" value="@fechaActual" readonly />
+<input type="hidden" id="CreatedBy" value="@usuarioToken" readonly />
+<input type="hidden" id="UpdatedBy" value="@usuarioToken" readonly />
+
