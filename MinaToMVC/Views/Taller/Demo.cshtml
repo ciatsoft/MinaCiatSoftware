@@ -1,0 +1,216 @@
+﻿
+@{
+    ViewBag.Title = "Demo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- FORMULARIO -->
+<div class="row">
+
+    <!-- Fecha -->
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Fecha</label>
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                </span>
+                <input type="date" class="form-control" id="fechaHoy" disabled>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vehículos -->
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Vehículo</label>
+            <select class="form-control">
+                <option>Seleccione...</option>
+                <option>Camión de Volteo Kenworth T800</option>
+                <option>Camión Freightliner 114SD</option>
+                <option>Camión Mack Granite</option>
+                <option>Camión International WorkStar</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Choferes -->
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Chofer</label>
+            <select class="form-control">
+                <option>Seleccione...</option>
+                <option>Juan Pérez</option>
+                <option>Carlos Hernández</option>
+                <option>Miguel Ramírez</option>
+                <option>Luis Torres</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Tipo de Servicio -->
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Tipo de Servicio</label>
+            <select class="form-control">
+                <option>Seleccione...</option>
+                <option>Preventivo</option>
+                <option>Correctivo</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Recibió -->
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Recibió</label>
+            <input type="text" class="form-control" value="Ing. Roberto García" disabled>
+        </div>
+    </div>
+
+</div>
+
+<!-- BOTONES -->
+<div class="row" style="margin-top:15px;">
+    <div class="col-md-12 text-right">
+        <button type="button" class="btn btn-success">
+            <i class="glyphicon glyphicon-floppy-disk"></i> Guardar
+        </button>
+        <button type="button" class="btn btn-default">
+            <i class="glyphicon glyphicon-remove"></i> Cancelar
+        </button>
+    </div>
+</div>
+
+<!-- TABLA -->
+<div class="row" style="margin-top:20px;">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Tipo de Servicio</th>
+                        <th>Cantidad de Piezas Reemplazadas</th>
+                        <th>Recibió</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2026-02-11</td>
+                        <td>Preventivo</td>
+                        <td>4</td>
+                        <td>Ing. Roberto García</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm"
+                                    data-toggle="modal"
+                                    data-target="#modalAsignar">
+                                Asignar Piezas
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal fade" id="modalAsignar" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Asignar Piezas</h4>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label>Nombre de la Pieza</label>
+                    <input type="text" class="form-control" placeholder="Ej. Balatas delanteras">
+                </div>
+
+                <div class="form-group">
+                    <label>Comentarios</label>
+                    <textarea class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Acción</label>
+                    <select class="form-control">
+                        <option>Seleccione...</option>
+                        <option>Cambio</option>
+                        <option>Reparación</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Subir imágenes (máximo 3)</label>
+                    <input type="file" id="imagenes" class="form-control" multiple accept="image/*">
+                    <small class="text-muted">Solo imágenes. Máximo 3 archivos.</small>
+                </div>
+
+                <!-- TABLA DE PIEZAS YA REGISTRADAS -->
+                <hr>
+                <h5><strong>Piezas ya registradas</strong></h5>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-condensed table-striped">
+                        <thead>
+                            <tr>
+                                <th>Pieza</th>
+                                <th>Acción</th>
+                                <th>Comentarios</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Balatas delanteras</td>
+                                <td>Cambio</td>
+                                <td>Desgaste excesivo</td>
+                            </tr>
+                            <tr>
+                                <td>Filtro de aire</td>
+                                <td>Cambio</td>
+                                <td>Mantenimiento preventivo</td>
+                            </tr>
+                            <tr>
+                                <td>Bomba hidráulica</td>
+                                <td>Reparación</td>
+                                <td>Presentaba fuga leve</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success">Guardar</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- JAVASCRIPT -->
+<script>
+    // Colocar fecha de hoy automáticamente
+    document.addEventListener("DOMContentLoaded", function () {
+        var hoy = new Date().toISOString().split('T')[0];
+        document.getElementById("fechaHoy").value = hoy;
+    });
+
+    // Validar máximo 3 imágenes
+    document.getElementById("imagenes").addEventListener("change", function () {
+        if (this.files.length > 3) {
+            alert("Solo puedes subir máximo 3 imágenes.");
+            this.value = "";
+        }
+    });
+</script>
