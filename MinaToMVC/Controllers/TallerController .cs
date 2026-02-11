@@ -118,6 +118,11 @@ namespace MinaToMVC.Controllers
 
             return View(categoriaInventario);
         }
+
+        public ActionResult Demo()
+        {
+            return View();
+        }
         #endregion
 
         #region PartialViews
