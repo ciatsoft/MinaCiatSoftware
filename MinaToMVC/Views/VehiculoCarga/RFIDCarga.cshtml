@@ -5,12 +5,73 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
     var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
+    var fechaHoraActual = DateTime.Now;
 }
 
 <link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
-<input type="hidden" id="trabajadorInput" value="@rfidCargaId" readonly />
-<input type="hidden" id="CreatedDt" value="@fechaActual" readonly />
-<input type="hidden" id="UpdatedDt" value="@fechaActual" readonly />
-<input type="hidden" id="CreatedBy" value="@usuarioToken" readonly />
-<input type="hidden" id="UpdatedBy" value="@usuarioToken" readonly />
 
+<div class="content">
+    @using (Html.BeginForm("SaveOrUpdateRFIDCarga", "VehiculoCarga", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmRFIDCarga", @id = "frmRFIDCarga" }))
+    {
+        @Html.HiddenFor(x => x.Id, new { id = "id" })
+        @Html.HiddenFor(x => x.Estatus, new { id = "estatus" })
+        @Html.HiddenFor(x => x.CreatedDt, new { id = "createdDt", @Value = fechaActual })
+        @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy", @Value = usuarioToken.UserName })
+        @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy", @Value = usuarioToken.UserName })
+        @Html.HiddenFor(x => x.UpdatedDt, new { id = "updatedDt", @Value = fechaActual })
+        <br />
+        <center><h1>Empleados</h1></center>
+        <div class="tabla-consultas-empleados">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-3">
+                        @*SELECT MAPEADO DE EMPLEADO*@
+                        <label>Trabajador:</label>
+                        @Html.DropDownListFor(x => x.IdTrabajador,
+                            new SelectList((IEnumerable<SelectListItem>)ViewBag.Trabajadores, "Value", "Text"),
+                            "Selecciona un trabajador",
+                            new { @class = "form-control", id = "ddlTrabajador", required = "required" })
+                    </div>
+                    <div class="col-lg-3">
+                        @*SELECT MAPEADO DE VEHICULO DE CARGA*@
+                        <label>Vehiculos de Carga:</label>
+                        @Html.DropDownListFor(x => x.IdVehiculoCarga,
+                            new SelectList((IEnumerable<SelectListItem>)ViewBag.VehiculosCarga, "Value", "Text"),
+                            "Selecciona un vehiculo de carga",
+                            new { @class = "form-control", id = "ddlVehiculoCarga", required = "required" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>RFID Asignado:</label>
+                        @Html.TextBoxFor(x => x.RFIDAsignado, new { @class = "form-control", @type = "text", id = "rfid", required = "required" })
+                    </div>
+                    <div class="col-lg-3">
+                        <label>RFID Asignado:</label>
+                        @Html.TextBoxFor(x => x.FechaHora, new { @class = "form-control", @type = "text", id = "fechaHora", required = "required", @Value = fechaHoraActual, @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 d-flex justify-content-between">
+                        <div>
+                            <input id="btnGuardar" type="button" value="Guardar" class="btn btn-success btn-lg-custom" />
+                        </div>
+                        <a href="/VehiculoCarga/RFIDCarga" class="btn btn-custom-cancel btn-lg-custom">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <br />
+    <table id="tblRFIDCarga" class="table table-bordered table-striped" style="width: 100%;"></table>
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+        <div class="mb-2" style="text-align: right;">
+            <button id="btnGenerarPDF" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
+                Generar Reporte PDF
+            </button>
+            <button id="btnGenerarExcel" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
+                Generar Reporte Excel
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="@(Url.StaticFile("Scripts/VehiculoCarga/RFIDCarga.js"))"></script>

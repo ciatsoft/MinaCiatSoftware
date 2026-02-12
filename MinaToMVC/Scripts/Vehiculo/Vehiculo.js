@@ -56,7 +56,7 @@
             "processing": "Procesando...",
             "lengthMenu": "Mostrar _MENU_ entradas",
             "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningún dato disponible en esta tabla",
+            "emptyTable": "Ningun dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
@@ -80,8 +80,8 @@
 
 function EliminarVehiculo(id) {
     Swal.fire({
-        title: '¿Está seguro?',
-        text: "¿Desea eliminar el siguiente registro?",
+        title: 'Eliminar Registro',
+        text: "Se eliminara el siguiente registro",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -94,10 +94,10 @@ function EliminarVehiculo(id) {
 
             PostMVC('/Vehiculo/EliminarVehiculo', parametro, function (r) {
                 if (r.IsSuccess) {
-                    Swal.fire('Eliminado', 'El vehículo ha sido eliminado.', 'success')
+                    Swal.fire('Eliminado', 'El vehiculo ha sido eliminado.', 'success')
                         .then(() => { window.location.href = '/Taller/Vehiculos'; });
                 } else {
-                    Swal.fire('Eliminado', 'El vehículo ha sido eliminado.', 'success')
+                    Swal.fire('Eliminado', 'El vehiculo ha sido eliminado.', 'success')
                         .then(() => { window.location.href = '/Taller/Vehiculos'; });
                 }
             });
