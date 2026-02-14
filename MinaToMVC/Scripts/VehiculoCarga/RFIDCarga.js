@@ -1,6 +1,21 @@
 let empleados = [];
+let vehiculosCarga = []
 
 $(document).ready(function () {
+  
+    var $fechaHora = $('#fechaHora');
+    var $fechaHoraHidden = $('#fechaHoraHidden');
+
+    // Sincronizar el hidden con el valor visible al cargar la página
+    if ($fechaHora.val()) {
+        $fechaHoraHidden.val($fechaHora.val());
+    }
+
+    // Actualizar el hidden cuando cambie el campo visible (por si acaso)
+    $fechaHora.on('change', function () {
+        $fechaHoraHidden.val($(this).val());
+    });
+
     $("#tblRFIDCarga").DataTable({
         processing: true,
         destroy: true,
@@ -12,8 +27,6 @@ $(document).ready(function () {
                 data: "idTrabajador",
                 title: "Trabajador",
                 render: function (data) {
-                    // Buscar el empleado por su ID
-                    // IMPORTANTE: Los empleados tienen 'id' como propiedad, no 'idTrabajador'
                     const empleado = empleados.find(e => e.id === data);
                     if (empleado) {
                         return `${empleado.nombre || ''} ${empleado.apellidoPaterno || ''} ${empleado.apellidoMaterno || ''}`.trim();
@@ -21,8 +34,39 @@ $(document).ready(function () {
                     return "No asignado";
                 }
             },
-            { data: "idVehiculoCarga", title: "Vehiculo Asignado" },
+            {
+                data: "idVehiculoCarga",
+                title: "Vehiculo de Carga",
+                render: function (data) {
+                    const vehiculo = vehiculosCarga.find(e => e.id === data);
+                    if (vehiculo) {
+                        return `${vehiculo.descripcion}`.trim();
+                    }
+                    return "No asignado";
+                }
+            },
             { data: "rfidAsignado", title: "RFID Asignado" },
+            {
+                data: "fechaHora",
+                title: "Fecha y Hora",
+                render: function (data) {
+                    if (!data) return '';
+
+                    // Si data es una cadena en formato ISO o similar
+                    var fecha = new Date(data);
+
+                    if (isNaN(fecha.getTime())) return data; // Si no es fecha válida, retorna el valor original
+
+                    var dia = ('0' + fecha.getDate()).slice(-2);
+                    var mes = ('0' + (fecha.getMonth() + 1)).slice(-2);
+                    var year = fecha.getFullYear();
+                    var horas = ('0' + fecha.getHours()).slice(-2);
+                    var minutos = ('0' + fecha.getMinutes()).slice(-2);
+                    var segundos = ('0' + fecha.getSeconds()).slice(-2);
+
+                    return dia + '/' + mes + '/' + year + ' ' + horas + ':' + minutos + ':' + segundos;
+                }
+            },
             {
                 data: "estatus",
                 title: "Estatus",
@@ -31,12 +75,25 @@ $(document).ready(function () {
                 }
             },
             {
+                data: "devuelto",
+                title: "Estatus de RFID",
+                render: function (data, type, row) {
+                    // data es el valor de devuelto (0 = no devuelto, 1 = devuelto)
+                    if (data == 1) {
+                        // Si ya está devuelto, mostrar mensaje en rojo
+                        return '<span class="badge badge-danger" style="background-color: #dc3545; color: white; padding: 8px 12px; border-radius: 4px;">YA DEVUELTO</span>';
+                    } else {
+                        // Si no está devuelto, mostrar el botón
+                        return '<input type="button" value="Devolver" class="btn btn-success btn-lg-custom" onclick="DevueltoRFIDCarga(' + row.id + ')"/>';
+                    }
+                }
+            },
+            {
                 data: "id",
                 title: "Acciones",
                 render: function (data) {
                     return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarRFIDCarga(' + data + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarRFIDCarga(' + data + ')"/>' +
-                        ' <input type="button" value="Devuelto" class="btn btn-custom-cancel" onclick="DevueltoRFIDCarga(' + data + ')"/>';
+                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarRFIDCarga(' + data + ')"/>';
                 }
             }
         ],
@@ -72,7 +129,9 @@ function GetAllRFIDCarga() {
     GetMVC("/VehiculoCarga/GetAllRFIDCarga", function (r) {
         if (r.IsSuccess) {
             GetAllEmpleados(function () {
-                MapingPropertiesDataTable("tblRFIDCarga", r.Response);
+                GetAllVehiculosCarga(function () {
+                    MapingPropertiesDataTable("tblRFIDCarga", r.Response);
+                });
             });
         } else {
             Swal.fire({
@@ -142,12 +201,14 @@ function DevueltoRFIDCarga(id) {
 }
 
 function SaveOrUpdateRFIDCarga() {
+    // Usar el valor del hidden que tiene la fecha formateada correctamente
     var parametro = {
         Id: $("#id").val() || 0,
         IdTrabajador: $("#ddlTrabajador").val(),
         IdVehiculoCarga: $("#ddlVehiculoCarga").val(),
         RFIDAsignado: $("#rfid").val(),
-        FechaHora: $("#fechaHora").val(),
+        FechaHora: $("#fechaHoraHidden").val(), // Usar el hidden en lugar del visible
+        Devuelto: 1,
         Estatus: 1,
         CreatedBy: $("#createdBy").val(),
         CreatedDt: $("#createdDt").val(),
@@ -174,7 +235,7 @@ function SaveOrUpdateRFIDCarga() {
                 icon: "success",
                 confirmButtonText: 'OK'
             }).then(() => {
-                window.location.href = '/VehiculoCarga/RFIDCarga'; // Redirigir al listado
+                window.location.href = '/VehiculoCarga/RFIDCarga';
             });
         } else {
             Swal.fire({
@@ -186,7 +247,6 @@ function SaveOrUpdateRFIDCarga() {
         }
     });
 }
-
 
 function GetAllEmpleados(callback) {
     GetMVC("/Empleado/GetAllEmpleados", function (r) {
@@ -205,6 +265,23 @@ function GetAllEmpleados(callback) {
     });
 }
 
+function GetAllVehiculosCarga(callback) {
+    GetMVC("/VehiculoCarga/GetAllVehiculoCarga", function (r) {
+        if (r.IsSuccess) {
+            vehiculosCarga = r.Response;
+            console.log('Vehiculos de carga cargados:', vehiculosCarga.length);
+            if (callback) callback();
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al cargar los Vehiculos de Carga: ' + r.ErrorMessage,
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
+}
+
 // Configurar el evento click del botón guardar sin usar onclick en HTML
 $(document).ready(function () {
     $("#btnGuardar").off('click').on('click', function (e) {
@@ -212,3 +289,146 @@ $(document).ready(function () {
         SaveOrUpdateRFIDCarga();
     });
 });
+
+document.getElementById("btnFiltrar").addEventListener("click", function () {
+
+    var fechaInicio = $("#fechaInicio").val();
+    var fechaFin = $("#fechaFin").val();
+
+    if (fechaInicio < fechaFin) {
+        alert("Por favor, seleccione una fecha válida.");
+        return;
+    }
+
+    GetRFIDCargaByDates(fechaInicio, fechaFin);
+});
+
+function GetRFIDCargaByDates(fechaInicio, fechaFin) {
+    PostMVC('/VehiculoCarga/GetRFIDCargaByDates', { fechaInicio: fechaInicio, fechaFin: fechaFin }, function (r, textStatus, jqXHR) {
+        if (r.IsSuccess && Array.isArray(r.Response)) {
+            const data = r.Response;
+            const table = $('#tblRFIDCarga');
+
+            // Destruir DataTable existente si existe
+            if ($.fn.DataTable.isDataTable(table)) {
+                table.DataTable().clear().destroy();
+                table.empty(); // Limpiar la tabla para evitar duplicados
+            }
+
+            // Asegurar que la tabla tiene la estructura HTML correcta
+            if (table.find('thead').length === 0) {
+                table.append('<thead><tr></tr></thead>');
+            }
+            if (table.find('tbody').length === 0) {
+                table.append('<tbody></tbody>');
+            }
+
+            table.DataTable({
+                data: data,
+                processing: true,
+                destroy: true,
+                paging: true,
+                searching: true,
+                columns: [
+                    { data: "id", visible: false, title: "Id" },
+                    {
+                        data: "idTrabajador",
+                        title: "Trabajador",
+                        render: function (data) {
+                            const empleado = empleados.find(e => e.id === data);
+                            if (empleado) {
+                                return `${empleado.nombre || ''} ${empleado.apellidoPaterno || ''} ${empleado.apellidoMaterno || ''}`.trim();
+                            }
+                            return "No asignado";
+                        }
+                    },
+                    {
+                        data: "idVehiculoCarga",
+                        title: "Vehiculo de Carga",
+                        render: function (data) {
+                            const vehiculo = vehiculosCarga.find(e => e.id === data);
+                            if (vehiculo) {
+                                return `${vehiculo.descripcion}`.trim();
+                            }
+                            return "No asignado";
+                        }
+                    },
+                    { data: "rfidAsignado", title: "RFID Asignado" },
+                    {
+                        data: "fechaHora",
+                        title: "Fecha y Hora",
+                        render: function (data) {
+                            if (!data) return '';
+
+                            // Si data es una cadena en formato ISO o similar
+                            var fecha = new Date(data);
+
+                            if (isNaN(fecha.getTime())) return data; // Si no es fecha válida, retorna el valor original
+
+                            var dia = ('0' + fecha.getDate()).slice(-2);
+                            var mes = ('0' + (fecha.getMonth() + 1)).slice(-2);
+                            var year = fecha.getFullYear();
+                            var horas = ('0' + fecha.getHours()).slice(-2);
+                            var minutos = ('0' + fecha.getMinutes()).slice(-2);
+                            var segundos = ('0' + fecha.getSeconds()).slice(-2);
+
+                            return dia + '/' + mes + '/' + year + ' ' + horas + ':' + minutos + ':' + segundos;
+                        }
+                    },
+                    {
+                        data: "estatus",
+                        title: "Estatus",
+                        render: function (data) {
+                            return data == 1 ? "Activo" : "Inactivo";
+                        }
+                    },
+                    {
+                        data: "devuelto",
+                        title: "Estatus de RFID",
+                        render: function (data, type, row) {
+                            // data es el valor de devuelto (0 = no devuelto, 1 = devuelto)
+                            if (data == 1) {
+                                // Si ya está devuelto, mostrar mensaje en rojo
+                                return '<span class="badge badge-danger" style="background-color: #dc3545; color: white; padding: 8px 12px; border-radius: 4px;">YA DEVUELTO</span>';
+                            } else {
+                                // Si no está devuelto, mostrar el botón
+                                return '<input type="button" value="Devolver" class="btn btn-success btn-lg-custom" onclick="DevueltoRFIDCarga(' + row.id + ')"/>';
+                            }
+                        }
+                    },
+                    {
+                        data: "id",
+                        title: "Acciones",
+                        render: function (data) {
+                            return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarRFIDCarga(' + data + ')" />' +
+                                ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarRFIDCarga(' + data + ')"/>';
+                        }
+                    }
+                ],
+                language: {
+                    "decimal": ",",
+                    "thousands": ".",
+                    "processing": "Procesando...",
+                    "lengthMenu": "Mostrar _MENU_ entradas",
+                    "zeroRecords": "No se encontraron resultados",
+                    "emptyTable": "Ningun dato disponible en esta tabla",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                    "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                    "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+                    "search": "Buscar:",
+                    "loadingRecords": "Cargando...",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    },
+                    "aria": {
+                        "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                        "sortDescending": ": activar para ordenar la columna de manera descendente"
+                    }
+                }
+            });
+        }
+    });
+}

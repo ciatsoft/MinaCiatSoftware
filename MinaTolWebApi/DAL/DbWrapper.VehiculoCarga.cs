@@ -236,6 +236,36 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
+        public ModelResponse GetRFIDCargaByDates(DateTime fechaInicio, DateTime fechaFin)
+        {
+            var modelResponse = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+
+            try
+            {
+                parameters.Add(new SqlParameter("@FechaInicio", fechaInicio));
+                parameters.Add(new SqlParameter("@FechaFin", fechaFin));
+
+                var vehiculosCarga = GetObjects("GetRFIDCargaByDates",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    new Func<IDataReader, RFIDCarga>((reader) =>
+                    {
+                        var r = FillEntity<RFIDCarga>(reader);
+                        return r;
+                    }));
+
+                modelResponse.Response = vehiculosCarga;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
         #endregion
     }
-}
+} 

@@ -63,6 +63,11 @@ namespace MinaToMVC.Controllers
                 var modelResponse = await httpClientConnection.GetRFIDCargaById(id);
                 vc = JsonConvert.DeserializeObject<RFIDCarga>(modelResponse.Response.ToString());
             }
+            else
+            {
+                // SOLO para nuevos registros, establecer la fecha actual
+                vc.FechaHora = DateTime.Now;
+            }
 
             var usuarioToken = SessionHelper.GetSessionUser();
             var usuario = new List<Usuario>()
@@ -78,7 +83,7 @@ namespace MinaToMVC.Controllers
 
             var trabajadoresResponse = await httpClientConnection.GetAllEmpleados();
             var trabajadores = JsonConvert.DeserializeObject<List<Empleado>>(trabajadoresResponse.Response.ToString());
-            var trabajadoresDdl = MappingPropertiToDropDownList<Empleado>(trabajadores, "Id", "Nombre");
+            var trabajadoresDdl = trabajadores.Select(e => new SelectListItem{Value = e.Id.ToString(),Text = $"{e.Nombre} {e.ApellidoPaterno} {e.ApellidoMaterno}".Trim()}).ToList();
 
             var vehiculosCargaResponse = await httpClientConnection.GetAllVehiculoCarga();
             var vehiculosCarga = JsonConvert.DeserializeObject<List<VehiculoCarga>>(vehiculosCargaResponse.Response.ToString());
@@ -430,6 +435,11 @@ namespace MinaToMVC.Controllers
         public async Task<string> SaveOrUpdateRFIDCarga(RFIDCarga rc)
         {
             var result = await httpClientConnection.SaveOrUpdateRFIDCarga(rc);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetRFIDCargaByDates(DateTime fechaInicio, DateTime fechaFin)
+        {
+            var result = await httpClientConnection.GetRFIDCargaByDates(fechaInicio, fechaFin);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
         #endregion
