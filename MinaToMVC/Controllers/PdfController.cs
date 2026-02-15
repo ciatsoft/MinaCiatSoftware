@@ -1223,6 +1223,43 @@ namespace MinaToMVC.Controllers
 
         [HttpPost]
         [ValidateInput(false)]
+        public ActionResult GenerarReporteHistoricoRFID(string htmlContent, string fechaInicio, string fechaFin, string userName, string datosHistoricoRFID)
+        {
+            try
+            {
+                // Configurar el convertidor HTML a PDF
+                var htmlToPdf = new HtmlToPdfConverter();
+                htmlToPdf.Orientation = PageOrientation.Landscape; // Landscape para mejor visualización de columnas
+                htmlToPdf.Size = PageSize.Letter;
+                htmlToPdf.Margins = new PageMargins { Top = 15, Bottom = 15, Left = 10, Right = 10 };
+                htmlToPdf.LowQuality = false;
+                htmlToPdf.Quiet = true;
+
+                // Generar el PDF
+                var pdfBytes = htmlToPdf.GeneratePdf(htmlContent);
+
+                // Nombre del archivo
+                string fechaReporte = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                var fileName = $"Reporte_Historico_RFID_{fechaReporte}.pdf";
+
+                // Devolver el PDF para descarga
+                return File(pdfBytes, "application/pdf", fileName);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error al generar PDF: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+
+                return Json(new
+                {
+                    success = false,
+                    message = $"Error al generar el reporte PDF: {ex.Message}"
+                });
+            }
+        }
+
+        [HttpPost]
+        [ValidateInput(false)]
         public ActionResult GenerarReporteGastosGeneralesFechas(string htmlContent, string fechaInicio, string fechaFin, string userName, string datosDeducciones)
         {
             try

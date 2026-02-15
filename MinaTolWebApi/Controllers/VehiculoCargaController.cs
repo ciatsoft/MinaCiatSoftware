@@ -77,7 +77,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.DeleteRFIDCarga(id);
             return result;
         }
-
+        [HttpGet, Route("RFIDCarga/Dates/")]
+        public ModelResponse GetRFIDCargaByDates([FromUri] DateTime fechaInicio, [FromUri] DateTime fechaFin)
+        {
+            var result = wrapper.GetRFIDCargaByDates(fechaInicio,fechaFin);
+            return result;
+        }
         #endregion
     }
 }
