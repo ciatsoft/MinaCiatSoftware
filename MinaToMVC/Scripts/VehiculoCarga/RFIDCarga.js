@@ -72,7 +72,8 @@ $(document).ready(function () {
                 title: "Estatus",
                 render: function (data) {
                     return data == 1 ? "Activo" : "Inactivo";
-                }
+                },
+                visible: false
             },
             {
                 data: "devuelto",
@@ -81,7 +82,7 @@ $(document).ready(function () {
                     // data es el valor de devuelto (0 = no devuelto, 1 = devuelto)
                     if (data == 1) {
                         // Si ya está devuelto, mostrar mensaje en rojo
-                        return '<span class="badge badge-danger" style="background-color: #dc3545; color: white; padding: 8px 12px; border-radius: 4px;">YA DEVUELTO</span>';
+                        return '<span class="badge badge-danger" style="background-color: #dc3545; color: white; padding: 8px 12px; border-radius: 4px;">DEVUELTO</span>';
                     } else {
                         // Si no está devuelto, mostrar el botón
                         return '<input type="button" value="Devolver" class="btn btn-success btn-lg-custom" onclick="DevueltoRFIDCarga(' + row.id + ')"/>';
@@ -295,8 +296,8 @@ document.getElementById("btnFiltrar").addEventListener("click", function () {
     var fechaInicio = $("#fechaInicio").val();
     var fechaFin = $("#fechaFin").val();
 
-    if (fechaInicio < fechaFin) {
-        alert("Por favor, seleccione una fecha válida.");
+    if (fechaInicio > fechaFin) {
+        alert("Por favor, seleccione una fecha valida.");
         return;
     }
 
@@ -380,7 +381,8 @@ function GetRFIDCargaByDates(fechaInicio, fechaFin) {
                         title: "Estatus",
                         render: function (data) {
                             return data == 1 ? "Activo" : "Inactivo";
-                        }
+                        },
+                        visible: false
                     },
                     {
                         data: "devuelto",
@@ -431,4 +433,618 @@ function GetRFIDCargaByDates(fechaInicio, fechaFin) {
             });
         }
     });
+}
+
+document.getElementById("btnGenerarPDF").addEventListener("click", function () {
+    generarReportePDF();
+});
+document.getElementById("btnGenerarExcel").addEventListener("click", function () {
+    generarReporteExcel();
+});
+
+function generarReportePDF() {
+    try {
+        if (!$.fn.DataTable.isDataTable("#tblRFIDCarga")) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Tabla no inicializada',
+                text: 'La tabla de Historico RFID no está inicializada o no existe'
+            });
+            return;
+        }
+
+        const table = $("#tblRFIDCarga").DataTable();
+
+        const totalRows = table.rows().count();
+        const datosHistoricoRFID = table.rows().data().toArray();
+
+        if (totalRows === 0 || datosHistoricoRFID.length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Tabla vacia',
+                text: 'No hay registros en la tabla para generar el reporte PDF',
+                confirmButtonText: 'Entendido'
+            });
+            return;
+        }
+
+        const fechaInicio = $("#fechaInicio").val();
+        const fechaFin = $("#fechaFin").val();
+        const username = $("#userName").val();
+        const now = new Date();
+        const fechaGeneracion = now.toLocaleDateString('es-MX') + ', ' + now.toLocaleTimeString('es-MX');
+
+        // Calcular estadísticas
+        const totalRegistros = datosHistoricoRFID.length;
+        const activos = datosHistoricoRFID.filter(item => item.estatus == 1).length;
+        const inactivos = datosHistoricoRFID.filter(item => item.estatus == 0).length;
+        const rfidDevueltos = datosHistoricoRFID.filter(item => item.devuelto == 1).length;
+        const rfidPendientes = datosHistoricoRFID.filter(item => item.devuelto == 0).length;
+
+        // Obtener trabajadores únicos
+        const trabajadoresUnicos = new Set();
+        datosHistoricoRFID.forEach(item => {
+            if (item.idTrabajador) {
+                const empleado = empleados.find(e => e.id === item.idTrabajador);
+                if (empleado) {
+                    const nombreCompleto = `${empleado.nombre || ''} ${empleado.apellidoPaterno || ''} ${empleado.apellidoMaterno || ''}`.trim();
+                    trabajadoresUnicos.add(nombreCompleto);
+                }
+            }
+        });
+
+        // Obtener vehículos únicos
+        const vehiculosUnicos = new Set();
+        datosHistoricoRFID.forEach(item => {
+            if (item.idVehiculoCarga) {
+                const vehiculo = vehiculosCarga.find(e => e.id === item.idVehiculoCarga);
+                if (vehiculo) {
+                    vehiculosUnicos.add(vehiculo.descripcion.trim());
+                }
+            }
+        });
+
+        let htmlContent = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>Reporte de Historico RFID</title>
+                <style>
+                    body { 
+                        font-family: Arial, sans-serif; 
+                        padding: 20px; 
+                        font-size: 12px; 
+                    }
+                    h1 { 
+                        text-align: center; 
+                        margin-bottom: 20px; 
+                        font-size: 22px; 
+                        color: #2c3e50;
+                    }
+                    .header-info { 
+                        margin-bottom: 20px; 
+                        font-size: 14px; 
+                        border-bottom: 1px solid #ddd; 
+                        padding-bottom: 10px;
+                    }
+                    .header-info p { 
+                        margin: 5px 0; 
+                    }
+                    .tabla-contenedor { 
+                        margin-bottom: 30px; 
+                    }
+                    .tabla-titulo { 
+                        margin: 15px 0 8px 0; 
+                        font-size: 16px; 
+                        border-bottom: 1px solid #ddd; 
+                        padding-bottom: 3px; 
+                    }
+                    table { 
+                        width: 100%; 
+                        border-collapse: collapse; 
+                        margin-bottom: 15px;
+                        font-size: 10px;
+                    }
+                    th, td { 
+                        padding: 6px; 
+                        border: 1px solid #ddd; 
+                        text-align: left;
+                    }
+                    th { 
+                        background-color: #34495e; 
+                        color: white; 
+                        font-weight: bold; 
+                        text-align: center;
+                    }
+                    tr:nth-child(even) { 
+                        background-color: #f9f9f9; 
+                    }
+                    .estadisticas-container {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 15px;
+                        margin: 20px 0;
+                    }
+                    .estadistica-card {
+                        flex: 1 1 calc(25% - 15px);
+                        min-width: 180px;
+                        padding: 15px;
+                        border: 1px solid #ddd;
+                        border-radius: 8px;
+                        background-color: #f8f9fa;
+                        text-align: center;
+                    }
+                    .estadistica-card h3 {
+                        margin: 0 0 10px 0;
+                        font-size: 14px;
+                        color: #2c3e50;
+                    }
+                    .estadistica-card .numero {
+                        font-size: 24px;
+                        font-weight: bold;
+                        color: #34495e;
+                    }
+                    .estadistica-card.total { background-color: #e8f4f8; border-left: 4px solid #3498db; }
+                    .estadistica-card.activos { background-color: #e8f8e8; border-left: 4px solid #27ae60; }
+                    .estadistica-card.inactivos { background-color: #f8e8e8; border-left: 4px solid #e74c3c; }
+                    .estadistica-card.devueltos { background-color: #f8f0e8; border-left: 4px solid #e67e22; }
+                    .estadistica-card.pendientes { background-color: #f0e8f8; border-left: 4px solid #9b59b6; }
+                    .total { 
+                        margin-top: 15px; 
+                        padding: 10px; 
+                        border: 1px solid #ddd; 
+                        border-radius: 5px; 
+                        background-color: #f5f5f5; 
+                        font-size: 14px; 
+                        font-weight: bold;
+                        text-align: right;
+                    }
+                    .sin-datos { 
+                        text-align: center; 
+                        padding: 20px; 
+                        font-style: italic; 
+                        color: #666;
+                        border: 1px dashed #ddd;
+                        margin: 20px 0;
+                    }
+                    .badge {
+                        padding: 8px 12px;
+                        border-radius: 4px;
+                        color: white;
+                        font-weight: bold;
+                        display: inline-block;
+                    }
+                    .badge-danger { background-color: #dc3545; }
+                </style>
+            </head>
+            <body>
+                <h1>Reporte de Historico RFID</h1>
+                <div class="header-info">
+                    <p><strong>Fecha de Inicio:</strong> ${fechaInicio || 'No especificada'}</p>
+                    <p><strong>Fecha de Fin:</strong> ${fechaFin || 'No especificada'}</p>
+                    <p><strong>Usuario:</strong> ${username || 'No especificado'}</p>
+                    <p><strong>Fecha de Generacion:</strong> ${fechaGeneracion}</p>
+                </div>
+        `;
+
+        // Crear tabla HTML manualmente
+        htmlContent += `
+            <div class="tabla-contenedor">
+                <h2 class="tabla-titulo">Registros de Historico RFID</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Trabajador</th>
+                            <th>Vehiculo de Carga</th>
+                            <th>RFID Asignado</th>
+                            <th>Fecha y Hora</th>
+                            <th>Estatus de RFID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        // Agregar filas con los datos del DataTable
+        datosHistoricoRFID.forEach(row => {
+            // Obtener nombre del trabajador
+            let nombreTrabajador = "No asignado";
+            if (row.idTrabajador) {
+                const empleado = empleados.find(e => e.id === row.idTrabajador);
+                if (empleado) {
+                    nombreTrabajador = `${empleado.nombre || ''} ${empleado.apellidoPaterno || ''} ${empleado.apellidoMaterno || ''}`.trim();
+                }
+            }
+
+            // Obtener descripción del vehículo
+            let descripcionVehiculo = "No asignado";
+            if (row.idVehiculoCarga) {
+                const vehiculo = vehiculosCarga.find(e => e.id === row.idVehiculoCarga);
+                if (vehiculo) {
+                    descripcionVehiculo = vehiculo.descripcion.trim();
+                }
+            }
+
+            // Formatear fecha
+            let fechaFormateada = row.fechaHora || '';
+            if (row.fechaHora) {
+                const fecha = new Date(row.fechaHora);
+                if (!isNaN(fecha.getTime())) {
+                    const dia = ('0' + fecha.getDate()).slice(-2);
+                    const mes = ('0' + (fecha.getMonth() + 1)).slice(-2);
+                    const year = fecha.getFullYear();
+                    const horas = ('0' + fecha.getHours()).slice(-2);
+                    const minutos = ('0' + fecha.getMinutes()).slice(-2);
+                    const segundos = ('0' + fecha.getSeconds()).slice(-2);
+                    fechaFormateada = `${dia}/${mes}/${year} ${horas}:${minutos}:${segundos}`;
+                }
+            }
+
+            // Estatus del registro
+            const estatusTexto = row.estatus == 1 ? "Activo" : "Inactivo";
+
+            // Estatus del RFID
+            let estatusRFID = '';
+            if (row.devuelto == 1) {
+                estatusRFID = '<span class="badge badge-danger">DEVUELTO</span>';
+            } else {
+                estatusRFID = 'PENDIENTE';
+            }
+
+            htmlContent += `
+                <tr>
+                    <td>${row.id || ''}</td>
+                    <td>${nombreTrabajador}</td>
+                    <td>${descripcionVehiculo}</td>
+                    <td>${row.rfidAsignado || ''}</td>
+                    <td>${fechaFormateada}</td>
+                    <td style="text-align: center;">${estatusRFID}</td>
+                </tr>
+            `;
+        });
+
+        htmlContent += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        // Agregar resumen final
+        htmlContent += `
+            <div class="total">
+                Resumen: ${totalRegistros} registros totales | 
+                Activos: ${activos} | 
+                Inactivos: ${inactivos} | 
+                RFID Devueltos: ${rfidDevueltos} | 
+                RFID Pendientes: ${rfidPendientes}
+            </div>
+        `;
+
+        htmlContent += `</body></html>`;
+
+        // Mostrar mensaje de carga
+        Swal.fire({
+            title: "Generando reporte...",
+            html: `
+                <div style="text-align: center;">
+                    <p>Procesando ${datosHistoricoRFID.length} registros</p>
+                    <p>Por favor espere...</p>
+                </div>
+            `,
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+
+                // Enviar al controlador después de un breve retraso
+                setTimeout(() => {
+                    enviarDatosParaPDF(htmlContent, fechaInicio, fechaFin, username, datosHistoricoRFID);
+                }, 500);
+            }
+        });
+
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error al generar el reporte: ' + error.message
+        });
+    }
+}
+
+function enviarDatosParaPDF(htmlContent, fechaInicio, fechaFin, userName, datosHistoricoRFID) {
+    try {
+        // Crear formulario para enviar los datos al servidor
+        var form = $('<form>', {
+            method: 'POST',
+            action: '/Pdf/GenerarReporteHistoricoRFID', // Cambia esta ruta según tu controlador
+            target: '_blank'
+        });
+
+        // Agregar el HTML como campo oculto
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'htmlContent',
+            value: htmlContent
+        }).appendTo(form);
+
+        // Agregar información adicional
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'fechaInicio',
+            value: fechaInicio || ''
+        }).appendTo(form);
+
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'fechaFin',
+            value: fechaFin || ''
+        }).appendTo(form);
+
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'userName',
+            value: userName || ''
+        }).appendTo(form);
+
+        // Agregar los datos como JSON
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'datosHistoricoRFID',
+            value: JSON.stringify(datosHistoricoRFID || [])
+        }).appendTo(form);
+
+        // Agregar token anti-falsificación si lo usas
+        var token = $('input[name="__RequestVerificationToken"]').val();
+        if (token) {
+            $('<input>').attr({
+                type: 'hidden',
+                name: '__RequestVerificationToken',
+                value: token
+            }).appendTo(form);
+        }
+
+        // Agregar el formulario al cuerpo y enviarlo
+        form.appendTo('body').submit().remove();
+
+        // Cerrar el mensaje de carga después de enviar
+        setTimeout(() => {
+            Swal.close();
+            Swal.fire({
+                icon: 'success',
+                title: 'Reporte generado',
+                text: 'El PDF se esta descargando',
+                timer: 3000,
+                showConfirmButton: false
+            });
+        }, 1000);
+
+    } catch (error) {
+        Swal.close();
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo enviar el formulario para generar el PDF'
+        });
+    }
+}
+
+function generarReporteExcel() {
+    try {
+        // Verificar si la tabla existe y tiene datos
+        if (!$.fn.DataTable.isDataTable("#tblRFIDCarga")) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Tabla no inicializada',
+                text: 'La tabla de Histórico RFID no está inicializada o no existe'
+            });
+            return;
+        }
+
+        // Obtener la instancia de DataTable
+        const table = $("#tblRFIDCarga").DataTable();
+
+        // Verificar si hay datos
+        const totalRows = table.rows().count();
+        const datosRFIDCarga = table.rows().data().toArray();
+
+        if (totalRows === 0 || datosRFIDCarga.length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Tabla vacía',
+                text: 'No hay registros en la tabla para generar el reporte Excel',
+                confirmButtonText: 'Entendido'
+            });
+            return;
+        }
+
+        // Obtener información adicional
+        const fechaInicio = $("#fechaInicio").val();
+        const fechaFin = $("#fechaFin").val();
+        const userName = $("#userName").val();
+
+        // Mostrar mensaje de carga
+        Swal.fire({
+            title: "Generando Excel...",
+            html: `
+                <div style="text-align: center;">
+                    <p>Procesando ${datosRFIDCarga.length} registros</p>
+                    <p>Por favor espere...</p>
+                </div>
+            `,
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+
+                // Crear tabla HTML para enviar al servidor
+                crearTablaHTMLParaExcel(datosRFIDCarga, fechaInicio, fechaFin, userName);
+            }
+        });
+
+    } catch (error) {
+        console.error("Error al generar Excel:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error al generar el reporte Excel: ' + error.message
+        });
+    }
+}
+
+function crearTablaHTMLParaExcel(datosRFIDCarga, fechaInicio, fechaFin, userName) {
+    try {
+        // Crear tabla HTML manualmente con estructura simple
+        let tablaHTML = '<table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse;">';
+
+        // Encabezados (sin columna de Estatus)
+        tablaHTML += '<thead><tr>';
+        tablaHTML += '<th>ID</th>';
+        tablaHTML += '<th>TRABAJADOR</th>';
+        tablaHTML += '<th>VEHÍCULO DE CARGA</th>';
+        tablaHTML += '<th>RFID ASIGNADO</th>';
+        tablaHTML += '<th>FECHA Y HORA</th>';
+        tablaHTML += '<th>ESTADO RFID</th>';
+        tablaHTML += '</tr></thead>';
+
+        // Datos
+        tablaHTML += '<tbody>';
+
+        datosRFIDCarga.forEach(row => {
+            // Obtener nombre del trabajador
+            let nombreTrabajador = "No asignado";
+            if (row.idTrabajador) {
+                const empleado = empleados.find(e => e.id === row.idTrabajador);
+                if (empleado) {
+                    nombreTrabajador = `${empleado.nombre || ''} ${empleado.apellidoPaterno || ''} ${empleado.apellidoMaterno || ''}`.trim();
+                }
+            }
+
+            // Obtener descripción del vehículo
+            let descripcionVehiculo = "No asignado";
+            if (row.idVehiculoCarga) {
+                const vehiculo = vehiculosCarga.find(e => e.id === row.idVehiculoCarga);
+                if (vehiculo) {
+                    descripcionVehiculo = vehiculo.descripcion.trim();
+                }
+            }
+
+            // Formatear fecha
+            let fechaFormateada = row.fechaHora || '';
+            if (row.fechaHora) {
+                const fecha = new Date(row.fechaHora);
+                if (!isNaN(fecha.getTime())) {
+                    const dia = ('0' + fecha.getDate()).slice(-2);
+                    const mes = ('0' + (fecha.getMonth() + 1)).slice(-2);
+                    const year = fecha.getFullYear();
+                    const horas = ('0' + fecha.getHours()).slice(-2);
+                    const minutos = ('0' + fecha.getMinutes()).slice(-2);
+                    const segundos = ('0' + fecha.getSeconds()).slice(-2);
+                    fechaFormateada = `${dia}/${mes}/${year} ${horas}:${minutos}:${segundos}`;
+                }
+            }
+
+            // Estatus del RFID
+            const estatusRFID = row.devuelto == 1 ? "DEVUELTO" : "PENDIENTE";
+
+            tablaHTML += '<tr>';
+            tablaHTML += `<td>${row.id || ''}</td>`;
+            tablaHTML += `<td>${nombreTrabajador}</td>`;
+            tablaHTML += `<td>${descripcionVehiculo}</td>`;
+            tablaHTML += `<td>${row.rfidAsignado || ''}</td>`;
+            tablaHTML += `<td>${fechaFormateada}</td>`;
+            tablaHTML += `<td>${estatusRFID}</td>`;
+            tablaHTML += '</tr>';
+        });
+
+        tablaHTML += '</tbody></table>';
+
+        // Enviar al servidor con todos los parámetros
+        enviarDatosParaExcel(tablaHTML, fechaInicio, fechaFin, userName, datosRFIDCarga.length);
+
+    } catch (error) {
+        Swal.close();
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al preparar datos para Excel: ' + error.message
+        });
+    }
+}
+
+function enviarDatosParaExcel(tablaHTML, fechaInicio, fechaFin, userName, totalRegistros) {
+    try {
+        // Crear formulario para enviar los datos al servidor
+        var form = $('<form>', {
+            method: 'POST',
+            action: '/Excel/GenerarReporteRFIDExcel' // Cambia esta ruta según tu controlador
+        });
+
+        // Agregar el HTML como campo oculto
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'tablaHTML',
+            value: tablaHTML
+        }).appendTo(form);
+
+        // Agregar información adicional
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'fechaInicio',
+            value: fechaInicio || ''
+        }).appendTo(form);
+
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'fechaFin',
+            value: fechaFin || ''
+        }).appendTo(form);
+
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'userName',
+            value: userName || ''
+        }).appendTo(form);
+
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'totalRegistros',
+            value: totalRegistros || 0
+        }).appendTo(form);
+
+        // Agregar token anti-falsificación si lo usas
+        var token = $('input[name="__RequestVerificationToken"]').val();
+        if (token) {
+            $('<input>').attr({
+                type: 'hidden',
+                name: '__RequestVerificationToken',
+                value: token
+            }).appendTo(form);
+        }
+
+        // Agregar el formulario al cuerpo y enviarlo
+        form.appendTo('body').submit().remove();
+
+        // Cerrar el mensaje de carga después de un tiempo
+        setTimeout(() => {
+            Swal.close();
+            Swal.fire({
+                icon: 'success',
+                title: 'Reporte generado',
+                text: 'El archivo Excel se está descargando',
+                timer: 3000,
+                showConfirmButton: false
+            });
+        }, 2000);
+
+    } catch (error) {
+        console.error("Error al enviar datos:", error);
+        Swal.close();
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo enviar el formulario para generar el Excel'
+        });
+    }
 }

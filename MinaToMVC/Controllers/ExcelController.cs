@@ -4675,5 +4675,378 @@ namespace MinaToMVC.Controllers
             }
         }
         #endregion
+
+        #region VehiculoCargaRFID
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult GenerarReporteRFIDExcel(string tablaHTML, string fechaInicio, string fechaFin, string userName, int totalRegistros)
+        {
+            try
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("Historico RFID");
+
+                // ================= CONFIGURACIÓN DE IMPRESIÓN =================
+                sheet.PrintSetup.Landscape = true;
+                sheet.PrintSetup.PaperSize = (short)PaperSize.A4;
+                sheet.SetMargin(MarginType.TopMargin, 0.5);
+                sheet.SetMargin(MarginType.BottomMargin, 0.5);
+                sheet.SetMargin(MarginType.LeftMargin, 0.4);
+                sheet.SetMargin(MarginType.RightMargin, 0.4);
+
+                // Configurar anchos de columna (solo 6 columnas ahora)
+                sheet.SetColumnWidth(0, 8 * 256);   // ID
+                sheet.SetColumnWidth(1, 35 * 256);  // Trabajador
+                sheet.SetColumnWidth(2, 30 * 256);  // Vehículo de Carga
+                sheet.SetColumnWidth(3, 18 * 256);  // RFID Asignado
+                sheet.SetColumnWidth(4, 20 * 256);  // Fecha y Hora
+                sheet.SetColumnWidth(5, 15 * 256);  // Estado RFID
+
+                int rowIndex = 0;
+
+                // ================= ESTILOS =================
+
+                // Empresa/Encabezado
+                ICellStyle headerStyle = workbook.CreateCellStyle();
+                IFont headerFont = workbook.CreateFont();
+                headerFont.FontName = "Calibri";
+                headerFont.FontHeightInPoints = 18;
+                headerFont.IsBold = true;
+                headerFont.Color = IndexedColors.DarkBlue.Index;
+                headerStyle.SetFont(headerFont);
+                headerStyle.Alignment = HorizontalAlignment.Center;
+
+                // Título reporte
+                ICellStyle titleStyle = workbook.CreateCellStyle();
+                IFont titleFont = workbook.CreateFont();
+                titleFont.FontName = "Calibri";
+                titleFont.FontHeightInPoints = 14;
+                titleFont.IsBold = true;
+                titleFont.Color = IndexedColors.Black.Index;
+                titleStyle.SetFont(titleFont);
+                titleStyle.Alignment = HorizontalAlignment.Center;
+
+                // Subtítulo
+                ICellStyle subtitleStyle = workbook.CreateCellStyle();
+                IFont subtitleFont = workbook.CreateFont();
+                subtitleFont.FontName = "Calibri";
+                subtitleFont.FontHeightInPoints = 12;
+                subtitleFont.IsBold = true;
+                subtitleFont.Color = IndexedColors.Grey50Percent.Index;
+                subtitleStyle.SetFont(subtitleFont);
+                subtitleStyle.Alignment = HorizontalAlignment.Center;
+
+                // Información
+                ICellStyle infoStyle = workbook.CreateCellStyle();
+                IFont infoFont = workbook.CreateFont();
+                infoFont.FontHeightInPoints = 11;
+                infoFont.Color = IndexedColors.Black.Index;
+                infoStyle.SetFont(infoFont);
+
+                // ENCABEZADOS TABLA - FONDO NEGRO, LETRAS BLANCAS
+                ICellStyle tableHeaderStyle = workbook.CreateCellStyle();
+                IFont tableHeaderFont = workbook.CreateFont();
+                tableHeaderFont.FontHeightInPoints = 11;
+                tableHeaderFont.IsBold = true;
+                tableHeaderFont.Color = IndexedColors.White.Index;
+                tableHeaderStyle.SetFont(tableHeaderFont);
+                tableHeaderStyle.FillForegroundColor = IndexedColors.Black.Index;
+                tableHeaderStyle.FillPattern = FillPattern.SolidForeground;
+                tableHeaderStyle.Alignment = HorizontalAlignment.Center;
+                tableHeaderStyle.VerticalAlignment = VerticalAlignment.Center;
+                tableHeaderStyle.BorderTop = BorderStyle.Thin;
+                tableHeaderStyle.BorderBottom = BorderStyle.Thin;
+                tableHeaderStyle.BorderLeft = BorderStyle.Thin;
+                tableHeaderStyle.BorderRight = BorderStyle.Thin;
+
+                // Datos base
+                ICellStyle dataStyle = workbook.CreateCellStyle();
+                dataStyle.BorderTop = BorderStyle.Thin;
+                dataStyle.BorderBottom = BorderStyle.Thin;
+                dataStyle.BorderLeft = BorderStyle.Thin;
+                dataStyle.BorderRight = BorderStyle.Thin;
+                dataStyle.VerticalAlignment = VerticalAlignment.Center;
+                dataStyle.WrapText = true;
+
+                // ID (centrado)
+                ICellStyle idStyle = workbook.CreateCellStyle();
+                idStyle.CloneStyleFrom(dataStyle);
+                idStyle.Alignment = HorizontalAlignment.Center;
+
+                // Texto normal
+                ICellStyle textStyle = workbook.CreateCellStyle();
+                textStyle.CloneStyleFrom(dataStyle);
+                textStyle.Alignment = HorizontalAlignment.Left;
+
+                // Fecha y hora
+                ICellStyle dateTimeStyle = workbook.CreateCellStyle();
+                dateTimeStyle.CloneStyleFrom(dataStyle);
+                dateTimeStyle.Alignment = HorizontalAlignment.Center;
+                dateTimeStyle.DataFormat = workbook.CreateDataFormat().GetFormat("dd/MM/yyyy hh:mm:ss");
+
+                // RFID (monospace)
+                ICellStyle rfidStyle = workbook.CreateCellStyle();
+                rfidStyle.CloneStyleFrom(dataStyle);
+                rfidStyle.Alignment = HorizontalAlignment.Center;
+                IFont rfidFont = workbook.CreateFont();
+                rfidFont.FontName = "Courier New";
+                rfidFont.FontHeightInPoints = 10;
+                rfidStyle.SetFont(rfidFont);
+
+                // RFID Devuelto (rojo)
+                ICellStyle devueltoStyle = workbook.CreateCellStyle();
+                devueltoStyle.CloneStyleFrom(dataStyle);
+                devueltoStyle.Alignment = HorizontalAlignment.Center;
+                IFont devueltoFont = workbook.CreateFont();
+                devueltoFont.Color = IndexedColors.Red.Index;
+                devueltoFont.IsBold = true;
+                devueltoStyle.SetFont(devueltoFont);
+
+                // RFID Pendiente (naranja)
+                ICellStyle pendienteStyle = workbook.CreateCellStyle();
+                pendienteStyle.CloneStyleFrom(dataStyle);
+                pendienteStyle.Alignment = HorizontalAlignment.Center;
+                IFont pendienteFont = workbook.CreateFont();
+                pendienteFont.Color = IndexedColors.Orange.Index;
+                pendienteFont.IsBold = true;
+                pendienteStyle.SetFont(pendienteFont);
+
+                // Resumen
+                ICellStyle summaryStyle = workbook.CreateCellStyle();
+                IFont summaryFont = workbook.CreateFont();
+                summaryFont.FontHeightInPoints = 11;
+                summaryFont.IsBold = true;
+                summaryFont.Color = IndexedColors.White.Index;
+                summaryStyle.SetFont(summaryFont);
+                summaryStyle.FillForegroundColor = IndexedColors.DarkBlue.Index;
+                summaryStyle.FillPattern = FillPattern.SolidForeground;
+                summaryStyle.BorderTop = BorderStyle.Thin;
+                summaryStyle.BorderBottom = BorderStyle.Thin;
+                summaryStyle.BorderLeft = BorderStyle.Thin;
+                summaryStyle.BorderRight = BorderStyle.Thin;
+
+                // ================= CONTENIDO =================
+
+                // Fila 0: Título principal
+                IRow headerRow = sheet.CreateRow(rowIndex++);
+                headerRow.CreateCell(0).SetCellValue("REPORTE DE HISTÓRICO RFID");
+                headerRow.GetCell(0).CellStyle = headerStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 5));
+
+                // Fila 1: Subtítulo
+                IRow subtitleRow = sheet.CreateRow(rowIndex++);
+                subtitleRow.CreateCell(0).SetCellValue("Control de Asignación y Devolución de RFID para Vehículos de Carga");
+                subtitleRow.GetCell(0).CellStyle = subtitleStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(1, 1, 0, 5));
+
+                rowIndex++; // Espacio
+
+                // Fila 3: Información del reporte
+                IRow infoRow1 = sheet.CreateRow(rowIndex++);
+                infoRow1.CreateCell(0).SetCellValue($"Fecha de Inicio: {fechaInicio ?? "No especificada"}");
+                infoRow1.GetCell(0).CellStyle = infoStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(3, 3, 0, 2));
+
+                infoRow1.CreateCell(3).SetCellValue($"Fecha de Fin: {fechaFin ?? "No especificada"}");
+                infoRow1.GetCell(3).CellStyle = infoStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(3, 3, 3, 5));
+
+                IRow infoRow2 = sheet.CreateRow(rowIndex++);
+                infoRow2.CreateCell(0).SetCellValue($"Usuario: {userName ?? "No especificado"}");
+                infoRow2.GetCell(0).CellStyle = infoStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(4, 4, 0, 2));
+
+                infoRow2.CreateCell(3).SetCellValue($"Fecha de Generación: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
+                infoRow2.GetCell(3).CellStyle = infoStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(4, 4, 3, 5));
+
+                rowIndex++; // Espacio
+
+                // Fila 6: Encabezados de la tabla (6 columnas)
+                IRow tableHeaderRow = sheet.CreateRow(rowIndex++);
+                string[] headers = {
+            "ID",
+            "TRABAJADOR",
+            "VEHÍCULO DE CARGA",
+            "RFID ASIGNADO",
+            "FECHA Y HORA",
+            "ESTADO RFID"
+        };
+
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    ICell cell = tableHeaderRow.CreateCell(i);
+                    cell.SetCellValue(headers[i]);
+                    cell.CellStyle = tableHeaderStyle;
+                }
+
+                // ================= DATOS =================
+                int totalRegistrosProcesados = 0;
+                int rfidDevueltos = 0;
+                int rfidPendientes = 0;
+
+                if (!string.IsNullOrEmpty(tablaHTML))
+                {
+                    // Extraer datos del HTML
+                    var tbodyMatch = Regex.Match(tablaHTML, @"<tbody[^>]*>(.*?)</tbody>",
+                        RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                    if (tbodyMatch.Success)
+                    {
+                        var rows = Regex.Matches(tbodyMatch.Groups[1].Value, @"<tr[^>]*>(.*?)</tr>",
+                            RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                        foreach (Match row in rows)
+                        {
+                            var cells = Regex.Matches(row.Groups[1].Value, @"<td[^>]*>(.*?)</td>",
+                                RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                            if (cells.Count >= 6)
+                            {
+                                IRow dataRow = sheet.CreateRow(rowIndex++);
+                                totalRegistrosProcesados++;
+
+                                for (int i = 0; i < 6; i++)
+                                {
+                                    string value = Regex.Replace(cells[i].Groups[1].Value, @"<[^>]*>", "");
+                                    value = System.Web.HttpUtility.HtmlDecode(value).Trim();
+
+                                    ICell cell = dataRow.CreateCell(i);
+
+                                    // Aplicar estilos según la columna
+                                    if (i == 0) // ID
+                                    {
+                                        cell.SetCellValue(value);
+                                        cell.CellStyle = idStyle;
+                                    }
+                                    else if (i == 1 || i == 2) // Trabajador, Vehículo
+                                    {
+                                        cell.SetCellValue(value);
+                                        cell.CellStyle = textStyle;
+                                    }
+                                    else if (i == 3) // RFID Asignado
+                                    {
+                                        cell.SetCellValue(value);
+                                        cell.CellStyle = rfidStyle;
+                                    }
+                                    else if (i == 4) // Fecha y Hora
+                                    {
+                                        // Intentar parsear la fecha
+                                        if (DateTime.TryParseExact(value, "dd/MM/yyyy HH:mm:ss",
+                                            CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime fecha))
+                                        {
+                                            cell.SetCellValue(fecha);
+                                            cell.CellStyle = dateTimeStyle;
+                                        }
+                                        else
+                                        {
+                                            cell.SetCellValue(value);
+                                            cell.CellStyle = textStyle;
+                                        }
+                                    }
+                                    else if (i == 5) // Estado RFID
+                                    {
+                                        cell.SetCellValue(value);
+                                        if (value == "DEVUELTO")
+                                        {
+                                            cell.CellStyle = devueltoStyle;
+                                            rfidDevueltos++;
+                                        }
+                                        else
+                                        {
+                                            cell.CellStyle = pendienteStyle;
+                                            rfidPendientes++;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // ================= RESUMEN ESTADÍSTICO =================
+                rowIndex += 2;
+
+                IRow resumenTitleRow = sheet.CreateRow(rowIndex++);
+                resumenTitleRow.CreateCell(0).SetCellValue("RESUMEN ESTADÍSTICO");
+                resumenTitleRow.GetCell(0).CellStyle = titleStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 5));
+
+                // Total de registros
+                IRow totalRegRow = sheet.CreateRow(rowIndex++);
+                totalRegRow.CreateCell(0).SetCellValue($"Total de registros: {totalRegistrosProcesados}");
+                totalRegRow.GetCell(0).CellStyle = summaryStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 5));
+
+                // RFID Devueltos
+                IRow devueltosRow = sheet.CreateRow(rowIndex++);
+                devueltosRow.CreateCell(0).SetCellValue($"RFID devueltos: {rfidDevueltos}");
+                devueltosRow.GetCell(0).CellStyle = summaryStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 2));
+
+                ICell devueltosPorcCell = devueltosRow.CreateCell(3);
+                if (totalRegistrosProcesados > 0)
+                {
+                    double porcentaje = (rfidDevueltos * 100.0) / totalRegistrosProcesados;
+                    devueltosPorcCell.SetCellValue($"{porcentaje:F1}% del total");
+                }
+                else
+                {
+                    devueltosPorcCell.SetCellValue("0%");
+                }
+                devueltosPorcCell.CellStyle = summaryStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 3, 5));
+
+                // RFID Pendientes
+                IRow pendientesRow = sheet.CreateRow(rowIndex++);
+                pendientesRow.CreateCell(0).SetCellValue($"RFID pendientes: {rfidPendientes}");
+                pendientesRow.GetCell(0).CellStyle = summaryStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 2));
+
+                ICell pendientesPorcCell = pendientesRow.CreateCell(3);
+                if (totalRegistrosProcesados > 0)
+                {
+                    double porcentaje = (rfidPendientes * 100.0) / totalRegistrosProcesados;
+                    pendientesPorcCell.SetCellValue($"{porcentaje:F1}% del total");
+                }
+                else
+                {
+                    pendientesPorcCell.SetCellValue("0%");
+                }
+                pendientesPorcCell.CellStyle = summaryStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 3, 5));
+
+                // ================= GUARDAR =================
+                byte[] excelBytes;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    workbook.Write(ms);
+                    excelBytes = ms.ToArray();
+                }
+
+                workbook.Close();
+
+                // Nombre del archivo con fecha y hora
+                string fileName = $"Reporte_Historico_RFID_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+
+                return File(
+                    excelBytes,
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    fileName
+                );
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error al generar Excel: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
+
+                return Json(new
+                {
+                    success = false,
+                    message = $"Error al generar el archivo Excel: {ex.Message}"
+                });
+            }
+        }
+        #endregion
     }
 }

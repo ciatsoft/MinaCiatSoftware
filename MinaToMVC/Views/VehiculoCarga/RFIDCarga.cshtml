@@ -31,7 +31,7 @@
         @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy", @Value = usuarioToken.UserName })
         @Html.HiddenFor(x => x.UpdatedDt, new { id = "updatedDt", @Value = fechaActual })
         <br />
-        <center><h1>Empleados</h1></center>
+        <center><h1>Asignar RFID para Trabajador y Camion de Carga</h1></center>
         <div class="tabla-consultas-empleados">
             <div class="rectangulos" style="width: 100%;">
                 <div class="row">
@@ -74,7 +74,7 @@
         </div>
     }
     <br />
-
+    <center><h1>Historico de RFID Asignado</h1></center>
     <div class="col-auto">
         <label for="fechaFiltroRango1" class="form-label">Fecha Inicio:</label>
         <input type="date" id="fechaInicio" name="fechaFiltro" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
@@ -85,7 +85,7 @@
     </div>
     <div style="margin-top: 50px;">
         <div class="col-auto">
-            <input type="hidden" id="userNameDeduccionesRango1" name="userName" class="form-control" value="@ViewBag.UserToken.UserName" readonly />
+            <input type="hidden" id="userName" name="userName" class="form-control" value="@ViewBag.UserToken.UserName" readonly />
             <input type="hidden" id="userIdDeduccionesRango1" name="userId" class="form-control" value="@ViewBag.UserToken.UserID" readonly />
         </div>
 
