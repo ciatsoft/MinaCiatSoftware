@@ -236,6 +236,56 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
+        public ModelResponse NoDevueltoRFIDCarga(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter()
+                    {
+                        Value = id,
+                        IsNullable = true,
+                        ParameterName = "@Id",
+                    }
+                };
+                var result = ExecuteNonQuery("NoDevueltoRFIDCarga", CommandType.StoredProcedure, parameters);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+        public ModelResponse DevueltoRFIDCarga(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter()
+                    {
+                        Value = id,
+                        IsNullable = true,
+                        ParameterName = "@Id",
+                    }
+                };
+                var result = ExecuteNonQuery("DevueltoRFIDCarga", CommandType.StoredProcedure, parameters);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
         public ModelResponse GetRFIDCargaByDates(DateTime fechaInicio, DateTime fechaFin)
         {
             var modelResponse = new ModelResponse();

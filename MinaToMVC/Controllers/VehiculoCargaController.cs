@@ -427,9 +427,24 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetRFIDCargaById(id);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+        public async Task<string> GetRFIDCargaByRFID(string rfid)
+        {
+            var result = await httpClientConnection.GetRFIDCargaByRFID(rfid);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
         public async Task<string> DeleteRFIDCarga(long id)
         {
             var result = await httpClientConnection.DeleteRFIDCarga(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> DevueltoRFIDCarga(long id)
+        {
+            var result = await httpClientConnection.DevueltoRFIDCarga(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> NoDevueltoRFIDCarga(long id)
+        {
+            var result = await httpClientConnection.NoDevueltoRFIDCarga(id);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
         public async Task<string> SaveOrUpdateRFIDCarga(RFIDCarga rc)
