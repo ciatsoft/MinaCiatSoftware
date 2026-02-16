@@ -944,6 +944,7 @@ async function printItem(rowIndex) {
     var rowData = table.row(rowIndex).data();
 
     // Datos comunes del ticket
+    var id = rowData.id;
     var folio = rowData.folio;
     var nombrePlanta = rowData.nombreUbicacion;
     var nombreMaterial = rowData.nombreTipoMaterial;
@@ -957,9 +958,33 @@ async function printItem(rowIndex) {
     var cantidad = parseFloat(rowData.cantidad).toFixed(2);
     var precioUnidad = parseFloat(rowData.precioUnidad).toFixed(2);
     var vendedor = rowData.userName;
-    var RFID = rowData.rfid;
+
+    // LIMPIAR RFID AQUÍ
+    var RFID = cleanRfidData(rowData.rfid);
+
     var nombreCliente = rowData.nombreCliente;
     var fecha = new Date(rowData.fecha).toLocaleString("es-MX");
+
+    // Función para limpiar RFID
+    function cleanRfidData(rfidValue) {
+        if (!rfidValue) return rfidValue;
+
+        // Eliminar prefijo '1Q' si existe
+        if (rfidValue.startsWith('1Q')) {
+            return rfidValue.substring(2);
+        }
+
+        // Eliminar cualquier otro prefijo común
+        const prefixes = ['1Q', '1q', 'IQ', 'iq', 'RF', 'rf'];
+        for (let prefix of prefixes) {
+            if (rfidValue.startsWith(prefix)) {
+                return rfidValue.substring(prefix.length);
+            }
+        }
+
+        // Si no hay prefijo conocido, eliminar cualquier carácter no hexadecimal al inicio
+        return rfidValue.replace(/^[^A-F0-9]+/i, '');
+    }
 
     // Función para enviar datos a Python
     async function enviarAPython(tituloSecundario) {
@@ -974,15 +999,16 @@ async function printItem(rowIndex) {
             Cantidad: cantidad,
             PrecioUnidad: precioUnidad,
             Vendedor: vendedor,
-            RFID: RFID,
+            RFID: RFID,  // Aquí ya está limpio
             NombreCliente: nombreCliente,
             Fecha: fecha,
-            TituloSecundario: tituloSecundario
+            TituloSecundario: tituloSecundario,
+            GitTicket: id + folio
         };
 
-        //const ipLocal = window.location.hostname; // o IP fija si sabes cual es
-        //console.log(ipLocal);
-        // Enviar a endpoint de Python
+        // Mostrar en consola para verificar
+        console.log('Datos enviados:', ticketData);
+
         const response = await fetch(`http://localhost:5000/imprimir-ticket`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -990,21 +1016,16 @@ async function printItem(rowIndex) {
         });
 
         if (!response.ok) {
-          Swal.fire({
-              icon: 'warning',
-              title: 'Error de Configuracion',
-              text: 'Por favor verifica la configuracion de la Impresora Termica',
-              confirmButtonText: 'Entendido',
-              confirmButtonColor: '#f27474',
-              showCancelButton: false,
-              allowOutsideClick: false
-          }).then((result) => {
-              if (result.isConfirmed) {
-                  // Opcional: puedes agregar alguna acción después de que el usuario haga clic
-                  // console.log('Usuario confirmó el error de configuración');
-              }
-          });
-      }
+            Swal.fire({
+                icon: 'warning',
+                title: 'Error de Configuracion',
+                text: 'Por favor verifica la configuracion de la Impresora Termica',
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#f27474',
+                showCancelButton: false,
+                allowOutsideClick: false
+            });
+        }
     }
 
     try {
@@ -1018,7 +1039,7 @@ async function printItem(rowIndex) {
             title: 'Error al imprimir',
             text: 'El aplicativo de Impresora no esta ejecutandose.',
             confirmButtonText: 'Aceptar'
-        })
+        });
     }
 }
 

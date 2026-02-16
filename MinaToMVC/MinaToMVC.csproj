@@ -266,6 +266,7 @@
     <Content Include="Scripts\Trabajador\ConceptosRH.js" />
     <Content Include="Scripts\Trabajador\Documento.js" />
     <Content Include="Scripts\Trabajador\Nominas.js" />
+    <Content Include="Scripts\VehiculoCarga\RFIDCarga.js" />
     <Content Include="Scripts\VehiculoCarga\VehiculoCarga.js" />
     <Content Include="Scripts\Vehiculo\Vehiculo.js" />
     <Content Include="Scripts\VentaPublicoGeneral\CajaChica.js" />
@@ -435,6 +436,7 @@
     <Content Include="Views\VehiculoCarga\VehiculoCarga.cshtml" />
     <Content Include="Scripts\jquery-1.9.0.min.map" />
     <Content Include="Views\VentaPublicoGeneral\GastosDiarios.cshtml" />
+    <Content Include="Views\VehiculoCarga\RFIDCarga.cshtml" />
     <Content Include="Views\Taller\Demo.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
