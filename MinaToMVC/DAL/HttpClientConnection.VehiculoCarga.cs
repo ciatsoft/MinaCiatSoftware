@@ -108,6 +108,26 @@ namespace MinaToMVC.DAL
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
             return modelResponse;
         }
+        public async Task<ModelResponse> DevueltoRFIDCarga(long id)
+        {
+            var result = await RequestAsync<object>($"api/VehiculoCarga/RFIDCarga/Devuelto/{id}", HttpMethod.Post, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        public async Task<ModelResponse> NoDevueltoRFIDCarga(long id)
+        {
+            var result = await RequestAsync<object>($"api/VehiculoCarga/RFIDCarga/NoDevuelto/{id}", HttpMethod.Post, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
         public async Task<ModelResponse> GetRFIDCargaByDates(DateTime fechaInicio, DateTime fechaFin)
         {
             // Armar la URL con parametros de consulta correctamente

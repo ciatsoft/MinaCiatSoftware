@@ -77,6 +77,18 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.DeleteRFIDCarga(id);
             return result;
         }
+        [HttpPost, Route("RFIDCarga/Devuelto/{id:long}")]
+        public ModelResponse DevueltoRFIDCarga(long id)
+        {
+            var result = wrapper.DevueltoRFIDCarga(id);
+            return result;
+        }
+        [HttpPost, Route("RFIDCarga/NoDevuelto/{id:long}")]
+        public ModelResponse NoDevueltoRFIDCarga(long id)
+        {
+            var result = wrapper.NoDevueltoRFIDCarga(id);
+            return result;
+        }
         [HttpGet, Route("RFIDCarga/Dates/")]
         public ModelResponse GetRFIDCargaByDates([FromUri] DateTime fechaInicio, [FromUri] DateTime fechaFin)
         {

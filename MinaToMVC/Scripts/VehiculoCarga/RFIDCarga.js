@@ -2,6 +2,13 @@ let empleados = [];
 let vehiculosCarga = []
 
 $(document).ready(function () {
+
+    $('#rfid').on('input', function () {
+        const rfid = $(this).val().trim();
+        if (rfid.length > 0) { // Opcional: solo buscar si hay valor
+            buscarRFID(rfid); // Pasar solo el string, no el objeto
+        }
+    });
   
     var $fechaHora = $('#fechaHora');
     var $fechaHoraHidden = $('#fechaHoraHidden');
@@ -92,9 +99,17 @@ $(document).ready(function () {
             {
                 data: "id",
                 title: "Acciones",
-                render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarRFIDCarga(' + data + ')" />' +
+                render: function (data, type, row) {
+                    // Verificar el valor de devuelto desde la fila actual
+                    let botones = '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarRFIDCarga(' + data + ')" />' +
                         ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarRFIDCarga(' + data + ')"/>';
+
+                    // Si devuelto = 1 (ya está devuelto), mostrar el botón NoDevuelto
+                    if (row.devuelto == 1) {
+                        botones += ' <input type="button" value="No Devuelto" class="btn btn-success btn-lg-custom" onclick="NoDevueltoRFIDCarga(' + data + ')" />';
+                    }
+
+                    return botones;
                 }
             }
         ],
@@ -152,7 +167,7 @@ function EditarRFIDCarga(id) {
 function EliminarRFIDCarga(id) {
     Swal.fire({
         title: 'Eliminar Registro',
-        text: "¿Estás seguro de eliminar este registro?",
+        text: "Se eliminara este registro",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -174,24 +189,74 @@ function EliminarRFIDCarga(id) {
         }
     });
 }
-
-function DevueltoRFIDCarga(id) {
+function NoDevueltoRFIDCarga(id) {
     Swal.fire({
-        title: 'Marcar como Devuelto',
-        text: "¿Confirmas que el RFID ha sido devuelto?",
-        icon: 'question',
+        title: 'Marcar RFID',
+        text: "Marcar como no devuelto este RFID",
+        icon: 'info',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, devuelto',
+        confirmButtonText: 'Si, marcar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            var parametro = { Id: id, Estatus: 0 }; // Asumiendo que 0 = Inactivo/Devuelto
+            var parametro = { Id: id };
+
+            PostMVC('/VehiculoCarga/NoDevueltoRFIDCarga', parametro, function (r) {
+                if (r.IsSuccess) {
+                    Swal.fire('Sin devolver', 'El registro ha sido marcado como no devuelto.', 'success')
+                        .then(() => { GetAllRFIDCarga(); }); // Recargar la tabla en lugar de redireccionar
+                } else {
+                    Swal.fire('Error', 'No se pudo modificar el registro: ' + r.ErrorMessage, 'error');
+                }
+            });
+        }
+    });
+}
+function DevueltoRFIDCarga(id) {
+    Swal.fire({
+        title: 'Marcar RFID',
+        text: "Marcar como devuelto este RFID",
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, marcar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var parametro = { Id: id };
 
             PostMVC('/VehiculoCarga/DevueltoRFIDCarga', parametro, function (r) {
                 if (r.IsSuccess) {
-                    Swal.fire('Actualizado', 'El RFID ha sido marcado como devuelto.', 'success')
+                    Swal.fire('Devuelto', 'El registro ha sido marcado como devuelto.', 'success')
+                        .then(() => { GetAllRFIDCarga(); }); // Recargar la tabla en lugar de redireccionar
+                } else {
+                    Swal.fire('Error', 'No se pudo devolver el registro: ' + r.ErrorMessage, 'error');
+                }
+            });
+        }
+    });
+}
+
+function EliminarRFIDCarga(id) {
+    Swal.fire({
+        title: 'Eliminar registro',
+        text: "Se eliminara registro",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var parametro = { Id: id }; // Asumiendo que 0 = Inactivo/Devuelto
+
+            PostMVC('/VehiculoCarga/DeleteRFIDCarga', parametro, function (r) {
+                if (r.IsSuccess) {
+                    Swal.fire('Eliminado', 'El RFID ha sido eliminado.', 'success')
                         .then(() => { GetAllRFIDCarga(); });
                 } else {
                     Swal.fire('Error', 'No se pudo actualizar el registro: ' + r.ErrorMessage, 'error');
@@ -253,7 +318,6 @@ function GetAllEmpleados(callback) {
     GetMVC("/Empleado/GetAllEmpleados", function (r) {
         if (r.IsSuccess) {
             empleados = r.Response;
-            console.log('Empleados cargados:', empleados.length);
             if (callback) callback();
         } else {
             Swal.fire({
@@ -270,7 +334,6 @@ function GetAllVehiculosCarga(callback) {
     GetMVC("/VehiculoCarga/GetAllVehiculoCarga", function (r) {
         if (r.IsSuccess) {
             vehiculosCarga = r.Response;
-            console.log('Vehiculos de carga cargados:', vehiculosCarga.length);
             if (callback) callback();
         } else {
             Swal.fire({
@@ -401,9 +464,17 @@ function GetRFIDCargaByDates(fechaInicio, fechaFin) {
                     {
                         data: "id",
                         title: "Acciones",
-                        render: function (data) {
-                            return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarRFIDCarga(' + data + ')" />' +
+                        render: function (data, type, row) {
+                            // Verificar el valor de devuelto desde la fila actual
+                            let botones = '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarRFIDCarga(' + data + ')" />' +
                                 ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarRFIDCarga(' + data + ')"/>';
+
+                            // Si devuelto = 1 (ya está devuelto), mostrar el botón NoDevuelto
+                            if (row.devuelto == 1) {
+                                botones += ' <input type="button" value="No Devuelto" class="btn btn-success btn-lg-custom" onclick="NoDevueltoRFIDCarga(' + data + ')" />';
+                            }
+
+                            return botones;
                         }
                     }
                 ],
@@ -1047,4 +1118,36 @@ function enviarDatosParaExcel(tablaHTML, fechaInicio, fechaFin, userName, totalR
             text: 'No se pudo enviar el formulario para generar el Excel'
         });
     }
+}
+function buscarRFID(rfid) {
+    $.ajax({
+        url: '/VehiculoCarga/GetRFIDCargaByRFID',
+        type: 'GET',
+        data: { rfid: rfid },
+        dataType: 'json',
+        contentType: "application/json",
+        success: function (r) {
+            if (r.IsSuccess) {
+                var data = r.Response;
+
+                if (data.devuelto != true) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'RFID no devuelto',
+                        text: 'Este RFID no ha sido devuelto por lo cual no puede ser utilizado.',
+                        confirmButtonText: 'Aceptar'
+                    });
+
+                    // Deshabilitar el botón de guardar
+                    $('#btnGuardar').prop('disabled', true);
+                    return;
+                } else {
+                    // Si es devuelto, habilitar el botón (por si estaba deshabilitado)
+                    $('#btnGuardar').prop('disabled', false);
+                }
+            } else {
+                // manejar error
+            }
+        }
+    });
 }
