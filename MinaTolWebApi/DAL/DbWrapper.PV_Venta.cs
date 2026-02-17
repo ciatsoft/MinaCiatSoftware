@@ -61,7 +61,7 @@ namespace MinaTolWebApi.DAL
             return response;
         }
 
-        public ModelResponse UpdateCarga(int id)
+        public ModelResponse UpdatedVenta(long id)
         {
             var response = new ModelResponse();
 
@@ -72,7 +72,7 @@ namespace MinaTolWebApi.DAL
                     new SqlParameter("@Id", id),
                 };
 
-                var result = ExecuteScalar("UpdateCarga", CommandType.StoredProcedure, parameters);
+                var result = ExecuteScalar("UpdatedVenta", CommandType.StoredProcedure, parameters);
 
                 response.IsSuccess = true;
                 response.Response = result;
@@ -526,5 +526,40 @@ namespace MinaTolWebApi.DAL
             }
             return response;
         }
+
+        #region MovilApp
+        public ModelResponse GetVentaByGitTicket(string gitTicket)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = gitTicket,
+                    IsNullable = true,
+                    ParameterName = "@GitTicket",
+                    SqlDbType = System.Data.SqlDbType.NVarChar
+                });
+
+                var result = GetObject("GetVentaByGitTicket", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, PV_Ventas>((reader) =>
+                    {
+                        var r = FillEntity<PV_Ventas>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+
+        }
+        #endregion
     }
 }
