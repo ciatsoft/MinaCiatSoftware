@@ -1,5 +1,7 @@
 ﻿using MinaTolEntidades;
+using MinaTolEntidades.Security;
 using MinaTolWebApi.DAL;
+using MinaTolWebApi.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +22,21 @@ namespace MinaTolWebApi.Controllers
         }
 
         #region MovilAPP
+        [AllowAnonymous]
+        [HttpGet, Route("Login/{username}/{password}")]
+        public async Task<ModelResponse> ValidateUserPassword(string username, string password)
+        {
+            password = Cryptography.Encrypt(password);
+            var result = wrapper.ValidateUserPassword(username, password);
+            if (result.Message == null && result.Response == null)
+            {
+                result.Message = "Usuario sin acceso.";
+            } else
+            {
+                result.Message = "Usuario encontrado, sesion iniciada.";
+            }
+                return result;
+        }
         [HttpGet, Route("GetVenta/{gitticket}")]
         public async Task<ModelResponse> GetVentaByGitTicket(string gitTicket)
         {
