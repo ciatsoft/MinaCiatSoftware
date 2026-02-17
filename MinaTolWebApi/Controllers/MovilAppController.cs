@@ -1,0 +1,37 @@
+﻿using MinaTolEntidades;
+using MinaTolWebApi.DAL;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web.Http;
+
+namespace MinaTolWebApi.Controllers
+{
+    [RoutePrefix("api/MovilApp")]
+    public class MovilAppController : ApiController
+    {
+        private DbWrapper wrapper { get; set; }
+        public MovilAppController()
+        {
+            wrapper = new DbWrapper();
+        }
+
+        #region MovilAPP
+        [HttpGet, Route("GetVenta/{gitticket}")]
+        public async Task<ModelResponse> GetVentaByGitTicket(string gitTicket)
+        {
+            var result = wrapper.GetVentaByGitTicket(gitTicket);
+            return result;
+        }
+        [HttpPost, Route("ActualizarVenta/{id:long}")]
+        public async Task<ModelResponse> UpdatedVenta(long id)
+        {
+            var result = wrapper.UpdatedVenta(id);
+            return result;
+        }
+        #endregion
+    }
+}
