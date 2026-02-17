@@ -51,7 +51,7 @@ namespace MinaTolWebApi.Controllers
         [HttpPost, Route("Cargar/{id:int}")]
         public async Task<ModelResponse> UpdateCarga(int id)
         {
-            var result = wrapper.UpdateCarga(id);
+            var result = wrapper.UpdatedVenta(id);
             return result;
         }
 
