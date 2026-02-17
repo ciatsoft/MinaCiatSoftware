@@ -317,5 +317,9 @@ namespace MinaTolWebApi.DAL
             return modelResponse;
         }
         #endregion
+
+        #region EventosRFID
+
+        #endregion
     }
 } 

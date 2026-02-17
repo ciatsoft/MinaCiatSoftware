@@ -438,6 +438,7 @@
     <Content Include="Views\VentaPublicoGeneral\GastosDiarios.cshtml" />
     <Content Include="Views\VehiculoCarga\RFIDCarga.cshtml" />
     <Content Include="Views\Taller\Demo.cshtml" />
+    <Content Include="Views\VehiculoCarga\ReporteEficiencia.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -97,6 +97,10 @@ namespace MinaToMVC.Controllers
 
             return View(vc);
         }
+        public async Task<ActionResult> ReporteEficiencia()
+        {
+            return View();
+        }
         #endregion
 
         #endregion
