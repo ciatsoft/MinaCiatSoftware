@@ -97,6 +97,35 @@ namespace MinaTolWebApi.DAL
 
             return modelResponse;
         }
+        public ModelResponse ValidateUserPassword(string userName, string pass)
+        {
+            var modelResponse = new ModelResponse();
+
+            try
+            {
+                var user = GetObject($"ValidateUserPassword", CommandType.StoredProcedure,
+                    new[] {
+                    new SqlParameter("@UserName", userName),
+                    new SqlParameter("@Password", pass)
+                    },
+                    new Func<IDataReader, Usuario>((reader) =>
+                    {
+                        var r = FillEntity<Usuario>(reader);
+
+                        return r;
+                    }));
+
+                modelResponse.Response = user;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
         public ModelResponse GetAllUsuario()
         {
             var modelResponse = new ModelResponse();
