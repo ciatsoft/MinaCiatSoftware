@@ -42,7 +42,8 @@ namespace MinaTolWebApi.DAL
                     new SqlParameter("@UpdatedBy", v.UpdatedBy),
                     new SqlParameter("@UpdatedDt", v.UpdatedDt),
                     new SqlParameter("@RFID", v.RFID),
-                    new SqlParameter("@NombreCliente", v.NombreCliente)
+                    new SqlParameter("@NombreCliente", v.NombreCliente),
+                    new SqlParameter("@Carga", v.Carga)
                 };
 
                 var result = ExecuteScalar("SaveOrUpdatePV_Ventas", CommandType.StoredProcedure, parameters);
@@ -61,7 +62,7 @@ namespace MinaTolWebApi.DAL
             return response;
         }
 
-        public ModelResponse UpdatedVenta(long id)
+        public ModelResponse UpdatedVenta(long id, int valor)
         {
             var response = new ModelResponse();
 
@@ -70,6 +71,7 @@ namespace MinaTolWebApi.DAL
                 var parameters = new List<SqlParameter>
                 {
                     new SqlParameter("@Id", id),
+                    new SqlParameter("@Valor", valor),
                 };
 
                 var result = ExecuteScalar("UpdatedVenta", CommandType.StoredProcedure, parameters);

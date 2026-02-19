@@ -43,10 +43,10 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetVentaByGitTicket(gitTicket);
             return result;
         }
-        [HttpPost, Route("ActualizarVenta/{id:long}")]
-        public async Task<ModelResponse> UpdatedVenta(long id)
+        [HttpPost, Route("ActualizarVenta/{id:long}/{valor:int}")]
+        public async Task<ModelResponse> UpdatedVenta(long id, int valor)
         {
-            var result = wrapper.UpdatedVenta(id);
+            var result = wrapper.UpdatedVenta(id, valor);
             return result;
         }
         #endregion

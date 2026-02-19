@@ -296,11 +296,7 @@ $(document).ready(function () {
                 data: "carga",  // Esta es la columna que define si está cargado o no (0 o 1)
                 title: "Carga",
                 render: function (data, type, row) {  // Añade 'row' para acceder a todas las propiedades de la fila
-                    if (data == 0) {
-                        return `
-                        <input type="button" value="Cargar" class="btn btn-success" onclick="Cargar(${row.id})" />
-                    `;
-                    } else if (data == 1) {
+                    if (data == 1) {
                         return `
                         <span style="display: inline-flex; align-items: center; gap: 5px;">
                           <span style="
@@ -310,11 +306,35 @@ $(document).ready(function () {
                             background-color: red;
                             border-radius: 50%;
                           "></span> 
-                          Ya cargado
+                          En Espera
                         </span>
                     `;
-                    } else {
-                        return '';
+                    } else if (data == 2) {
+                        return `
+                        <span style="display: inline-flex; align-items: center; gap: 5px;">
+                          <span style="
+                            display: inline-block;
+                            width: 20px;
+                            height: 20px;
+                            background-color: yellow;
+                            border-radius: 50%;
+                          "></span> 
+                          En proceso
+                        </span>
+                    `;
+                    } else if(data == 3){
+                        return `
+                        <span style="display: inline-flex; align-items: center; gap: 5px;">
+                          <span style="
+                            display: inline-block;
+                            width: 20px;
+                            height: 20px;
+                            background-color: green;
+                            border-radius: 50%;
+                          "></span>
+                          Ya cargado
+                        </span>
+                        `;
                     }
                 }
             }
@@ -343,71 +363,6 @@ $(document).ready(function () {
             }
         }
     });
-
-    //$("#tableDeducciones").DataTable({
-    //    processing: true,
-    //    destroy: true,
-    //    paging: true,
-    //    order: [[0, 'desc']],
-    //    searching: true,
-    //    columns: [
-    //        { data: "id", visible: true, title: "Id" },
-    //        { data: "nombreGasto", title: "Tipo Gasto" },
-    //        { data: "descripcion", title: "Descripcion de la Deduccion" },
-    //        { data: "usuarioName", title: "Encargado" },
-    //        {
-    //            data: "monto",
-    //            title: "Monto",
-    //            render: function (data) {
-    //                return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
-    //            }
-    //        },
-    //        {
-    //            data: "fecha",
-    //            title: "Fecha",
-    //            render: function (data) {
-    //                return new Date(data).toLocaleDateString('es-MX');
-    //            }
-    //        },
-    //        {
-    //            data: "id",
-    //            title: "Acciones",
-    //            render: function (data) {
-    //                return `
-    //                <input type="button" value="Cancelar" class="btn btn-custom-cancel" onclick="EliminarDeduccion(${data})" />
-    //                 <input type="button" value="Imprimir" class="btn btn-custom-cancel" style="background-color: yellow; border:
-    //                 none; color:black;  padding: 7px 10px; border-radius: 5px; cursor: pointer;" onclick="ImprimirDeduccion(${data})" />
-    //                 <input type="button" value="Editar" class="btn btn-custom-clean" style="width: 80px;" onclick="AbrirModalDeduccion(${data})" />
-    //            `;
-    //            }
-    //        }
-    //    ],
-    //    language: {
-    //        decimal: ",",
-    //        thousands: ".",
-    //        processing: "Procesando...",
-    //        lengthMenu: "Mostrar _MENU_ entradas",
-    //        zeroRecords: "No se encontraron resultados",
-    //        emptyTable: "Ningun dato disponible en esta tabla",
-    //        info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-    //        infoEmpty: "Mostrando 0 a 0 de 0 entradas",
-    //        infoFiltered: "(filtrado de un total de _MAX_ entradas)",
-    //        search: "Buscar:",
-    //        loadingRecords: "Cargando...",
-    //        paginate: {
-    //            first: "Primero",
-    //            last: "Último",
-    //            next: "Siguiente",
-    //            previous: "Anterior"
-    //        },
-    //        aria: {
-    //            sortAscending: ": activar para ordenar ascendente",
-    //            sortDescending: ": activar para ordenar descendente"
-    //        }
-    //    }
-
-    //});
-
     GetAllPV_Ventas();
 });
 

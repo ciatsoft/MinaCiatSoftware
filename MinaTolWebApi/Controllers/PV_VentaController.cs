@@ -48,10 +48,10 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-        [HttpPost, Route("Cargar/{id:int}")]
-        public async Task<ModelResponse> UpdateCarga(int id)
+        [HttpPost, Route("Cargar/{id:int}/{valor:int}")]
+        public async Task<ModelResponse> UpdateCarga(int id, int valor)
         {
-            var result = wrapper.UpdatedVenta(id);
+            var result = wrapper.UpdatedVenta(id, valor);
             return result;
         }
 

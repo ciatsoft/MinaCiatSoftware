@@ -266,6 +266,7 @@
     <Content Include="Scripts\Trabajador\ConceptosRH.js" />
     <Content Include="Scripts\Trabajador\Documento.js" />
     <Content Include="Scripts\Trabajador\Nominas.js" />
+    <Content Include="Scripts\VehiculoCarga\ReporteEficiencia.js" />
     <Content Include="Scripts\VehiculoCarga\RFIDCarga.js" />
     <Content Include="Scripts\VehiculoCarga\VehiculoCarga.js" />
     <Content Include="Scripts\Vehiculo\Vehiculo.js" />
