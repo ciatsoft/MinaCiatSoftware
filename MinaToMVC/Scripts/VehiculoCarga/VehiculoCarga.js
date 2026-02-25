@@ -270,6 +270,7 @@ function SaveOrUpdateVehiculoCarga() {
                     .then(() => {
                         GetAllVehiculoCarga();
                         limpiarFormulario();
+                        window.location.reload();
                     });
             } else {
                 Swal.fire('Error', r.ErrorMessage || 'Error al guardar el vehiculo', 'error');

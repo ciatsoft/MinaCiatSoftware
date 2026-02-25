@@ -294,38 +294,55 @@
 
     // 5. Función para Abrir Documento
     function BuscarDocumento(idDocumento) {
+        // Mostrar indicador de carga
+        console.log('Buscando documento ID:', idDocumento);
+
         $.ajax({
             url: '/Empleado/GetDocumentoEmpleadoById?id=' + idDocumento,
             type: 'GET',
             success: function (response) {
                 try {
-                    // Siemparseamos la respuesta porque viene como string
+                    // Parsear la respuesta JSON
                     const parsedResponse = JSON.parse(response);
 
                     if (parsedResponse.IsSuccess) {
                         const datos = parsedResponse.Response;
 
-                        // ⭐ CORRECCIÓN: Usar el endpoint de descarga en lugar de la ruta física
-                        const urlDescarga = '/Empleado/DescargarDocumento?' +
-                            'rutaArchivo=' + encodeURIComponent(datos.rutaArchivo) +
-                            '&nombreArchivo=' + encodeURIComponent(datos.gitDocumento);
+                        // Verificar que los datos necesarios existan
+                        if (datos && datos.RutaArchivo && datos.GitDocumento) {
 
-                        console.log('URL de descarga: ', urlDescarga);
+                            // Construir URL de descarga
+                            const urlDescarga = '/Empleado/DescargarDocumento?' +
+                                'rutaArchivo=' + encodeURIComponent(datos.RutaArchivo) +
+                                '&nombreArchivo=' + encodeURIComponent(datos.GitDocumento);
 
-                        // Abrir el documento en una nueva ventana
-                        window.open(urlDescarga, '_blank');
+                            console.log('Documento:', datos.GitDocumento);
+                            console.log('URL de descarga:', urlDescarga);
+
+                            // Abrir el documento en una nueva pestaña
+                            // Los PDFs se mostrarán automáticamente, otros archivos se descargarán
+                            window.open(urlDescarga, '_blank');
+
+                        } else {
+                            console.error('Datos incompletos:', datos);
+                            alert('El documento no tiene información de archivo válida');
+                        }
                     } else {
-                        console.error('Error del servidor:', parsedResponse.Message);
-                        alert('Error: ' + parsedResponse.Message);
+                        const mensaje = parsedResponse.Message || 'Error desconocido';
+                        console.error('Error del servidor:', mensaje);
+                        alert('Error: ' + mensaje);
                     }
                 } catch (error) {
-                    console.error('Error parsing JSON:', error);
-                    alert('Error al procesar la respuesta');
+                    console.error('Error al procesar la respuesta:', error);
+                    console.error('Respuesta original:', response);
+                    alert('Error al procesar la respuesta del servidor');
                 }
             },
             error: function (xhr, status, error) {
-                console.error('Error en la solicitud:', error);
-                alert('Error de conexión');
+                console.error('Error en la petición AJAX:', error);
+                console.error('Status:', status);
+                console.error('Response:', xhr.responseText);
+                alert('Error de conexión al servidor');
             }
         });
     }
