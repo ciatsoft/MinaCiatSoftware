@@ -132,6 +132,7 @@ namespace MinaTolWebApi.Controllers
                 { "PrecioUnidad", canjeo.PrecioUnidad },
                 { "FolioInicio", canjeo.FolioInicio },
                 { "FolioFinal", canjeo.FolioFinal },
+                { "NoVale", canjeo.NoVale },
             };
 
             var resultado = wrapper.ProcesarCanjeo(parametros);

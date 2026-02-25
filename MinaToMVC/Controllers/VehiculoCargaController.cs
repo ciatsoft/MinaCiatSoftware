@@ -132,9 +132,12 @@ namespace MinaToMVC.Controllers
                     vehiculoId = 0;
                 }
 
-                // Datos del path
+                // Definir carpeta base (solo AttachmentVehiculosCarga, sin ruta del proyecto)
+                string baseFolder = "AttachmentVehiculosCarga";
+
+                // Obtener la ruta física completa SOLO para operaciones de archivo
                 string projectRootPath = HostingEnvironment.ApplicationPhysicalPath;
-                string baseAttachmentPath = Path.Combine(projectRootPath, "AttachmentVehiculosCarga");
+                string baseAttachmentPath = Path.Combine(projectRootPath, baseFolder);
 
                 if (!Directory.Exists(baseAttachmentPath))
                 {
@@ -160,18 +163,20 @@ namespace MinaToMVC.Controllers
                 if (archivo != null && archivo.ContentLength > 0)
                 {
                     // CASO 1: Actualización (vehiculoId > 0) - Sobreescribir archivo existente
-                    if (vehiculoId > 0 && vehiculoExistente != null)
+                    if (vehiculoId > 0 && vehiculoExistente != null && !string.IsNullOrEmpty(vehiculoExistente.GitArchivo))
                     {
                         // Mantener el mismo nombre de archivo (sobreescribir)
                         gitArchivo = vehiculoExistente.GitArchivo;
+                        // Mantener la misma ruta relativa
                         rutaArchivo = vehiculoExistente.RutaArchivo;
 
-                        string fullPath = Path.Combine(rutaArchivo, gitArchivo);
+                        // Construir ruta física completa SOLO para guardar
+                        string fullPhysicalPath = Path.Combine(projectRootPath, rutaArchivo, gitArchivo);
 
                         // Guardar archivo (sobreescribir)
-                        archivo.SaveAs(fullPath);
+                        archivo.SaveAs(fullPhysicalPath);
                     }
-                    // CASO 2: Registro nuevo (vehiculoId <= 0) - Crear nuevo archivo con consecutivo
+                    // CASO 2: Registro nuevo (vehiculoId <= 0) - Crear nuevo archivo
                     else
                     {
                         // OBTENER EL PRÓXIMO NÚMERO CONSECUTIVO
@@ -182,13 +187,16 @@ namespace MinaToMVC.Controllers
 
                         // Generar nombre único para el archivo
                         string fileName = $"VehiculoCarga_{siguienteNumero}{extension}";
-                        string fullPath = Path.Combine(baseAttachmentPath, fileName);
+
+                        // Ruta física completa para guardar
+                        string fullPhysicalPath = Path.Combine(baseAttachmentPath, fileName);
 
                         // Guardar archivo en el sistema
-                        archivo.SaveAs(fullPath);
+                        archivo.SaveAs(fullPhysicalPath);
 
                         gitArchivo = fileName;
-                        rutaArchivo = baseAttachmentPath;
+                        // Guardar SOLO la ruta relativa desde la raíz del proyecto
+                        rutaArchivo = baseFolder;
                     }
                 }
                 // No se subió archivo
@@ -216,8 +224,8 @@ namespace MinaToMVC.Controllers
                 {
                     Id = vehiculoId,
                     Descripcion = Descripcion,
-                    RutaArchivo = rutaArchivo,
-                    GitArchivo = gitArchivo,
+                    RutaArchivo = rutaArchivo,     
+                    GitArchivo = gitArchivo,       
                     Estatus = estatusBool,
                     CreatedBy = vehiculoId > 0 && vehiculoExistente != null ? vehiculoExistente.CreatedBy : CreatedBy,
                     CreatedDt = vehiculoId > 0 && vehiculoExistente != null ? vehiculoExistente.CreatedDt : DateTime.Parse(CreatedDt),
@@ -330,8 +338,17 @@ namespace MinaToMVC.Controllers
         {
             try
             {
-                // Combina la ruta completa
-                string rutaCompleta = Path.Combine(rutaArchivo, nombreArchivo);
+                // Validar parámetros
+                if (string.IsNullOrEmpty(rutaArchivo) || string.IsNullOrEmpty(nombreArchivo))
+                {
+                    return ImagenPorDefecto();
+                }
+
+                // Obtener la ruta raíz del proyecto
+                string projectRootPath = HostingEnvironment.ApplicationPhysicalPath;
+
+                // Concatenar: raíz + rutaArchivo + nombreArchivo
+                string rutaCompleta = Path.Combine(projectRootPath, rutaArchivo, nombreArchivo);
 
                 // Verifica que el archivo exista
                 if (!System.IO.File.Exists(rutaCompleta))
@@ -344,30 +361,16 @@ namespace MinaToMVC.Controllers
                     }
                     else
                     {
-                        // Crear una imagen simple en memoria
-                        Bitmap bmp = new Bitmap(300, 300);
-                        using (Graphics g = Graphics.FromImage(bmp))
-                        {
-                            g.Clear(Color.LightGray);
-                            g.DrawString("Imagen no disponible",
-                                        new Font("Arial", 12),
-                                        Brushes.Black,
-                                        new PointF(10, 140));
-                        }
-
-                        MemoryStream ms = new MemoryStream();
-                        bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
-                        ms.Position = 0;
-
-                        return File(ms, "image/jpeg", "no-image.jpg");
+                        return ImagenPorDefecto();
                     }
                 }
 
                 // Obtiene el tipo MIME del archivo
                 string contentType = GetContentType(nombreArchivo);
 
-                // Devuelve el archivo
-                return File(rutaCompleta, contentType, nombreArchivo);
+                // Leer el archivo como bytes y devolverlo
+                byte[] fileBytes = System.IO.File.ReadAllBytes(rutaCompleta);
+                return File(fileBytes, contentType);
             }
             catch (Exception ex)
             {
@@ -375,7 +378,7 @@ namespace MinaToMVC.Controllers
                 System.Diagnostics.Debug.WriteLine($"Error al mostrar imagen: {ex.Message}");
 
                 // Devolver imagen por defecto
-                return RedirectToAction("ImagenPorDefecto");
+                return ImagenPorDefecto();
             }
         }
 
@@ -401,21 +404,24 @@ namespace MinaToMVC.Controllers
         // Método para imagen por defecto
         public ActionResult ImagenPorDefecto()
         {
-            Bitmap bmp = new Bitmap(300, 300);
-            using (Graphics g = Graphics.FromImage(bmp))
+            // Crear una imagen simple en memoria
+            using (Bitmap bmp = new Bitmap(300, 300))
             {
-                g.Clear(Color.LightGray);
-                g.DrawString("Imagen no disponible",
-                            new Font("Arial", 12),
-                            Brushes.Black,
-                            new PointF(10, 140));
+                using (Graphics g = Graphics.FromImage(bmp))
+                {
+                    g.Clear(Color.LightGray);
+                    g.DrawString("Imagen no disponible",
+                                new Font("Arial", 12),
+                                Brushes.Black,
+                                new PointF(10, 140));
+                }
+
+                MemoryStream ms = new MemoryStream();
+                bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+                ms.Position = 0;
+
+                return File(ms.ToArray(), "image/jpeg");
             }
-
-            MemoryStream ms = new MemoryStream();
-            bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
-            ms.Position = 0;
-
-            return File(ms, "image/jpeg");
         }
         #endregion
         #endregion
