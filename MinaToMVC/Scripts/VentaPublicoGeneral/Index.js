@@ -337,6 +337,21 @@ $(document).ready(function () {
                         `;
                     }
                 }
+            },
+            {
+                data: "noVale",
+                visible: false,
+                title: "ValeCanjeable",
+                render: function (data, type, row) {
+                    // Si existe un valor en noVale (no es null, undefined o vacío)
+                    if (data !== null && data !== undefined && data !== "") {
+                        // Muestra el valor de noVale
+                        return data;
+                    } else {
+                        // Si no hay valor, retorna cadena vacía
+                        return "";
+                    }
+                }
             }
         ],
         language: {
@@ -913,6 +928,7 @@ async function printItem(rowIndex) {
     var cantidad = parseFloat(rowData.cantidad).toFixed(2);
     var precioUnidad = parseFloat(rowData.precioUnidad).toFixed(2);
     var vendedor = rowData.userName;
+    var noVale = rowData.noVale;
 
     // LIMPIAR RFID AQUÍ
     var RFID = cleanRfidData(rowData.rfid);
@@ -958,7 +974,8 @@ async function printItem(rowIndex) {
             NombreCliente: nombreCliente,
             Fecha: fecha,
             TituloSecundario: tituloSecundario,
-            GitTicket: id + folio
+            GitTicket: id + folio,
+            NoVale: noVale
         };
 
         // Mostrar en consola para verificar
