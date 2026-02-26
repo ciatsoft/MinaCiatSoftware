@@ -145,5 +145,49 @@ namespace MinaToMVC.DAL
             return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
         }
         #endregion
+        #region ReparacionVehiculos
+        public async Task<ModelResponse> SaveOrUpdateReparacionVehiculos(ReparacionVehiculos reparacionVehiculos)
+        {
+            var result = await RequestAsync<object>("api/Taller/ReparacionVehiculos/", HttpMethod.Post, reparacionVehiculos,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        public async Task<ModelResponse> GetAllReparacionVehiculos()
+        {
+
+            var result = await RequestAsync<object>("api/Taller/ReparacionVehiculos/List", HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+        public async Task<ModelResponse> GetReparacionVehiculosById(long id)
+        {
+            var result = await RequestAsync<object>($"api/Taller/ReparacionVehiculos/{id}", HttpMethod.Get, null,
+               new Func<string, string>((responseString) =>
+               {
+                   return responseString;
+               }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        public async Task<ModelResponse> DeleteReparacionVehiculosById(long Id)
+        {
+            var result = await RequestAsync($"api/Taller/ReparacionVehiculos/{Id}", HttpMethod.Post, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+        }
+        #endregion
     }
 }
