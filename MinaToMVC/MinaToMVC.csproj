@@ -440,6 +440,7 @@
     <Content Include="Views\VehiculoCarga\RFIDCarga.cshtml" />
     <Content Include="Views\Taller\Demo.cshtml" />
     <Content Include="Views\VehiculoCarga\ReporteEficiencia.cshtml" />
+    <Content Include="Views\Taller\ReparacionVehiculos.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
