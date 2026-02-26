@@ -123,6 +123,32 @@ namespace MinaToMVC.Controllers
         {
             return View();
         }
+        public async Task<ActionResult> ReparacionVehiculos(long id = 0)
+        {
+            ReparacionVehiculos reparacionVehiculos = new ReparacionVehiculos();
+
+            if(id != 0)
+            {
+                var result = await httpClientConnection.GetReparacionVehiculosById(id);
+                reparacionVehiculos = JsonConvert.DeserializeObject<ReparacionVehiculos>(result.Response.ToString());
+            }
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+
+            return View();
+        }
         #endregion
 
         #region PartialViews
@@ -226,6 +252,10 @@ namespace MinaToMVC.Controllers
             var r = await httpClientConnection.DeleteComponenteVehiculoById(id);
             return Redirect("Inventario_Taller");
         }
+        #endregion
+
+        #region ReparacionVehiculos
+
         #endregion
 
 
