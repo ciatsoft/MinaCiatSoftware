@@ -62,7 +62,7 @@ namespace MinaTolWebApi.DAL
             return response;
         }
 
-        public ModelResponse UpdatedVenta(long id, int valor)
+        public ModelResponse UpdatedVenta(long id, int valor, string rutaFoto, string gitFoto, bool estatus, string createdBy, DateTime createdDt)
         {
             var response = new ModelResponse();
 
@@ -70,14 +70,28 @@ namespace MinaTolWebApi.DAL
             {
                 var parameters = new List<SqlParameter>
                 {
-                    new SqlParameter("@Id", id),
-                    new SqlParameter("@Valor", valor),
+                    new SqlParameter("@IdVenta", id),
+                    new SqlParameter("@Carga", valor),
+                    new SqlParameter("@RutaFoto", rutaFoto),
+                    new SqlParameter("@GitFoto", gitFoto),
+                    new SqlParameter("@Estatus", estatus),
+                    new SqlParameter("@CreatedBy", createdBy),
+                    new SqlParameter("@CreatedDt", createdDt),
                 };
 
                 var result = ExecuteScalar("UpdatedVenta", CommandType.StoredProcedure, parameters);
 
-                response.IsSuccess = true;
                 response.Response = result;
+
+                if (result != null && Convert.ToInt32(result) == 0)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Registro ya cuenta con evidencia previa, solicite borrar registro";
+                }
+                else
+                {
+                    response.IsSuccess = true;
+                }
             }
             catch (Exception ex)
             {
@@ -561,6 +575,36 @@ namespace MinaTolWebApi.DAL
             }
             return response;
 
+        }
+        public ModelResponse GetEstatusVenta(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+
+                var parameters = new List<SqlParameter>
+                {
+                    new SqlParameter("@IdVenta", SqlDbType.BigInt)   { Value = id}
+                };
+
+                // CORREGIDO: usar GetList para obtener varios registros
+                var result = GetList(
+                    "GetEstatusVenta",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    reader => FillEntity<AnexoTicket>(reader)
+                );
+
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
         }
         #endregion
     }

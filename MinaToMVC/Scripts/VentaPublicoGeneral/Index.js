@@ -161,7 +161,7 @@ $(document).ready(function () {
             { targets: '_all', className: 'dt-body-center dt-head-center' }  // Centra contenido
         ],
         columns: [
-            { data: "id", "visible": false, title: "id" },
+            { data: "id", "visible": true, title: "id" },
             { data: "folio", title: "Folio" },
             { data: "nombreTipoMaterial", title: "Material" },
             { data: "nombreUbicacion", title: "Planta" },
@@ -293,49 +293,16 @@ $(document).ready(function () {
                 }
             },
             {
-                data: "carga",  // Esta es la columna que define si está cargado o no (0 o 1)
-                title: "Carga",
-                render: function (data, type, row) {  // Añade 'row' para acceder a todas las propiedades de la fila
-                    if (data == 1) {
-                        return `
-                        <span style="display: inline-flex; align-items: center; gap: 5px;">
-                          <span style="
-                            display: inline-block;
-                            width: 20px;
-                            height: 20px;
-                            background-color: red;
-                            border-radius: 50%;
-                          "></span> 
-                          En Espera
-                        </span>
-                    `;
-                    } else if (data == 2) {
-                        return `
-                        <span style="display: inline-flex; align-items: center; gap: 5px;">
-                          <span style="
-                            display: inline-block;
-                            width: 20px;
-                            height: 20px;
-                            background-color: yellow;
-                            border-radius: 50%;
-                          "></span> 
-                          En proceso
-                        </span>
-                    `;
-                    } else if(data == 3){
-                        return `
-                        <span style="display: inline-flex; align-items: center; gap: 5px;">
-                          <span style="
-                            display: inline-block;
-                            width: 20px;
-                            height: 20px;
-                            background-color: green;
-                            border-radius: 50%;
-                          "></span>
-                          Ya cargado
-                        </span>
-                        `;
-                    }
+                data: "id",
+                render: function (data, type, row, meta) {
+                    return `
+                    <button 
+                        type="button"
+                        onclick="mostrarEstatus(${row.id})"
+                        style="background-color: blue; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; color: white;">
+                        Mostrar Estatus
+                    </button>
+                `;
                 }
             },
             {
@@ -1298,4 +1265,15 @@ async function ImprimirDeduccion(id) {
 function formatearTipoGasto(tipo) {
     // Mantén tu lógica actual de formateo
     return tipo.charAt(0).toUpperCase() + tipo.slice(1).toLowerCase();
+}
+
+//Function para mostrar modal de fotografias de las ventas 
+function mostrarEstatus(id) {
+    console.log('ID de la fila:', id);
+    $("#titleGenerciModal").text("Estatus de la Venta");
+
+    // Carga la vista parcial desde el backend
+    $("#boddyGeericModal").load(`/VentaPublicoGeneral/PartialmostrarEstatus?id=${id}`, function () {
+        $("#genericModal").modal("show");
+    });
 }

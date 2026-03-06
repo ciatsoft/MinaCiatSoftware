@@ -1,0 +1,389 @@
+﻿@model List<MinaTolEntidades.DtoVentaPublicoGeneral.AnexoTicket>
+@{
+    ViewBag.Title = "Estatus de Venta con Fotografías";
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+
+    // Determinar el estado basado en la cantidad de evidencias
+    int cantidadEvidencias = Model?.Count ?? 0;
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+
+<style>
+    /* Estilos generales */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    .modal-estatus-fotos {
+        font-family: Arial, sans-serif;
+    }
+
+    .modal-header-estatus {
+        padding: 15px 20px;
+        border-bottom: 1px solid #dee2e6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: white;
+    }
+
+        .modal-header-estatus h1 {
+            font-size: 1.8rem;
+            margin: 0;
+            font-weight: bold;
+            color: #333;
+        }
+
+    .btn-cerrar-modal {
+        background: none;
+        border: none;
+        color: #666;
+        font-size: 1.8rem;
+        cursor: pointer;
+        line-height: 1;
+    }
+
+        .btn-cerrar-modal:hover {
+            color: #333;
+        }
+
+    .modal-body-estatus {
+        padding: 20px;
+        background-color: #f5f5f5;
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    /* Grid de fotos */
+    .fotos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    /* Tarjeta de foto */
+    .foto-tarjeta {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        overflow: hidden;
+        border: 1px solid #ddd;
+    }
+
+    /* Header con colores según carga */
+    .foto-tarjeta-header-carga2 {
+        background-color: #f39c12; /* Naranja */
+        color: white;
+        padding: 12px 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: bold;
+    }
+
+    .foto-tarjeta-header-carga3 {
+        background-color: #27ae60; /* Verde */
+        color: white;
+        padding: 12px 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: bold;
+    }
+
+    .foto-titulo {
+        font-weight: bold;
+        font-size: 1rem;
+    }
+
+    /* Indicador de finalizado en rojo */
+    .indicador-finalizado {
+        background-color: #c0392b; /* Rojo */
+        color: white;
+        padding: 3px 10px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .foto-contenedor-imagen {
+        padding: 15px;
+        background-color: #f9f9f9;
+        text-align: center;
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid #eee;
+    }
+
+    .foto-imagen {
+        max-width: 100%;
+        max-height: 180px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+        .foto-imagen:hover {
+            opacity: 0.8;
+        }
+
+    .foto-detalles {
+        padding: 15px;
+        font-size: 0.9rem;
+    }
+
+    .detalle-item {
+        margin-bottom: 8px;
+        display: flex;
+        border-bottom: 1px dashed #f0f0f0;
+        padding-bottom: 5px;
+    }
+
+    .detalle-label {
+        font-weight: bold;
+        color: #555;
+        min-width: 120px;
+    }
+
+    .detalle-valor {
+        color: #333;
+        word-break: break-all;
+    }
+
+    /* Caso 1: Sin evidencia */
+    .sin-evidencia {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+        .sin-evidencia .icono-grande {
+            font-size: 4rem;
+            color: #f39c12;
+            margin-bottom: 20px;
+        }
+
+        .sin-evidencia h2 {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .sin-evidencia p {
+            color: #666;
+            font-size: 1.2rem;
+            font-style: italic;
+        }
+
+    .modal-footer-estatus {
+        background-color: #ecf0f1;
+        padding: 12px 20px;
+        border-top: 1px solid #bdc3c7;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .info-usuario {
+        color: #7f8c8d;
+        font-size: 0.85rem;
+    }
+
+    .btn-cerrar {
+        background-color: #95a5a6;
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+    }
+
+        .btn-cerrar:hover {
+            background-color: #7f8c8d;
+        }
+
+    /* Modal ampliado */
+    .modal-ampliado {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.9);
+        text-align: center;
+    }
+
+    .modal-ampliado-contenido {
+        margin: auto;
+        display: block;
+        max-width: 90%;
+        max-height: 90%;
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+        border: 3px solid white;
+        border-radius: 4px;
+    }
+
+    .modal-ampliado-cerrar {
+        position: absolute;
+        top: 20px;
+        right: 35px;
+        color: white;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+        .modal-ampliado-cerrar:hover {
+            color: #e74c3c;
+        }
+
+    /* Utilerías */
+    .text-truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
+
+<div class="modal-estatus-fotos">
+    <div class="modal-header-estatus">
+        <h1><strong>Estatus de Venta con Fotografía</strong></h1>
+    </div>
+
+    <div class="modal-body-estatus">
+        @if (Model != null && Model.Any())
+        {
+            <div class="fotos-grid">
+                @foreach (var foto in Model.OrderBy(f => f.Carga))
+                {
+                    // Determinar la clase del header y el texto según el valor de Carga
+                    string headerClass = "";
+                    string headerTexto = "";
+
+                    if (foto.Carga == 2)
+                    {
+                        headerClass = "foto-tarjeta-header-carga2";
+                        headerTexto = "En Proceso";
+                    }
+                    else if (foto.Carga == 3)
+                    {
+                        headerClass = "foto-tarjeta-header-carga3";
+                        headerTexto = "Carga finalizada";
+                    }
+                    else
+                    {
+                        // Por si acaso hay otros valores
+                        headerClass = foto.Carga == 2 ? "foto-tarjeta-header-carga2" : "foto-tarjeta-header-carga3";
+                        headerTexto = foto.Carga == 2 ? "En Proceso" : "Carga finalizada";
+                    }
+
+                    <div class="foto-tarjeta">
+                        <div class="@headerClass">
+                            <span class="foto-titulo">@headerTexto</span>
+                            <span class="indicador-finalizado">Finalizado</span>
+                        </div>
+
+                        <div class="foto-contenedor-imagen">
+                            @{
+                                string rutaImagen = $"~/{foto.RutaFoto.TrimStart('\\').Replace('\\', '/')}/{foto.GitFoto}";
+                            }
+                            <img src="@Url.Content(rutaImagen)"
+                                 alt="Foto carga @foto.Carga"
+                                 class="foto-imagen"
+                                 onclick="mostrarImagenAmpliada(this.src)"
+                                 onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'padding:20px;color:#999;\'>Imagen no disponible</div>';" />
+                        </div>
+
+                        <div class="foto-detalles">
+                            <div class="detalle-item">
+                                <span class="detalle-label">Operador a Cargo:</span>
+                                <span class="detalle-valor">@(!string.IsNullOrEmpty(foto.CreatedBy) ? foto.CreatedBy : "No asignado")</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <!-- Caso 1: Sin evidencia -->
+            <div class="sin-evidencia">
+                <div class="icono-grande">⏳</div>
+                <h2>Sin evidencia aún</h2>
+                <p>Esta venta está en espera de fotografías</p>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Modal para vista ampliada -->
+<div id="modalAmpliado" class="modal-ampliado" onclick="cerrarModalAmpliado()">
+    <span class="modal-ampliado-cerrar" onclick="cerrarModalAmpliado()">&times;</span>
+    <img class="modal-ampliado-contenido" id="imgAmpliada">
+</div>
+
+<script>
+    // Variables globales
+    var modalPrincipal = document.querySelector('.modal-estatus-fotos');
+
+    // Función para mostrar imagen ampliada
+    function mostrarImagenAmpliada(src) {
+        var modal = document.getElementById('modalAmpliado');
+        var img = document.getElementById('imgAmpliada');
+        img.src = src;
+        modal.style.display = "block";
+    }
+
+    // Función para cerrar modal ampliado
+    function cerrarModalAmpliado() {
+        document.getElementById('modalAmpliado').style.display = 'none';
+    }
+
+    // Función para cerrar modal principal
+    function cerrarModal() {
+        var modalBootstrap = document.getElementById('modalEstatusFotos');
+        if (modalBootstrap) {
+            if (typeof $ !== 'undefined' && $.fn && $.fn.modal) {
+                $('#modalEstatusFotos').modal('hide');
+            } else {
+                modalBootstrap.style.display = 'none';
+                document.body.classList.remove('modal-open');
+                var backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) backdrop.remove();
+            }
+        } else {
+            var contenedor = document.querySelector('.modal-estatus-fotos');
+            if (contenedor) contenedor.style.display = 'none';
+        }
+    }
+
+    // Cerrar modal con tecla ESC
+    document.addEventListener('keydown', function (e) {
+        if (e.key === "Escape") {
+            cerrarModalAmpliado();
+        }
+    });
+
+    // Prevenir que el modal ampliado se cierre al hacer clic en la imagen
+    document.getElementById('modalAmpliado').addEventListener('click', function (e) {
+        if (e.target === this) {
+            cerrarModalAmpliado();
+        }
+    });
+</script>

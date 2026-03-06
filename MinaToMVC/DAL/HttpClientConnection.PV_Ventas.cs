@@ -250,6 +250,20 @@ namespace MinaToMVC.DAL
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
             return modelResponse;
         }
+        public async Task<ModelResponse> GetEstatusVenta(long id)
+        {
+            // Armar la URL con parámetros de consulta correctamente
+            string url = $"api/PV_Venta/EstatusVenta/{id}";
+
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
 
         public async Task<ModelResponse> SearchDeduccionesByDateAndUser(string userName, DateTime fecha)
         {
