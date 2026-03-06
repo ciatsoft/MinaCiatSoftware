@@ -19,6 +19,7 @@ using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Mvc;
 using static MinaToMVC.Controllers.Filters.FiltersHelper;
 
@@ -405,6 +406,36 @@ namespace MinaToMVC.Controllers
             ViewBag.Usuarios = usuarios;
 
             return PartialView("PartialDeducciones", modelo);
+        }
+
+        public async Task<ActionResult> PartialmostrarEstatus(long id = 0)
+        {
+            List<AnexoTicket> anexoTickets = new List<AnexoTicket>();
+
+            if (id != 0)
+            {
+                var response = await httpClientConnection.GetEstatusVenta(id);
+                anexoTickets = JsonConvert.DeserializeObject<List<AnexoTicket>>(response.Response.ToString());
+            }
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>
+            {
+                new Usuario
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            string projectRootPath = HostingEnvironment.ApplicationPhysicalPath;
+
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+
+            ViewBag.UserToken = usuarioToken;
+            ViewBag.Usuarios = usuarios;
+            ViewBag.ProjectRootPath = projectRootPath;
+
+            return PartialView(anexoTickets);
         }
 
         // ---------------------------------------Deducciones------------------------------------------
