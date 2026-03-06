@@ -48,12 +48,12 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-        [HttpPost, Route("Cargar/{id:int}/{valor:int}")]
-        public async Task<ModelResponse> UpdateCarga(int id, int valor)
-        {
-            var result = wrapper.UpdatedVenta(id, valor);
-            return result;
-        }
+        //[HttpPost, Route("Cargar/{id:int}/{valor:int}")]
+        //public async Task<ModelResponse> UpdateCarga(int id, int valor)
+        //{
+        //    var result = wrapper.UpdatedVenta(id, valor);
+        //    return result;
+        //}
 
         [HttpGet, Route("search")]
         public async Task<ModelResponse> SearchPV_VentasByDateAndUser([FromUri] int usuarioId, [FromUri] DateTime fecha)
@@ -151,6 +151,13 @@ namespace MinaTolWebApi.Controllers
         public async Task<ModelResponse> SearchDeduccionesByDateAndUser(string userName, [FromUri] DateTime fecha)
         {
             var result = wrapper.SearchDeduccionesByDateAndUser(userName, fecha);
+            return result;
+        }
+
+        [HttpGet, Route("EstatusVenta/{id:long}")]
+        public async Task<ModelResponse> GetEstatusVenta(long id)
+        {
+            var result = wrapper.GetEstatusVenta(id);
             return result;
         }
     }
