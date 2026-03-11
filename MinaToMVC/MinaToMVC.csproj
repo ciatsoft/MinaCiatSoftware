@@ -261,6 +261,7 @@
     <Content Include="Scripts\sweetalert.min.js" />
     <Content Include="Scripts\Taller\CatalogoInventario.js" />
     <Content Include="Scripts\Taller\InventarioTaller.js" />
+    <Content Include="Scripts\Taller\ReparacionVehiculos.js" />
     <Content Include="Scripts\Trabajador\AltaEdicion.js" />
     <Content Include="Scripts\Trabajador\BajaEmpleados.js" />
     <Content Include="Scripts\Trabajador\ConceptosRH.js" />

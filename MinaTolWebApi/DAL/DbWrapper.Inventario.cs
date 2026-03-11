@@ -333,5 +333,135 @@ namespace MinaTolWebApi.DAL
             return response;
         }
         #endregion
+        #region ReparacionVehiculos
+        public ModelResponse SaveOrUpdateReparacionVehiculos(ReparacionVehiculos rv)
+        {
+            var modelResponse = new ModelResponse();
+
+            try
+            {
+                var userID = ExecuteScalar($"SaveOrUpdateReparacionVehiculos", CommandType.StoredProcedure, GenerateSQLParameters(rv));
+                rv.Id = Convert.ToInt64(userID);
+
+                modelResponse.Response = rv;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
+        public ModelResponse GetAllReparacionVehiculos()
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                var result = GetObjects("GetAllReparacionVehiculos", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, ReparacionVehiculos>((reader) =>
+                    {
+                        var r = FillEntity<ReparacionVehiculos>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+
+        }
+        public ModelResponse GetReparacionVehiculosById(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id",
+                    SqlDbType = System.Data.SqlDbType.Int
+                });
+
+                var result = GetObject("GetReparacionVehiculosById", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, ReparacionVehiculos>((reader) =>
+                    {
+                        var r = FillEntity<ReparacionVehiculos>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+
+        }
+        public ModelResponse DeleteReparacionVehiculosById(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id"
+                });
+
+                var result = ExecuteNonQuery("DeleteReparacionVehiculosById", System.Data.CommandType.StoredProcedure, parameters);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
+        public ModelResponse GetAllRegistersReparacionVehiculos()
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                var result = GetObjects("GetAllRegistersReparacionVehiculos", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, ReparacionVehiculos>((reader) =>
+                    {
+                        var r = FillEntity<ReparacionVehiculos>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+
+        }
+        #endregion
     }
 }

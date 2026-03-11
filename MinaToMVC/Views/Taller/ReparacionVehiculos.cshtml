@@ -2,10 +2,99 @@
 @{
     ViewBag.Title = "ReparacionVehiculos";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var fechaActual = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+    var trabajadores = (List<MinaTolEntidades.DtoSucursales.DtoTrabajador>)ViewBag.Trabajadores;
+    var tiposVehiculos = (List<string>)ViewBag.TiposVehiculos;
+    var tiposServicio = (List<string>)ViewBag.TipoServicio;
 }
 <link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
 
 <div class="content">
+    @using (Html.BeginForm("SaveOrUpdateReparacionVehiculos", "Taller", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmReparacionVehiculos", @id = "frmReparacionVehiculos" }))
+    {
+        @Html.HiddenFor(x => x.Id)
+        @Html.HiddenFor(x => x.Estatus, new { id = "estatus" })
+        @Html.HiddenFor(x => x.CreatedDt, new { id = "createdDt", @Value = fechaActual })
+        @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy", @Value = usuarioToken.UserName })
+        @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy", @Value = usuarioToken.UserName })
+        @Html.HiddenFor(x => x.UpdatedDt, new { id = "updatedDt", @Value = fechaActual })
+        <br />
+        <center><h1>Reparacion de Vehiculos</h1></center>
+        <div class="tabla-consultas-empleados">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Fecha:</label>
+                        @Html.TextBoxFor(x => x.Fecha, new { @class = "form-control", @type = "text", id = "fecha", @readonly = "readonly", @Value = fechaActual, @required = "required" })
+                    </div>
 
+                    <!-- Dropdown de Tipos de Vehículo (HTML puro con disabled) -->
+                    <div class="col-lg-3">
+                        <label>Origen de Vehiculo:</label>
+                        <select id="ddlTiposVehiculos" name="TipoVehiculo" class="form-control" required>
+                            <option value="" disabled selected>Selecciona un Tipo de Vehiculo</option>
+                            @foreach (var tipoVehiculo in tiposVehiculos)
+                            {
+                                var splitTipoVehiculos = tipoVehiculo.ToString().Split(':');
+                                <option value="@splitTipoVehiculos[0].Trim()">@splitTipoVehiculos[1].Trim()</option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Dropdown de Vehículos (se llenará con JS) -->
+                    <div class="col-lg-3">
+                        <label>Vehiculo:</label>
+                        <select id="ddlVehiculo" name="IdVehiculo" class="form-control" required>
+                            <option value="" disabled selected>Selecciona un Vehiculo</option>
+                        </select>
+                    </div>
+
+                    <!-- Dropdown de Choferes (HTML puro con disabled) -->
+                    <div class="col-lg-3">
+                        <label>Chofer:</label>
+                        <select id="ddlEmpleados" name="IdEmpleado" class="form-control" required>
+                            <option value="" disabled selected>Selecciona un Chofer</option>
+                            @foreach (var i in trabajadores)
+                            {
+                                <option value="@i.Id">@i.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Dropdown de Tipo de Servicio (HTML puro con disabled) -->
+                    <div class="col-lg-3">
+                        <label>Tipo de Servicio:</label>
+                        <select id="ddlTipoServicio" name="TipoServicio" class="form-control" required>
+                            <option value="" disabled selected>Selecciona un Tipo de Servicio</option>
+                            @foreach (var tipoServicio in tiposServicio)
+                            {
+                                var splitTipoServicio = tipoServicio.Split(':');
+                                <option value="@splitTipoServicio[0].Trim()">@splitTipoServicio[1].Trim()</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-lg-3">
+                        <label>Recibio:</label>
+                        @Html.TextBoxFor(x => x.Recibido, new { @class = "form-control", @type = "text", id = "recibido", @readonly = "readonly", @Value = usuarioToken.UserName, @required = "required" })
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12 d-flex justify-content-between">
+                        <div>
+                            <input id="btnGuardar" type="submit" value="Guardar" class="btn btn-success btn-lg-custom" />
+                        </div>
+                        <a href="/Taller/ReparacionVehiculos" class="btn btn-custom-cancel btn-lg-custom">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <br />
+    <table id="tblReparacionVehiculos" class="table table-bordered table-striped" style="width: 100%;"></table>
 </div>
-
+<script src="@(Url.StaticFile("Scripts/Taller/ReparacionVehiculos.js"))"></script>

@@ -112,5 +112,37 @@ namespace MinaTolWebApi.Controllers
         }
 
         #endregion
+        #region ReparacionVehiculos
+        [HttpPost, Route("ReparacionVehiculos/")]
+        public ModelResponse SaveOrUpdateReparacionVehiculos(ReparacionVehiculos rv)
+        {
+            var result = wrapper.SaveOrUpdateReparacionVehiculos(rv);
+            return result;
+        }
+        [HttpGet, Route("ReparacionVehiculos/List")]
+        public ModelResponse GetAllReparacionVehiculos()
+        {
+            var result = wrapper.GetAllReparacionVehiculos();
+            return result;
+        }
+        [HttpGet, Route("ReparacionVehiculos/{id:long}")]
+        public ModelResponse GetReparacionVehiculosById(long id)
+        {
+            var result = wrapper.GetReparacionVehiculosById(id);
+            return result;
+        }
+        [HttpPost, Route("ReparacionVehiculos/{id:long}")]
+        public ModelResponse DeleteReparacionVehiculosById(long id)
+        {
+            var result = wrapper.DeleteReparacionVehiculosById(id);
+            return result;
+        }
+        [HttpGet, Route("ReparacionVehiculos/AllList")]
+        public ModelResponse GetAllRegistersReparacionVehiculos()
+        {
+            var result = wrapper.GetAllRegistersReparacionVehiculos();
+            return result;
+        }
+        #endregion
     }
 }

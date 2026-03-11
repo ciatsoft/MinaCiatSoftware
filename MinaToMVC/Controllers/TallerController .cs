@@ -126,8 +126,9 @@ namespace MinaToMVC.Controllers
         public async Task<ActionResult> ReparacionVehiculos(long id = 0)
         {
             ReparacionVehiculos reparacionVehiculos = new ReparacionVehiculos();
+            var trabajadores = new List<DtoTrabajador>();
 
-            if(id != 0)
+            if (id != 0)
             {
                 var result = await httpClientConnection.GetReparacionVehiculosById(id);
                 reparacionVehiculos = JsonConvert.DeserializeObject<ReparacionVehiculos>(result.Response.ToString());
@@ -144,8 +145,24 @@ namespace MinaToMVC.Controllers
             };
             var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
             var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            var tipoVehiculos = System.Configuration.ConfigurationManager.AppSettings["TipoVehiculo"]?.ToString()
+                .Split('|')
+                .ToList() ?? new List<string>();
+
+            var tipoServicio= System.Configuration.ConfigurationManager.AppSettings["TipoServicioTaller"]?.ToString()
+                .Split('|')
+                .ToList() ?? new List<string>();
+
+            var responsetrabajadores = await httpClientConnection.GetAllEmpleados();
+            trabajadores = JsonConvert.DeserializeObject<List<DtoTrabajador>>(responsetrabajadores.Response.ToString());
+
             ViewBag.UserToken = usuarioAutenticado;
             ViewBag.Usuarios = usuarios;
+            ViewBag.TiposVehiculos = tipoVehiculos;
+            ViewBag.TipoServicio = tipoServicio;
+            ViewBag.Trabajadores = trabajadores;
+
 
             return View();
         }
@@ -255,7 +272,11 @@ namespace MinaToMVC.Controllers
         #endregion
 
         #region ReparacionVehiculos
-
+        public async Task<string> GetAllVehiculo()
+        {
+            var result = await httpClientConnection.GetAllVehiculo();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
         #endregion
 
 
