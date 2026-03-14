@@ -34,6 +34,28 @@ namespace MinaTolWebApi.DAL
             }
             return modelResponse;
         }
+        public ModelResponse GetAllRegistersVehiculoCarga()
+        {
+            var modelResponse = new ModelResponse();
+            var parameters = new List<SqlParameter>();
+            try
+            {
+                var vehiculosCarga = GetObjects("GetAllRegistersVehiculoCarga", CommandType.StoredProcedure, parameters,
+                    new Func<IDataReader, VehiculoCarga>((reader) =>
+                    {
+                        var r = FillEntity<VehiculoCarga>(reader);
+                        return r;
+                    }));
+                modelResponse.Response = vehiculosCarga;
+            }   
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+            return modelResponse;
+        }
         public ModelResponse GetVehiculoCargaById(long id)
         {
             var modelResponse = new ModelResponse();

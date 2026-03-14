@@ -179,14 +179,40 @@ namespace MinaToMVC.DAL
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
             return modelResponse;
         }
-        public async Task<ModelResponse> DeleteReparacionVehiculosById(long Id)
+        public async Task<ModelResponse> DeleteReparacionVehiculosById(long Id, long IdVehiculo, int TipoVehiculo)
         {
-            var result = await RequestAsync($"api/Taller/ReparacionVehiculos/{Id}", HttpMethod.Post, null,
+            string url = $"api/Taller/ReparacionVehiculos/{Id}/{IdVehiculo}/{TipoVehiculo}";
+
+            var result = await RequestAsync(url, HttpMethod.Post, null,
                 new Func<string, string>((responseString) =>
                 {
                     return responseString;
                 }), token.Token.access_token);
             return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+        }
+        public async Task<ModelResponse> LiberarVehiculo(long Id, long IdVehiculo, int TipoVehiculo)
+        {
+            string url = $"api/Taller/ReparacionVehiculos/LiberarVehiculo/{Id}/{IdVehiculo}/{TipoVehiculo}";
+
+            var result = await RequestAsync(url, HttpMethod.Post, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+        }
+        public async Task<ModelResponse> GetAllRegistersReparacionVehiculos()
+        {
+
+            var result = await RequestAsync<object>("api/Taller/ReparacionVehiculos/AllList", HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
         }
         #endregion
     }

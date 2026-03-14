@@ -118,7 +118,6 @@ namespace MinaToMVC.Controllers
 
             return View(categoriaInventario);
         }
-
         public ActionResult Demo()
         {
             return View();
@@ -126,11 +125,16 @@ namespace MinaToMVC.Controllers
         public async Task<ActionResult> ReparacionVehiculos(long id = 0)
         {
             ReparacionVehiculos reparacionVehiculos = new ReparacionVehiculos();
+            var trabajadores = new List<DtoTrabajador>();
 
-            if(id != 0)
+            if (id != 0)
             {
                 var result = await httpClientConnection.GetReparacionVehiculosById(id);
                 reparacionVehiculos = JsonConvert.DeserializeObject<ReparacionVehiculos>(result.Response.ToString());
+            }
+            else
+            {
+                reparacionVehiculos.Fecha = DateTime.Now;
             }
 
             var usuarioToken = SessionHelper.GetSessionUser();
@@ -141,13 +145,30 @@ namespace MinaToMVC.Controllers
                     Id = usuarioToken.UserID,
                     Nombre = usuarioToken.UserName
                 }
-            };
+            }; 
             var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
             var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            var tipoVehiculos = System.Configuration.ConfigurationManager.AppSettings["TipoVehiculo"]?.ToString()
+                .Split('|')
+                .ToList() ?? new List<string>();
+
+            var tipoServicio = System.Configuration.ConfigurationManager.AppSettings["TipoServicioTaller"]?.ToString()
+                .Split('|')
+                .ToList() ?? new List<string>();
+
+            var responsetrabajadores = await httpClientConnection.GetAllEmpleados();
+            trabajadores = JsonConvert.DeserializeObject<List<DtoTrabajador>>(responsetrabajadores.Response.ToString());
+
             ViewBag.UserToken = usuarioAutenticado;
             ViewBag.Usuarios = usuarios;
+            ViewBag.TiposVehiculos = tipoVehiculos;
+            ViewBag.TipoServicio = tipoServicio;
+            ViewBag.Trabajadores = trabajadores;
+            ViewBag.RegistroId = id;
+            ViewBag.EsNuevoRegistro = id == 0;
 
-            return View();
+            return View(reparacionVehiculos);
         }
         #endregion
 
@@ -255,7 +276,41 @@ namespace MinaToMVC.Controllers
         #endregion
 
         #region ReparacionVehiculos
-
+        public async Task<string> GetAllVehiculo()
+        {
+            var result = await httpClientConnection.GetAllVehiculo();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetAllRegistersVehiculos()
+        {
+            var result = await httpClientConnection.GetAllRegistersVehiculos();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<ActionResult> SaveOrUpdateReparacionVehiculos(ReparacionVehiculos ci)
+        {
+            var r = await httpClientConnection.SaveOrUpdateReparacionVehiculos(ci);
+            return Redirect("ReparacionVehiculos");
+        }
+        public async Task<string> GetAllReparacionVehiculos()
+        {
+            var result = await httpClientConnection.GetAllReparacionVehiculos();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<ActionResult> DeleteReparacionVehiculosById(long Id, long IdVehiculo, int TipoVehiculo)
+        {
+            var r = await httpClientConnection.DeleteReparacionVehiculosById(Id, IdVehiculo, TipoVehiculo);
+            return Redirect("ReparacionVehiculos");
+        }
+        public async Task<string> GetAllRegistersReparacionVehiculos()
+        {
+            var result = await httpClientConnection.GetAllRegistersReparacionVehiculos();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<ActionResult> LiberarVehiculo(long Id, long IdVehiculo, int TipoVehiculo)
+        {
+            var r = await httpClientConnection.LiberarVehiculo(Id, IdVehiculo, TipoVehiculo);
+            return Redirect("ReparacionVehiculos");
+        }
         #endregion
 
 

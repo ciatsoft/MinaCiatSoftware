@@ -161,7 +161,7 @@ $(document).ready(function () {
             { targets: '_all', className: 'dt-body-center dt-head-center' }  // Centra contenido
         ],
         columns: [
-            { data: "id", "visible": true, title: "id" },
+            { data: "id", "visible": false, title: "id" },
             { data: "folio", title: "Folio" },
             { data: "nombreTipoMaterial", title: "Material" },
             { data: "nombreUbicacion", title: "Planta" },

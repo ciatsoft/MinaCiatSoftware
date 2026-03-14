@@ -23,6 +23,16 @@ namespace MinaToMVC.DAL
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
             return modelResponse;
         }
+        public async Task<ModelResponse> GetAllRegistersVehiculoCarga()
+        {
+            var result = await RequestAsync<object>("api/VehiculoCarga/AllList", HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
         public async Task<ModelResponse> GetVehiculoCargaById(long id)
         {
             var result = await RequestAsync<object>($"api/VehiculoCarga/{id}", HttpMethod.Get, null,
