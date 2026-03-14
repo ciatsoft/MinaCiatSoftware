@@ -83,13 +83,13 @@ namespace MinaToMVC.Controllers
             // 6. Usuarios
             var usuarioToken = SessionHelper.GetSessionUser();
             var usuario = new List<Usuario>()
-    {
-        new Usuario()
-        {
-            Id = usuarioToken?.UserID ?? 0,
-            Nombre = usuarioToken?.UserName ?? ""
-        }
-    };
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken?.UserID ?? 0,
+                    Nombre = usuarioToken?.UserName ?? ""
+                }
+            };
             var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
 
             var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
