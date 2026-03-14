@@ -306,6 +306,11 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllVehiculoCarga();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+        public async Task<string> GetAllRegistersVehiculoCarga()
+        {
+            var result = await httpClientConnection.GetAllRegistersVehiculoCarga();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
 
         // Método para obtener vehículo por ID con URL completa
         public async Task<string> GetVehiculoCargaById(long id)

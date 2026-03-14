@@ -12,7 +12,8 @@ namespace MinaTolEntidades.DtoTaller
         public int TipoVehiculo { get; set; }
         public long IdEmpleado { get; set; }
         public int TipoServicio { get; set; }
-        public string Recibido { get; set; }
+        public string Recibio { get; set; }
         public DateTime Fecha { get; set; }
+        public int Estado { get; set; }
     }
 }

@@ -411,7 +411,7 @@ namespace MinaTolWebApi.DAL
             return response;
 
         }
-        public ModelResponse DeleteReparacionVehiculosById(long id)
+        public ModelResponse DeleteReparacionVehiculosById(long id, long idVehiculo, int tipoVehiculo)
         {
             var response = new ModelResponse();
             try
@@ -419,14 +419,72 @@ namespace MinaTolWebApi.DAL
                 response.IsSuccess = true;
 
                 var parameters = new List<SqlParameter>();
+                // Corrección: Crear cada parámetro individualmente
                 parameters.Add(new SqlParameter()
                 {
+                    ParameterName = "@Id",
                     Value = id,
-                    IsNullable = true,
-                    ParameterName = "@Id"
+                    SqlDbType = System.Data.SqlDbType.BigInt
+                });
+
+                parameters.Add(new SqlParameter()
+                {
+                    ParameterName = "@IdVehiculo",
+                    Value = idVehiculo,
+                    SqlDbType = System.Data.SqlDbType.BigInt
+                });
+
+                parameters.Add(new SqlParameter()
+                {
+                    ParameterName = "@TipoVehiculo",
+                    Value = tipoVehiculo,
+                    SqlDbType = System.Data.SqlDbType.Int
                 });
 
                 var result = ExecuteNonQuery("DeleteReparacionVehiculosById", System.Data.CommandType.StoredProcedure, parameters);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
+        public ModelResponse LiberarVehiculo(long id, long idVehiculo, int tipoVehiculo)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                var parameters = new List<SqlParameter>();
+
+                // Corrección: Crear cada parámetro individualmente
+                parameters.Add(new SqlParameter()
+                {
+                    ParameterName = "@Id",
+                    Value = id,
+                    SqlDbType = System.Data.SqlDbType.BigInt
+                });
+
+                parameters.Add(new SqlParameter()
+                {
+                    ParameterName = "@IdVehiculo",
+                    Value = idVehiculo,
+                    SqlDbType = System.Data.SqlDbType.BigInt
+                });
+
+                parameters.Add(new SqlParameter()
+                {
+                    ParameterName = "@TipoVehiculo",
+                    Value = tipoVehiculo,
+                    SqlDbType = System.Data.SqlDbType.Int
+                });
+
+                var result = ExecuteNonQuery("LiberarVehiculo", System.Data.CommandType.StoredProcedure, parameters);
+
+                response.IsSuccess = true;
+                response.Message = "Vehículo liberado correctamente";
             }
             catch (Exception ex)
             {

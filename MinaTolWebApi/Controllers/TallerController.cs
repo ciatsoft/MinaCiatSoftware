@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace MinaTolWebApi.Controllers
@@ -131,10 +132,16 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetReparacionVehiculosById(id);
             return result;
         }
-        [HttpPost, Route("ReparacionVehiculos/{id:long}")]
-        public ModelResponse DeleteReparacionVehiculosById(long id)
+        [HttpPost, Route("ReparacionVehiculos/{id:long}/{idVehiculo:long}/{tipoVehiculo:int}")]
+        public ModelResponse DeleteReparacionVehiculosById(long id, long idVehiculo, int tipoVehiculo)
         {
-            var result = wrapper.DeleteReparacionVehiculosById(id);
+            var result = wrapper.DeleteReparacionVehiculosById(id, idVehiculo, tipoVehiculo);
+            return result;
+        }
+        [HttpPost, Route("ReparacionVehiculos/LiberarVehiculo/{id:long}/{idVehiculo:long}/{tipoVehiculo:int}")]
+        public async Task<ModelResponse> LiberarVehiculo(long id, long idVehiculo, int tipoVehiculo)
+        {
+            var result = await Task.Run(() => wrapper.LiberarVehiculo(id, idVehiculo, tipoVehiculo));
             return result;
         }
         [HttpGet, Route("ReparacionVehiculos/AllList")]

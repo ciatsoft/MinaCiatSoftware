@@ -26,6 +26,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetAllVehiculoCarga();
             return result;
         }
+        [HttpGet, Route("AllList")]
+        public ModelResponse GetAllRegistersVehiculoCarga()
+        {
+            var result = wrapper.GetAllRegistersVehiculoCarga();
+            return result;
+        }
         [HttpGet, Route("{id:long}")]
         public ModelResponse GetVehiculoCargaById(long id)
         {

@@ -26,6 +26,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetAllVehiculo();
             return result;
         }
+        [Route("AllList"), HttpGet]
+        public async Task <ModelResponse> GetAllRegistersVehiculos()
+        {
+            var result = wrapper.GetAllRegistersVehiculos();
+            return result;
+        }
         [HttpGet, Route("{id:long}")]
         public async Task<ModelResponse> GetVehiculoById( int id)
         {
