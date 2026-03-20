@@ -20,7 +20,6 @@ namespace MinaToMVC.Controllers
     public class TallerController : BaseController
     {
         #region View
-        
         public ActionResult Index()
         {
             return View();
@@ -170,10 +169,42 @@ namespace MinaToMVC.Controllers
 
             return View(reparacionVehiculos);
         }
+        public async Task<ActionResult> ResumenReparacionVehiculo(long id)
+        {
+            ReparacionVehiculos reparacionVehiculos = new ReparacionVehiculos();
+            var result = await httpClientConnection.GetReparacionVehiculosById(id);
+            reparacionVehiculos = JsonConvert.DeserializeObject<ReparacionVehiculos>(result.Response.ToString());
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            var tipoVehiculos = System.Configuration.ConfigurationManager.AppSettings["TipoVehiculo"]?.ToString()
+                .Split('|')
+                .ToList() ?? new List<string>();
+
+            var tipoServicio = System.Configuration.ConfigurationManager.AppSettings["TipoServicioTaller"]?.ToString()
+                .Split('|')
+                .ToList() ?? new List<string>();
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+            ViewBag.TiposVehiculos = tipoVehiculos;
+            ViewBag.TipoServicio = tipoServicio;
+
+            return View(reparacionVehiculos);
+        }
         #endregion
 
         #region PartialViews
-
         public async Task<ActionResult> PartialComponenteVehiculo(long id)
         {
             ComponenteVehiculo componenteVehiculo = new ComponenteVehiculo();
@@ -212,7 +243,39 @@ namespace MinaToMVC.Controllers
 
             return PartialView(componenteVehiculo);
         }
+        public async Task<ActionResult> PartialViewModalRetirarPiezas(long id, int tipoVehiculo, long idVehiculo)
+        {
 
+            ViewBag.IdRegistro = id;
+            ViewBag.TipoVehiculo = tipoVehiculo;
+            ViewBag.IdVehiculo = idVehiculo;
+            return PartialView();
+        }
+
+        //public async Task<ActionResult>PartialViewReparacionVehiculos(long id = 0)
+        //{
+        //    ReparacionVehiculos reparacionVehiculos = new ReparacionVehiculos();
+        //    var result = await httpClientConnection.GetReparacionVehiculosById(id);
+        //    reparacionVehiculos = JsonConvert.DeserializeObject<ReparacionVehiculos>(result.Response.ToString());
+        //    reparacionVehiculos.Fecha = DateTime.Now;
+        //    var usuarioToken = SessionHelper.GetSessionUser();
+        //    var usuario = new List<Usuario>()
+        //    {
+        //        new Usuario()
+        //        {
+        //            Id = usuarioToken.UserID,
+        //            Nombre = usuarioToken.UserName
+        //        }
+        //    };
+        //    var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+        //    var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+            
+        //    ViewBag.UserToken = usuarioAutenticado;
+        //    ViewBag.Usuarios = usuarios;
+        //    ViewBag.RegistroId = id;
+
+        //    return PartialView(reparacionVehiculos);
+        //}
         #endregion
 
         #region Data Acces
@@ -310,6 +373,34 @@ namespace MinaToMVC.Controllers
         {
             var r = await httpClientConnection.LiberarVehiculo(Id, IdVehiculo, TipoVehiculo);
             return Redirect("ReparacionVehiculos");
+        }
+        #endregion
+
+        #region RetirarPiezaVehiculoReparacion
+        public async Task<string> GetAllRetirarPiezaVehiculoReparacion()
+        {
+            var result = await httpClientConnection.GetAllRetirarPiezaVehiculoReparacion();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> SaveOrUpdateRetirarPiezaVehiculoReparacion(RetirarPiezaVehiculoReparacion ci)
+        {
+            var r = await httpClientConnection.SaveOrUpdateRetirarPiezaVehiculoReparacion(ci);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(r);
+        }
+        public async Task<string> GetRetirarPiezaVehiculoReparacionById(long Id)
+        {
+            var r = await httpClientConnection.GetRetirarPiezaVehiculoReparacionById(Id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(r);
+        }
+        public async Task<string> DeleteRetirarPiezaVehiculoReparacionById(long Id)
+        {
+            var r = await httpClientConnection.DeleteRetirarPiezaVehiculoReparacionById(Id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(r);
+        }
+        public async Task<string> GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo )
+        {
+            var r = await httpClientConnection.GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(tipoVehiculo, idVehiculo);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(r);
         }
         #endregion
 

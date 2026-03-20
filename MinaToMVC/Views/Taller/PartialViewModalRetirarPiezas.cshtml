@@ -1,0 +1,28 @@
+﻿@ViewBag.IdRegistro
+@ViewBag.TipoVehiculo
+@ViewBag.IdVehiculo
+<h1>HOLA</h1>
+
+<script>
+    $(document).ready(function () {
+        GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(@ViewBag.TipoVehiculo, @ViewBag.IdVehiculo)
+    });
+
+    function GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(tipoVehiculo, idVehiculo) {
+        console.log(tipoVehiculo);
+        console.log(idVehiculo);
+
+        GetMVC(`/Taller/GetAllRetirarPiezaVehiculoReparacionByIdVehiculo?tipoVehiculo=${tipoVehiculo}&idVehiculo=${idVehiculo}`, function (r) {
+            if (r.IsSuccess) {
+                console.log(r.Response);
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar las piezas retiradas: ' + r.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+</script>

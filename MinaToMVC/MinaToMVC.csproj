@@ -262,6 +262,7 @@
     <Content Include="Scripts\Taller\CatalogoInventario.js" />
     <Content Include="Scripts\Taller\InventarioTaller.js" />
     <Content Include="Scripts\Taller\ReparacionVehiculos.js" />
+    <Content Include="Scripts\Taller\ResumenReparacionVehiculo.js" />
     <Content Include="Scripts\Trabajador\AltaEdicion.js" />
     <Content Include="Scripts\Trabajador\BajaEmpleados.js" />
     <Content Include="Scripts\Trabajador\ConceptosRH.js" />
@@ -443,6 +444,8 @@
     <Content Include="Views\VehiculoCarga\ReporteEficiencia.cshtml" />
     <Content Include="Views\Taller\ReparacionVehiculos.cshtml" />
     <Content Include="Views\VentaPublicoGeneral\PartialmostrarEstatus.cshtml" />
+    <Content Include="Views\Taller\ResumenReparacionVehiculo.cshtml" />
+    <Content Include="Views\Taller\PartialViewModalRetirarPiezas.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
