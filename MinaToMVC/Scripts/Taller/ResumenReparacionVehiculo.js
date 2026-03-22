@@ -90,6 +90,8 @@ function MostrarDescripcionVehiculo() {
     var idVehiculo = $('#vehiculo').val();
     var tipoVehiculoCodigo = $('#tipoVehiculo').val();
 
+    GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(tipoVehiculoCodigo, idVehiculo);
+
     if (!idVehiculo || idVehiculo === "0" || idVehiculo === "") {
         $('#vehiculoDesc').val("Sin vehículo");
         return;
@@ -164,4 +166,18 @@ function ModalRetirarPiezas(id, tipoVehiculo, idVehiculo) {
 function ModalAsignarPiezas(id) {
     console.log(id);
     //$("#titleGenerciModal").text("Retirar Piezas");
+}
+function GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(tipoVehiculo, idVehiculo) {
+    GetMVC(`/Taller/GetAllRetirarPiezaVehiculoReparacionByIdVehiculo?tipoVehiculo=${tipoVehiculo}&idVehiculo=${idVehiculo}`, function (r) {
+        if (r.IsSuccess) {
+            console.log(r.Response);
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al cargar las piezas retiradas: ' + r.ErrorMessage,
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
 }

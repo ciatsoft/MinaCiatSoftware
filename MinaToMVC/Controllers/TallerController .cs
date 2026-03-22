@@ -8,9 +8,11 @@ using MinaToMVC.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Mvc;
 using static MinaToMVC.Controllers.Filters.FiltersHelper;
 
@@ -245,10 +247,46 @@ namespace MinaToMVC.Controllers
         }
         public async Task<ActionResult> PartialViewModalRetirarPiezas(long id, int tipoVehiculo, long idVehiculo)
         {
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
 
+            var categoriasInventarioResponse = await httpClientConnection.GetAllCategoriaInventario();
+            var categoriaInventario = JsonConvert.DeserializeObject<List<CategoriaInventario>>(categoriasInventarioResponse.Response.ToString());
+            var categoriaInventarioDdl = MappingPropertiToDropDownList<CategoriaInventario>(categoriaInventario, "Id", "Nombre");
+
+            var ubicacionesAlmacenTaller = System.Configuration.ConfigurationManager
+                .AppSettings["UbicacionesAlmacenTaller"]?
+                .ToString()
+                .Split('|')
+                .Select(x =>
+                {
+                    var partes = x.Split(':');
+
+                    return new SelectListItem
+                    {
+                        Value = partes[0],
+                        Text = partes.Length > 1 ? partes[1] : partes[0]
+                    };
+                })
+                .ToList() ?? new List<SelectListItem>();
+
+            ViewBag.UserToken = usuarioAutenticado.UserName;
+            ViewBag.Usuarios = usuarios;
             ViewBag.IdRegistro = id;
             ViewBag.TipoVehiculo = tipoVehiculo;
             ViewBag.IdVehiculo = idVehiculo;
+            ViewBag.CategoriaInventario = categoriaInventarioDdl;
+            ViewBag.UbicacionesInventarioTaller = ubicacionesAlmacenTaller;
+
             return PartialView();
         }
 
@@ -382,10 +420,174 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllRetirarPiezaVehiculoReparacion();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-        public async Task<string> SaveOrUpdateRetirarPiezaVehiculoReparacion(RetirarPiezaVehiculoReparacion ci)
+        public async Task<ActionResult> SaveOrUpdateRetirarPiezaVehiculoReparacion()
         {
-            var r = await httpClientConnection.SaveOrUpdateRetirarPiezaVehiculoReparacion(ci);
-            return Newtonsoft.Json.JsonConvert.SerializeObject(r);
+            var usuarioToken = SessionHelper.GetSessionUser();
+            try
+            {
+                long id = 0;
+                long.TryParse(Request.Form["Id"], out id);
+
+                long.TryParse(Request.Form["IdReparacion"], out long idReparacion);
+                long.TryParse(Request.Form["IdCategoriaInventario"], out long idCategoriaInventario);
+                long.TryParse(Request.Form["IdVehiculo"], out long idVehiculo);
+
+                int.TryParse(Request.Form["TipoVehiculo"], out int tipoVehiculo);
+
+                string nombre = Request.Form["Nombre"] ?? string.Empty;
+                string marca = Request.Form["Marca"] ?? string.Empty;
+
+                int.TryParse(Request.Form["Cantidad"], out int cantidad);
+                int.TryParse(Request.Form["UbicacionAlmacen"], out int ubicacionAlmacen);
+
+                DateTime fecha = DateTime.Now;
+
+                if (!string.IsNullOrEmpty(Request.Form["Fecha"]))
+                {
+                    DateTime.TryParseExact(
+                        Request.Form["Fecha"],
+                        "yyyy-MM-dd HH:mm:ss",
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        System.Globalization.DateTimeStyles.None,
+                        out fecha
+                    );
+                }
+
+                var valoresReutilizable = Request.Form.GetValues("Reutilizable");
+                bool reutilizable = valoresReutilizable != null && valoresReutilizable.Contains("true");
+
+                bool estatus = Request.Form["estatusModal"] == "1" ||
+                               Request.Form["estatusModal"] == "true";
+
+                string createdBy = usuarioToken.UserName;
+                string updatedBy = usuarioToken.UserName;
+
+                DateTime createdDt = DateTime.Now;
+                if (!string.IsNullOrEmpty(Request.Form["createdDtModal"]) &&
+                    DateTime.TryParse(Request.Form["createdDtModal"], out DateTime tempCreated))
+                {
+                    createdDt = tempCreated;
+                }
+
+                DateTime updatedDt = DateTime.Now;
+                if (!string.IsNullOrEmpty(Request.Form["updatedDtModal"]) &&
+                    DateTime.TryParse(Request.Form["updatedDtModal"], out DateTime tempUpdated))
+                {
+                    updatedDt = tempUpdated;
+                }
+
+                var archivo = Request.Files["Fotografia"];
+
+                string baseFolder = "AttachmentTaller/PiezasRetiradas";
+                string rootPath = HostingEnvironment.ApplicationPhysicalPath;
+                string fullFolderPath = Path.Combine(rootPath, baseFolder);
+
+                if (!Directory.Exists(fullFolderPath))
+                    Directory.CreateDirectory(fullFolderPath);
+
+                string gitArchivo = string.Empty;
+                string rutaArchivo = string.Empty;
+
+                RetirarPiezaVehiculoReparacion existente = null;
+
+                if (id > 0)
+                {
+                    var resp = await httpClientConnection.GetRetirarPiezaVehiculoReparacionById(id);
+
+                    if (resp.IsSuccess && resp.Response != null)
+                    {
+                        existente = JsonConvert.DeserializeObject<RetirarPiezaVehiculoReparacion>(resp.Response.ToString());
+                    }
+                }
+
+                if (archivo != null && archivo.ContentLength > 0)
+                {
+                    if (id > 0 && existente != null && !string.IsNullOrEmpty(existente.GitFoto))
+                    {
+                        gitArchivo = existente.GitFoto;
+                        rutaArchivo = existente.RutaFoto;
+
+                        string fullPath = Path.Combine(rootPath, rutaArchivo, gitArchivo);
+                        archivo.SaveAs(fullPath);
+                    }
+                    else
+                    {
+                        int consecutivo = ObtenerSiguienteNumeroConsecutivo(fullFolderPath);
+                        string ext = Path.GetExtension(archivo.FileName);
+
+                        gitArchivo = $"PiezaRetirada_{consecutivo}{ext}";
+                        rutaArchivo = baseFolder;
+
+                        string fullPath = Path.Combine(fullFolderPath, gitArchivo);
+                        archivo.SaveAs(fullPath);
+                    }
+                }
+                else if (existente != null)
+                {
+                    gitArchivo = existente.GitFoto;
+                    rutaArchivo = existente.RutaFoto;
+                }
+
+                var pieza = new RetirarPiezaVehiculoReparacion
+                {
+                    Id = id,
+                    IdReparacion = idReparacion,
+                    IdCategoriaInventario = idCategoriaInventario,
+                    IdVehiculo = idVehiculo,
+                    TipoVehiculo = tipoVehiculo,
+                    Reutilizable = reutilizable,
+                    Nombre = nombre,
+                    Marca = marca,
+                    Cantidad = cantidad,
+                    UbicacionAlmacen = ubicacionAlmacen,
+                    Fecha = fecha,
+                    RutaFoto = rutaArchivo,
+                    GitFoto = gitArchivo,
+                    Estatus = true,
+
+                    CreatedBy = (id > 0 && existente != null) ? existente.CreatedBy : createdBy,
+                    CreatedDt = (id > 0 && existente != null) ? existente.CreatedDt : createdDt,
+                    UpdatedBy = updatedBy,
+                    UpdatedDt = DateTime.Now
+                };
+
+                var result = await httpClientConnection.SaveOrUpdateRetirarPiezaVehiculoReparacion(pieza);
+
+                return Redirect("ResumenReparacionVehiculo/" + idReparacion);
+            }
+            catch (Exception ex)
+            {
+                return Redirect("ReparacionVehiculos");
+            }
+        }
+        private int ObtenerSiguienteNumeroConsecutivo(string path)
+        {
+            if (!Directory.Exists(path))
+            {
+                return 1;
+            }
+
+            var files = Directory.GetFiles(path);
+            int maxNumero = 0;
+
+            foreach (var file in files)
+            {
+                string fileName = Path.GetFileNameWithoutExtension(file);
+                // Buscar archivos con formato "PiezaRetirada_XXX"
+                if (fileName.StartsWith("PiezaRetirada_"))
+                {
+                    string numeroStr = fileName.Substring("PiezaRetirada_".Length);
+                    if (int.TryParse(numeroStr, out int numero))
+                    {
+                        if (numero > maxNumero)
+                        {
+                            maxNumero = numero;
+                        }
+                    }
+                }
+            }
+
+            return maxNumero + 1;
         }
         public async Task<string> GetRetirarPiezaVehiculoReparacionById(long Id)
         {
