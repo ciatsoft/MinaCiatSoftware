@@ -82,6 +82,7 @@
     <Compile Include="DtoTaller\ComponenteVehiculo.cs" />
     <Compile Include="DtoTaller\Inventario.cs" />
     <Compile Include="DtoTaller\ReparacionVehiculos.cs" />
+    <Compile Include="DtoTaller\RetirarPiezaVehiculoReparacion.cs" />
     <Compile Include="DtoVentaPublicoGeneral\AnexoTicket.cs" />
     <Compile Include="DtoVentaPublicoGeneral\Canjeo.cs" />
     <Compile Include="DtoVentaPublicoGeneral\ClientePublicoGral.cs" />

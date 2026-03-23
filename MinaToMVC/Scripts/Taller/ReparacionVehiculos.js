@@ -182,6 +182,7 @@ function inicializarTablaReparaciones() {
 
     $("#tblAllRegistersReparacionVehiculos").DataTable({
         data: reparaciones,
+        order: [[0, 'desc']],
         columns: [
             { data: 'id', title: 'ID', visible: false },
             {
@@ -266,7 +267,7 @@ function inicializarTablaReparaciones() {
                 title: "Asignar",
                 render: function (data, type, row) {
                     if (row.estado != 4) {
-                        return `<input type="button" value="Asignar Piezas" class="btn btn-success btn-lg-custom" onclick="AbrirModalComponente(${data})" />`;
+                        return `<input type="button" value="Asignar Piezas" class="btn btn-success btn-lg-custom" onclick="resumenVehiculo(${data})" />`;
                     } else {
                         return '';
                     }
@@ -315,6 +316,7 @@ function inicializarTablaReparaciones() {
 
     $("#tblReparacionVehiculos").DataTable({
         data: reparaciones,
+        order: [[0, 'desc']],
         columns: [
             { data: 'id', title: 'ID', visible: false },
             {
@@ -712,4 +714,8 @@ function inicializarFormularioEdicion() {
             }, 500);
         }
     }
+}
+
+function resumenVehiculo(id) {
+    location.href = "/Taller/ResumenReparacionVehiculo/" + id;
 }

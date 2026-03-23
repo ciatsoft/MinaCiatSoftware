@@ -1,0 +1,73 @@
+﻿@model MinaTolEntidades.DtoTaller.ReparacionVehiculos
+@{
+    ViewBag.Title = "ResumenReparacionVehiculo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+
+<!-- Pasar datos del servidor al cliente -->
+<script type="text/javascript">
+    // Datos del modelo
+    var modeloReparacion = @Html.Raw(Json.Encode(Model));
+
+    // Datos de configuración desde ViewBag
+    var configuracion = {
+        tipoVehiculos: @Html.Raw(Json.Encode(ViewBag.TiposVehiculos)),
+        tipoServicio: @Html.Raw(Json.Encode(ViewBag.TipoServicio))
+    };
+</script>
+
+<div class="content">
+    <div class="row">
+        <div class="col-lg-6">
+            <a href="/Taller/ReparacionVehiculos" class="btn btn-custom-cancel btn-lg-custom">Regresar</a>
+        </div>
+    </div>
+    <center><h1>Resumen de Reparacion</h1></center>
+    <br />
+    <div class="tabla-consultas-empleados">
+        <div class="rectangulos" style="width: 100%;">
+            <div class="row">
+                <div class="col-lg-3">
+                    <label>Id Reparación</label>
+                    @Html.TextBoxFor(x => x.Id, new { id = "id", @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="col-lg-3">
+                    <label>Tipo de Vehiculo</label>
+                    @Html.HiddenFor(x => x.TipoVehiculo, new { id = "tipoVehiculo" })
+                    <input type="text" id="tipoVehiculoDesc" class="form-control" readonly style="background-color: #f0f0f0;" />
+                </div>
+                <div class="col-lg-3">
+                    <label>Vehículo</label>
+                    @Html.HiddenFor(x => x.IdVehiculo, new { id = "vehiculo" })
+                    <input type="text" id="vehiculoDesc" class="form-control" readonly style="background-color: #f0f0f0;" />
+                </div>
+                <div class="col-lg-3">
+                    <label>Tipo Servicio</label>
+                    @Html.HiddenFor(x => x.TipoServicio, new { id = "tipoServicio" })
+                    <input type="text" id="tipoServicioDesc" class="form-control" readonly style="background-color: #f0f0f0;" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <input type="button" value="Retirar Piezas"
+                           class="btn btn-custom-cancel btn-lg-custom"
+                           onclick="ModalRetirarPiezas(@Model.Id, @Model.TipoVehiculo, @Model.IdVehiculo)" />
+
+                    <input style="margin-left:96px;" type="button"
+                           value="Asignar Piezas"
+                           class="btn btn-success btn-lg-custom"
+                           onclick="ModalAsignarPiezas(@Model.Id)" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <center><h1>Piezas Retiradas</h1></center>
+    <br />
+    <table id="tblPiezasRetiradas" class="table table-bordered table-striped" style="width: 100%;"></table>
+    <br />
+    <center><h1>Piezas Instaladas</h1></center>
+    <br />
+</div>
+<script src="@(Url.StaticFile("Scripts/Taller/ResumenReparacionVehiculo.js"))"></script>

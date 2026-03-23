@@ -151,5 +151,37 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
         #endregion
+        #region RetirarPiezaVehiculoReparacion
+        [HttpPost, Route("RetirarPiezaVehiculoReparacion/")]
+        public ModelResponse SaveOrUpdateRetirarPiezaVehiculoReparacion(RetirarPiezaVehiculoReparacion rv)
+        {
+            var result = wrapper.SaveOrUpdateRetirarPiezaVehiculoReparacion(rv);
+            return result;
+        }
+        [HttpGet, Route("RetirarPiezaVehiculoReparacion/List")]
+        public ModelResponse GetAllRetirarPiezaVehiculoReparacion()
+        {
+            var result = wrapper.GetAllRetirarPiezaVehiculoReparacion();
+            return result;
+        }
+        [HttpGet, Route("RetirarPiezaVehiculoReparacion/{id:long}")]
+        public ModelResponse GetRetirarPiezaVehiculoReparacionById(long id)
+        {
+            var result = wrapper.GetRetirarPiezaVehiculoReparacionById(id);
+            return result;
+        }
+        [HttpPost, Route("RetirarPiezaVehiculoReparacion/{id:long}")]
+        public ModelResponse DeleteRetirarPiezaVehiculoReparacionById(long id)
+        {
+            var result = wrapper.DeleteRetirarPiezaVehiculoReparacionById(id);
+            return result;
+        }
+        [HttpGet, Route("RetirarPiezaVehiculoReparacion/ByVehiculo/{tipoVehiculo:int}/{idVehiculo:long}/{idReparacion:long}")]
+        public ModelResponse GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo, long idReparacion)
+        {
+            var result = wrapper.GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(tipoVehiculo, idVehiculo, idReparacion);
+            return result;
+        }
+        #endregion
     }
 }
