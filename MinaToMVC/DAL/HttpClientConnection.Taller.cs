@@ -260,9 +260,9 @@ namespace MinaToMVC.DAL
                 }), token.Token.access_token);
             return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
         }
-        public async Task<ModelResponse> GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo)
+        public async Task<ModelResponse> GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo, long idReparacion)
         {
-            var result = await RequestAsync<object>($"api/Taller/RetirarPiezaVehiculoReparacion/ByVehiculo/{tipoVehiculo}/{idVehiculo}", HttpMethod.Get, null,
+            var result = await RequestAsync<object>($"api/Taller/RetirarPiezaVehiculoReparacion/ByVehiculo/{tipoVehiculo}/{idVehiculo}/{idReparacion}", HttpMethod.Get, null,
                new Func<string, string>((responseString) =>
                {
                    return responseString;

@@ -167,7 +167,7 @@ namespace MinaTolWebApi.Controllers
         [HttpGet, Route("RetirarPiezaVehiculoReparacion/{id:long}")]
         public ModelResponse GetRetirarPiezaVehiculoReparacionById(long id)
         {
-            var result = wrapper.GetReparacionVehiculosById(id);
+            var result = wrapper.GetRetirarPiezaVehiculoReparacionById(id);
             return result;
         }
         [HttpPost, Route("RetirarPiezaVehiculoReparacion/{id:long}")]
@@ -176,10 +176,10 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.DeleteRetirarPiezaVehiculoReparacionById(id);
             return result;
         }
-        [HttpGet, Route("RetirarPiezaVehiculoReparacion/ByVehiculo/{tipoVehiculo:int}/{idVehiculo:long}")]
-        public ModelResponse GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo)
+        [HttpGet, Route("RetirarPiezaVehiculoReparacion/ByVehiculo/{tipoVehiculo:int}/{idVehiculo:long}/{idReparacion:long}")]
+        public ModelResponse GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo, long idReparacion)
         {
-            var result = wrapper.GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(tipoVehiculo, idVehiculo);
+            var result = wrapper.GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(tipoVehiculo, idVehiculo, idReparacion);
             return result;
         }
         #endregion

@@ -246,7 +246,7 @@ namespace MinaToMVC.Controllers
             return PartialView(componenteVehiculo);
         }
         public async Task<ActionResult> PartialViewModalRetirarPiezas(long id, int tipoVehiculo, long idVehiculo)
-        {
+        {            
             var usuarioToken = SessionHelper.GetSessionUser();
             var usuario = new List<Usuario>()
             {
@@ -258,26 +258,25 @@ namespace MinaToMVC.Controllers
             };
             var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
             var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
-
             var categoriasInventarioResponse = await httpClientConnection.GetAllCategoriaInventario();
             var categoriaInventario = JsonConvert.DeserializeObject<List<CategoriaInventario>>(categoriasInventarioResponse.Response.ToString());
             var categoriaInventarioDdl = MappingPropertiToDropDownList<CategoriaInventario>(categoriaInventario, "Id", "Nombre");
 
             var ubicacionesAlmacenTaller = System.Configuration.ConfigurationManager
-                .AppSettings["UbicacionesAlmacenTaller"]?
-                .ToString()
-                .Split('|')
-                .Select(x =>
-                {
-                    var partes = x.Split(':');
-
-                    return new SelectListItem
+                    .AppSettings["UbicacionesAlmacenTaller"]?
+                    .ToString()
+                    .Split('|')
+                    .Select(x =>
                     {
-                        Value = partes[0],
-                        Text = partes.Length > 1 ? partes[1] : partes[0]
-                    };
-                })
-                .ToList() ?? new List<SelectListItem>();
+                        var partes = x.Split(':');
+
+                        return new SelectListItem
+                        {
+                            Value = partes[0],
+                            Text = partes.Length > 1 ? partes[1] : partes[0]
+                        };
+                    })
+                    .ToList() ?? new List<SelectListItem>();
 
             ViewBag.UserToken = usuarioAutenticado.UserName;
             ViewBag.Usuarios = usuarios;
@@ -290,30 +289,201 @@ namespace MinaToMVC.Controllers
             return PartialView();
         }
 
-        //public async Task<ActionResult>PartialViewReparacionVehiculos(long id = 0)
-        //{
-        //    ReparacionVehiculos reparacionVehiculos = new ReparacionVehiculos();
-        //    var result = await httpClientConnection.GetReparacionVehiculosById(id);
-        //    reparacionVehiculos = JsonConvert.DeserializeObject<ReparacionVehiculos>(result.Response.ToString());
-        //    reparacionVehiculos.Fecha = DateTime.Now;
-        //    var usuarioToken = SessionHelper.GetSessionUser();
-        //    var usuario = new List<Usuario>()
-        //    {
-        //        new Usuario()
-        //        {
-        //            Id = usuarioToken.UserID,
-        //            Nombre = usuarioToken.UserName
-        //        }
-        //    };
-        //    var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
-        //    var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
-            
-        //    ViewBag.UserToken = usuarioAutenticado;
-        //    ViewBag.Usuarios = usuarios;
-        //    ViewBag.RegistroId = id;
+        public async Task<ActionResult> PartialViewEditarRetirarPieza(long id, long idReparacion, int tipoVehiculo, long idVehiculo)
+        {
+            RetirarPiezaVehiculoReparacion retirarPiezaVehiculoReparacion = new RetirarPiezaVehiculoReparacion();
+            var result = await httpClientConnection.GetRetirarPiezaVehiculoReparacionById(id);
+            retirarPiezaVehiculoReparacion = JsonConvert.DeserializeObject<RetirarPiezaVehiculoReparacion>(result.Response.ToString());
 
-        //    return PartialView(reparacionVehiculos);
-        //}
+            // Limpiar las rutas
+            string rutaFoto = retirarPiezaVehiculoReparacion.RutaFoto?.Replace("\\", "/").Trim('/') ?? "";
+            string gitFoto = retirarPiezaVehiculoReparacion.GitFoto?.Trim() ?? "";
+
+            // Construir la URL manualmente sin usar Url.Action para evitar el encoding de &amp;
+            string imageUrl = "";
+            bool hasImage = false;
+
+            if (!string.IsNullOrEmpty(rutaFoto) && !string.IsNullOrEmpty(gitFoto))
+            {
+                // Verificar si el archivo existe
+                string projectRootPath = HostingEnvironment.ApplicationPhysicalPath;
+                string physicalPath = Path.Combine(projectRootPath, rutaFoto, gitFoto);
+
+                if (System.IO.File.Exists(physicalPath))
+                {
+                    hasImage = true;
+                    // Construir URL manualmente para evitar el encoding
+                    imageUrl = $"/Taller/VerImagenPiezaRetirada?rutaArchivo={Uri.EscapeDataString(rutaFoto)}&nombreArchivo={Uri.EscapeDataString(gitFoto)}";
+                }
+                else
+                {
+                    // Intentar con la ruta alternativa
+                    string alternativePath = Path.Combine(projectRootPath, "AttachmentTaller/PiezasRetiradas", gitFoto);
+                    if (System.IO.File.Exists(alternativePath))
+                    {
+                        hasImage = true;
+                        imageUrl = $"/Taller/VerImagenPiezaRetirada?rutaArchivo={Uri.EscapeDataString("AttachmentTaller/PiezasRetiradas")}&nombreArchivo={Uri.EscapeDataString(gitFoto)}";
+                    }
+                }
+            }
+
+            ViewBag.ImageUrl = imageUrl;
+            ViewBag.HasImage = hasImage;
+            ViewBag.RutaArchivo = rutaFoto;
+            ViewBag.NombreArchivo = gitFoto;
+
+            // Resto del código...
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+            var categoriasInventarioResponse = await httpClientConnection.GetAllCategoriaInventario();
+            var categoriaInventario = JsonConvert.DeserializeObject<List<CategoriaInventario>>(categoriasInventarioResponse.Response.ToString());
+            var categoriaInventarioDdl = MappingPropertiToDropDownList<CategoriaInventario>(categoriaInventario, "Id", "Nombre");
+
+            var ubicacionesAlmacenTaller = System.Configuration.ConfigurationManager
+                    .AppSettings["UbicacionesAlmacenTaller"]?
+                    .ToString()
+                    .Split('|')
+                    .Select(x =>
+                    {
+                        var partes = x.Split(':');
+                        return new SelectListItem
+                        {
+                            Value = partes[0],
+                            Text = partes.Length > 1 ? partes[1] : partes[0]
+                        };
+                    })
+                    .ToList() ?? new List<SelectListItem>();
+
+            ViewBag.UserToken = usuarioAutenticado.UserName;
+            ViewBag.Usuarios = usuarios;
+            ViewBag.IdRegistro = id;
+            ViewBag.IdReparacion = idReparacion;
+            ViewBag.TipoVehiculo = tipoVehiculo;
+            ViewBag.IdVehiculo = idVehiculo;
+            ViewBag.CategoriaInventario = categoriaInventarioDdl;
+            ViewBag.UbicacionesInventarioTaller = ubicacionesAlmacenTaller;
+
+            return PartialView(retirarPiezaVehiculoReparacion);
+        }
+        public ActionResult VerImagenPiezaRetirada(string rutaArchivo, string nombreArchivo)
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine($"=== VerImagenPiezaRetirada ===");
+                System.Diagnostics.Debug.WriteLine($"rutaArchivo: {rutaArchivo}");
+                System.Diagnostics.Debug.WriteLine($"nombreArchivo: {nombreArchivo}");
+
+                // Validar parámetros
+                if (string.IsNullOrEmpty(rutaArchivo) || string.IsNullOrEmpty(nombreArchivo))
+                {
+                    return ImagenPorDefecto();
+                }
+
+                // Obtener la ruta raíz del proyecto
+                string projectRootPath = HostingEnvironment.ApplicationPhysicalPath;
+
+                // Concatenar: raíz + rutaArchivo + nombreArchivo
+                string rutaCompleta = Path.Combine(projectRootPath, rutaArchivo, nombreArchivo);
+                System.Diagnostics.Debug.WriteLine($"Ruta completa: {rutaCompleta}");
+
+                // Verifica que el archivo exista
+                if (!System.IO.File.Exists(rutaCompleta))
+                {
+                    System.Diagnostics.Debug.WriteLine("Archivo no encontrado en la ruta principal");
+
+                    // Intentar buscar en la carpeta AttachmentTaller/PiezasRetiradas
+                    string alternativePath = Path.Combine(projectRootPath, "AttachmentTaller/PiezasRetiradas", nombreArchivo);
+                    System.Diagnostics.Debug.WriteLine($"Buscando en alternativa: {alternativePath}");
+
+                    if (System.IO.File.Exists(alternativePath))
+                    {
+                        rutaCompleta = alternativePath;
+                        System.Diagnostics.Debug.WriteLine("Archivo encontrado en ruta alternativa");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("Archivo no encontrado en ninguna ubicación");
+                        return ImagenPorDefecto();
+                    }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Archivo encontrado en ruta principal");
+                }
+
+                // Obtiene el tipo MIME del archivo
+                string contentType = GetContentType(nombreArchivo);
+
+                // Leer el archivo como bytes y devolverlo
+                byte[] fileBytes = System.IO.File.ReadAllBytes(rutaCompleta);
+                System.Diagnostics.Debug.WriteLine($"Tamaño del archivo: {fileBytes.Length} bytes");
+
+                return File(fileBytes, contentType);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
+                return ImagenPorDefecto();
+            }
+        }
+
+        private ActionResult ImagenPorDefecto()
+        {
+            // Ruta de una imagen por defecto si existe
+            string defaultImagePath = Server.MapPath("~/Content/images/no-image-available.jpg");
+            if (System.IO.File.Exists(defaultImagePath))
+            {
+                return File(defaultImagePath, "image/jpeg");
+            }
+
+            // Si no existe, crear una imagen simple en memoria
+            using (var bitmap = new System.Drawing.Bitmap(200, 200))
+            using (var graphics = System.Drawing.Graphics.FromImage(bitmap))
+            {
+                graphics.Clear(System.Drawing.Color.LightGray);
+                using (var font = new System.Drawing.Font("Arial", 10))
+                using (var brush = new System.Drawing.SolidBrush(System.Drawing.Color.Black))
+                {
+                    graphics.DrawString("Sin imagen", font, brush, new System.Drawing.PointF(60, 90));
+                }
+
+                using (var ms = new System.IO.MemoryStream())
+                {
+                    bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+                    byte[] imageBytes = ms.ToArray();
+                    return File(imageBytes, "image/jpeg");
+                }
+            }
+        }
+
+        private string GetContentType(string fileName)
+        {
+            string extension = System.IO.Path.GetExtension(fileName).ToLower();
+            switch (extension)
+            {
+                case ".jpg":
+                case ".jpeg":
+                    return "image/jpeg";
+                case ".png":
+                    return "image/png";
+                case ".gif":
+                    return "image/gif";
+                case ".bmp":
+                    return "image/bmp";
+                default:
+                    return "application/octet-stream";
+            }
+        }
+
         #endregion
 
         #region Data Acces
@@ -599,9 +769,9 @@ namespace MinaToMVC.Controllers
             var r = await httpClientConnection.DeleteRetirarPiezaVehiculoReparacionById(Id);
             return Newtonsoft.Json.JsonConvert.SerializeObject(r);
         }
-        public async Task<string> GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo )
+        public async Task<string> GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo, long idReparacion )
         {
-            var r = await httpClientConnection.GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(tipoVehiculo, idVehiculo);
+            var r = await httpClientConnection.GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(tipoVehiculo, idVehiculo, idReparacion);
             return Newtonsoft.Json.JsonConvert.SerializeObject(r);
         }
         #endregion

@@ -626,7 +626,7 @@ namespace MinaTolWebApi.DAL
 
             return response;
         }
-        public ModelResponse GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo)
+        public ModelResponse GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo, long idReparacion)
         {
             var response = new ModelResponse();
             try
@@ -645,6 +645,13 @@ namespace MinaTolWebApi.DAL
                     Value = tipoVehiculo,
                     IsNullable = true,
                     ParameterName = "@TipoVehiculo",
+                    SqlDbType = System.Data.SqlDbType.Int
+                });
+                parameters.Add(new SqlParameter()
+                {
+                    Value = idReparacion,
+                    IsNullable = true,
+                    ParameterName = "@IdReparacion",
                     SqlDbType = System.Data.SqlDbType.Int
                 });
 
