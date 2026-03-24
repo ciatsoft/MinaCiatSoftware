@@ -1,4 +1,5 @@
 ﻿using MinaTolEntidades;
+using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.DtoTaller;
 using MinaTolEntidades.DtoVentaPublicoGeneral;
 using Newtonsoft.Json;
@@ -263,6 +264,28 @@ namespace MinaToMVC.DAL
         public async Task<ModelResponse> GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo, long idReparacion)
         {
             var result = await RequestAsync<object>($"api/Taller/RetirarPiezaVehiculoReparacion/ByVehiculo/{tipoVehiculo}/{idVehiculo}/{idReparacion}", HttpMethod.Get, null,
+               new Func<string, string>((responseString) =>
+               {
+                   return responseString;
+               }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        #endregion
+        #region AsignarPiezas
+        public async Task<ModelResponse> GetAllInventarioReutilizableByCategoria(long categoriaInventario)
+        {
+            var result = await RequestAsync<object>($"api/Taller/GetAllInventarioReutilizableByCategoria/{categoriaInventario}", HttpMethod.Get, null,
+               new Func<string, string>((responseString) =>
+               {
+                   return responseString;
+               }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        public async Task<ModelResponse> GetAllInventarioByCategoria(long categoriaInventario)
+        {
+            var result = await RequestAsync<object>($"api/Taller/GetAllInventarioByCategoria/{categoriaInventario}", HttpMethod.Get, null,
                new Func<string, string>((responseString) =>
                {
                    return responseString;

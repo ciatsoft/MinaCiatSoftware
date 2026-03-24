@@ -673,5 +673,69 @@ namespace MinaTolWebApi.DAL
 
         }
         #endregion
+        #region AsignarPiezas
+        public ModelResponse GetAllInventarioReutilizableByCategoria(long categoriaInventario)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = categoriaInventario,
+                    IsNullable = true,
+                    ParameterName = "@CategoriaInventario",
+                    SqlDbType = System.Data.SqlDbType.Int
+                });
+
+                var result = GetObjects("GetAllInventarioReutilizableByCategoria", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, RetirarPiezaVehiculoReparacion>((reader) =>
+                    {
+                        var r = FillEntity<RetirarPiezaVehiculoReparacion>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+        public ModelResponse GetAllInventarioByCategoria(long categoriaInventario)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = categoriaInventario,
+                    IsNullable = true,
+                    ParameterName = "@CategoriaInventario",
+                    SqlDbType = System.Data.SqlDbType.Int
+                });
+
+                var result = GetObjects("GetAllInventarioByCategoria", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, Inventario>((reader) =>
+                    {
+                        var r = FillEntity<Inventario>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+        }
+        #endregion
     }
 }
