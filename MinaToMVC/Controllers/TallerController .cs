@@ -288,7 +288,6 @@ namespace MinaToMVC.Controllers
 
             return PartialView();
         }
-
         public async Task<ActionResult> PartialViewEditarRetirarPieza(long id, long idReparacion, int tipoVehiculo, long idVehiculo)
         {
             RetirarPiezaVehiculoReparacion retirarPiezaVehiculoReparacion = new RetirarPiezaVehiculoReparacion();
@@ -435,7 +434,6 @@ namespace MinaToMVC.Controllers
                 return ImagenPorDefecto();
             }
         }
-
         private ActionResult ImagenPorDefecto()
         {
             // Ruta de una imagen por defecto si existe
@@ -464,7 +462,6 @@ namespace MinaToMVC.Controllers
                 }
             }
         }
-
         private string GetContentType(string fileName)
         {
             string extension = System.IO.Path.GetExtension(fileName).ToLower();
@@ -483,7 +480,64 @@ namespace MinaToMVC.Controllers
                     return "application/octet-stream";
             }
         }
+        public async Task<ActionResult> PartialViewModalAsignarPiezas(long id, int tipoVehiculo, long idVehiculo)
+        {
+            ComponenteVehiculo componenteVehiculo = new ComponenteVehiculo();
 
+            var inventarioResponse = await httpClientConnection.GetAllInventario();
+            var inventario = JsonConvert.DeserializeObject<List<Inventario>>(inventarioResponse.Response.ToString());
+
+            var tipoInventario = System.Configuration.ConfigurationManager
+                    .AppSettings["TipoInventario"]?
+                    .ToString()
+                    .Split('|')
+                    .Select(x =>
+                    {
+                        var partes = x.Split(':');
+                        return new SelectListItem
+                        {
+                            Value = partes[0],
+                            Text = partes.Length > 1 ? partes[1] : partes[0]
+                        };
+                    })
+                    .ToList() ?? new List<SelectListItem>();
+
+            var categoriasInventarioResponse = await httpClientConnection.GetAllCategoriaInventario();
+            var categoriaInventario = JsonConvert.DeserializeObject<List<CategoriaInventario>>(categoriasInventarioResponse.Response.ToString());
+            var categoriaInventarioDdl = MappingPropertiToDropDownList<CategoriaInventario>(categoriaInventario, "Id", "Nombre");
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            // Asignar valores al modelo principal
+            componenteVehiculo.CreatedBy = usuarioToken.UserName;
+            componenteVehiculo.UpdatedBy = usuarioToken.UserName;
+            componenteVehiculo.CreatedDt = DateTime.Now;
+            componenteVehiculo.UpdatedDt = DateTime.Now;
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+            ViewBag.Inventario = inventario;
+            ViewBag.TipoInventario = tipoInventario;
+            ViewBag.CategoriaInventario = categoriaInventarioDdl;
+
+            ViewBag.IdReparacion = id;
+            ViewBag.TipoVehiculo = tipoVehiculo;
+            ViewBag.IdVehiculo = idVehiculo;
+
+            return PartialView(componenteVehiculo);
+
+        }
         #endregion
 
         #region Data Acces
@@ -529,10 +583,10 @@ namespace MinaToMVC.Controllers
         #endregion
 
         #region ComponenteVehiculo
-        public async Task<ActionResult> SaveOrUpdateComponenteVehiculo(ComponenteVehiculo ci)
+        public async Task<string> SaveOrUpdateComponenteVehiculo(ComponenteVehiculo ci)
         {
             var r = await httpClientConnection.SaveOrUpdateComponenteVehiculo(ci);
-            return Redirect("Inventario_Taller");
+            return Newtonsoft.Json.JsonConvert.SerializeObject(r);
         }
         public async Task<string> GetAllComponenteVehiculo()
         {
@@ -773,6 +827,21 @@ namespace MinaToMVC.Controllers
         {
             var r = await httpClientConnection.GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(tipoVehiculo, idVehiculo, idReparacion);
             return Newtonsoft.Json.JsonConvert.SerializeObject(r);
+        }
+        public async Task<string> GetAllInventarioByCategoriaTipo(long categoriaInventario, int tipoInventario)
+        {
+            if (tipoInventario == 1)
+            {
+                var r = await httpClientConnection.GetAllInventarioReutilizableByCategoria(categoriaInventario);
+                return Newtonsoft.Json.JsonConvert.SerializeObject(r);
+            }
+            else if (tipoInventario == 2)
+            {
+                var r = await httpClientConnection.GetAllInventarioByCategoria(categoriaInventario);
+                return Newtonsoft.Json.JsonConvert.SerializeObject(r);
+            }
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>());
         }
         #endregion
 
