@@ -233,7 +233,7 @@
             var idInventario = selectedOption.val();
 
             // Llenar los inputs
-            $("#txtNombreItem").val(nombreItem);
+            $("#nombreItem").val(nombreItem);
             $("#txtCantidad").val(cantidad);
             $("#idInventario").val(idInventario);
 
@@ -251,14 +251,13 @@
 
         } else {
             // Si no hay selección, limpiar los inputs
-            $("#txtNombreItem").val('');
+            $("#nombreItem").val('');
             $("#txtCantidad").val('');
             $("#idInventario").val('');
             datosInventarioSeleccionado = null;
         }
     }
 
-    // Función para obtener los datos del inventario seleccionado (útil para el submit)
     function getInventarioSeleccionado() {
         return datosInventarioSeleccionado;
     }
@@ -273,12 +272,96 @@
         var idReparacion = $("#idReparacion").val();
         var tipoVehiculo = $("#tipoVehiculo").val();
         var idVehiculo = $("#idVehiculo").val();
-        var idInventario = $("#idInventario").val();
-        var ddlCategoriaInventario = $("#ddlCategoriaInventario").val();
-        var ddlTipoInventario = $("#ddlTipoInventario").val();
-        var ddlInventarioItems = $("#ddlInventarioItems").val();
+
+        var idCategoria = $("#ddlCategoriaInventario").val();     
+        var idInventario = $("#ddlInventarioItems").val();        
+        var tipoInventario = $("#ddlTipoInventario").val();       
+
         var nombreItem = $("#nombreItem").val();
         var cantidadComponente = parseInt($("#cantidadItem").val()) || 0;
-        var cantidadExistente = parseInt($("#cantidadExistente").val()) || 0;
+        var cantidadExistente = parseInt($("#txtCantidad").val()) || 0;
+
+
+        if (idCategoria <= 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Categoria inválida',
+                text: 'Debes seleccionar una Categoria.'
+            });
+            return;
+        }
+
+        if (tipoInventario <= 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Tipo de Inventario inválido',
+                text: 'Debes seleccionar un Tipo de Inventario.'
+            });
+            return;
+        }
+
+        if (idInventario <= 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Item inválido',
+                text: 'Debes seleccionar un Item.'
+            });
+            return;
+        }
+
+        if (cantidadComponente <= 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Cantidad inválida',
+                text: 'Debes ingresar una cantidad mayor a 0.'
+            });
+            return;
+        }
+
+        if (cantidadComponente > cantidadExistente) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Stock insuficiente',
+                text: 'La cantidad a usar no puede ser mayor a la cantidad en existencia.'
+            });
+            return;
+        }
+
+        var parametro = {
+            Id: id,
+            IdCategoria: idCategoria,                    
+            TipoInventario: tipoInventario,              
+            IdInventario: idInventario,                  
+            NombreInventario: nombreItem,
+            CantidadComponente: cantidadComponente,
+            IdVehiculo: idVehiculo,
+            IdReparacion: idReparacion,
+            TipoVehiculo: tipoVehiculo,
+            Estatus: estatus,
+            CreatedBy: createdBy,
+            CreatedDt: createdDt,
+            UpdatedBy: updatedBy,
+            UpdatedDt: updatedDt
+        }
+
+        PostMVC('/Taller/SaveOrUpdateComponenteVehiculo', parametro, function (r) {
+            if (r.IsSuccess) {
+                Swal.fire({
+                    title: "Registro guardado!",
+                    text: "El registro se ha guardado correctamente.",
+                    icon: "success",
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al guardar los datos: ' + r.ErrorMessage,
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
     }
 </script>

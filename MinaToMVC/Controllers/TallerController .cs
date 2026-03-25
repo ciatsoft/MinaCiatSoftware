@@ -583,10 +583,10 @@ namespace MinaToMVC.Controllers
         #endregion
 
         #region ComponenteVehiculo
-        public async Task<ActionResult> SaveOrUpdateComponenteVehiculo(ComponenteVehiculo ci)
+        public async Task<string> SaveOrUpdateComponenteVehiculo(ComponenteVehiculo ci)
         {
             var r = await httpClientConnection.SaveOrUpdateComponenteVehiculo(ci);
-            return Redirect("ResumenReparacionVehiculo/" + ci.IdReparacion);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(r);
         }
         public async Task<string> GetAllComponenteVehiculo()
         {

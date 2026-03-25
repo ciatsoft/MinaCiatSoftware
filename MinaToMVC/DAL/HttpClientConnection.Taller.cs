@@ -109,7 +109,7 @@ namespace MinaToMVC.DAL
                 new Func<string, string>((responseString) =>
                 {
                     return responseString;
-                }));
+                }), token.Token.access_token);
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
             return modelResponse;
         }
