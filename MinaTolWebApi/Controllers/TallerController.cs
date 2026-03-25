@@ -183,5 +183,19 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
         #endregion
+        #region AsignarPiezas
+        [HttpGet, Route("GetAllInventarioReutilizableByCategoria/{categoriaInventario:long}")]
+        public ModelResponse GetAllInventarioReutilizableByCategoria(long categoriaInventario)
+        {
+            var result = wrapper.GetAllInventarioReutilizableByCategoria(categoriaInventario);
+            return result;
+        }
+        [HttpGet, Route("GetAllInventarioByCategoria/{categoriaInventario:long}")]
+        public ModelResponse GetAllInventarioByCategoria(long categoriaInventario)
+        {
+            var result = wrapper.GetAllInventarioByCategoria(categoriaInventario);
+            return result;
+        }
+        #endregion
     }
 }

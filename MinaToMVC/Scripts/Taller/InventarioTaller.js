@@ -73,11 +73,6 @@ $(document).ready(function () {
                         ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarInventario(' + data + ')"/>';
                 }
             },
-            {
-                data: "id", render: function (data) {
-                    return '<input type="button" value="Usar Componente" class="btn btn-success btn-lg-custom" onclick="AbrirModalComponente(' + data + ')" />';
-                }
-            }
         ],
         language: {
             "decimal": ",",
@@ -111,8 +106,6 @@ $(document).ready(function () {
             //{ data: 'idInventario', title: 'Id Inventario', visable: false },
             { data: 'nombreInventario', title: 'Nombre de Pieza' },
             { data: 'cantidadComponente', title: 'Cantidad Usado' },
-            //{ data: 'idVehiculo', title: 'Id Vehiculo' },
-            { data: 'placa', title: 'Placa del Vehiculo' },
             {
                 data: "id", title: "Acciones", render: function (data) {
                     return ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarComponenteInventario(' + data + ')"/>';

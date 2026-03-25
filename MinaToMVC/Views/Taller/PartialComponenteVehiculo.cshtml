@@ -34,14 +34,6 @@
                     <label>Cantidad de Piezas a Usar:</label>
                     @Html.TextBoxFor(x => x.CantidadComponente, new { @class = "form-control", @id = "cantidadComponente", type = "number", min = "1" })
                 </div>
-                <div class="col-lg-4">
-                    <label>Placas del Vehículo:</label>
-                    @Html.DropDownListFor(x => x.IdVehiculo,
-                        new SelectList(vehiculos, "Id", "Placa"),
-                        "Seleccione un vehículo",
-                        new { @class = "form-control", @required = "required" })
-                    @Html.HiddenFor(x => x.Placa, new { @class = "form-control", @id = "placa" })
-                </div>
             </div>
             <div class="row">
                 <div class="col-lg-4">

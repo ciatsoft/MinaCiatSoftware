@@ -14,6 +14,7 @@ $(document).ready(function () {
             { data: 'nombre', title: 'Nombre' },
             { data: 'nombreCategoria', title: 'Categoria' },
             { data: 'marca', title: 'Marca' },
+            { data: 'cantidad', title: 'Cantidad' },
             {
                 data: 'reutilizable',
                 title: 'Reutilizable',
@@ -122,17 +123,14 @@ function ObtenerDescripcionPorCodigo(codigo, listaConfig) {
 
 function ObtenerNombreCategoria(idCategoria) {
     if (!categoriasInventario || categoriasInventario.length === 0) {
-        console.log("Categorías no cargadas aún, devolviendo ID:", idCategoria);
         return idCategoria;
     }
 
     var categoria = categoriasInventario.find(c => c.id === idCategoria);
 
     if (categoria) {
-        console.log("Categoría encontrada:", categoria.nombre, "para ID:", idCategoria);
         return categoria.nombre;
     } else {
-        console.log("Categoría NO encontrada para ID:", idCategoria);
         return idCategoria;
     }
 }
@@ -254,21 +252,22 @@ function ModalRetirarPiezas(id, tipoVehiculo, idVehiculo) {
     });
 }
 
-function ModalAsignarPiezas(id) {
-    console.log(id);
-    //$("#titleGenerciModal").text("Retirar Piezas");
+function ModalAsignarPiezas(id, tipoVehiculo, idVehiculo) {
+    console.log(id, tipoVehiculo, idVehiculo);
+    $("#titleGenerciModal").text("Asignacion de Piezas");
+
+    $("#boddyGeericModal").load(`/Taller/PartialViewModalAsignarPiezas?id=${id}&tipoVehiculo=${tipoVehiculo}&idVehiculo=${idVehiculo}`, function () {
+        $("#genericModal").modal("show");
+    });
 }
 
 function GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(tipoVehiculo, idVehiculo, idReparacion) {
     GetMVC(`/Taller/GetAllRetirarPiezaVehiculoReparacionByIdVehiculo?tipoVehiculo=${tipoVehiculo}&idVehiculo=${idVehiculo}&idReparacion=${idReparacion}`, function (r) {
         if (r.IsSuccess) {
-            console.log("Piezas recibidas:", r.Response);
-            console.log("Categorías disponibles:", categoriasInventario);
-
+            
             var datosProcesados = r.Response.map(function (pieza) {
                 var nombreCategoria = ObtenerNombreCategoria(pieza.idCategoriaInventario);
-                console.log("Pieza ID:", pieza.id, "ID Categoría:", pieza.idCategoriaInventario, "Nombre Categoría:", nombreCategoria);
-
+                
                 return {
                     ...pieza,
                     nombreCategoria: nombreCategoria
@@ -291,7 +290,7 @@ function GetAllCategoriaInventario(callback) {
     GetMVC("/Taller/GetAllCategoriaInventario", function (r) {
         if (r.IsSuccess) {
             categoriasInventario = r.Response;
-            console.log("Categorías cargadas:", categoriasInventario);
+
             if (callback) callback();
         } else {
             Swal.fire({
@@ -333,7 +332,6 @@ function EliminarPiezaRetirada(id) {
 }
 
 function EditarPiezaRetirada(id, idReparacion, tipoVehiculoCodigo, idVehiculo) {
-    console.log(id, idReparacion, tipoVehiculoCodigo, idVehiculo);
     $("#titleGenerciModal").text("Editar Retirar Piezas");
 
     $("#boddyGeericModal").load(`/Taller/PartialViewEditarRetirarPieza?id=${id}&idReparacion=${idReparacion}&tipoVehiculo=${tipoVehiculoCodigo}&idVehiculo=${idVehiculo}`, function () {
