@@ -65,16 +65,48 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Capacidad en M3:</label>
-                        @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control no-select", @type = "number", id = "cantidadRecibida" })
+                        @Html.TextBoxFor(x => x.Cantidad, new
+                   {
+                       type = "number",
+                       id = "cantidadRecibida",
+                       @class = "form-control",
+                       pattern = "[1-9][0-9]{0,9}",
+                       title = "Ingrese un número positivo mayor a 0 (máximo 10 dígitos)",
+                       placeholder = "1 - 9999999999",
+                       onkeypress = "return (event.charCode >= 48 && event.charCode <= 57) && this.value.length < 10",
+                       oninput = "if(this.value <= 0 || this.value == 0) this.value = 1; if(this.value.length > 10) this.value = this.value.slice(0,10); if(parseInt(this.value) > 9999999999) this.value = 9999999999; this.value = this.value.replace(/^0+/, '') || 1"
+                   })
                     </div>
 
                     <div class="col-lg-3">
                         <label>Planta:</label>
-                        @Html.DropDownListFor(x => x.Ubicacion.Id, (IEnumerable<SelectListItem>)ViewBag.Ubicaciones, new { @class = "form-control", @onchange = "CambioUbicacion()" })
+                        @{
+                            var ubicacionesList = ((IEnumerable<SelectListItem>)ViewBag.Ubicaciones).ToList();
+                            ubicacionesList.Insert(0, new SelectListItem
+                            {
+                                Text = "Selecciona una opción",
+                                Value = "",
+                                Selected = true,
+                                Disabled = true
+                            });
+                        }
+
+                        @Html.DropDownListFor(x => x.Ubicacion.Id, ubicacionesList, new { @class = "form-control", @onchange = "CambioUbicacion(this)" })
                     </div>
                     <div class="col-lg-3">
                         <label>Material:</label>
-                        @Html.DropDownListFor(x => x.TipoMaterial.Id, (IEnumerable<SelectListItem>)ViewBag.Materiales, new { @class = "form-control" })
+                        @{
+                            var materialesList = ((IEnumerable<SelectListItem>)ViewBag.Materiales).ToList();
+                            materialesList.Insert(0, new SelectListItem
+                            {
+                                Text = "Selecciona una opción",
+                                Value = "",
+                                Selected = true,
+                                Disabled = true
+                            });
+                        }
+
+                        @Html.DropDownListFor(x => x.TipoMaterial.Id, materialesList, new { @class = "form-control", @onchange = "CambioMaterial(this)" })
                     </div>
                     @Html.DropDownListFor(x => x.UnidadMedida.Id, (IEnumerable<SelectListItem>)ViewBag.UnidadMedida, new { @class = "form-control d-none", @readonly = "readonly" })
                     <div class="col-lg-3">
@@ -93,7 +125,12 @@
                         {
                             @class = "form-control",
                             id = "dineroRecibido",
-                            @type = "number"  // Cambia a text para formato personalizado
+                            type = "text",
+                            pattern = "[1-9][0-9]{0,9}",
+                            title = "Ingrese un número positivo mayor a 0 (máximo 10 dígitos)",
+                            placeholder = "1 - 9999999999",
+                            onkeypress = "return (event.charCode >= 48 && event.charCode <= 57) && this.value.length < 10",
+                            oninput = "if(this.value <= 0 || this.value == 0) this.value = 1; if(this.value.length > 10) this.value = this.value.slice(0,10); if(parseInt(this.value) > 9999999999) this.value = 9999999999; this.value = this.value.replace(/^0+/, '') || 1"
                         })
                     </div>
                     <div class="col-lg-3">

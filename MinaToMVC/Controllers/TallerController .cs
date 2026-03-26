@@ -598,6 +598,11 @@ namespace MinaToMVC.Controllers
             var r = await httpClientConnection.DeleteComponenteVehiculoById(id);
             return Redirect("Inventario_Taller");
         }
+        public async Task<string> GetAllPiezasAsignadasReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo, long idReparacion)
+        {
+            var r = await httpClientConnection.GetAllPiezasAsignadasReparacionByIdVehiculo(tipoVehiculo, idVehiculo, idReparacion);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(r);
+        }
         #endregion
 
         #region ReparacionVehiculos

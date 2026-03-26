@@ -71,6 +71,64 @@ $(document).ready(function () {
         }
     });
 
+    $("#tblPiezasAsignadas").DataTable({
+        data: [],
+        columns: [
+            { data: 'id', title: 'ID' },
+            {
+                data: 'tipoInventario',
+                title: 'Tipo de Inventario',
+                render: function (data, type, row) {
+                    if (data == 1) {
+                        return 'Reutilizable';
+                    } else if (data == 2) {
+                        return 'Stock Nuevo';
+                    }
+                    else {
+                        return 'Sin Tipo';
+                    }
+                }
+            },
+            { data: 'nombreCategoria', title: 'Categoria' },
+            { data: 'nombreInventario', title: 'Componente Usado' },
+            { data: 'cantidadComponente', title: 'Cantidad' },
+            { data: 'idReparacion', title: 'Reparacion', visible: false },
+            { data: 'idVehiculo', title: 'Vehiculo', visible: false },
+            { data: 'tipoVehiculo', title: 'Tipo', visible: false },
+            {
+                data: "id",
+                title: "Acciones",
+                render: function (data, type, row) {
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarPiezaRetirada(' + data + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />' +
+                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarPiezaRetirada(' + data + ')"/>';
+                }
+            }
+        ],
+        language: {
+            "decimal": ",",
+            "thousands": ".",
+            "processing": "Procesando...",
+            "lengthMenu": "Mostrar _MENU_ entradas",
+            "zeroRecords": "No se encontraron resultados",
+            "emptyTable": "Ningun dato disponible en esta tabla",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+            "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+            "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+            "search": "Buscar:",
+            "loadingRecords": "Cargando...",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                "sortDescending": ": activar para ordenar la columna de manera descendente"
+            }
+        }
+    });
+
     MostrarValoresIniciales();
 
     // Cargar categorías primero, luego los demás datos
@@ -177,6 +235,7 @@ function MostrarDescripcionVehiculo() {
     // Esperar a que las categorías estén cargadas antes de obtener las piezas
     if (categoriasInventario && categoriasInventario.length > 0) {
         GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(tipoVehiculoCodigo, idVehiculo, idReparacion);
+        GetAllPiezasAsignadasReparacionByIdVehiculo(tipoVehiculoCodigo, idVehiculo, idReparacion);
     } else {
         // Si las categorías aún no están cargadas, esperar un poco y reintentar
         setTimeout(function () {
@@ -275,6 +334,30 @@ function GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(tipoVehiculo, idVehicu
             });
 
             MapingPropertiesDataTable("tblPiezasRetiradas", datosProcesados);
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al cargar las piezas retiradas: ' + r.ErrorMessage,
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
+}
+function GetAllPiezasAsignadasReparacionByIdVehiculo(tipoVehiculo, idVehiculo, idReparacion) {
+    GetMVC(`/Taller/GetAllPiezasAsignadasReparacionByIdVehiculo?tipoVehiculo=${tipoVehiculo}&idVehiculo=${idVehiculo}&idReparacion=${idReparacion}`, function (r) {
+        if (r.IsSuccess) {
+            
+            var datosProcesados = r.Response.map(function (pieza) {
+                var nombreCategoria = ObtenerNombreCategoria(pieza.idCategoria);
+                
+                return {
+                    ...pieza,
+                    nombreCategoria: nombreCategoria
+                };
+            });
+
+            MapingPropertiesDataTable("tblPiezasAsignadas", datosProcesados);
         } else {
             Swal.fire({
                 title: 'Error',

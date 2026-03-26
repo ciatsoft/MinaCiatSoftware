@@ -273,7 +273,7 @@ namespace MinaTolWebApi.DAL
 
         }
 
-        public ModelResponse GetComponenteVehiculoById(long id)
+        public ModelResponse GetAllPiezasAsignadasReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo, long idReparacion)
         {
             var response = new ModelResponse();
             try
@@ -282,13 +282,27 @@ namespace MinaTolWebApi.DAL
                 var parameters = new List<SqlParameter>();
                 parameters.Add(new SqlParameter()
                 {
-                    Value = id,
+                    Value = idVehiculo,
                     IsNullable = true,
-                    ParameterName = "@Id",
+                    ParameterName = "@IdVehiculo",
+                    SqlDbType = System.Data.SqlDbType.Int
+                });
+                parameters.Add(new SqlParameter()
+                {
+                    Value = tipoVehiculo,
+                    IsNullable = true,
+                    ParameterName = "@TipoVehiculo",
+                    SqlDbType = System.Data.SqlDbType.Int
+                });
+                parameters.Add(new SqlParameter()
+                {
+                    Value = idReparacion,
+                    IsNullable = true,
+                    ParameterName = "@IdReparacion",
                     SqlDbType = System.Data.SqlDbType.Int
                 });
 
-                var result = GetObject("GetComponenteVehiculoById", System.Data.CommandType.StoredProcedure,
+                var result = GetObjects("GetAllPiezasAsignadasReparacionByIdVehiculo", System.Data.CommandType.StoredProcedure,
                     parameters, new Func<System.Data.IDataReader, ComponenteVehiculo>((reader) =>
                     {
                         var r = FillEntity<ComponenteVehiculo>(reader);
