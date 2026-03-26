@@ -98,10 +98,10 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-        [HttpGet, Route("ComponenteVehiculo/{id:long}")]
-        public ModelResponse GetComponenteVehiculoById(long id)
+        [HttpGet, Route("AsignarComponenteVehiculo/ByVehiculo/{tipoVehiculo:int}/{idVehiculo:long}/{idReparacion:long}")]
+        public ModelResponse GetAllPiezasAsignadasReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo, long idReparacion)
         {
-            var result = wrapper.GetComponenteVehiculoById(id);
+            var result = wrapper.GetAllPiezasAsignadasReparacionByIdVehiculo(tipoVehiculo, idVehiculo, idReparacion);
             return result;
         }
 

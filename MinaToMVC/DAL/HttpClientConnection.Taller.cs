@@ -126,9 +126,9 @@ namespace MinaToMVC.DAL
 
             return modelResponse;
         }
-        public async Task<ModelResponse> GetComponenteVehiculoById(long id)
+        public async Task<ModelResponse> GetAllPiezasAsignadasReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo, long idReparacion)
         {
-            var result = await RequestAsync<object>($"api/Taller/ComponenteVehiculo/{id}", HttpMethod.Get, null,
+            var result = await RequestAsync<object>($"api/Taller/AsignarComponenteVehiculo/ByVehiculo/{tipoVehiculo}/{idVehiculo}/{idReparacion}", HttpMethod.Get, null,
                new Func<string, string>((responseString) =>
                {
                    return responseString;

@@ -30,17 +30,58 @@ namespace MinaTolWebApi.Controllers
         [HttpGet, Route("Login/{username}/{password}")]
         public async Task<ModelResponse> ValidateUserPassword(string username, string password)
         {
-            password = Cryptography.Encrypt(password);
-            var result = wrapper.ValidateUserPassword(username, password);
-            if (result.Message == null && result.Response == null)
+            // Validar entrada
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
-                result.Message = "Usuario sin acceso.";
+                return new ModelResponse
+                {
+                    IsSuccess = false,
+                    Enum = Enumeration.ErrorValidacion,
+                    Message = "Usuario y contraseña son requeridos"
+                };
             }
-            else
+
+            try
             {
-                result.Message = "Usuario encontrado, sesion iniciada.";
+                // Encriptar contraseña
+                var encryptedPassword = Cryptography.Encrypt(password);
+
+                // Validar credenciales
+                var result = wrapper.ValidateUserPassword(username, encryptedPassword);
+
+                // Construir respuesta según el resultado
+                if (result.IsSuccess && result.Response != null)
+                {
+                    // Login exitoso
+                    var usuario = (Usuario)result.Response;
+
+                    // Opcional: Generar token JWT aquí si es necesario
+                    // var token = GenerateJwtToken(usuario);
+
+                    result.Message = "Inicio de sesión exitoso";
+
+                    // Opcional: No devolver información sensible
+                    // usuario.Contraseña = null;
+                }
+                else if (!result.IsSuccess)
+                {
+                    // Error en la validación
+                    // El mensaje ya viene definido en el DBWrapper
+                    return result;
+                }
+
+                return result;
             }
-            return result;
+            catch (Exception ex)
+            {
+                // Error no controlado
+                return new ModelResponse
+                {
+                    IsSuccess = false,
+                    Enum = Enumeration.ErrorNoControlado,
+                    Message = "Error al procesar la solicitud de login"
+                };
+            }
         }
 
         [HttpGet, Route("GetVenta/{gitticket}")]

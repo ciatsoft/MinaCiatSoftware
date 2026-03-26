@@ -44,7 +44,11 @@ namespace MinaTolEntidades
         [Description("Email se encuentra en uso.")]
         ErrorEmailIsAlreadyInUse,
         [Description("Archivo no cargado.")]
-        FileNotLoad
+        FileNotLoad,
+        Exito,
+        ErrorCredencialesInvalidas,
+        ErrorBaseDeDatos,
+        ErrorValidacion
     }
     public static class EnumExtensionMethods
     {

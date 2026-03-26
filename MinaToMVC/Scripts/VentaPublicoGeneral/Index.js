@@ -8,8 +8,12 @@ $(document).ready(function () {
     });
 
     // También cuando cambia el tipo de material
+    $("#Ubicacion_Id").on("change", function () {
+        CambioUbicacion(this);
+    });
+
     $("#TipoMaterial_Id").on("change", function () {
-        ObtenerPrecioMaterial();
+        CambioMaterial(this);
     });
 
     // Función para manejar la búsqueda por nombre
@@ -384,7 +388,7 @@ $(function () {
 
     // Al cambiar la ubicación, carga los materiales disponibles
     $("#Ubicacion_Id").on("change", function () {
-        CambioUbicacion();
+        CambioUbicacion(this); // Pasar el elemento select
     });
 
     // Al cambiar el material, actualiza el precio
@@ -408,11 +412,26 @@ $(function () {
     }
 });
 
-function CambioUbicacion() {
+function CambioUbicacion(selectElement) {
+    // Si no se pasa el elemento, obtenerlo por ID
+    if (!selectElement) {
+        selectElement = document.getElementById("Ubicacion_Id");
+    }
+
+    // Obtener todas las opciones y deshabilitar permanentemente la opción por defecto
+    var options = selectElement.options;
+    for (var i = 0; i < options.length; i++) {
+        if (options[i].value === "") {
+            options[i].disabled = true;
+            break;
+        }
+    }
+
     var ubicacionSeleccionada = $("#Ubicacion_Id").val();
 
     if (!ubicacionSeleccionada) {
-        $("#TipoMaterial_Id").empty().append('<option value="">Selecciona una opción</option>');
+        // Limpiar el dropdown de materiales y agregar opción por defecto
+        $("#TipoMaterial_Id").empty().append('<option value="" selected disabled>Selecciona una opción</option>');
         $("#precioMaterial").val(0);
         precioMaterial = 0;
         actualizarTotal();
@@ -422,14 +441,28 @@ function CambioUbicacion() {
     GetMVC("/VentaPublicoGeneral/GetMaterialUbicacionByUbicacion/" + ubicacionSeleccionada, function (r) {
         if (r.IsSuccess) {
             $("#TipoMaterial_Id").empty();
+
+            // Agregar opción por defecto al inicio (selected y disabled)
+            $("#TipoMaterial_Id").append('<option value="" selected disabled>Selecciona una opción</option>');
+
+            // Agregar los materiales
             $.each(r.Response, function (index, item) {
                 var templateoption = "<option value='" + item.material.id + "'>" + item.material.nombreTipoMaterial + "</option>";
                 $("#TipoMaterial_Id").append(templateoption);
             });
 
-            // Si solo hay un material, seleccionarlo automáticamente
+            // Si solo hay un material, seleccionarlo automáticamente y deshabilitar la opción por defecto
             if (r.Response.length === 1) {
                 $("#TipoMaterial_Id").val(r.Response[0].material.id).trigger('change');
+                // Deshabilitar la opción por defecto después de seleccionar el único material
+                var materialSelect = document.getElementById("TipoMaterial_Id");
+                var materialOptions = materialSelect.options;
+                for (var i = 0; i < materialOptions.length; i++) {
+                    if (materialOptions[i].value === "") {
+                        materialOptions[i].disabled = true;
+                        break;
+                    }
+                }
             } else {
                 // Limpiar precios si hay múltiples opciones
                 $("#precioMaterial").val(0);
@@ -441,6 +474,36 @@ function CambioUbicacion() {
             window.Swal.fire('Error', 'No es posible obtener los materiales de esta ubicación: ', 'error');
         }
     });
+}
+
+function CambioMaterial(selectElement) {
+    // Si no se pasa el elemento, obtenerlo por ID
+    if (!selectElement) {
+        selectElement = document.getElementById("TipoMaterial_Id");
+    }
+
+    // Deshabilitar la opción por defecto después de seleccionar otra
+    var options = selectElement.options;
+    for (var i = 0; i < options.length; i++) {
+        if (options[i].value === "") {
+            options[i].disabled = true;
+            break;
+        }
+    }
+
+    // Prevenir que se vuelva a seleccionar la opción por defecto
+    if ($(selectElement).val() === "") {
+        var lastValidValue = $(selectElement).attr('data-last-value');
+        if (lastValidValue) {
+            $(selectElement).val(lastValidValue);
+            return;
+        }
+    } else {
+        $(selectElement).attr('data-last-value', $(selectElement).val());
+    }
+
+    // Llamar a la función para obtener el precio
+    ObtenerPrecioMaterial();
 }
 
 // Función para obtener y asignar el precio dependiendo de la cantidad
@@ -809,33 +872,18 @@ function SearchPV_VentasByDate(fecha) {
                         }
                     },
                     {
-                        data: "carga",
-                        title: "Carga",
-                        render: function (data, type, row) {  // Añade 'row' para acceder a todas las propiedades de la fila
-                            if (data == 0) {
-                                return `
-                            <input type="button" value="Cargar" class="btn btn-success" onclick="Cargar(${row.id})" />
-                        `;
-                            } else if (data == 1) {
-                                return `
-                            <span style="display: inline-flex; align-items: center; gap: 5px;">
-                              <span style="
-                                display: inline-block;
-                                width: 20px;
-                                height: 20px;
-                                background-color: red;
-                                border-radius: 50%;
-                              "></span> 
-                              Ya cargado
-                            </span>
-                        `;
-                            } else {
-                                return '';
-                            }
-                        },
-                        orderable: false,
-                        searchable: false
-                    }
+                        data: "id",
+                        render: function (data, type, row, meta) {
+                            return `
+                    <button 
+                        type="button"
+                        onclick="mostrarEstatus(${row.id})"
+                        style="background-color: blue; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; color: white;">
+                        Mostrar Estatus
+                    </button>
+                `;
+                        }
+                    },
                 ],
                 language: {
                     decimal: ",",
