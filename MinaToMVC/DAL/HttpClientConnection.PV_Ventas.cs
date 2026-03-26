@@ -215,7 +215,6 @@ namespace MinaToMVC.DAL
 
         public async Task<ModelResponse> SaveOrUpdateDeducciones(Deducciones tmu)
         {
-            MappingColumSecurity(tmu);
             var result = await RequestAsync<object>("api/PV_Venta/Deducciones", HttpMethod.Post, tmu,
             new Func<string, string>((responseString) =>
             {
