@@ -1,0 +1,16 @@
+﻿
+@{
+    ViewBag.Title = "InventarioPiezasReutilizables";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+
+<div class="content">
+    <br />
+    <center><h1>Inventario de Piezas Reutilizables</h1></center>
+    <br />
+    <table id="tblPiezasRetiradas" class="table table-bordered table-striped" style="width: 100%;"></table>
+</div>
+
+<script src="@(Url.StaticFile("Scripts/Taller/InventarioPiezasReutilizables.js"))"></script>

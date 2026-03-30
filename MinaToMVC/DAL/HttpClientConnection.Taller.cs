@@ -304,5 +304,33 @@ namespace MinaToMVC.DAL
             return modelResponse;
         }
         #endregion
+        #region Reportes
+        public async Task<ModelResponse> GetAllRetirarPiezasReutilizables()
+        {
+
+            var result = await RequestAsync<object>("api/Taller/PiezasReutilizables/List", HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+        public async Task<ModelResponse> GetAllRetirarPiezasNoReutilizables()
+        {
+
+            var result = await RequestAsync<object>("api/Taller/PiezasNoReutilizables/List", HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+        #endregion
     }
 }

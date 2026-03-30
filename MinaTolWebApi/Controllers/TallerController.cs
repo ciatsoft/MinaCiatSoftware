@@ -203,5 +203,19 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
         #endregion
+        #region Reportes
+        [HttpGet, Route("PiezasReutilizables/List")]
+        public ModelResponse GetAllRetirarPiezasReutilizables()
+        {
+            var result = wrapper.GetAllRetirarPiezasReutilizables();
+            return result;
+        }
+        [HttpGet, Route("PiezasNoReutilizables/List")]
+        public ModelResponse GetAllRetirarPiezasNoReutilizables()
+        {
+            var result = wrapper.GetAllRetirarPiezasNoReutilizables();
+            return result;
+        }
+        #endregion
     }
 }

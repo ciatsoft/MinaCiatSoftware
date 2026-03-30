@@ -204,6 +204,14 @@ namespace MinaToMVC.Controllers
 
             return View(reparacionVehiculos);
         }
+        public async Task<ActionResult> InventarioPiezasReutilizables()
+        {
+            return View();
+        }
+        public async Task<ActionResult> InventarioPiezasNoUtilizadas()
+        {
+            return View();
+        }
         #endregion
 
         #region PartialViews
@@ -552,6 +560,91 @@ namespace MinaToMVC.Controllers
 
             return PartialView(componenteVehiculo);
         }
+        public async Task<ActionResult> PartialViewModalMostrarDetalles(long id, long idReparacion, int tipoVehiculo, long idVehiculo)
+        {
+            RetirarPiezaVehiculoReparacion retirarPiezaVehiculoReparacion = new RetirarPiezaVehiculoReparacion();
+            var result = await httpClientConnection.GetRetirarPiezaVehiculoReparacionById(id);
+            retirarPiezaVehiculoReparacion = JsonConvert.DeserializeObject<RetirarPiezaVehiculoReparacion>(result.Response.ToString());
+
+            // Limpiar las rutas
+            string rutaFoto = retirarPiezaVehiculoReparacion.RutaFoto?.Replace("\\", "/").Trim('/') ?? "";
+            string gitFoto = retirarPiezaVehiculoReparacion.GitFoto?.Trim() ?? "";
+
+            // Construir la URL manualmente sin usar Url.Action para evitar el encoding de &amp;
+            string imageUrl = "";
+            bool hasImage = false;
+
+            if (!string.IsNullOrEmpty(rutaFoto) && !string.IsNullOrEmpty(gitFoto))
+            {
+                // Verificar si el archivo existe
+                string projectRootPath = HostingEnvironment.ApplicationPhysicalPath;
+                string physicalPath = Path.Combine(projectRootPath, rutaFoto, gitFoto);
+
+                if (System.IO.File.Exists(physicalPath))
+                {
+                    hasImage = true;
+                    // Construir URL manualmente para evitar el encoding
+                    imageUrl = $"/Taller/VerImagenPiezaRetirada?rutaArchivo={Uri.EscapeDataString(rutaFoto)}&nombreArchivo={Uri.EscapeDataString(gitFoto)}";
+                }
+                else
+                {
+                    // Intentar con la ruta alternativa
+                    string alternativePath = Path.Combine(projectRootPath, "AttachmentTaller/PiezasRetiradas", gitFoto);
+                    if (System.IO.File.Exists(alternativePath))
+                    {
+                        hasImage = true;
+                        imageUrl = $"/Taller/VerImagenPiezaRetirada?rutaArchivo={Uri.EscapeDataString("AttachmentTaller/PiezasRetiradas")}&nombreArchivo={Uri.EscapeDataString(gitFoto)}";
+                    }
+                }
+            }
+
+            ViewBag.ImageUrl = imageUrl;
+            ViewBag.HasImage = hasImage;
+            ViewBag.RutaArchivo = rutaFoto;
+            ViewBag.NombreArchivo = gitFoto;
+
+            // Resto del código...
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+            var categoriasInventarioResponse = await httpClientConnection.GetAllCategoriaInventario();
+            var categoriaInventario = JsonConvert.DeserializeObject<List<CategoriaInventario>>(categoriasInventarioResponse.Response.ToString());
+            var categoriaInventarioDdl = MappingPropertiToDropDownList<CategoriaInventario>(categoriaInventario, "Id", "Nombre");
+
+            var ubicacionesAlmacenTaller = System.Configuration.ConfigurationManager
+                    .AppSettings["UbicacionesAlmacenTaller"]?
+                    .ToString()
+                    .Split('|')
+                    .Select(x =>
+                    {
+                        var partes = x.Split(':');
+                        return new SelectListItem
+                        {
+                            Value = partes[0],
+                            Text = partes.Length > 1 ? partes[1] : partes[0]
+                        };
+                    })
+                    .ToList() ?? new List<SelectListItem>();
+
+            ViewBag.UserToken = usuarioAutenticado.UserName;
+            ViewBag.Usuarios = usuarios;
+            ViewBag.IdRegistro = id;
+            ViewBag.IdReparacion = idReparacion;
+            ViewBag.TipoVehiculo = tipoVehiculo;
+            ViewBag.IdVehiculo = idVehiculo;
+            ViewBag.CategoriaInventario = categoriaInventarioDdl;
+            ViewBag.UbicacionesInventarioTaller = ubicacionesAlmacenTaller;
+
+            return PartialView(retirarPiezaVehiculoReparacion);
+        }
         #endregion
 
         #region Data Acces
@@ -862,6 +955,19 @@ namespace MinaToMVC.Controllers
             }
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>());
+        }
+        #endregion
+
+        #region Reportes
+        public async Task<string> GetAllRetirarPiezasReutilizables()
+        {
+            var result = await httpClientConnection.GetAllRetirarPiezasReutilizables();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetAllRetirarPiezasNoReutilizables()
+        {
+            var result = await httpClientConnection.GetAllRetirarPiezasNoReutilizables();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
         #endregion
 

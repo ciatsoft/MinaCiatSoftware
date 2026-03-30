@@ -780,5 +780,57 @@ namespace MinaTolWebApi.DAL
             return response;
         }
         #endregion
+        #region Reportes
+        public ModelResponse GetAllRetirarPiezasReutilizables()
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                var result = GetObjects("GetAllRetirarPiezasReutilizables", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, RetirarPiezaVehiculoReparacion>((reader) =>
+                    {
+                        var r = FillEntity<RetirarPiezaVehiculoReparacion>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+
+        }
+        public ModelResponse GetAllRetirarPiezasNoReutilizables()
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                var result = GetObjects("GetAllRetirarPiezasNoReutilizables", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, RetirarPiezaVehiculoReparacion>((reader) =>
+                    {
+                        var r = FillEntity<RetirarPiezaVehiculoReparacion>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+
+        }
+        #endregion
     }
 }
