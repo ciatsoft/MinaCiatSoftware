@@ -82,7 +82,7 @@ $(document).ready(function () {
                     if (data == 1) {
                         return 'Reutilizable';
                     } else if (data == 2) {
-                        return 'Stock Nuevo';
+                        return 'Nueva Pieza';
                     }
                     else {
                         return 'Sin Tipo';
@@ -99,8 +99,8 @@ $(document).ready(function () {
                 data: "id",
                 title: "Acciones",
                 render: function (data, type, row) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarPiezaRetirada(' + data + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarPiezaRetirada(' + data + ')"/>';
+                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarPiezaAsignada(' + row.id + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />' +
+                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarPiezaAsignada(' + data + ')"/>';
                 }
             }
         ],
@@ -311,11 +311,11 @@ function ModalRetirarPiezas(id, tipoVehiculo, idVehiculo) {
     });
 }
 
-function ModalAsignarPiezas(id, tipoVehiculo, idVehiculo) {
+function ModalAsignarPiezas(id, idReparacion, tipoVehiculo, idVehiculo) {
     console.log(id, tipoVehiculo, idVehiculo);
     $("#titleGenerciModal").text("Asignacion de Piezas");
 
-    $("#boddyGeericModal").load(`/Taller/PartialViewModalAsignarPiezas?id=${id}&tipoVehiculo=${tipoVehiculo}&idVehiculo=${idVehiculo}`, function () {
+    $("#boddyGeericModal").load(`/Taller/PartialViewModalAsignarPiezas?id=${id}&idReparacion=${idReparacion}&tipoVehiculo=${tipoVehiculo}&idVehiculo=${idVehiculo}`, function () {
         $("#genericModal").modal("show");
     });
 }
@@ -418,6 +418,13 @@ function EditarPiezaRetirada(id, idReparacion, tipoVehiculoCodigo, idVehiculo) {
     $("#titleGenerciModal").text("Editar Retirar Piezas");
 
     $("#boddyGeericModal").load(`/Taller/PartialViewEditarRetirarPieza?id=${id}&idReparacion=${idReparacion}&tipoVehiculo=${tipoVehiculoCodigo}&idVehiculo=${idVehiculo}`, function () {
+        $("#genericModal").modal("show");
+    });
+}
+function EditarPiezaAsignada(id, idReparacion, tipoVehiculoCodigo, idVehiculo) {
+    $("#titleGenerciModal").text("Editar Retirar Piezas");
+
+    $("#boddyGeericModal").load(`/Taller/PartialViewModalAsignarPiezas?id=${id}&idReparacion=${idReparacion}&tipoVehiculo=${tipoVehiculoCodigo}&idVehiculo=${idVehiculo}`, function () {
         $("#genericModal").modal("show");
     });
 }

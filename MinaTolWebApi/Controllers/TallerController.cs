@@ -111,6 +111,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.DeleteComponenteVehiculoById(id);
             return result;
         }
+        [HttpGet, Route("AsignarPiezaVehiculoReparacion/{id:long}")]
+        public ModelResponse GetAsignarPiezaVehiculoReparacionById(long id)
+        {
+            var result = wrapper.GetAsignarPiezaVehiculoReparacionById(id);
+            return result;
+        }
 
         #endregion
         #region ReparacionVehiculos

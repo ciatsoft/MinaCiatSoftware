@@ -480,9 +480,17 @@ namespace MinaToMVC.Controllers
                     return "application/octet-stream";
             }
         }
-        public async Task<ActionResult> PartialViewModalAsignarPiezas(long id, int tipoVehiculo, long idVehiculo)
+        public async Task<ActionResult> PartialViewModalAsignarPiezas(long id, long idReparacion, int tipoVehiculo, long idVehiculo)
         {
             ComponenteVehiculo componenteVehiculo = new ComponenteVehiculo();
+            var tieneDatos = false;
+
+            if (id != 0)
+            {
+                var result = await httpClientConnection.GetAsignarPiezaVehiculoReparacionById(id);
+                componenteVehiculo = JsonConvert.DeserializeObject<ComponenteVehiculo>(result.Response.ToString());
+                tieneDatos = true;
+            }
 
             var inventarioResponse = await httpClientConnection.GetAllInventario();
             var inventario = JsonConvert.DeserializeObject<List<Inventario>>(inventarioResponse.Response.ToString());
@@ -519,24 +527,30 @@ namespace MinaToMVC.Controllers
             var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
             var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
 
-            // Asignar valores al modelo principal
-            componenteVehiculo.CreatedBy = usuarioToken.UserName;
-            componenteVehiculo.UpdatedBy = usuarioToken.UserName;
-            componenteVehiculo.CreatedDt = DateTime.Now;
-            componenteVehiculo.UpdatedDt = DateTime.Now;
+            // Asignar valores al modelo principal solo si es nuevo registro
+            if (!tieneDatos)
+            {
+                componenteVehiculo.CreatedBy = usuarioToken.UserName;
+                componenteVehiculo.UpdatedBy = usuarioToken.UserName;
+                componenteVehiculo.CreatedDt = DateTime.Now;
+                componenteVehiculo.UpdatedDt = DateTime.Now;
+            }
 
             ViewBag.UserToken = usuarioAutenticado;
             ViewBag.Usuarios = usuarios;
             ViewBag.Inventario = inventario;
             ViewBag.TipoInventario = tipoInventario;
             ViewBag.CategoriaInventario = categoriaInventarioDdl;
+            ViewBag.Id = id;
 
-            ViewBag.IdReparacion = id;
+            ViewBag.IdReparacion = idReparacion;
             ViewBag.TipoVehiculo = tipoVehiculo;
             ViewBag.IdVehiculo = idVehiculo;
 
-            return PartialView(componenteVehiculo);
+            // Agregar flag para saber si es edición
+            ViewBag.EsEdicion = tieneDatos;
 
+            return PartialView(componenteVehiculo);
         }
         #endregion
 

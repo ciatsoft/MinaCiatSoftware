@@ -145,6 +145,16 @@ namespace MinaToMVC.DAL
                 }), token.Token.access_token);
             return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
         }
+        public async Task<ModelResponse> GetAsignarPiezaVehiculoReparacionById(long id)
+        {
+            var result = await RequestAsync<object>($"api/Taller/AsignarPiezaVehiculoReparacion/{id}", HttpMethod.Get, null,
+               new Func<string, string>((responseString) =>
+               {
+                   return responseString;
+               }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
         #endregion
         #region ReparacionVehiculos
         public async Task<ModelResponse> SaveOrUpdateReparacionVehiculos(ReparacionVehiculos reparacionVehiculos)
