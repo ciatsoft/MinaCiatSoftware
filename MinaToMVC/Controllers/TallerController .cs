@@ -782,6 +782,7 @@ namespace MinaToMVC.Controllers
                     Nombre = nombre,
                     Marca = marca,
                     Cantidad = cantidad,
+                    CantidadRetirada = cantidad,
                     UbicacionAlmacen = ubicacionAlmacen,
                     Fecha = fecha,
                     RutaFoto = rutaArchivo,

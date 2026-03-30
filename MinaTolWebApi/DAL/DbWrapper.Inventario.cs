@@ -246,7 +246,6 @@ namespace MinaTolWebApi.DAL
 
             return modelResponse;
         }
-
         public ModelResponse GetAllComponenteVehiculo()
         {
             var response = new ModelResponse();
@@ -272,7 +271,6 @@ namespace MinaTolWebApi.DAL
             return response;
 
         }
-
         public ModelResponse GetAllPiezasAsignadasReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo, long idReparacion)
         {
             var response = new ModelResponse();
@@ -319,7 +317,6 @@ namespace MinaTolWebApi.DAL
             return response;
 
         }
-
         public ModelResponse GetAsignarPiezaVehiculoReparacionById(long id)
         {
             var response = new ModelResponse();
@@ -352,7 +349,6 @@ namespace MinaTolWebApi.DAL
             return response;
 
         }
-
         public ModelResponse DeleteComponenteVehiculoById(long id)
         {
             var response = new ModelResponse();

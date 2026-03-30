@@ -14,7 +14,7 @@ $(document).ready(function () {
             { data: 'nombre', title: 'Nombre' },
             { data: 'nombreCategoria', title: 'Categoria' },
             { data: 'marca', title: 'Marca' },
-            { data: 'cantidad', title: 'Cantidad' },
+            { data: 'cantidadRetirada', title: 'Cantidad' },
             {
                 data: 'reutilizable',
                 title: 'Reutilizable',
@@ -100,7 +100,7 @@ $(document).ready(function () {
                 title: "Acciones",
                 render: function (data, type, row) {
                     return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarPiezaAsignada(' + row.id + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarPiezaAsignada(' + data + ')"/>';
+                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarPiezaAsignada(' + row.id + ')"/>';
                 }
             }
         ],
@@ -321,6 +321,9 @@ function ModalAsignarPiezas(id, idReparacion, tipoVehiculo, idVehiculo) {
 }
 
 function GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(tipoVehiculo, idVehiculo, idReparacion) {
+    console.log("Tipo Vehiculo: " + tipoVehiculo);
+    console.log("Id Vehiculo: " + idVehiculo);
+    console.log("Id Reparacion: " + idReparacion);
     GetMVC(`/Taller/GetAllRetirarPiezaVehiculoReparacionByIdVehiculo?tipoVehiculo=${tipoVehiculo}&idVehiculo=${idVehiculo}&idReparacion=${idReparacion}`, function (r) {
         if (r.IsSuccess) {
             
@@ -426,5 +429,31 @@ function EditarPiezaAsignada(id, idReparacion, tipoVehiculoCodigo, idVehiculo) {
 
     $("#boddyGeericModal").load(`/Taller/PartialViewModalAsignarPiezas?id=${id}&idReparacion=${idReparacion}&tipoVehiculo=${tipoVehiculoCodigo}&idVehiculo=${idVehiculo}`, function () {
         $("#genericModal").modal("show");
+    });
+}
+function EliminarPiezaAsignada(id) {
+    Swal.fire({
+        title: 'Eliminar Registro',
+        text: "Desea eliminar el siguiente registro?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var parametro = { Id: id };
+
+            PostMVC('/Taller/DeleteComponenteVehiculoById', parametro, function (r) {
+                if (r.IsSuccess) {
+                    Swal.fire('Eliminado', 'El registro ha sido eliminado.', 'success')
+                        .then(() => { window.location.reload(); });
+                } else {
+                    Swal.fire('Eliminado', 'El registro ha sido eliminado.', 'success')
+                        .then(() => { window.location.reload(); });
+                }
+            });
+        }
     });
 }
