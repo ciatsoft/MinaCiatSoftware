@@ -1373,5 +1373,188 @@ namespace MinaToMVC.Controllers
                 });
             }
         }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult GenerarReporteReparacionPDF(string tablaRetiradasHTML, string tablaAsignadasHTML,
+    string idReparacion, string tipoVehiculo, string vehiculo, string tipoServicio, string estado)
+        {
+            byte[] pdfBytes = null;
+
+            try
+            {
+                // Obtener la fecha actual formateada
+                string fechaGeneracion = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+
+                // Obtener información adicional si es necesario
+                string tituloReporte = $"Reporte de Reparación #{idReparacion}";
+
+                // Crear HTML completo con estilos optimizados para PDF
+                string htmlCompleto = $@"
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset='UTF-8'>
+                    <title>Reporte de Reparación de Vehículo</title>
+                    <style>
+                        body {{ 
+                            font-family: Arial, sans-serif; 
+                            margin: 15px; 
+                            font-size: 12px;
+                            color: #333;
+                        }}
+                        .header {{ 
+                            text-align: center; 
+                            margin-bottom: 20px;
+                            border-bottom: 2px solid #2c3e50;
+                            padding-bottom: 10px;
+                        }}
+                        h1 {{ 
+                            color: #2c3e50; 
+                            margin: 0 0 5px 0;
+                            font-size: 20px;
+                        }}
+                        .fecha {{
+                            font-size: 14px;
+                            color: #7f8c8d;
+                        }}
+                        .info-reparacion {{
+                            background-color: #f8f9fa;
+                            border: 1px solid #dee2e6;
+                            border-radius: 5px;
+                            padding: 15px;
+                            margin-bottom: 20px;
+                        }}
+                        .info-row {{
+                            margin-bottom: 10px;
+                        }}
+                        .info-label {{
+                            font-weight: bold;
+                            display: inline-block;
+                            width: 150px;
+                            color: #2c3e50;
+                        }}
+                        .info-value {{
+                            display: inline-block;
+                            color: #555;
+                        }}
+                        table {{ 
+                            width: 100%; 
+                            border-collapse: collapse; 
+                            margin-top: 10px;
+                            margin-bottom: 20px;
+                            font-size: 10px;
+                            page-break-inside: auto;
+                        }}
+                        th, td {{ 
+                            padding: 8px; 
+                            text-align: left; 
+                            border: 1px solid #ddd; 
+                            word-wrap: break-word;
+                        }}
+                        th {{ 
+                            background-color: #34495e; 
+                            color: white;
+                            font-weight: bold;
+                            text-align: center;
+                        }}
+                        tr:nth-child(even) {{ 
+                            background-color: #f9f9f9; 
+                        }}
+                        tr {{ 
+                            page-break-inside: avoid;
+                            page-break-after: auto;
+                        }}
+                        .footer {{ 
+                            text-align: center; 
+                            margin-top: 30px; 
+                            font-size: 10px; 
+                            color: #7f8c8d;
+                            border-top: 1px solid #eee;
+                            padding-top: 10px;
+                        }}
+                        h2 {{
+                            color: #2c3e50;
+                            font-size: 16px;
+                            margin-top: 20px;
+                            margin-bottom: 10px;
+                        }}
+                        .estado-badge {{
+                            display: inline-block;
+                            padding: 3px 8px;
+                            border-radius: 3px;
+                            font-size: 11px;
+                            font-weight: bold;
+                        }}
+                        .estado-pendiente {{ background-color: #f39c12; color: white; }}
+                        .estado-proceso {{ background-color: #3498db; color: white; }}
+                        .estado-terminado {{ background-color: #27ae60; color: white; }}
+                    </style>
+                </head>
+                <body>
+                    <div class='header'>
+                        <h1>{tituloReporte}</h1>
+                        <p class='fecha'><strong>Fecha de generación:</strong> {fechaGeneracion}</p>
+                    </div>
+            
+                    <div class='info-reparacion'>
+                        <div class='info-row'>
+                            <span class='info-label'>ID Reparación:</span>
+                            <span class='info-value'>{idReparacion}</span>
+                        </div>
+                        <div class='info-row'>
+                            <span class='info-label'>Tipo de Vehículo:</span>
+                            <span class='info-value'>{tipoVehiculo}</span>
+                        </div>
+                        <div class='info-row'>
+                            <span class='info-label'>Vehículo:</span>
+                            <span class='info-value'>{vehiculo}</span>
+                        </div>
+                        <div class='info-row'>
+                            <span class='info-label'>Tipo de Servicio:</span>
+                            <span class='info-value'>{tipoServicio}</span>
+                        </div>
+                        <div class='info-row'>
+                            <span class='info-label'>Estado:</span>
+                            <span class='info-value'>
+                                <span class='estado-badge estado-{(estado.ToLower() == "pendiente" ? "pendiente" : (estado.ToLower() == "en proceso" ? "proceso" : "terminado"))}'>
+                                    {estado}
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+            
+                    {tablaRetiradasHTML}
+                    {tablaAsignadasHTML}
+            
+                    <div class='footer'>
+                        <p>Reporte generado por Sistema de Taller - Mina San Miguel</p>
+                        <p>Página 1 de 1</p>
+                    </div>
+                </body>
+                </html>";
+
+                // Configurar el convertidor HTML a PDF
+                var htmlToPdf = new HtmlToPdfConverter();
+                htmlToPdf.Orientation = PageOrientation.Default;
+                htmlToPdf.Size = PageSize.Letter;
+                htmlToPdf.Margins = new PageMargins { Top = 15, Bottom = 15, Left = 10, Right = 10 };
+
+                // Configuraciones adicionales para mejor rendimiento
+                htmlToPdf.LowQuality = false;
+                htmlToPdf.Quiet = true;
+
+                // Generar el PDF
+                pdfBytes = htmlToPdf.GeneratePdf(htmlCompleto);
+
+                // Devolver el PDF para descarga
+                return File(pdfBytes, "application/pdf", $"Reporte_Reparacion_{idReparacion}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error al generar PDF: {ex.Message}");
+                return Content($"Error al generar el reporte PDF: {ex.Message}");
+            }
+        }
     }
 }
