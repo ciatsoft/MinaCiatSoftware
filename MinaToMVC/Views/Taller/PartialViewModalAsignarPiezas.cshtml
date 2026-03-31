@@ -392,6 +392,7 @@
         var cantidadComponente = parseInt($("#cantidadItem").val()) || 0;
         var cantidadExistente = parseInt($("#txtCantidad").val()) || 0;
 
+        // Validaciones existentes
         if (!idCategoria || idCategoria === "") {
             Swal.fire({
                 icon: 'warning',
@@ -428,15 +429,7 @@
             return;
         }
 
-        if (id == 0 && cantidadComponente > cantidadExistente) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Stock insuficiente',
-                text: 'La cantidad a usar no puede ser mayor a la cantidad en existencia.'
-            });
-            return;
-        }
-
+        // Crear el objeto parametro ANTES de las validaciones de stock
         var parametro = {
             Id: parseInt(id) || 0,
             IdCategoria: parseInt(idCategoria),
@@ -454,6 +447,76 @@
             UpdatedDt: createdDt
         }
 
+        // Validaciones de stock
+        if (id != 0) {
+            // Edición
+            var cantidadAnterior = cantidadComponenteModel;
+            var cambioNeto = cantidadComponente - cantidadAnterior;
+            var cantidadResultante = cantidadExistente - cambioNeto;
+
+            if (cantidadResultante < 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Stock insuficiente',
+                    text: `No se puede realizar la modificación. La cantidad disponible actual es ${cantidadExistente}, y el cambio solicitado (${cambioNeto > 0 ? '+' : ''}${cambioNeto}) resultaría en un stock negativo (${cantidadResultante}). Por favor, ajusta la cantidad.`,
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
+
+            if (cantidadResultante === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Stock se agotará',
+                    text: `Al modificar la cantidad de ${cantidadAnterior} a ${cantidadComponente}, el stock quedará en 0. ¿Deseas continuar?`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, continuar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        continuarConGuardado(parametro);
+                    }
+                });
+                return;
+            }
+
+            // Si pasa todas las validaciones, continuar con el guardado
+            continuarConGuardado(parametro);
+
+        } else {
+            // Nuevo registro
+            if (cantidadComponente > cantidadExistente) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Stock insuficiente',
+                    text: `No se puede realizar el consumo. La cantidad disponible (${cantidadExistente}) es insuficiente para cubrir el consumo solicitado (${cantidadComponente}).`,
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
+
+            if (cantidadComponente === cantidadExistente) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Stock se agotará',
+                    text: `Al consumir ${cantidadComponente} unidades, el stock quedará en 0. ¿Deseas continuar?`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, continuar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        continuarConGuardado(parametro);
+                    }
+                });
+                return;
+            }
+
+            // Si pasa todas las validaciones, continuar con el guardado
+            continuarConGuardado(parametro);
+        }
+    }
+
+    function continuarConGuardado(parametro) {
         PostMVC('/Taller/SaveOrUpdateComponenteVehiculo', parametro, function (r) {
             if (r.IsSuccess) {
                 Swal.fire({
@@ -468,7 +531,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Error al guardar los datos: ' + r.ErrorMessage,
+                    text: 'Error al guardar los datos: ' + (r.ErrorMessage || 'Error desconocido'),
                     confirmButtonText: 'Aceptar'
                 });
             }
