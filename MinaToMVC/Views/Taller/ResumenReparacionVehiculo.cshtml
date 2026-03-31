@@ -48,9 +48,10 @@
                     @Html.HiddenFor(x => x.TipoServicio, new { id = "tipoServicio" })
                     <input type="text" id="tipoServicioDesc" class="form-control" readonly style="background-color: #f0f0f0;" />
                 </div>
+                @Html.HiddenFor(x => x.Estado, new { id = "estado" })
             </div>
             <div class="row">
-                <div class="col-lg-6">
+                <div class="col-lg-10">
                     <input type="button" value="Retirar Piezas"
                            class="btn btn-custom-cancel btn-lg-custom"
                            onclick="ModalRetirarPiezas(@Model.Id, @Model.TipoVehiculo, @Model.IdVehiculo)" />
@@ -58,8 +59,35 @@
                     <input style="margin-left:96px;" type="button"
                            value="Asignar Piezas"
                            class="btn btn-success btn-lg-custom"
-                           onclick="ModalAsignarPiezas(@Model.Id, @Model.TipoVehiculo, @Model.IdVehiculo)" />
+                           onclick="ModalAsignarPiezas(0, @Model.Id, @Model.TipoVehiculo, @Model.IdVehiculo)" />
                 </div>
+                @if (Model.Estado == 1)
+                {
+                    <div class="col-lg-2" style="align-items:end;">
+                        <input style="align-items: end;" type="button"
+                               value="Comenzar Reparacion"
+                               class="btn btn-success btn-lg-custom"
+                               onclick="ActualizarEstado(@Model.Id, 2)" />
+                    </div>
+                }
+                else if (Model.Estado == 2)
+                {
+                    <div class="col-lg-2" style="align-items:end;">
+                        <input style="align-items: end;" type="button"
+                               value="Reparacion Terminada"
+                               class="btn btn-custom-clean"
+                               onclick="ActualizarEstado(@Model.Id, 3)" />
+                    </div>
+                }
+                else if (Model.Estado == 3)
+                {
+                    <div class="col-lg-2" style="display: flex; align-items: flex-end;">
+                        <div class="alert alert-warning" style="width: 100%; margin-bottom: 0; padding: 8px 12px; background-color: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+                            <strong style="color: #856404;">Servicio Terminado</strong>
+                            <span style="color: #856404; font-size: 12px; display: block;">Por favor libere el vehículo</span>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </div>

@@ -145,6 +145,16 @@ namespace MinaToMVC.DAL
                 }), token.Token.access_token);
             return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
         }
+        public async Task<ModelResponse> GetAsignarPiezaVehiculoReparacionById(long id)
+        {
+            var result = await RequestAsync<object>($"api/Taller/AsignarPiezaVehiculoReparacion/{id}", HttpMethod.Get, null,
+               new Func<string, string>((responseString) =>
+               {
+                   return responseString;
+               }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
         #endregion
         #region ReparacionVehiculos
         public async Task<ModelResponse> SaveOrUpdateReparacionVehiculos(ReparacionVehiculos reparacionVehiculos)
@@ -291,6 +301,46 @@ namespace MinaToMVC.DAL
                    return responseString;
                }));
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        #endregion
+        #region ResumenReparacion
+        public async Task<ModelResponse> ActualizarEstado(long Id, int Estado)
+        {
+            var result = await RequestAsync<object>($"api/Taller/ActualizarEstado/{Id}/{Estado}", HttpMethod.Post, null,
+               new Func<string, string>((responseString) =>
+               {
+                   return responseString;
+               }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        #endregion
+        #region Reportes
+        public async Task<ModelResponse> GetAllRetirarPiezasReutilizables()
+        {
+
+            var result = await RequestAsync<object>("api/Taller/PiezasReutilizables/List", HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+        public async Task<ModelResponse> GetAllRetirarPiezasNoReutilizables()
+        {
+
+            var result = await RequestAsync<object>("api/Taller/PiezasNoReutilizables/List", HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
             return modelResponse;
         }
         #endregion
