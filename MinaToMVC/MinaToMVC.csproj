@@ -453,6 +453,8 @@
     <Content Include="Views\Taller\InventarioPiezasReutilizables.cshtml" />
     <Content Include="Views\Taller\InventarioPiezasNoUtilizadas.cshtml" />
     <Content Include="Views\Taller\PartialViewModalMostrarDetalles.cshtml" />
+    <Content Include="Views\Taller\PartialViewModalConsultarPiezaRetirada.cshtml" />
+    <Content Include="Views\Taller\PartialViewConsultarPiezaAsignada.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

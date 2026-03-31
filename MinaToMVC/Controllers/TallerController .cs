@@ -560,7 +560,164 @@ namespace MinaToMVC.Controllers
 
             return PartialView(componenteVehiculo);
         }
+        public async Task<ActionResult> PartialViewConsultarPiezaAsignada(long id, long idReparacion, int tipoVehiculo, long idVehiculo)
+        {
+            ComponenteVehiculo componenteVehiculo = new ComponenteVehiculo();
+            var tieneDatos = false;
+
+            if (id != 0)
+            {
+                var result = await httpClientConnection.GetAsignarPiezaVehiculoReparacionById(id);
+                componenteVehiculo = JsonConvert.DeserializeObject<ComponenteVehiculo>(result.Response.ToString());
+                tieneDatos = true;
+            }
+
+            var inventarioResponse = await httpClientConnection.GetAllInventario();
+            var inventario = JsonConvert.DeserializeObject<List<Inventario>>(inventarioResponse.Response.ToString());
+
+            var tipoInventario = System.Configuration.ConfigurationManager
+                    .AppSettings["TipoInventario"]?
+                    .ToString()
+                    .Split('|')
+                    .Select(x =>
+                    {
+                        var partes = x.Split(':');
+                        return new SelectListItem
+                        {
+                            Value = partes[0],
+                            Text = partes.Length > 1 ? partes[1] : partes[0]
+                        };
+                    })
+                    .ToList() ?? new List<SelectListItem>();
+
+            var categoriasInventarioResponse = await httpClientConnection.GetAllCategoriaInventario();
+            var categoriaInventario = JsonConvert.DeserializeObject<List<CategoriaInventario>>(categoriasInventarioResponse.Response.ToString());
+            var categoriaInventarioDdl = MappingPropertiToDropDownList<CategoriaInventario>(categoriaInventario, "Id", "Nombre");
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+
+            // Asignar valores al modelo principal solo si es nuevo registro
+            if (!tieneDatos)
+            {
+                componenteVehiculo.CreatedBy = usuarioToken.UserName;
+                componenteVehiculo.UpdatedBy = usuarioToken.UserName;
+                componenteVehiculo.CreatedDt = DateTime.Now;
+                componenteVehiculo.UpdatedDt = DateTime.Now;
+            }
+
+            ViewBag.UserToken = usuarioAutenticado;
+            ViewBag.Usuarios = usuarios;
+            ViewBag.Inventario = inventario;
+            ViewBag.TipoInventario = tipoInventario;
+            ViewBag.CategoriaInventario = categoriaInventarioDdl;
+            ViewBag.Id = id;
+
+            ViewBag.IdReparacion = idReparacion;
+            ViewBag.TipoVehiculo = tipoVehiculo;
+            ViewBag.IdVehiculo = idVehiculo;
+
+            // Agregar flag para saber si es edición
+            ViewBag.EsEdicion = tieneDatos;
+
+            return PartialView(componenteVehiculo);
+        }
         public async Task<ActionResult> PartialViewModalMostrarDetalles(long id, long idReparacion, int tipoVehiculo, long idVehiculo)
+        {
+            RetirarPiezaVehiculoReparacion retirarPiezaVehiculoReparacion = new RetirarPiezaVehiculoReparacion();
+            var result = await httpClientConnection.GetRetirarPiezaVehiculoReparacionById(id);
+            retirarPiezaVehiculoReparacion = JsonConvert.DeserializeObject<RetirarPiezaVehiculoReparacion>(result.Response.ToString());
+
+            // Limpiar las rutas
+            string rutaFoto = retirarPiezaVehiculoReparacion.RutaFoto?.Replace("\\", "/").Trim('/') ?? "";
+            string gitFoto = retirarPiezaVehiculoReparacion.GitFoto?.Trim() ?? "";
+
+            // Construir la URL manualmente sin usar Url.Action para evitar el encoding de &amp;
+            string imageUrl = "";
+            bool hasImage = false;
+
+            if (!string.IsNullOrEmpty(rutaFoto) && !string.IsNullOrEmpty(gitFoto))
+            {
+                // Verificar si el archivo existe
+                string projectRootPath = HostingEnvironment.ApplicationPhysicalPath;
+                string physicalPath = Path.Combine(projectRootPath, rutaFoto, gitFoto);
+
+                if (System.IO.File.Exists(physicalPath))
+                {
+                    hasImage = true;
+                    // Construir URL manualmente para evitar el encoding
+                    imageUrl = $"/Taller/VerImagenPiezaRetirada?rutaArchivo={Uri.EscapeDataString(rutaFoto)}&nombreArchivo={Uri.EscapeDataString(gitFoto)}";
+                }
+                else
+                {
+                    // Intentar con la ruta alternativa
+                    string alternativePath = Path.Combine(projectRootPath, "AttachmentTaller/PiezasRetiradas", gitFoto);
+                    if (System.IO.File.Exists(alternativePath))
+                    {
+                        hasImage = true;
+                        imageUrl = $"/Taller/VerImagenPiezaRetirada?rutaArchivo={Uri.EscapeDataString("AttachmentTaller/PiezasRetiradas")}&nombreArchivo={Uri.EscapeDataString(gitFoto)}";
+                    }
+                }
+            }
+
+            ViewBag.ImageUrl = imageUrl;
+            ViewBag.HasImage = hasImage;
+            ViewBag.RutaArchivo = rutaFoto;
+            ViewBag.NombreArchivo = gitFoto;
+
+            // Resto del código...
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>()
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+            var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
+            var categoriasInventarioResponse = await httpClientConnection.GetAllCategoriaInventario();
+            var categoriaInventario = JsonConvert.DeserializeObject<List<CategoriaInventario>>(categoriasInventarioResponse.Response.ToString());
+            var categoriaInventarioDdl = MappingPropertiToDropDownList<CategoriaInventario>(categoriaInventario, "Id", "Nombre");
+
+            var ubicacionesAlmacenTaller = System.Configuration.ConfigurationManager
+                    .AppSettings["UbicacionesAlmacenTaller"]?
+                    .ToString()
+                    .Split('|')
+                    .Select(x =>
+                    {
+                        var partes = x.Split(':');
+                        return new SelectListItem
+                        {
+                            Value = partes[0],
+                            Text = partes.Length > 1 ? partes[1] : partes[0]
+                        };
+                    })
+                    .ToList() ?? new List<SelectListItem>();
+
+            ViewBag.UserToken = usuarioAutenticado.UserName;
+            ViewBag.Usuarios = usuarios;
+            ViewBag.IdRegistro = id;
+            ViewBag.IdReparacion = idReparacion;
+            ViewBag.TipoVehiculo = tipoVehiculo;
+            ViewBag.IdVehiculo = idVehiculo;
+            ViewBag.CategoriaInventario = categoriaInventarioDdl;
+            ViewBag.UbicacionesInventarioTaller = ubicacionesAlmacenTaller;
+
+            return PartialView(retirarPiezaVehiculoReparacion);
+        }
+        public async Task<ActionResult> PartialViewModalConsultarPiezaRetirada(long id, long idReparacion, int tipoVehiculo, long idVehiculo)
         {
             RetirarPiezaVehiculoReparacion retirarPiezaVehiculoReparacion = new RetirarPiezaVehiculoReparacion();
             var result = await httpClientConnection.GetRetirarPiezaVehiculoReparacionById(id);
@@ -955,6 +1112,14 @@ namespace MinaToMVC.Controllers
             }
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(new List<object>());
+        }
+        #endregion
+
+        #region ResumenReparacion
+        public async Task<string> ActualizarEstado(long Id, int Estado)
+        {
+            var r = await httpClientConnection.ActualizarEstado(Id, Estado);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(r);
         }
         #endregion
 

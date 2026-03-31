@@ -1,0 +1,371 @@
+﻿@model MinaTolEntidades.DtoTaller.ComponenteVehiculo
+
+@{
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+    var inventario = (List<MinaTolEntidades.DtoTaller.Inventario>)ViewBag.Inventario;
+
+    var categoriasOriginal = (List<SelectListItem>)ViewBag.CategoriaInventario ?? new List<SelectListItem>();
+    var tiposOriginal = (List<SelectListItem>)ViewBag.TipoInventario ?? new List<SelectListItem>();
+
+    if (Model != null)
+    {
+        if (Model.IdCategoria == 0)
+        {
+            Model.IdCategoria = null;
+        }
+        if (Model.TipoInventario == 0)
+        {
+            Model.TipoInventario = null;
+        }
+    }
+
+    ViewData.ModelState.Remove("IdCategoria");
+    ViewData.ModelState.Remove("TipoInventario");
+
+    var categorias = new List<SelectListItem>();
+
+    categorias.Add(new SelectListItem
+    {
+        Value = "",
+        Text = "Selecciona una Categoría"
+    });
+
+    categorias.AddRange(categoriasOriginal);
+
+    var tipos = new List<SelectListItem>();
+
+    tipos.Add(new SelectListItem
+    {
+        Value = "",
+        Text = "Selecciona un Tipo de Inventario"
+    });
+
+    tipos.AddRange(tiposOriginal);
+
+    // Obtener valores seguros para JavaScript
+    var idCategoriaValue = Model?.IdCategoria?.ToString() ?? "";
+    var tipoInventarioValue = Model?.TipoInventario?.ToString() ?? "";
+    var idInventarioValue = Model?.IdInventario ?? 0;
+    var nombreInventarioValue = Model?.NombreInventario?.Replace("'", "\\'") ?? "";
+    var cantidadComponenteValue = Model?.CantidadComponente ?? 0;
+    var esEdicionValue = ViewBag.EsEdicion ?? false;
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+
+@using (Html.BeginForm("SaveOrUpdateComponenteVehiculo", "Taller", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmAsignarPiezas" }))
+{
+    @Html.HiddenFor(x => x.Id, new { @id = "id", @Value = ViewBag.Id })
+    @Html.HiddenFor(x => x.Estatus, new { @id = "estatus" })
+    @Html.HiddenFor(x => x.CreatedBy, new { @id = "createdBy" })
+    @Html.HiddenFor(x => x.UpdatedBy, new { @id = "updatedBy" })
+    @Html.HiddenFor(x => x.CreatedDt, new { @id = "createdDt" })
+    @Html.HiddenFor(x => x.UpdatedDt, new { @id = "updatedDt" })
+
+    @Html.HiddenFor(x => x.IdReparacion, new { @id = "idReparacion", @Value = ViewBag.IdReparacion })
+    @Html.HiddenFor(x => x.TipoVehiculo, new { @id = "tipoVehiculo", @Value = ViewBag.TipoVehiculo })
+    @Html.HiddenFor(x => x.IdVehiculo, new { @id = "idVehiculo", @Value = ViewBag.IdVehiculo })
+
+    <div class="tabla-consultas-empleados">
+        <div class="rectangulos" style="width: 100%;">
+            <div class="row">
+                @Html.HiddenFor(x => x.IdInventario, new { @id = "idInventario" })
+                <div class="col-lg-4">
+                    <label>Categoria del Inventario</label>
+                    @Html.DropDownListFor(
+                        x => x.IdCategoria,
+                        categorias,
+                        new { @class = "form-control", id = "ddlCategoriaInventario", required = "required" }
+                    )
+                </div>
+                <div class="col-lg-4">
+                    <label>Tipo de Inventario</label>
+                    @Html.DropDownListFor(
+                        x => x.TipoInventario,
+                        tipos,
+                        new { @class = "form-control", id = "ddlTipoInventario", required = "required" }
+                    )
+                </div>
+                <div class="col-lg-4">
+                    <label>Item del Inventario</label>
+                    <select id="ddlInventarioItems" class="form-control">
+                        <option value="" selected disabled>Seleccione un item</option>
+                    </select>
+                </div>
+                @Html.HiddenFor(x => x.NombreInventario, new { @class = "form-control", @id = "nombreItem" })
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4">
+                    <label>Cantidad a usar</label>
+                    @Html.TextBoxFor(x => x.CantidadComponente, new { @class = "form-control", type = "number", @id = "cantidadItem", min = "1", step = "1", onkeypress = "return event.charCode >= 48 && event.charCode <= 57", oninput = "if(this.value < 1) this.value = 1" })
+                </div>
+                <div class="col-lg-4">
+                    <input type="hidden" id="txtCantidad" class="form-control" readonly disabled />
+                </div>
+            </div>
+
+            <div style="margin-top: 35px; align-items:end;">
+                <button type="button" class="btn btn-custom-cancel" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    // Variable global para almacenar los datos del inventario seleccionado
+    var datosInventarioSeleccionado = null;
+    var esEdicion = @(esEdicionValue ? "true" : "false");
+    var idInventarioModel = @idInventarioValue;
+    var idCategoriaModel = '@idCategoriaValue';
+    var tipoInventarioModel = '@tipoInventarioValue';
+    var nombreInventarioModel = '@Html.Raw(nombreInventarioValue)';
+    var cantidadComponenteModel = @cantidadComponenteValue;
+
+    $(document).ready(function () {
+
+        // Configurar eventos
+        $("#ddlCategoriaInventario").on("change", function () {
+            var categoriaVal = $("#ddlCategoriaInventario").val();
+            var tipoVal = $("#ddlTipoInventario").val();
+            if (categoriaVal && categoriaVal !== "" && tipoVal && tipoVal !== "") {
+                GetInventarioByCategoriaTipo();
+            }
+        });
+
+        $("#ddlTipoInventario").on("change", function () {
+            var categoriaVal = $("#ddlCategoriaInventario").val();
+            var tipoVal = $("#ddlTipoInventario").val();
+            if (categoriaVal && categoriaVal !== "" && tipoVal && tipoVal !== "") {
+                GetInventarioByCategoriaTipo();
+            }
+        });
+
+        // Evento para cuando se selecciona un item
+        $("#ddlInventarioItems").on("change", function () {
+            cargarNombreYCantidad();
+        });
+
+        // Si es edición, precargar datos
+        if (esEdicion && idInventarioModel > 0) {
+            setTimeout(function() {
+                precargarDatosEdicion();
+            }, 500);
+        }
+    });
+
+    function precargarDatosEdicion() {
+
+        // Establecer los valores de los selects
+        if (idCategoriaModel && idCategoriaModel !== "" && idCategoriaModel !== "null") {
+            $("#ddlCategoriaInventario").val(idCategoriaModel);
+        }
+
+        if (tipoInventarioModel && tipoInventarioModel !== "" && tipoInventarioModel !== "null") {
+            $("#ddlTipoInventario").val(tipoInventarioModel);
+        }
+
+        // Deshabilitar los selects en modo edición
+        $("#ddlCategoriaInventario").prop('disabled', true);
+        $("#ddlTipoInventario").prop('disabled', true);
+        $("#ddlInventarioItems").prop('disabled', true);
+        $("#cantidadItem").prop('disabled', true);
+
+        // Cargar el inventario basado en la categoría y tipo seleccionados
+        if (idCategoriaModel && idCategoriaModel !== "" && idCategoriaModel !== "null" &&
+            tipoInventarioModel && tipoInventarioModel !== "" && tipoInventarioModel !== "null") {
+
+            GetInventarioByCategoriaTipo(function() {
+                // Después de cargar el inventario, seleccionar el item correspondiente
+                if (idInventarioModel > 0) {
+                    $("#ddlInventarioItems").val(idInventarioModel.toString());
+
+                    // Pequeño delay para asegurar que el valor se haya seteado
+                    setTimeout(function() {
+                        cargarNombreYCantidad();
+                        // Establecer la cantidad a usar
+                        if (cantidadComponenteModel > 0) {
+                            $("#cantidadItem").val(cantidadComponenteModel);
+                        }
+                    }, 100);
+                }
+            });
+        }
+    }
+
+    function GetInventarioByCategoriaTipo(callback) {
+        var categoriaInventario = $("#ddlCategoriaInventario").val();
+        var tipoInventario = $("#ddlTipoInventario").val();
+
+        if (!categoriaInventario || categoriaInventario === "" || !tipoInventario || tipoInventario === "") {
+            if (callback) callback();
+            return;
+        }
+
+        // Limpiar el select de items usando DOM
+        var selectElement = document.getElementById("ddlInventarioItems");
+        if (selectElement) {
+            // Limpiar el select
+            while (selectElement.firstChild) {
+                selectElement.removeChild(selectElement.firstChild);
+            }
+
+            // Agregar opción de carga
+            var loadingOption = document.createElement("option");
+            loadingOption.value = "";
+            loadingOption.text = "Cargando...";
+            loadingOption.selected = true;
+            loadingOption.disabled = true;
+            selectElement.appendChild(loadingOption);
+        }
+
+        var url = `/Taller/GetAllInventarioByCategoriaTipo?categoriaInventario=${encodeURIComponent(categoriaInventario)}&tipoInventario=${encodeURIComponent(tipoInventario)}`;
+
+        GetMVC(url, function (r) {
+
+            if (r.IsSuccess) {
+                // Limpiar y llenar el select de items
+                llenarSelectInventario(r.Response, tipoInventario);
+
+                // Ejecutar callback después de llenar el select
+                if (callback) callback();
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar el Inventario: ' + r.ErrorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+
+                // Limpiar y mostrar mensaje de error usando DOM
+                if (selectElement) {
+                    while (selectElement.firstChild) {
+                        selectElement.removeChild(selectElement.firstChild);
+                    }
+                    var errorOption = document.createElement("option");
+                    errorOption.value = "";
+                    errorOption.text = "Error al cargar items";
+                    errorOption.selected = true;
+                    errorOption.disabled = true;
+                    selectElement.appendChild(errorOption);
+                }
+
+                if (callback) callback();
+            }
+        });
+    }
+
+    function llenarSelectInventario(data, tipoInventario) {
+
+        var selectElement = document.getElementById("ddlInventarioItems");
+        if (!selectElement) return;
+
+        // Limpiar el select
+        while (selectElement.firstChild) {
+            selectElement.removeChild(selectElement.firstChild);
+        }
+
+        // Agregar la opción por defecto
+        var defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.text = "Seleccione un item";
+        defaultOption.selected = true;
+        defaultOption.disabled = true;
+        selectElement.appendChild(defaultOption);
+
+        // Limpiar inputs
+        $("#nombreItem").val('');
+        $("#txtCantidad").val('');
+        $("#idInventario").val('');
+
+        // Verificar si data es un array
+        if (!data || !Array.isArray(data) || data.length === 0) {
+            return;
+        }
+
+        // Mapear los items
+        for (var i = 0; i < data.length; i++) {
+            var item = data[i];
+            var optionValue = "";
+            var optionText = "";
+            var cantidad = 0;
+
+            if (tipoInventario === "1") {
+                // Tipo Inventario 1: Piezas retiradas
+                optionValue = item.id;
+                optionText = item.nombre || item.nombreItem || "Item sin nombre";
+                cantidad = item.cantidad || 0;
+            }
+            else if (tipoInventario === "2") {
+                // Tipo Inventario 2: Inventario general
+                optionValue = item.id;
+                optionText = item.nombre || item.nombreCategoria || "Item sin nombre";
+                cantidad = item.cantidadExistente || item.cantidad || 0;
+            }
+            else {
+                // Fallback genérico
+                optionValue = item.id || "";
+                optionText = item.nombre || item.nombreCategoria || item.marca || "Item sin nombre";
+                cantidad = item.cantidad || item.cantidadExistente || 0;
+            }
+
+            // Crear la opción usando DOM methods
+            var option = document.createElement("option");
+            option.value = optionValue ? optionValue.toString() : "";
+            option.text = optionText || "Item sin nombre";
+            option.setAttribute('data-nombre', optionText || "");
+            option.setAttribute('data-cantidad', cantidad || 0);
+            option.setAttribute('data-item-completo', JSON.stringify(item));
+
+            selectElement.appendChild(option);
+        }
+
+    }
+
+    function cargarNombreYCantidad() {
+        var select = $("#ddlInventarioItems");
+        var selectedOption = select.find("option:selected");
+
+        if (selectedOption.val() && selectedOption.val() !== "") {
+            // Obtener nombre y cantidad de los data attributes
+            var nombreItem = selectedOption.attr('data-nombre') || selectedOption.text();
+            var cantidad = selectedOption.attr('data-cantidad') || 0;
+
+            // Obtener el id del inventario
+            var idInventario = selectedOption.val();
+
+            // Llenar los inputs
+            $("#nombreItem").val(nombreItem);
+            $("#txtCantidad").val(cantidad);
+            $("#idInventario").val(idInventario);
+
+            // Guardar los datos completos para uso posterior
+            var itemCompleto = selectedOption.attr('data-item-completo');
+            if (itemCompleto) {
+                try {
+                    datosInventarioSeleccionado = JSON.parse(itemCompleto);
+                } catch(e) {
+                    datosInventarioSeleccionado = {
+                        id: idInventario,
+                        nombre: nombreItem,
+                        cantidad: cantidad
+                    };
+                }
+            } else {
+                datosInventarioSeleccionado = {
+                    id: idInventario,
+                    nombre: nombreItem,
+                    cantidad: cantidad
+                };
+            }
+        } else {
+            // Si no hay selección, limpiar los inputs
+            $("#nombreItem").val('');
+            $("#txtCantidad").val('');
+            $("#idInventario").val('');
+            datosInventarioSeleccionado = null;
+        }
+    }
+</script>

@@ -304,6 +304,18 @@ namespace MinaToMVC.DAL
             return modelResponse;
         }
         #endregion
+        #region ResumenReparacion
+        public async Task<ModelResponse> ActualizarEstado(long Id, int Estado)
+        {
+            var result = await RequestAsync<object>($"api/Taller/ActualizarEstado/{Id}/{Estado}", HttpMethod.Post, null,
+               new Func<string, string>((responseString) =>
+               {
+                   return responseString;
+               }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        #endregion
         #region Reportes
         public async Task<ModelResponse> GetAllRetirarPiezasReutilizables()
         {

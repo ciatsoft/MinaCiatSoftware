@@ -780,6 +780,41 @@ namespace MinaTolWebApi.DAL
             return response;
         }
         #endregion
+        #region ResumenReparacion
+        public ModelResponse ActualizarEstado(long Id, int Estado)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+
+                var parameters = new List<SqlParameter>();
+                // Corrección: Crear cada parámetro individualmente
+                parameters.Add(new SqlParameter()
+                {
+                    ParameterName = "@Id",
+                    Value = Id,
+                    SqlDbType = System.Data.SqlDbType.BigInt
+                });
+                parameters.Add(new SqlParameter()
+                {
+                    ParameterName = "@Estado",
+                    Value = Estado,
+                    SqlDbType = System.Data.SqlDbType.BigInt
+                });
+
+                var result = ExecuteNonQuery("ActualizarEstado", System.Data.CommandType.StoredProcedure, parameters);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
+        #endregion
         #region Reportes
         public ModelResponse GetAllRetirarPiezasReutilizables()
         {

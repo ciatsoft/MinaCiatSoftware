@@ -203,6 +203,14 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
         #endregion
+        #region ResumenReparacion
+        [HttpPost, Route("ActualizarEstado/{Id:long}/{Estado:int}")]
+        public ModelResponse ActualizarEstado(long Id, int Estado)
+        {
+            var result = wrapper.ActualizarEstado(Id, Estado);
+            return result;
+        }
+        #endregion
         #region Reportes
         [HttpGet, Route("PiezasReutilizables/List")]
         public ModelResponse GetAllRetirarPiezasReutilizables()
