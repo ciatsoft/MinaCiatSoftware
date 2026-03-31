@@ -1,0 +1,390 @@
+﻿@model MinaTolEntidades.DtoTaller.RetirarPiezaVehiculoReparacion
+@{
+    var fechaActual = DateTime.Now;
+    var usuarioToken = ViewBag.UserToken;
+    var imageUrl = ViewBag.ImageUrl as string;
+    var hasImage = ViewBag.HasImage as bool? ?? false;
+    var rutaArchivo = ViewBag.RutaArchivo as string;
+    var nombreArchivo = ViewBag.NombreArchivo as string;
+}
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+
+<style>
+    /* Tus estilos existentes se mantienen */
+    .photo-upload-container {
+        border: 2px dashed #ddd;
+        border-radius: 6px;
+        padding: 10px;
+        text-align: center;
+        background-color: #f9f9f9;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .photo-preview {
+        max-width: 100%;
+        max-height: 100px;
+        margin-bottom: 5px;
+        border-radius: 4px;
+        object-fit: cover;
+        cursor: pointer;
+    }
+
+    .photo-placeholder {
+        color: #999;
+        font-size: 28px;
+        margin-bottom: 5px;
+    }
+
+        .photo-placeholder .camera-icon {
+            font-size: 32px;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        .photo-placeholder p {
+            font-size: 11px;
+            margin: 5px 0;
+        }
+
+        .photo-placeholder small {
+            font-size: 9px;
+        }
+
+    .photo-actions {
+        margin-top: 5px;
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+    }
+
+    .btn-photo {
+        padding: 3px 10px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-delete-photo {
+        background-color: #dc3545;
+        color: white;
+    }
+
+        .btn-delete-photo:hover {
+            background-color: #c82333;
+        }
+
+    .btn-change-photo {
+        background-color: #007bff;
+        color: white;
+    }
+
+        .btn-change-photo:hover {
+            background-color: #0056b3;
+        }
+
+    .file-input-hidden {
+        display: none;
+    }
+
+    .photo-required {
+        color: #dc3545;
+        font-size: 10px;
+        margin-top: 3px;
+        display: none;
+    }
+
+    .photo-upload-container.has-error {
+        border-color: #dc3545;
+        background-color: #fff5f5;
+    }
+
+    .photo-label {
+        font-weight: 600;
+        margin-bottom: 5px;
+        display: block;
+        font-size: 12px;
+    }
+
+        .photo-label .required-star {
+            color: #dc3545;
+            margin-left: 3px;
+        }
+
+    .rectangulos {
+        padding: 15px;
+    }
+
+    .form-control-sm-custom {
+        height: 32px;
+        font-size: 12px;
+        padding: 4px 8px;
+    }
+
+        /* Estilo para inputs bloqueados */
+        .form-control-sm-custom[readonly],
+        .form-control-sm-custom[disabled],
+        select.form-control-sm-custom[disabled] {
+            background-color: #e9ecef;
+            opacity: 1;
+            cursor: not-allowed;
+        }
+
+    /* Estilo para checkbox bloqueado */
+    input[type="checkbox"][disabled] {
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    label {
+        font-size: 12px;
+        margin-bottom: 3px;
+    }
+
+    h2 {
+        font-size: 18px;
+        margin: 0 0 10px 0;
+    }
+
+    .field-required {
+        color: #dc3545;
+        font-size: 10px;
+        margin-top: 3px;
+        display: none;
+    }
+
+    .form-control.error {
+        border-color: #dc3545;
+        background-color: #fff5f5;
+    }
+
+    .existing-image-indicator {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background-color: rgba(0, 123, 255, 0.8);
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .img-thumbnail-preview {
+        max-width: 100%;
+        max-height: 100px;
+        cursor: pointer;
+        border-radius: 4px;
+        object-fit: cover;
+        transition: transform 0.2s;
+    }
+
+        .img-thumbnail-preview:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+</style>
+
+@using (Html.BeginForm("SaveOrUpdateRetirarPiezaVehiculoReparacion", "Taller", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmRetirarPiezaVehiculo" }))
+{
+    @Html.HiddenFor(x => x.Id, new { @Value = Model?.Id ?? 0 })
+    @Html.HiddenFor(x => x.Estatus, new { @id = "estatusModal", @Value = 1 })
+    @Html.HiddenFor(x => x.CreatedBy, new { @id = "createdByModal", @Value = usuarioToken })
+    @Html.HiddenFor(x => x.UpdatedBy, new { @id = "updatedByModal", @Value = usuarioToken })
+    @Html.HiddenFor(x => x.CreatedDt, new { @id = "createdDtModal", @Value = fechaActual })
+    @Html.HiddenFor(x => x.UpdatedDt, new { @id = "updatedDtModal", @Value = fechaActual })
+    @Html.HiddenFor(x => x.RutaFoto, new { @id = "rutaFoto" })
+    @Html.HiddenFor(x => x.GitFoto, new { @id = "gitFoto" })
+    @Html.HiddenFor(x => x.IdReparacion, new { @Value = ViewBag.IdReparacion })
+    @Html.HiddenFor(x => x.IdVehiculo, new { @Value = ViewBag.IdVehiculo })
+    @Html.HiddenFor(x => x.TipoVehiculo, new { @Value = ViewBag.TipoVehiculo })
+
+    <h2>Detalles de la Pieza/Componente Retirado</h2>
+
+    <div class="tabla-consultas-empleados">
+        <div class="rectangulos" style="width: 100%; padding: 10px;">
+            <div class="row">
+                <div class="col-lg-4">
+                    <label>Categoria Inventario:</label>
+                    @Html.DropDownListFor(x => x.IdCategoriaInventario,
+                        new SelectList((IEnumerable<SelectListItem>)ViewBag.CategoriaInventario, "Value", "Text"),
+                        "Selecciona",
+                        new { @class = "form-control form-control-sm-custom", id = "ddlCategoriaInventario", disabled = "disabled" })
+                </div>
+                <div class="col-lg-4">
+                    <label>Nombre:</label>
+                    @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control form-control-sm-custom", @id = "nombre", placeholder = "Nombre", @readonly = "readonly" })
+                </div>
+                <div class="col-lg-2">
+                    <label>Reutilizable:</label>
+                    @Html.CheckBoxFor(x => x.Reutilizable, new { @class = "form-control", @id = "reutilizable", style = "width: 20px; height: 20px; margin-top: 5px;", disabled = "disabled" })
+                </div>
+            </div>
+            <div class="row" style="margin-top: 8px;">
+                <div class="col-lg-3">
+                    <label>Marca:</label>
+                    @Html.TextBoxFor(x => x.Marca, new { @class = "form-control form-control-sm-custom", @id = "marca", @readonly = "readonly" })
+                </div>
+                <div class="col-lg-2">
+                    <label>Cantidad:</label>
+                    @Html.TextBoxFor(x => x.CantidadRetirada, new { @class = "form-control form-control-sm-custom", @id = "cantidad", type = "number", min = "1", @readonly = "readonly" })
+                </div>
+                <div class="col-lg-4">
+                    <label>Ubicacion Almacen:</label>
+                    @Html.DropDownListFor(x => x.UbicacionAlmacen,
+                        (IEnumerable<SelectListItem>)ViewBag.UbicacionesInventarioTaller,
+                        "Selecciona ubicación",
+                        new { @class = "form-control form-control-sm-custom", @id = "ubicacionAlmacen", disabled = "disabled" })
+                </div>
+                <div class="col-lg-3">
+                    <label>Fecha:</label>
+                    @Html.TextBoxFor(x => x.Fecha, new { @class = "form-control form-control-sm-custom", @id = "fecha", @Value = fechaActual.ToString("yyyy-MM-dd HH:mm:ss"), @readonly = "readonly" })
+                </div>
+            </div>
+            <div class="row" style="margin-top: 8px;">
+                <div class="col-lg-12">
+                    <div class="photo-label">
+                        <label>Fotografía</label>
+                    </div>
+                    <div class="photo-upload-container" id="photoUploadContainer">
+                        <div class="photo-placeholder" id="photoPlaceholder" style="@(hasImage ? "display:none;" : "")">
+                            <div class="camera-icon">📷</div>
+                            <p>Sin imagen disponible</p>
+                        </div>
+                        @if (hasImage)
+                        {
+                            <img id="photoPreview" class="img-thumbnail-preview"
+                                 src="@Html.Raw(imageUrl)"
+                                 alt="Vista previa"
+                                 onclick="ampliarImagenPieza('@Html.Raw(imageUrl)')"
+                                 title="Click para ampliar"
+                                 style="max-width: 100%; max-height: 100px; cursor: pointer;" />
+                        }
+                        else
+                        {
+                            <img id="photoPreview" class="img-thumbnail-preview"
+                                 style="display: none;"
+                                 alt="Vista previa" />
+                        }
+                        @if (hasImage)
+                        {
+                            <div class="existing-image-indicator" title="Imagen existente">
+                                ✓
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 15px;">
+        <div class="col-lg-12 text-right">
+            <button type="button" class="btn btn-custom-cancel btn-lg-custom" data-dismiss="modal">Cerrar</button>
+        </div>
+    </div>
+}
+
+<script>
+    // Función para ampliar imagen
+    function ampliarImagenPieza(url) {
+        if (!url || url === '#' || url === '') {
+            Swal.fire({
+                title: 'Sin imagen',
+                text: 'No hay imagen disponible para mostrar',
+                icon: 'info',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
+
+        Swal.fire({
+            html: '<img src="' + url + '" style="max-width: 100%; max-height: 70vh; cursor: pointer;" onclick="this.style.transform=\'scale(1.1)\'" />',
+            showCloseButton: true,
+            showConfirmButton: false,
+            width: 'auto',
+            background: 'transparent',
+            backdrop: 'rgba(0,0,0,0.8)',
+            customClass: {
+                popup: 'image-modal-popup'
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        const $photoPreview = $('#photoPreview');
+        let existingImageUrl = '@Html.Raw(imageUrl)';
+        let hasExistingImage = @hasImage.ToString().ToLower();
+
+        // Si hay una imagen existente, asegurar que tenga el evento onclick
+        if (hasExistingImage && existingImageUrl) {
+            $photoPreview.attr('onclick', `ampliarImagenPieza('${existingImageUrl}')`);
+
+            // Verificar que la imagen realmente se cargó
+            $photoPreview.on('load', function() {
+                console.log('Imagen cargada correctamente');
+            }).on('error', function() {
+                console.log('Error al cargar la imagen');
+                // Si falla, mostrar el placeholder
+                $('#photoPlaceholder').show();
+                $(this).hide();
+            });
+        }
+
+        // Prevenir cualquier intento de envío de formulario
+        $('#frmRetirarPiezaVehiculo').on('submit', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        // Deshabilitar cualquier interacción con el contenedor de foto que pueda intentar cambiar la imagen
+        $('#photoUploadContainer').off('click').on('click', function(e) {
+            // Solo permitir ampliar si se hace clic en la imagen
+            if ($(e.target).is('#photoPreview')) {
+                // Ya tiene el onclick, no hacer nada adicional
+                return;
+            }
+            e.stopPropagation();
+        });
+    });
+</script>
+
+<style>
+    /* Estilo adicional para el modal de imagen */
+    .image-modal-popup {
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    /* Asegurar que los selects deshabilitados se vean consistentes */
+    select.form-control-sm-custom:disabled {
+        background-color: #e9ecef;
+        color: #495057;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+
+    /* Estilo para campos de texto readonly */
+    input.form-control-sm-custom:read-only {
+        background-color: #e9ecef;
+        cursor: default;
+    }
+
+    /* Estilo para el checkbox deshabilitado */
+    input[type="checkbox"]:disabled {
+        cursor: default;
+    }
+</style>

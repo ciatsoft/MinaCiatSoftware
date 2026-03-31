@@ -20,6 +20,7 @@ namespace MinaTolWebApi.Controllers
             wrapper = new DbWrapper();
         }
 
+        #region Cliente Publico General
         [Route("List"), HttpGet]
         public async Task<ModelResponse> GetAllClientePublicoGral()
         {
@@ -47,5 +48,45 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.DeleteClientePublicoGral(id);
             return result;
         }
+        #endregion
+
+        #region HistoricoRFID
+        [Route("HistoricoRFID/"), HttpPost]
+        public async Task<ModelResponse> SaveOrUpdateHistoricoRFID(HistoricoRFID c)
+        {
+            var result = wrapper.SaveOrUpdateHistoricoRFID(c);
+            return result;
+        }
+        [Route("List/HistoricoRFID"), HttpGet]
+        public async Task<ModelResponse> GetAllHistoricoRFID()
+        {
+            var result = wrapper.GetAllHistoricoRFID();
+            return result;
+        }
+        [Route("HistoricoRFID/{id:long}"), HttpGet]
+        public async Task<ModelResponse> GetHistoricoRFIDById(long id)
+        {
+            var result = wrapper.GetHistoricoRFIDById(id);
+            return result;
+        }
+        [Route("HistoricoRFID/{id:long}"), HttpPost]
+        public async Task<ModelResponse> DeleteHistoricoRFID(long id)
+        {
+            var result = wrapper.DeleteHistoricoRFID(id);
+            return result;
+        }
+        [Route("HistoricoRFID/Cliente/{id:long}"), HttpGet]
+        public async Task<ModelResponse> GetAllHistoricoRFIDByIdCliente(long id)
+        {
+            var result = wrapper.GetAllHistoricoRFIDByIdCliente(id);
+            return result;
+        }
+        [Route("HistoricoRFID/TotalCliente/{id:long}"), HttpGet]
+        public async Task<ModelResponse> TotalHistoricoRFIDByIdCliente(long id)
+        {
+            var result = wrapper.TotalHistoricoRFIDByIdCliente(id);
+            return result;
+        }
+        #endregion
     }
 }

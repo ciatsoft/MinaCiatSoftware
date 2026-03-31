@@ -25,6 +25,7 @@
         @Html.HiddenFor(x => x.UpdatedBy)
         @Html.HiddenFor(x => x.UpdatedDt)
         @Html.HiddenFor(x => x.Folio)
+        @Html.HiddenFor(x => x.Carga, new { @Value = 1})
 
         <br />
         <center><h1>Venta publico en general</h1></center>
@@ -64,16 +65,48 @@
                     </div>
                     <div class="col-lg-3">
                         <label>Capacidad en M3:</label>
-                        @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control no-select", @type = "number", id = "cantidadRecibida" })
+                        @Html.TextBoxFor(x => x.Cantidad, new
+                   {
+                       type = "number",
+                       id = "cantidadRecibida",
+                       @class = "form-control",
+                       pattern = "[1-9][0-9]{0,9}",
+                       title = "Ingrese un número positivo mayor a 0 (máximo 10 dígitos)",
+                       placeholder = "1 - 9999999999",
+                       onkeypress = "return (event.charCode >= 48 && event.charCode <= 57) && this.value.length < 10",
+                       oninput = "if(this.value <= 0 || this.value == 0) this.value = 1; if(this.value.length > 10) this.value = this.value.slice(0,10); if(parseInt(this.value) > 9999999999) this.value = 9999999999; this.value = this.value.replace(/^0+/, '') || 1"
+                   })
                     </div>
 
                     <div class="col-lg-3">
                         <label>Planta:</label>
-                        @Html.DropDownListFor(x => x.Ubicacion.Id, (IEnumerable<SelectListItem>)ViewBag.Ubicaciones, new { @class = "form-control", @onchange = "CambioUbicacion()" })
+                        @{
+                            var ubicacionesList = ((IEnumerable<SelectListItem>)ViewBag.Ubicaciones).ToList();
+                            ubicacionesList.Insert(0, new SelectListItem
+                            {
+                                Text = "Selecciona una opción",
+                                Value = "",
+                                Selected = true,
+                                Disabled = true
+                            });
+                        }
+
+                        @Html.DropDownListFor(x => x.Ubicacion.Id, ubicacionesList, new { @class = "form-control", @onchange = "CambioUbicacion(this)" })
                     </div>
                     <div class="col-lg-3">
                         <label>Material:</label>
-                        @Html.DropDownListFor(x => x.TipoMaterial.Id, (IEnumerable<SelectListItem>)ViewBag.Materiales, new { @class = "form-control" })
+                        @{
+                            var materialesList = ((IEnumerable<SelectListItem>)ViewBag.Materiales).ToList();
+                            materialesList.Insert(0, new SelectListItem
+                            {
+                                Text = "Selecciona una opción",
+                                Value = "",
+                                Selected = true,
+                                Disabled = true
+                            });
+                        }
+
+                        @Html.DropDownListFor(x => x.TipoMaterial.Id, materialesList, new { @class = "form-control", @onchange = "CambioMaterial(this)" })
                     </div>
                     @Html.DropDownListFor(x => x.UnidadMedida.Id, (IEnumerable<SelectListItem>)ViewBag.UnidadMedida, new { @class = "form-control d-none", @readonly = "readonly" })
                     <div class="col-lg-3">
@@ -92,7 +125,12 @@
                         {
                             @class = "form-control",
                             id = "dineroRecibido",
-                            @type = "number"  // Cambia a text para formato personalizado
+                            type = "text",
+                            pattern = "[1-9][0-9]{0,9}",
+                            title = "Ingrese un número positivo mayor a 0 (máximo 10 dígitos)",
+                            placeholder = "1 - 9999999999",
+                            onkeypress = "return (event.charCode >= 48 && event.charCode <= 57) && this.value.length < 10",
+                            oninput = "if(this.value <= 0 || this.value == 0) this.value = 1; if(this.value.length > 10) this.value = this.value.slice(0,10); if(parseInt(this.value) > 9999999999) this.value = 9999999999; this.value = this.value.replace(/^0+/, '') || 1"
                         })
                     </div>
                     <div class="col-lg-3">
@@ -187,33 +225,6 @@
             <table class="table table-bordered table-striped" id="tablePuntoVenta" style="width: 100%;"></table>
         </div>
     </div>
-
-    <!--<div class="rectangulos" style="width: 100%;">
-        <center><h1>Historial de Gastos/Deducciones</h1></center>
-        <div class="row align-items-end">-->
-    @* FILTRADO POR FECHA *@
-    <!--<div class="col-auto">
-                <label for="fechaFiltro" class="form-label">Fecha:</label>
-                <input type="date" id="fechaDeducciones" name="fechaFiltro" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
-            </div>
-
-            <div class="col-auto">
-                <input type="hidden" id="userNameDeducciones" name="userName" class="form-control" value="@ViewBag.UserToken.UserName" readonly />
-                <input type="hidden" id="userIdDeducciones" name="userId" class="form-control" value="@ViewBag.UserToken.UserID" readonly />
-            </div>
-
-            <div class="col-auto">
-                <input id="btnDeducciones" type="button" value="Buscar" class="btn btn-custom-clean" style="margin-top: -30px" />
-                <a href="/VentaPublicoGeneral/Index" class="btn btn-custom-cancel" style="margin-top: -30px; margin-left: 10px">Cancelar</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-12">
-            <table class="table table-bordered table-striped" id="tableDeducciones" style="width: 100%;"></table>
-        </div>
-    </div>-->
 </div>
 
 

@@ -139,6 +139,7 @@
     <Compile Include="Controllers\ClientePublicoGralController.cs" />
     <Compile Include="Controllers\DocumentosController.cs" />
     <Compile Include="Controllers\HoraExtraTrabajadorController.cs" />
+    <Compile Include="Controllers\MovilAppController.cs" />
     <Compile Include="Controllers\PV_CorteCajaController.cs" />
     <Compile Include="Controllers\DireccionCliente.cs" />
     <Compile Include="Controllers\AreaTrabajoController.cs" />
@@ -209,6 +210,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\Cryptography.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

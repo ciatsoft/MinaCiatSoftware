@@ -81,12 +81,17 @@
     <Compile Include="DtoTaller\CategoriaInventario.cs" />
     <Compile Include="DtoTaller\ComponenteVehiculo.cs" />
     <Compile Include="DtoTaller\Inventario.cs" />
+    <Compile Include="DtoTaller\ReparacionVehiculos.cs" />
+    <Compile Include="DtoTaller\RetirarPiezaVehiculoReparacion.cs" />
+    <Compile Include="DtoVentaPublicoGeneral\AnexoTicket.cs" />
     <Compile Include="DtoVentaPublicoGeneral\Canjeo.cs" />
     <Compile Include="DtoVentaPublicoGeneral\ClientePublicoGral.cs" />
     <Compile Include="DtoVentaPublicoGeneral\Deducciones.cs" />
+    <Compile Include="DtoVentaPublicoGeneral\HistoricoRFID.cs" />
     <Compile Include="DtoVentaPublicoGeneral\Prepago.cs" />
     <Compile Include="DtoVentaPublicoGeneral\PV_CajaChica.cs" />
     <Compile Include="DtoVentaPublicoGeneral\PV_CorteCaja.cs" />
+    <Compile Include="DtoVentaPublicoGeneral\Reporte.cs" />
     <Compile Include="DtoVentaPublicoGeneral\Reporte_Venta.cs" />
     <Compile Include="DtoVentaPublicoGeneral\TicketModel.cs" />
     <Compile Include="DtoVentaPublicoGeneral\TotalPlanta.cs" />
@@ -105,6 +110,8 @@
     <Compile Include="Security\Token.cs" />
     <Compile Include="Security\TokenCookie.cs" />
     <Compile Include="Security\Usuario.cs" />
+    <Compile Include="VehiculoCarga\EventosRFIDCarga.cs" />
+    <Compile Include="VehiculoCarga\RFIDCarga.cs" />
     <Compile Include="VehiculoCarga\VehiculoCarga.cs" />
   </ItemGroup>
   <ItemGroup />

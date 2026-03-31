@@ -1,0 +1,211 @@
+﻿@model MinaTolEntidades.DtoTaller.ReparacionVehiculos
+@{
+    ViewBag.Title = "ReparacionVehiculos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+    var trabajadores = (List<MinaTolEntidades.DtoSucursales.DtoTrabajador>)ViewBag.Trabajadores;
+    var tiposVehiculos = (List<string>)ViewBag.TiposVehiculos;
+    var tiposServicio = (List<string>)ViewBag.TipoServicio;
+    var esNuevoRegistro = ViewBag.EsNuevoRegistro ?? true;
+
+    // CORREGIDO: Formatear la fecha correctamente
+    string fechaFormateada = "";
+    if (Model != null && Model.Fecha != null && Model.Fecha > DateTime.MinValue)
+    {
+        // Si es edición y tiene fecha válida
+        fechaFormateada = Model.Fecha.ToString("yyyy-MM-dd HH:mm:ss");
+    }
+    else
+    {
+        // Si es nuevo registro, usar fecha actual
+        fechaFormateada = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+    }
+
+    // Crear SelectLists para los dropdowns con opción por defecto SIEMPRE presente
+    var tipoVehiculoSelectList = new List<SelectListItem>();
+
+    // Determinar si hay un valor seleccionado en el modelo
+    bool tieneTipoVehiculo = Model != null && Model.TipoVehiculo > 0;
+    bool tieneTipoServicio = Model != null && Model.TipoServicio > 0;
+    bool tieneEmpleado = Model != null && Model.IdEmpleado > 0;
+
+    // Agregar opción por defecto SIEMPRE (disabled)
+    tipoVehiculoSelectList.Add(new SelectListItem
+    {
+        Value = "",
+        Text = "Selecciona un Tipo de Vehiculo",
+        Selected = !tieneTipoVehiculo, // Seleccionada SOLO si NO hay valor en el modelo
+        Disabled = true
+    });
+
+    foreach (var tipoVehiculo in tiposVehiculos)
+    {
+        var splitTipoVehiculos = tipoVehiculo.ToString().Split(':');
+        tipoVehiculoSelectList.Add(new SelectListItem
+        {
+            Value = splitTipoVehiculos[0].Trim(),
+            Text = splitTipoVehiculos[1].Trim(),
+            Selected = tieneTipoVehiculo && Model.TipoVehiculo.ToString() == splitTipoVehiculos[0].Trim()
+        });
+    }
+
+    var tipoServicioSelectList = new List<SelectListItem>();
+
+    // Agregar opción por defecto SIEMPRE (disabled)
+    tipoServicioSelectList.Add(new SelectListItem
+    {
+        Value = "",
+        Text = "Selecciona un Tipo de Servicio",
+        Selected = !tieneTipoServicio, // Seleccionada SOLO si NO hay valor en el modelo
+        Disabled = true
+    });
+
+    foreach (var tipoServicio in tiposServicio)
+    {
+        var splitTipoServicio = tipoServicio.Split(':');
+        tipoServicioSelectList.Add(new SelectListItem
+        {
+            Value = splitTipoServicio[0].Trim(),
+            Text = splitTipoServicio[1].Trim(),
+            Selected = tieneTipoServicio && Model.TipoServicio.ToString() == splitTipoServicio[0].Trim()
+        });
+    }
+
+    var trabajadoresSelectList = new List<SelectListItem>();
+
+    // Agregar opción por defecto SIEMPRE (disabled)
+    trabajadoresSelectList.Add(new SelectListItem
+    {
+        Value = "",
+        Text = "Selecciona un Chofer",
+        Selected = !tieneEmpleado, // Seleccionada SOLO si NO hay valor en el modelo
+        Disabled = true
+    });
+
+    foreach (var i in trabajadores)
+    {
+        trabajadoresSelectList.Add(new SelectListItem
+        {
+            Value = i.Id.ToString(),
+            Text = i.Nombre,
+            Selected = tieneEmpleado && Model.IdEmpleado == i.Id
+        });
+    }
+}
+
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+
+<div class="content">
+    @using (Html.BeginForm("SaveOrUpdateReparacionVehiculos", "Taller", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmReparacionVehiculos", @id = "frmReparacionVehiculos" }))
+    {
+        @Html.HiddenFor(x => x.Id, new { id = "id" })
+        @Html.HiddenFor(x => x.Estatus, new { id = "estatus" })
+        @Html.HiddenFor(x => x.CreatedDt, new { id = "createdDt", @Value = Model != null && Model.CreatedDt != null && Model.CreatedDt > DateTime.MinValue ? Model.CreatedDt.ToString("yyyy-MM-dd HH:mm:ss") : DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") })
+        @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy", @Value = Model != null && !string.IsNullOrEmpty(Model.CreatedBy) ? Model.CreatedBy : usuarioToken.UserName })
+        @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy", @Value = usuarioToken.UserName })
+        @Html.HiddenFor(x => x.UpdatedDt, new { id = "updatedDt", @Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") })
+
+        <br />
+        <center><h1>Reparacion de Vehiculos</h1></center>
+        <div class="tabla-consultas-empleados">
+            <div class="rectangulos" style="width: 100%;">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Fecha:</label>
+                        <input type="text" id="fecha" name="Fecha" class="form-control"
+                               readonly="readonly" required="required"
+                               value="@fechaFormateada" />
+                    </div>
+
+                    <div class="col-lg-3">
+                        <label>Origen de Vehiculo:</label>
+                        @Html.DropDownListFor(x => x.TipoVehiculo,
+                            tipoVehiculoSelectList,
+                            new { @class = "form-control", id = "ddlTiposVehiculos", @required = "required" })
+                    </div>
+
+                    <div class="col-lg-3">
+                        <label>Vehiculo:</label>
+                        <select id="ddlVehiculo" name="IdVehiculo" class="form-control" required>
+                            <option value="" disabled selected>Selecciona un Vehiculo</option>
+                        </select>
+                    </div>
+
+                    <div class="col-lg-3">
+                        <label>Chofer:</label>
+                        @Html.DropDownListFor(x => x.IdEmpleado,
+                            trabajadoresSelectList,
+                            new { @class = "form-control", id = "ddlEmpleados", @required = "required" })
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label>Tipo de Servicio:</label>
+                        @Html.DropDownListFor(x => x.TipoServicio,
+                            tipoServicioSelectList,
+                            new { @class = "form-control", id = "ddlTipoServicio", @required = "required" })
+                    </div>
+
+                    <div class="col-lg-3">
+                        <label>Recibio:</label>
+                        @Html.TextBoxFor(x => x.Recibio, new
+                        {
+                            @class = "form-control",
+                            @type = "text",
+                            id = "recibido",
+                            @readonly = "readonly",
+                            @Value = Model != null && !string.IsNullOrEmpty(Model.Recibio) ? Model.Recibio : usuarioToken.UserName,
+                            @required = "required"
+                        })
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12 d-flex justify-content-between">
+                        <div>
+                            <input id="btnGuardar" type="submit" value="Guardar" class="btn btn-success btn-lg-custom" />
+                        </div>
+                        <a href="/Taller/ReparacionVehiculos" class="btn btn-custom-cancel btn-lg-custom">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <br />
+    <center><h1>Historial de Reparaciones</h1></center>
+    <br />
+    <table id="tblReparacionVehiculos" class="table table-bordered table-striped" style="width: 100%;"></table>
+    <br />
+    <center><h1>Estatus y Asignacion de Refacciones</h1></center>
+    <br />
+    <table id="tblAllRegistersReparacionVehiculos" class="table table-bordered table-striped" style="width: 100%;"></table>
+</div>
+
+<script>
+    // Pasar datos del modelo a JavaScript
+    var modeloEdicion = @Html.Raw(Json.Encode(Model));
+    var esNuevoRegistro = @(esNuevoRegistro ? "true" : "false");
+
+    // CORRECCIÓN: Forzar que en nuevos registros se muestre la opción por defecto
+    $(document).ready(function() {
+        if (esNuevoRegistro) {
+            // Asegurar que los selects muestren la opción por defecto
+            setTimeout(function() {
+                // Estos selects ya deberían tener la opción por defecto seleccionada
+                // pero forzamos por si acaso
+                if ($("#ddlTiposVehiculos").val() !== "") {
+                    $("#ddlTiposVehiculos").val("");
+                }
+                if ($("#ddlTipoServicio").val() !== "") {
+                    $("#ddlTipoServicio").val("");
+                }
+                if ($("#ddlEmpleados").val() !== "") {
+                    $("#ddlEmpleados").val("");
+                }
+            }, 100);
+        }
+    });
+</script>
+
+<script src="@(Url.StaticFile("Scripts/Taller/ReparacionVehiculos.js"))"></script>

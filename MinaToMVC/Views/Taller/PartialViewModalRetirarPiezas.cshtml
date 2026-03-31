@@ -1,0 +1,456 @@
+﻿@model MinaTolEntidades.DtoTaller.RetirarPiezaVehiculoReparacion
+@{
+    var fechaActual = DateTime.Now;
+    var usuarioToken = ViewBag.UserToken;
+}
+<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+
+<style>
+    .photo-upload-container {
+        border: 2px dashed #ddd;
+        border-radius: 6px;
+        padding: 10px;
+        text-align: center;
+        background-color: #f9f9f9;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .photo-upload-container:hover {
+            border-color: #007bff;
+            background-color: #f0f0f0;
+        }
+
+    .photo-preview {
+        max-width: 100%;
+        max-height: 100px;
+        margin-bottom: 5px;
+        border-radius: 4px;
+        object-fit: cover;
+    }
+
+    .photo-placeholder {
+        color: #999;
+        font-size: 28px;
+        margin-bottom: 5px;
+    }
+
+        .photo-placeholder .camera-icon {
+            font-size: 32px;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        .photo-placeholder p {
+            font-size: 11px;
+            margin: 5px 0;
+        }
+
+        .photo-placeholder small {
+            font-size: 9px;
+        }
+
+    .photo-actions {
+        margin-top: 5px;
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+    }
+
+    .btn-photo {
+        padding: 3px 10px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-delete-photo {
+        background-color: #dc3545;
+        color: white;
+    }
+
+        .btn-delete-photo:hover {
+            background-color: #c82333;
+        }
+
+    .btn-change-photo {
+        background-color: #007bff;
+        color: white;
+    }
+
+        .btn-change-photo:hover {
+            background-color: #0056b3;
+        }
+
+    .file-input-hidden {
+        display: none;
+    }
+
+    .photo-required {
+        color: #dc3545;
+        font-size: 10px;
+        margin-top: 3px;
+        display: none;
+    }
+
+    .photo-upload-container.has-error {
+        border-color: #dc3545;
+        background-color: #fff5f5;
+    }
+
+    .photo-label {
+        font-weight: 600;
+        margin-bottom: 5px;
+        display: block;
+        font-size: 12px;
+    }
+
+        .photo-label .required-star {
+            color: #dc3545;
+            margin-left: 3px;
+        }
+
+    .rectangulos {
+        padding: 15px;
+    }
+
+    .form-control-sm-custom {
+        height: 32px;
+        font-size: 12px;
+        padding: 4px 8px;
+    }
+
+    label {
+        font-size: 12px;
+        margin-bottom: 3px;
+    }
+
+    h2 {
+        font-size: 18px;
+        margin: 0 0 10px 0;
+    }
+
+    .field-required {
+        color: #dc3545;
+        font-size: 10px;
+        margin-top: 3px;
+        display: none;
+    }
+
+    .form-control.error {
+        border-color: #dc3545;
+        background-color: #fff5f5;
+    }
+</style>
+
+@using (Html.BeginForm("SaveOrUpdateRetirarPiezaVehiculoReparacion", "Taller", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmRetirarPiezaVehiculo" }))
+{
+    @Html.HiddenFor(x => x.Id, new { @Value = Model?.Id ?? 0 })
+    @Html.HiddenFor(x => x.Estatus, new { @id = "estatusModal", @Value = 1 })
+    @Html.HiddenFor(x => x.CreatedBy, new { @id = "createdByModal", @Value = usuarioToken })
+    @Html.HiddenFor(x => x.UpdatedBy, new { @id = "updatedByModal", @Value = usuarioToken })
+    @Html.HiddenFor(x => x.CreatedDt, new { @id = "createdDtModal", @Value = fechaActual })
+    @Html.HiddenFor(x => x.UpdatedDt, new { @id = "updatedDtModal", @Value = fechaActual })
+    @Html.HiddenFor(x => x.RutaFoto, new { @id = "rutaFoto" })
+    @Html.HiddenFor(x => x.GitFoto, new { @id = "gitFoto" })
+    @Html.HiddenFor(x => x.IdReparacion, new { @Value = ViewBag.IdRegistro })
+    @Html.HiddenFor(x => x.IdVehiculo, new { @Value = ViewBag.IdVehiculo })
+    @Html.HiddenFor(x => x.TipoVehiculo, new { @Value = ViewBag.TipoVehiculo })
+
+    <h2>Retirar Pieza/Componente</h2>
+
+    <div class="tabla-consultas-empleados">
+        <div class="rectangulos" style="width: 100%; padding: 10px;">
+            <div class="row">
+                <div class="col-lg-4">
+                    <label>Categoria Inventario: <span class="required-star">*</span></label>
+                    @Html.DropDownListFor(x => x.IdCategoriaInventario,
+                        new SelectList((IEnumerable<SelectListItem>)ViewBag.CategoriaInventario, "Value", "Text"),
+                        "Selecciona",
+                        new { @class = "form-control form-control-sm-custom", id = "ddlCategoriaInventario" })
+                    <div class="field-required" id="errorCategoria">Seleccione una categoría</div>
+                </div>
+                <div class="col-lg-4">
+                    <label>Nombre: <span class="required-star">*</span></label>
+                    @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control form-control-sm-custom", @id = "nombre", placeholder = "Nombre" })
+                    <div class="field-required" id="errorNombre">El nombre es requerido</div>
+                </div>
+                <div class="col-lg-2">
+                    <label>Reutilizable:</label>
+                    @Html.CheckBoxFor(x => x.Reutilizable, new { @class = "form-control", @id = "reutilizable", style = "width: 20px; height: 20px; margin-top: 5px;" })
+                </div>
+            </div>
+            <div class="row" style="margin-top: 8px;">
+                <div class="col-lg-3">
+                    <label>Marca: <span class="required-star">*</span></label>
+                    @Html.TextBoxFor(x => x.Marca, new { @class = "form-control form-control-sm-custom", @id = "marca" })
+                    <div class="field-required" id="errorMarca">La marca es requerida</div>
+                </div>
+                <div class="col-lg-2">
+                    <label>Cantidad: <span class="required-star">*</span></label>
+                    @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control form-control-sm-custom", @id = "cantidad", type = "number", min = "1" })
+                    <div class="field-required" id="errorCantidad">La cantidad es requerida y debe ser mayor a 0</div>
+                </div>
+                <div class="col-lg-4">
+                    <label>Ubicacion Almacen: <span class="required-star">*</span></label>
+                    @Html.DropDownListFor(x => x.UbicacionAlmacen,
+                        (IEnumerable<SelectListItem>)ViewBag.UbicacionesInventarioTaller,
+                        "Selecciona ubicación",
+                        new { @class = "form-control form-control-sm-custom", @id = "ubicacionAlmacen" })
+                    <div class="field-required" id="errorUbicacion">La ubicación es requerida</div>
+                </div>
+                <div class="col-lg-3">
+                    <label>Fecha: <span class="required-star">*</span></label>
+                    @Html.TextBoxFor(x => x.Fecha, new { @class = "form-control form-control-sm-custom", @id = "fecha", @Value = fechaActual.ToString("yyyy-MM-dd HH:mm:ss"), @readonly = "readonly" })
+                </div>
+            </div>
+            <div class="row" style="margin-top: 8px;">
+                <div class="col-lg-12">
+                    <div class="photo-label">
+                        <label>Fotografía <span class="required-star">*</span></label>
+                    </div>
+                    <div class="photo-upload-container" id="photoUploadContainer">
+                        <div class="photo-placeholder" id="photoPlaceholder">
+                            <div class="camera-icon">📷</div>
+                            <p>Seleccionar foto</p>
+                            <small>JPG, JPEG, PNG, GIF | 5MB</small>
+                        </div>
+                        <img id="photoPreview" class="photo-preview" style="display: none;" alt="Vista previa" />
+                        <div class="photo-actions" id="photoActions" style="display: none;">
+                            <button type="button" class="btn-photo btn-change-photo" id="btnChangePhoto">
+                                🔄 Cambiar
+                            </button>
+                            <button type="button" class="btn-photo btn-delete-photo" id="btnDeletePhoto">
+                                🗑️ Eliminar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="photo-required" id="photoRequired">
+                        ⚠️ La fotografía es requerida
+                    </div>
+                    <input type="file" id="fotografia" name="Fotografia" accept="image/jpeg,image/jpg,image/png,image/gif" class="file-input-hidden" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 15px;">
+        <div class="col-lg-12 text-right">
+            <button type="submit" class="btn btn-success btn-lg-custom">Guardar</button>
+            <button type="button" class="btn btn-custom-cancel btn-lg-custom" data-dismiss="modal">Cancelar</button>
+        </div>
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        const $fileInput = $('#fotografia');
+        const $photoContainer = $('#photoUploadContainer');
+        const $photoPlaceholder = $('#photoPlaceholder');
+        const $photoPreview = $('#photoPreview');
+        const $photoActions = $('#photoActions');
+        const $photoRequired = $('#photoRequired');
+        const $rutaFoto = $('#rutaFoto');
+        const $gitFoto = $('#gitFoto');
+
+        let currentFile = null;
+
+        // Función para validar campos del formulario
+        function validateFormFields() {
+            let isValid = true;
+
+            // Validar categoría
+            const categoria = $('#ddlCategoriaInventario').val();
+            if (!categoria || categoria === '') {
+                $('#ddlCategoriaInventario').addClass('error');
+                $('#errorCategoria').show();
+                isValid = false;
+            } else {
+                $('#ddlCategoriaInventario').removeClass('error');
+                $('#errorCategoria').hide();
+            }
+
+            // Validar nombre
+            const nombre = $('#nombre').val().trim();
+            if (!nombre) {
+                $('#nombre').addClass('error');
+                $('#errorNombre').show();
+                isValid = false;
+            } else {
+                $('#nombre').removeClass('error');
+                $('#errorNombre').hide();
+            }
+
+            // Validar marca
+            const marca = $('#marca').val().trim();
+            if (!marca) {
+                $('#marca').addClass('error');
+                $('#errorMarca').show();
+                isValid = false;
+            } else {
+                $('#marca').removeClass('error');
+                $('#errorMarca').hide();
+            }
+
+            // Validar cantidad
+            const cantidad = $('#cantidad').val().trim();
+            if (!cantidad || parseInt(cantidad) <= 0) {
+                $('#cantidad').addClass('error');
+                $('#errorCantidad').show();
+                isValid = false;
+            } else {
+                $('#cantidad').removeClass('error');
+                $('#errorCantidad').hide();
+            }
+
+            // Validar ubicación
+            const ubicacion = $('#ubicacionAlmacen').val().trim();
+            if (!ubicacion) {
+                $('#ubicacionAlmacen').addClass('error');
+                $('#errorUbicacion').show();
+                isValid = false;
+            } else {
+                $('#ubicacionAlmacen').removeClass('error');
+                $('#errorUbicacion').hide();
+            }
+
+            return isValid;
+        }
+
+        function hasPhoto() {
+            return currentFile !== null || ($gitFoto.val() && $gitFoto.val().trim() !== '');
+        }
+
+        function validatePhoto() {
+            if (!hasPhoto()) {
+                $photoContainer.addClass('has-error');
+                $photoRequired.show();
+                return false;
+            } else {
+                $photoContainer.removeClass('has-error');
+                $photoRequired.hide();
+                return true;
+            }
+        }
+
+        function previewImage(file) {
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $photoPreview.attr('src', e.target.result);
+                    $photoPreview.show();
+                    $photoPlaceholder.hide();
+                    $photoActions.show();
+                    currentFile = file;
+                    validatePhoto();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function deletePhoto() {
+            $fileInput.val('');
+            $photoPreview.hide();
+            $photoPlaceholder.show();
+            $photoActions.hide();
+            currentFile = null;
+            $rutaFoto.val('');
+            $gitFoto.val('');
+            validatePhoto();
+        }
+
+        // Función para mostrar mensajes con SweetAlert
+        function showError(message) {
+            Swal.fire({
+                title: 'Error',
+                text: message,
+                icon: 'error',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#3085d6'
+            });
+        }
+
+        function showWarning(message) {
+            Swal.fire({
+                title: 'Advertencia',
+                text: message,
+                icon: 'warning',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#3085d6'
+            });
+        }
+
+        $photoContainer.on('click', function (e) {
+            if (!$(e.target).closest('.btn-photo').length) {
+                $fileInput.click();
+            }
+        });
+
+        $fileInput.on('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const maxSize = 5 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    showError('El archivo es demasiado grande. El tamaño máximo permitido es 5MB.');
+                    $fileInput.val('');
+                    return;
+                }
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+                if (!allowedTypes.includes(file.type)) {
+                    showError('Formato no permitido. Use JPG, JPEG, PNG o GIF.');
+                    $fileInput.val('');
+                    return;
+                }
+                previewImage(file);
+                $rutaFoto.val('');
+                $gitFoto.val('');
+            }
+        });
+
+        $('#btnChangePhoto').on('click', function (e) {
+            e.stopPropagation();
+            $fileInput.click();
+        });
+
+        $('#btnDeletePhoto').on('click', function (e) {
+            e.stopPropagation();
+            deletePhoto();
+        });
+
+        $('#frmRetirarPiezaVehiculo').on('submit', function (e) {
+            // Validar todos los campos requeridos
+            const areFieldsValid = validateFormFields();
+            const isPhotoValid = validatePhoto();
+
+            if (!areFieldsValid) {
+                e.preventDefault();
+                showError('Por favor, complete todos los campos requeridos.');
+                return false;
+            }
+
+            if (!isPhotoValid) {
+                e.preventDefault();
+                showError('Por favor, seleccione una fotografía.');
+                return false;
+            }
+
+            return true;
+        });
+
+        if ($gitFoto.val() && $gitFoto.val().trim() !== '') {
+            $photoPlaceholder.html('<div class="camera-icon">✓</div><p>Foto existente</p><small>Click para cambiar</small>');
+            $photoPlaceholder.show();
+            $photoPreview.hide();
+            $photoActions.hide();
+            currentFile = null;
+            validatePhoto();
+        }
+    });
+</script>

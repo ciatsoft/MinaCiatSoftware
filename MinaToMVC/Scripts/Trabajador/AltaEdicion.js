@@ -1,4 +1,11 @@
 ﻿$(document).ready(function () {
+
+    // Cargar foto existente si estamos en modo edición
+    var empleadoId = $("#id").val();
+    if (empleadoId > 0) {
+        cargarFotoExistente(empleadoId);
+    }
+
     // Actualizar el TextBox cuando cambie la selección del DropDownList
     $("#ddlDepartamento").change(function () {
         var selectedText = $(this).find("option:selected").text();
@@ -117,6 +124,10 @@
         }
     });
 
+    $("#btnGuardar").click(function () {
+        SaveOrupdateEmpleado();
+    });
+
     GetAllEmpleados();
 });
 
@@ -135,6 +146,27 @@ function GetAllEmpleados() {
     });
 }
 
+function cargarFotoExistente(empleadoId) {
+    $.ajax({
+        url: '/Empleado/ObtenerFotoEmpleado/' + empleadoId,
+        type: 'GET',
+        success: function (response) {
+            if (response.success && response.fotoBase64) {
+                // Mostrar la foto precargada
+                $("#preview-image").attr("src", response.fotoBase64);
+                $("#preview-container").show();
+                $("#no-image-message").hide();
+
+                // Marcar que hay foto existente
+                window.tieneFotoExistente = true;
+            }
+        },
+        error: function () {
+            console.log("No se pudo cargar la foto existente");
+        }
+    });
+}
+
 function SaveOrupdateEmpleado() {
     if ($("#frmEmpleado").valid()) {
         // Validación adicional para la categoría
@@ -148,7 +180,12 @@ function SaveOrupdateEmpleado() {
             return false;
         }
 
-        var parametro = {
+        var formData = new FormData();
+        var fotoInput = document.getElementById('fotografia');
+        var tieneFotoNueva = fotoInput && fotoInput.files && fotoInput.files[0];
+
+        // Crear objeto empleado
+        var empleadoData = {
             id: $("#id").val(),
             nombre: $("#nombre").val(),
             apellidoPaterno: $("#apellidoPaterno").val(),
@@ -158,42 +195,62 @@ function SaveOrupdateEmpleado() {
             nss: $("#nss").val(),
             diaNomina: $("#diaNomina").val(),
             idDepartamento: $("#ddlDepartamento").val(),
-            NombreDepartamento: $("#nombreDepartamento").val(),
+            nombreDepartamento: $("#nombreDepartamento").val(),
             comentario: $("#comentario").val(),
-            FechaContratacion: $("#fechaContratacion").val(),
-            Estatus: $("#estatus").val(),
-            CreatedBy: $("#createdBy").val(),
-            CreatedDt: $("#createdDt").val(),
-            UpdatedBy: $("#updatedBy").val(),
-            UpdatedDt: $("#updatedDt").val(),
+            fechaContratacion: $("#fechaContratacion").val(),
+            estatus: $("#estatus").val(),
+            createdBy: $("#createdBy").val(),
+            createdDt: $("#createdDt").val(),
+            updatedBy: $("#updatedBy").val(),
+            updatedDt: $("#updatedDt").val(),
+            rutaFoto: "",
+            gitFoto: ""
         };
 
-        PostMVC('/Empleado/SaveOrupdateEmpleado', parametro, function (r) {
-            if (r.IsSuccess) {
-                LimpiarFormulario();
-                Swal.fire({
-                    title: "Registro guardado!",
-                    text: "El registro se ha guardado correctamente.",
-                    icon: "success",
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    window.location.reload();
-                });
-            } else {
+        // Agregar el objeto empleado como JSON
+        formData.append('empleadoData', JSON.stringify(empleadoData));
+
+        // Agregar la foto solo si existe una NUEVA
+        if (tieneFotoNueva) {
+            formData.append('fotoEmpleado', fotoInput.files[0]);
+        }
+
+        // Enviar usando AJAX con FormData
+        $.ajax({
+            url: '/Empleado/SaveOrUpdateTrabajador',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        title: "Registro guardado!",
+                        text: response.message || "El registro se ha guardado correctamente.",
+                        icon: "success",
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = '/Empleado/AltaEdicion/';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message || 'Error al guardar los datos',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Error al guardar los datos: ' + r.ErrorMessage,
+                    text: 'Error en la solicitud: ' + error,
                     confirmButtonText: 'Aceptar'
                 });
             }
         });
     }
-}
-
-function LimpiarFormulario() {
-    $("#frmInventario")[0].reset();
-    $("#ddlCategoriaInventario").val("").trigger("change");
 }
 
 function EditarEmpleado(id) {
@@ -593,3 +650,49 @@ function AbrirModalDocumentosEmpleado(id) {
     });
 }
 
+// Función para mostrar la vista previa de la imagen seleccionada
+document.getElementById('fotografia').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    const previewContainer = document.getElementById('preview-container');
+    const previewImage = document.getElementById('preview-image');
+    const noImageMessage = document.getElementById('no-image-message');
+
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            previewImage.src = e.target.result;
+            previewContainer.style.display = 'block';
+            noImageMessage.style.display = 'none';
+        };
+
+        reader.readAsDataURL(file);
+    } else {
+        // Si no es una imagen válida
+        previewContainer.style.display = 'none';
+        noImageMessage.style.display = 'block';
+        noImageMessage.textContent = 'Por favor, selecciona una imagen válida';
+
+        // Limpiar el input de archivo
+        event.target.value = '';
+    }
+});
+
+// Función para eliminar la foto seleccionada
+function eliminarFoto() {
+    const previewContainer = document.getElementById('preview-container');
+    const previewImage = document.getElementById('preview-image');
+    const noImageMessage = document.getElementById('no-image-message');
+    const fileInput = document.getElementById('fotografia');
+
+    // Limpiar la vista previa
+    previewImage.src = '';
+    previewContainer.style.display = 'none';
+
+    // Limpiar el input de archivo
+    fileInput.value = '';
+
+    // Mostrar mensaje de que no hay imagen
+    noImageMessage.style.display = 'block';
+    noImageMessage.textContent = 'No hay imagen seleccionada';
+}

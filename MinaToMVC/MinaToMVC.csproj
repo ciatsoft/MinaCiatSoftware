@@ -260,12 +260,18 @@
     <Content Include="Scripts\Seguridad\Usuario.js" />
     <Content Include="Scripts\sweetalert.min.js" />
     <Content Include="Scripts\Taller\CatalogoInventario.js" />
+    <Content Include="Scripts\Taller\InventarioPiezasNoReutilizables.js" />
+    <Content Include="Scripts\Taller\InventarioPiezasReutilizables.js" />
     <Content Include="Scripts\Taller\InventarioTaller.js" />
+    <Content Include="Scripts\Taller\ReparacionVehiculos.js" />
+    <Content Include="Scripts\Taller\ResumenReparacionVehiculo.js" />
     <Content Include="Scripts\Trabajador\AltaEdicion.js" />
     <Content Include="Scripts\Trabajador\BajaEmpleados.js" />
     <Content Include="Scripts\Trabajador\ConceptosRH.js" />
     <Content Include="Scripts\Trabajador\Documento.js" />
     <Content Include="Scripts\Trabajador\Nominas.js" />
+    <Content Include="Scripts\VehiculoCarga\ReporteEficiencia.js" />
+    <Content Include="Scripts\VehiculoCarga\RFIDCarga.js" />
     <Content Include="Scripts\VehiculoCarga\VehiculoCarga.js" />
     <Content Include="Scripts\Vehiculo\Vehiculo.js" />
     <Content Include="Scripts\VentaPublicoGeneral\CajaChica.js" />
@@ -435,6 +441,20 @@
     <Content Include="Views\VehiculoCarga\VehiculoCarga.cshtml" />
     <Content Include="Scripts\jquery-1.9.0.min.map" />
     <Content Include="Views\VentaPublicoGeneral\GastosDiarios.cshtml" />
+    <Content Include="Views\VehiculoCarga\RFIDCarga.cshtml" />
+    <Content Include="Views\Taller\Demo.cshtml" />
+    <Content Include="Views\VehiculoCarga\ReporteEficiencia.cshtml" />
+    <Content Include="Views\Taller\ReparacionVehiculos.cshtml" />
+    <Content Include="Views\VentaPublicoGeneral\PartialmostrarEstatus.cshtml" />
+    <Content Include="Views\Taller\ResumenReparacionVehiculo.cshtml" />
+    <Content Include="Views\Taller\PartialViewModalRetirarPiezas.cshtml" />
+    <Content Include="Views\Taller\PartialViewEditarRetirarPieza.cshtml" />
+    <Content Include="Views\Taller\PartialViewModalAsignarPiezas.cshtml" />
+    <Content Include="Views\Taller\InventarioPiezasReutilizables.cshtml" />
+    <Content Include="Views\Taller\InventarioPiezasNoUtilizadas.cshtml" />
+    <Content Include="Views\Taller\PartialViewModalMostrarDetalles.cshtml" />
+    <Content Include="Views\Taller\PartialViewModalConsultarPiezaRetirada.cshtml" />
+    <Content Include="Views\Taller\PartialViewConsultarPiezaAsignada.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

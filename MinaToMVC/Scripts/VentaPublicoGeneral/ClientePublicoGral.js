@@ -55,7 +55,68 @@ $(document).ready(function () {
             processing: "Procesando...",
             lengthMenu: "Mostrar _MENU_ entradas",
             zeroRecords: "No se encontraron resultados",
-            emptyTable: "Ningún dato disponible en esta tabla",
+            emptyTable: "Ningun dato disponible en esta tabla",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+            infoEmpty: "Mostrando 0 a 0 de 0 entradas",
+            infoFiltered: "(filtrado de un total de _MAX_ entradas)",
+            search: "Buscar:",
+            loadingRecords: "Cargando...",
+            paginate: {
+                first: "Primero",
+                last: "Último",
+                next: "Siguiente",
+                previous: "Anterior"
+            },
+            aria: {
+                sortAscending: ": activar para ordenar ascendente",
+                sortDescending: ": activar para ordenar descendente"
+            }
+        }
+    });
+
+    $("#tblHistoricoRFIDCliente").DataTable({
+        processing: true,
+        destroy: true,
+        paging: true,
+        searching: true,
+        responsive: true,
+        autoWidth: false,
+        columns: [
+            { data: "id", visible: false, title: "Id" },
+            { data: "rfiD_Anterior", visible: true, title: "RFID Anterior" },
+            { data: "rfiD_Nuevo", title: "RFID Nuevo" },
+            {
+                data: "fecha_Cambio",
+                title: "Fecha de Cambio",
+                render: function (data) {
+                    if (data) {
+                        var fecha = new Date(data);
+                        // Formato: dd/mm/yyyy HH:MM
+                        return fecha.toLocaleDateString('es-ES') + ', Hora: ' + fecha.toLocaleTimeString('es-ES', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                    }
+                    return '';
+                }
+            },
+            {
+                data: "id",
+                title: "Acciones",
+                render: function (data) {
+                    return `
+                        <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarHistoricoRFID(${data})" />
+                    `;
+                }
+            }
+        ],
+        language: {
+            decimal: ",",
+            thousands: ".",
+            processing: "Procesando...",
+            lengthMenu: "Mostrar _MENU_ entradas",
+            zeroRecords: "No se encontraron resultados",
+            emptyTable: "Ningun dato disponible en esta tabla",
             info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             infoEmpty: "Mostrando 0 a 0 de 0 entradas",
             infoFiltered: "(filtrado de un total de _MAX_ entradas)",
@@ -86,7 +147,8 @@ $(document).ready(function () {
         $("#rfc").val(ClientePublicoGralJson.RFC);
         $("#razonSocial").val(ClientePublicoGralJson.RazonSocial);
         $("#comentarios").val(ClientePublicoGralJson.Comentarios);
-        
+
+        GetAllHistoricoRFIDByIdCliente(ClientePublicoGralJson.Id);
     } else {
         $("#btnEliminaru").hide();
         $("#btnGuardaru").show();
@@ -100,6 +162,25 @@ function GetAllClientePublicoGral() {
         } else {
             Swal.fire("Error", "Error al cargar los Clientes Venta Publico General: " + r.ErrorMessage, "error");
         }
+    });
+}
+
+function GetAllHistoricoRFIDByIdCliente(id) {
+    GetMVC("/VentaPublicoGeneral/GetAllHistoricoRFIDByIdCliente/" + id, function (r) {
+        if (r.IsSuccess) {
+            var data = r.Response;
+            MapingPropertiesDataTable("tblHistoricoRFIDCliente", r.Response);
+            console.log(data);
+        } else {
+            Swal.fire("Error", "Error al cargar los Datos del Clientes Venta Publico General: " + r.ErrorMessage, "error");
+        }
+    });
+}
+
+function EliminarHistoricoRFID(id) {
+    PostMVC('/VentaPublicoGeneral/DeleteHistoricoRFID', { id: id }, function (r) {
+        Swal.fire('Eliminado', 'El registro ha sido eliminado.', 'success')
+            .then(() => window.location.reload());
     });
 }
 
@@ -123,7 +204,7 @@ function SaveOrUpdateClientePublicoGral() {
 
         var isUpdating = parametro.Id && parametro.Id != 0;
         Swal.fire({
-            title: isUpdating ? '¿Desea actualizar el registro?' : '¿Desea guardar el nuevo registro?',
+            title: isUpdating ? 'Actualizar el registro' : 'Guardar nuevo registro',
             html: `<strong>Id:</strong> ${parametro.Id}<br/>
                    <strong>RFID:</strong> ${parametro.RFID}<br/>
                    <strong>Nombre:</strong> ${parametro.nombre}<br/> 
@@ -138,12 +219,58 @@ function SaveOrUpdateClientePublicoGral() {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                PostMVC("/VentaPublicoGeneral/SaveOrUpdateClientePublicoGral", parametro, function (success, response) {
-                    if (success) {
-                        Swal.fire('Éxito', isUpdating ? 'Datos actualizados exitosamente.' : 'Datos guardados exitosamente.', 'success')
-                            .then(() => window.location.href = '/VentaPublicoGeneral/ClientePublicoGeneral');
+
+                GetMVC("/VentaPublicoGeneral/GetClientePublicoGralById/" + parametro.Id, function (r) {
+                    if (r.IsSuccess) {
+                        var data = r.Response;
+                        if (parametro.RFID == data.rfid) {
+                            PostMVC("/VentaPublicoGeneral/SaveOrUpdateClientePublicoGral", parametro, function (success, response) {
+                                if (success) {
+                                    Swal.fire('Exito', isUpdating ? 'Datos actualizados exitosamente.' : 'Datos guardados exitosamente.', 'success')
+                                        .then(() => window.location.href = '/VentaPublicoGeneral/ClientePublicoGeneral');
+                                } else {
+                                    Swal.fire('Error', 'Error al guardar los datos: ' + response.ErrorMessage, 'error');
+                                }
+                            });
+                        }
+                        else {
+                            var objeto = {
+                                Id: 0,
+                                IdCliente: parametro.Id,
+                                RFID_Anterior: data.rfid,
+                                RFID_Nuevo: $("#RFID").val(),
+                                Fecha_Cambio: $("#fecha").val(),
+                                Estatus: 1,
+                                CreatedBy: $("#createdBy").val(),
+                                CreatedDt: $("#fecha").val(),
+                                UpdatedBy: $("#createdBy").val(),
+                                UpdatedDt: $("#fecha").val()
+                            }
+                            PostMVC("/VentaPublicoGeneral/SaveOrUpdateHistoricoRFID", objeto, function (success, response) {
+                                if (success) {
+                                    GetMVC("/VentaPublicoGeneral/TotalHistoricoRFIDByIdCliente/" + parametro.Id, function (r) {
+                                        if (r.IsSuccess) {
+                                            var datosCliente = r.Response;
+                                            PostMVC("/VentaPublicoGeneral/SaveOrUpdateClientePublicoGral", parametro, function (success, response) {
+                                                Swal.fire({
+                                                    title: 'Exito',
+                                                    html: `${isUpdating ? 'Datos actualizados exitosamente.' : 'Datos guardados exitosamente.'}<br>
+                                                            Se han actualizado <strong>${datosCliente.totalRegistros}</strong> veces la tarjeta RFID`,
+                                                    icon: 'success'
+                                                }).then(() => window.location.href = '/VentaPublicoGeneral/ClientePublicoGeneral');
+                                            });
+                                        }
+                                        else {
+                                            Swal.fire('Error', 'Error al guardar los datos: ' + response.ErrorMessage, 'error');
+                                        }
+                                    });
+                                } else {
+                                    Swal.fire('Error', 'Error al guardar los datos: ' + response.ErrorMessage, 'error');
+                                }
+                            });
+                        }
                     } else {
-                        Swal.fire('Error', 'Error al guardar los datos: ' + response.ErrorMessage, 'error');
+                        Swal.fire("Error", "Error al cargar los Datos del Clientes Venta Publico General: " + r.ErrorMessage, "error");
                     }
                 });
             }
@@ -159,8 +286,8 @@ function EditarClientePublicoGral(id) {
 
 function EliminarClientePublicoGral(id) {
     Swal.fire({
-        title: '¿Estás seguro?',
-        text: "Esta acción eliminará el Cliente Publico General.",
+        title: 'Eliminar registro',
+        text: "Esta acción eliminara el Cliente.",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
@@ -171,7 +298,7 @@ function EliminarClientePublicoGral(id) {
         if (result.isConfirmed) {
             PostMVC('/VentaPublicoGeneral/DeleteClientePublicoGral', { id: id }, function (r) {
                 if (r.IsSuccess) {
-                    Swal.fire('¡Eliminado!', 'El Cliente Publico General ha sido eliminado.', 'success')
+                    Swal.fire('Eliminado', 'El Cliente ha sido eliminado.', 'success')
                         .then(() => window.location.href = '/VentaPublicoGeneral/ClientePublicoGeneral');
                 } else {
                     Swal.fire('Error', 'No se pudo eliminar: ' + r.ErrorMessage, 'error');

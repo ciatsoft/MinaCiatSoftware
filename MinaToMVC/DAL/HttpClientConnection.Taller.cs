@@ -1,4 +1,5 @@
 ﻿using MinaTolEntidades;
+using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.DtoTaller;
 using MinaTolEntidades.DtoVentaPublicoGeneral;
 using Newtonsoft.Json;
@@ -108,7 +109,7 @@ namespace MinaToMVC.DAL
                 new Func<string, string>((responseString) =>
                 {
                     return responseString;
-                }));
+                }), token.Token.access_token);
             var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
             return modelResponse;
         }
@@ -125,9 +126,9 @@ namespace MinaToMVC.DAL
 
             return modelResponse;
         }
-        public async Task<ModelResponse> GetComponenteVehiculoById(long id)
+        public async Task<ModelResponse> GetAllPiezasAsignadasReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo, long idReparacion)
         {
-            var result = await RequestAsync<object>($"api/Taller/ComponenteVehiculo/{id}", HttpMethod.Get, null,
+            var result = await RequestAsync<object>($"api/Taller/AsignarComponenteVehiculo/ByVehiculo/{tipoVehiculo}/{idVehiculo}/{idReparacion}", HttpMethod.Get, null,
                new Func<string, string>((responseString) =>
                {
                    return responseString;
@@ -143,6 +144,204 @@ namespace MinaToMVC.DAL
                     return responseString;
                 }), token.Token.access_token);
             return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+        }
+        public async Task<ModelResponse> GetAsignarPiezaVehiculoReparacionById(long id)
+        {
+            var result = await RequestAsync<object>($"api/Taller/AsignarPiezaVehiculoReparacion/{id}", HttpMethod.Get, null,
+               new Func<string, string>((responseString) =>
+               {
+                   return responseString;
+               }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        #endregion
+        #region ReparacionVehiculos
+        public async Task<ModelResponse> SaveOrUpdateReparacionVehiculos(ReparacionVehiculos reparacionVehiculos)
+        {
+            var result = await RequestAsync<object>("api/Taller/ReparacionVehiculos/", HttpMethod.Post, reparacionVehiculos,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        public async Task<ModelResponse> GetAllReparacionVehiculos()
+        {
+
+            var result = await RequestAsync<object>("api/Taller/ReparacionVehiculos/List", HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+        public async Task<ModelResponse> GetReparacionVehiculosById(long id)
+        {
+            var result = await RequestAsync<object>($"api/Taller/ReparacionVehiculos/{id}", HttpMethod.Get, null,
+               new Func<string, string>((responseString) =>
+               {
+                   return responseString;
+               }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        public async Task<ModelResponse> DeleteReparacionVehiculosById(long Id, long IdVehiculo, int TipoVehiculo)
+        {
+            string url = $"api/Taller/ReparacionVehiculos/{Id}/{IdVehiculo}/{TipoVehiculo}";
+
+            var result = await RequestAsync(url, HttpMethod.Post, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+        }
+        public async Task<ModelResponse> LiberarVehiculo(long Id, long IdVehiculo, int TipoVehiculo)
+        {
+            string url = $"api/Taller/ReparacionVehiculos/LiberarVehiculo/{Id}/{IdVehiculo}/{TipoVehiculo}";
+
+            var result = await RequestAsync(url, HttpMethod.Post, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+        }
+        public async Task<ModelResponse> GetAllRegistersReparacionVehiculos()
+        {
+
+            var result = await RequestAsync<object>("api/Taller/ReparacionVehiculos/AllList", HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+        #endregion
+        #region RetirarPiezaVehiculoReparacion
+        public async Task<ModelResponse> SaveOrUpdateRetirarPiezaVehiculoReparacion(RetirarPiezaVehiculoReparacion reparacionVehiculos)
+        {
+            var result = await RequestAsync<object>("api/Taller/RetirarPiezaVehiculoReparacion/", HttpMethod.Post, reparacionVehiculos,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        public async Task<ModelResponse> GetAllRetirarPiezaVehiculoReparacion()
+        {
+
+            var result = await RequestAsync<object>("api/Taller/RetirarPiezaVehiculoReparacion/List", HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+        public async Task<ModelResponse> GetRetirarPiezaVehiculoReparacionById(long id)
+        {
+            var result = await RequestAsync<object>($"api/Taller/RetirarPiezaVehiculoReparacion/{id}", HttpMethod.Get, null,
+               new Func<string, string>((responseString) =>
+               {
+                   return responseString;
+               }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        public async Task<ModelResponse> DeleteRetirarPiezaVehiculoReparacionById(long Id)
+        {
+            string url = $"api/Taller/RetirarPiezaVehiculoReparacion/{Id}";
+
+            var result = await RequestAsync(url, HttpMethod.Post, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+        }
+        public async Task<ModelResponse> GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo, long idReparacion)
+        {
+            var result = await RequestAsync<object>($"api/Taller/RetirarPiezaVehiculoReparacion/ByVehiculo/{tipoVehiculo}/{idVehiculo}/{idReparacion}", HttpMethod.Get, null,
+               new Func<string, string>((responseString) =>
+               {
+                   return responseString;
+               }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        #endregion
+        #region AsignarPiezas
+        public async Task<ModelResponse> GetAllInventarioReutilizableByCategoria(long categoriaInventario)
+        {
+            var result = await RequestAsync<object>($"api/Taller/GetAllInventarioReutilizableByCategoria/{categoriaInventario}", HttpMethod.Get, null,
+               new Func<string, string>((responseString) =>
+               {
+                   return responseString;
+               }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        public async Task<ModelResponse> GetAllInventarioByCategoria(long categoriaInventario)
+        {
+            var result = await RequestAsync<object>($"api/Taller/GetAllInventarioByCategoria/{categoriaInventario}", HttpMethod.Get, null,
+               new Func<string, string>((responseString) =>
+               {
+                   return responseString;
+               }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        #endregion
+        #region ResumenReparacion
+        public async Task<ModelResponse> ActualizarEstado(long Id, int Estado)
+        {
+            var result = await RequestAsync<object>($"api/Taller/ActualizarEstado/{Id}/{Estado}", HttpMethod.Post, null,
+               new Func<string, string>((responseString) =>
+               {
+                   return responseString;
+               }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        #endregion
+        #region Reportes
+        public async Task<ModelResponse> GetAllRetirarPiezasReutilizables()
+        {
+
+            var result = await RequestAsync<object>("api/Taller/PiezasReutilizables/List", HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+        public async Task<ModelResponse> GetAllRetirarPiezasNoReutilizables()
+        {
+
+            var result = await RequestAsync<object>("api/Taller/PiezasNoReutilizables/List", HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
         }
         #endregion
     }

@@ -45,7 +45,7 @@ namespace MinaTolWebApi.DAL
                         new SqlParameter("@CreatedBy", p.CreatedBy),
                         new SqlParameter("@CreatedDt", p.CreatedDt),
                         new SqlParameter("@UpdatedBy", p.UpdatedBy),
-                        new SqlParameter("@UpdatedDt", p.UpdatedDt)
+                        new SqlParameter("@UpdatedDt", p.UpdatedDt),
                     };
 
                     var result = ExecuteScalar("SaveOrUpdatePrepago", CommandType.StoredProcedure, parameters);

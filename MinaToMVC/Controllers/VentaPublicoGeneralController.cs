@@ -1,4 +1,4 @@
-﻿    using MinaTolEntidades;
+﻿using MinaTolEntidades;
 using MinaTolEntidades.DtoCatalogos;
 using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.DtoEmpleados;
@@ -19,6 +19,7 @@ using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Mvc;
 using static MinaToMVC.Controllers.Filters.FiltersHelper;
 
@@ -82,13 +83,13 @@ namespace MinaToMVC.Controllers
             // 6. Usuarios
             var usuarioToken = SessionHelper.GetSessionUser();
             var usuario = new List<Usuario>()
-    {
-        new Usuario()
-        {
-            Id = usuarioToken?.UserID ?? 0,
-            Nombre = usuarioToken?.UserName ?? ""
-        }
-    };
+            {
+                new Usuario()
+                {
+                    Id = usuarioToken?.UserID ?? 0,
+                    Nombre = usuarioToken?.UserName ?? ""
+                }
+            };
             var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
 
             var usuarioAutenticado = Helpers.SessionHelper.GetSessionUser();
@@ -407,6 +408,36 @@ namespace MinaToMVC.Controllers
             return PartialView("PartialDeducciones", modelo);
         }
 
+        public async Task<ActionResult> PartialmostrarEstatus(long id = 0)
+        {
+            List<AnexoTicket> anexoTickets = new List<AnexoTicket>();
+
+            if (id != 0)
+            {
+                var response = await httpClientConnection.GetEstatusVenta(id);
+                anexoTickets = JsonConvert.DeserializeObject<List<AnexoTicket>>(response.Response.ToString());
+            }
+
+            var usuarioToken = SessionHelper.GetSessionUser();
+            var usuario = new List<Usuario>
+            {
+                new Usuario
+                {
+                    Id = usuarioToken.UserID,
+                    Nombre = usuarioToken.UserName
+                }
+            };
+            string projectRootPath = HostingEnvironment.ApplicationPhysicalPath;
+
+            var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+
+            ViewBag.UserToken = usuarioToken;
+            ViewBag.Usuarios = usuarios;
+            ViewBag.ProjectRootPath = projectRootPath;
+
+            return PartialView(anexoTickets);
+        }
+
         // ---------------------------------------Deducciones------------------------------------------
         public async Task<string> GetAllDeducciones()
         {
@@ -428,6 +459,11 @@ namespace MinaToMVC.Controllers
         public async Task<string> SearchDeduccionesByDate(DateTime fechaDeducciones)
         {
             var result = await httpClientConnection.SearchDeduccionesByDate(fechaDeducciones);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> SearchDeduccionesByDates(DateTime fechaDeduccionesInicio, DateTime fechaDeduccionesFin)
+        {
+            var result = await httpClientConnection.SearchDeduccionesByDates(fechaDeduccionesInicio, fechaDeduccionesFin);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
@@ -768,6 +804,8 @@ namespace MinaToMVC.Controllers
             ViewBag.UserToken = usuarioAutenticado;
             ViewBag.Usuarios = usuarios;
 
+            ViewBag.EsEdicion = (id != 0);
+
             return View(clientePublicoGral);
         }
         public async Task<string> GetAllClientePublicoGral()
@@ -775,14 +813,53 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllClientePublicoGral();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-        public async Task<ActionResult> SaveOrUpdateClientePublicoGral(ClientePublicoGral c)
+        public async Task<string> SaveOrUpdateClientePublicoGral(ClientePublicoGral c)
         {
             var r = await httpClientConnection.SaveOrUpdateClientePublicoGral(c);
-            return Redirect("ClientePublicoGeneral");
+            return Newtonsoft.Json.JsonConvert.SerializeObject(r);
         }
         public async Task<String> DeleteClientePublicoGral(long id)
         {
             var result = await httpClientConnection.DeleteClientePublicoGral(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetClientePublicoGralById(long id)
+        {
+            var result = await httpClientConnection.GetClientePublicoGralById(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        #endregion
+
+        #region HistoricoRFID
+
+        public async Task<string> SaveOrUpdateHistoricoRFID(HistoricoRFID c)
+        {
+            var r = await httpClientConnection.SaveOrUpdateHistoricoRFID(c);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(r);
+        }
+        public async Task<string> GetAllHistoricoRFID()
+        {
+            var result = await httpClientConnection.GetAllHistoricoRFID();
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetHistoricoRFIDById(long id)
+        {
+            var result = await httpClientConnection.GetHistoricoRFIDById(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> GetAllHistoricoRFIDByIdCliente(long id)
+        {
+            var result = await httpClientConnection.GetAllHistoricoRFIDByIdCliente(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<string> TotalHistoricoRFIDByIdCliente(long id)
+        {
+            var result = await httpClientConnection.TotalHistoricoRFIDByIdCliente(id);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
+        public async Task<String> DeleteHistoricoRFID(long id)
+        {
+            var result = await httpClientConnection.DeleteHistoricoRFID(id);
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 

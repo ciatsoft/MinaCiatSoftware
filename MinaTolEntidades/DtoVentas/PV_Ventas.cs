@@ -39,6 +39,8 @@ namespace MinaTolEntidades.DtoVentas
         public string RFID { get; set; }
         public string NombreCliente { get; set; }
         public int Carga { get; set; }
+        public string GitTicket { get; set; }
+        public int NoVale { get; set; }
 
     }
 }

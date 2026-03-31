@@ -97,6 +97,56 @@ namespace MinaTolWebApi.DAL
 
             return modelResponse;
         }
+        public ModelResponse ValidateUserPassword(string userName, string pass)
+        {
+            var modelResponse = new ModelResponse();
+
+            try
+            {
+                var user = GetObject($"ValidateUserPassword", CommandType.StoredProcedure,
+                    new[] {
+                new SqlParameter("@UserName", userName),
+                new SqlParameter("@Password", pass)
+                    },
+                    new Func<IDataReader, Usuario>((reader) =>
+                    {
+                        return FillEntity<Usuario>(reader);
+                    }));
+
+                // Verificar si se encontró el usuario
+                if (user != null)
+                {
+                    modelResponse.Response = user;
+                    modelResponse.IsSuccess = true;
+                    modelResponse.Enum = Enumeration.Exito;
+                    modelResponse.Message = "Usuario autenticado correctamente";
+                }
+                else
+                {
+                    // Usuario no encontrado o contraseña incorrecta
+                    modelResponse.Response = null;
+                    modelResponse.IsSuccess = false;
+                    modelResponse.Enum = Enumeration.ErrorCredencialesInvalidas;
+                    modelResponse.Message = "Usuario o contraseña incorrectos";
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorBaseDeDatos;
+                modelResponse.Message = "Error al conectar con la base de datos";
+                // Loggear sqlEx para debugging
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = "Ocurrió un error al validar las credenciales";
+                // Loggear ex para debugging
+            }
+
+            return modelResponse;
+        }
         public ModelResponse GetAllUsuario()
         {
             var modelResponse = new ModelResponse();

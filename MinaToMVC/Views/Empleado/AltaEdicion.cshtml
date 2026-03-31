@@ -12,7 +12,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 
 <div class="content">
-    @using (Html.BeginForm("SaveOrUpdateEmpleado", "Empleado", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmEmpleado", @id = "frmEmpleado" }))
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmEmpleado", @id = "frmEmpleado", onsubmit = "return false;" }))
     {
         @Html.HiddenFor(x => x.Id, new { id = "id" })
         @Html.HiddenFor(x => x.Estatus, new { id = "estatus" })
@@ -25,6 +25,34 @@
         <center><h1>Empleados</h1></center>
         <div class="tabla-consultas-empleados">
             <div class="rectangulos" style="width: 100%;">
+                @if (ViewBag.EsEdicion == true)
+                {
+                    <div class="row" id="rowFotografia">
+                        <div class="col-lg-3">
+                            <label>Fotografía:</label>
+
+                            <input class="form-control" type="file" id="fotografia" accept="image/*" style="display:none;" />
+
+                            <button type="button" class="form-control"
+                                    onclick="document.getElementById('fotografia').click()">
+                                Seleccionar Foto
+                            </button>
+
+                            <div id="preview-container" class="mt-2" style="display:none;">
+                                <img id="preview-image" class="img-thumbnail"
+                                     style="max-width:200px; max-height:200px;" />
+                                <button type="button" class="btn btn-custom-cancel"
+                                        onclick="eliminarFoto()">
+                                    Eliminar
+                                </button>
+                            </div>
+
+                            <div id="no-image-message" class="text-muted mt-1">
+                                No hay imagen seleccionada
+                            </div>
+                        </div>
+                    </div>
+                }
                 <div class="row">
                     <div class="col-lg-3">
                         <label>Nombre:</label>

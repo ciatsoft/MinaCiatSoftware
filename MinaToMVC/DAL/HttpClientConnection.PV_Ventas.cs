@@ -101,6 +101,20 @@ namespace MinaToMVC.DAL
             return modelResponse;
         }
 
+        public async Task<ModelResponse> SearchDeduccionesByDates(DateTime fechaDeduccionesInicio, DateTime fechaDeduccionesFin)
+        {
+            // Armar la URL con parametros de consulta correctamente
+            string url = $"api/PV_Venta/searchDeduccionesFechas?fechaDeduccionesInicio={fechaDeduccionesInicio.ToString("yyyy-MM-dd")}&fechaDeduccionesFin={fechaDeduccionesFin.ToString("yyyy-MM-dd")}";
+
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((resposeString) =>
+                {
+                    return resposeString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
         public async Task<ModelResponse> SearchDeduccionesByDate(DateTime fechaDeducciones)
         {
             // Armar la URL con parametros de consulta correctamente
@@ -201,7 +215,6 @@ namespace MinaToMVC.DAL
 
         public async Task<ModelResponse> SaveOrUpdateDeducciones(Deducciones tmu)
         {
-            MappingColumSecurity(tmu);
             var result = await RequestAsync<object>("api/PV_Venta/Deducciones", HttpMethod.Post, tmu,
             new Func<string, string>((responseString) =>
             {
@@ -226,6 +239,20 @@ namespace MinaToMVC.DAL
         {
             // Armar la URL con parámetros de consulta correctamente
             string url = $"api/PV_Venta/Deducciones/{id}";
+
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
+        }
+        public async Task<ModelResponse> GetEstatusVenta(long id)
+        {
+            // Armar la URL con parámetros de consulta correctamente
+            string url = $"api/PV_Venta/EstatusVenta/{id}";
 
             var result = await RequestAsync<object>(url, HttpMethod.Get, null,
                 new Func<string, string>((responseString) =>

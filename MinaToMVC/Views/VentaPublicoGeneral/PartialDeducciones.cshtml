@@ -3,23 +3,25 @@
     ViewBag.Title = "PartialDeducciones";
     var gastos = (List<MinaTolEntidades.DtoCatalogos.DtoTipoGasto>)ViewBag.Gastos;
     var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
+    var fechaActual = DateTime.Now;
+    var fechaActualStr = fechaActual.ToString("yyyy-MM-ddTHH:mm:ss");
+    var fechaSoloStr = fechaActual.ToString("yyyy-MM-dd");
 }
 
 <link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 
-@using (Html.BeginForm("SaveOrUpdateDeducciones", "Catalog", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmDeducciones" }))
+@using (Html.BeginForm("SaveOrUpdateDeducciones", "VentaPublicoGeneral", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmDeducciones" }))
 {
     @Html.HiddenFor(x => x.Id, new { @id = "id" })
     @Html.HiddenFor(x => x.UsuarioName, new { @id = "user" })
     @Html.HiddenFor(x => x.Estatus)
-    @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy" })
-    @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy" })
-    @Html.HiddenFor(x => x.CreatedDt, new { id = "CreatedDt" })
-    @Html.HiddenFor(x => x.UpdatedDt, new { id = "UpdatedDt" })
-
+    @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy", Value = usuarioToken.UserName })
+    @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy", Value = usuarioToken.UserName })
     @Html.HiddenFor(x => x.NombreGasto, new { @id = "nombreGasto" })
+
+    @* Campos de fecha como strings para que el modelo los reciba correctamente *@
+    <input type="hidden" id="CreatedDt" name="CreatedDt" value="@fechaActual" />
+    <input type="hidden" id="UpdatedDt" name="UpdatedDt" value="@fechaActual" />
 
     <div class="content">
         <br />
@@ -47,7 +49,9 @@
                         {
                             @class = "form-control",
                             @id = "monto",
-                            @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')"
+                            @type = "number",
+                            @step = "0.01",
+                            @min = "0"
                         })
                     </div>
                 </div>
@@ -59,12 +63,7 @@
                     </div>
                     <div class="col-lg-4">
                         <label>Fecha:</label>
-                        @Html.TextBoxFor(x => x.Fecha, new
-                        {
-                            @class = "form-control",
-                            @id = "fecha",
-                            @readonly = "readonly"
-                        })
+                        <input type="text" class="form-control" id="fecha" name="Fecha" value="@fechaSoloStr" readonly />
                     </div>
                 </div>
 
@@ -81,16 +80,11 @@
 
 <script>
     $(document).ready(function () {
-        const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
-        $("#fecha").val(now);
-        $("#CreatedDt").val(now);
-        $("#UpdatedDt").val(now);
         $("#user").val('@usuarioToken.UserName');
 
         $("#ddlTipoGasto").change(function () {
             const selectedText = $("#ddlTipoGasto option:selected").text();
             const selectedValue = $(this).val();
-
             $("#nombreGasto").val(selectedValue ? selectedText : "");
         });
     });
@@ -99,37 +93,37 @@
         if ($("#frmDeducciones").valid()) {
             const isUpdating = $("#id").val() && $("#id").val() != 0;
             const currentUser = $("#user").val();
-            const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-            if (isUpdating) {
-                $("#updatedBy").val(currentUser);
-                $("#UpdatedDt").val(now);
-            } else {
-                $("#createdBy").val(currentUser);
-                $("#CreatedDt").val(now);
-            }
+            // Obtener los valores de los hidden inputs
+            var createdDtValue = $("#CreatedDt").val();
+            var updatedDtValue = $("#UpdatedDt").val();
 
             const parametro = {
-                Id: $("#id").val(),
-                TipoGastoId: $("#ddlTipoGasto").val(),
-                NombreGasto: $("#nombreGasto").val(),
-                Descripcion: $("#descripcion").val(),
-                Monto: $("#monto").val(),
+                Id: parseInt($("#id").val()) || 0,
+                TipoGastoId: parseInt($("#ddlTipoGasto").val()) || 0,
+                NombreGasto: $("#nombreGasto").val() || "",
+                Descripcion: $("#descripcion").val() || "",
+                Monto: parseFloat($("#monto").val()) || 0,
                 UsuarioName: currentUser,
                 Fecha: $("#fecha").val(),
-                CreatedBy: $("#createdBy").val(),
-                CreatedDt: $("#CreatedDt").val(),
-                UpdatedBy: $("#updatedBy").val(),
-                UpdatedDt: $("#UpdatedDt").val()
+                CreatedBy: currentUser,
+                CreatedDt: $("#fecha").val(),
+                UpdatedBy: currentUser,
+                UpdatedDt: $("#fecha").val(),
+                Estatus: $("#Estatus").val() === "true" || $("#Estatus").val() === "True" || true,
+                Corte_Id: null
             };
+
+            // Verificar en consola que los valores son correctos
+            console.log("Datos a enviar:", parametro);
 
             Swal.fire({
                 title: isUpdating ? '¿Desea actualizar el registro?' : '¿Desea guardar el nuevo registro?',
                 html: `
-                    <strong>Tipo de Gasto:</strong> ${parametro.TipoGastoId}<br/>
+                    <strong>Tipo de Gasto:</strong> ${$("#ddlTipoGasto option:selected").text()}<br/>
                     <strong>Nombre del Gasto:</strong> ${parametro.NombreGasto}<br/>
                     <strong>Descripción:</strong> ${parametro.Descripcion}<br/>
-                    <strong>Monto:</strong> ${parametro.Monto}<br/>
+                    <strong>Monto:</strong> $${parametro.Monto.toFixed(2)}<br/>
                     <strong>Usuario:</strong> ${parametro.UsuarioName}<br/>
                     <strong>Fecha:</strong> ${parametro.Fecha}<br/>
                 `,
@@ -144,7 +138,7 @@
                             Swal.fire('Éxito', isUpdating ? 'Datos actualizados correctamente.' : 'Datos guardados exitosamente.', 'success')
                                 .then(() => window.location.href = '/VentaPublicoGeneral/Index');
                         } else {
-                            Swal.fire('Error', 'Error al guardar los datos: ' + response.ErrorMessage, 'error');
+                            Swal.fire('Error', 'Error al guardar los datos: ' + (response.ErrorMessage || JSON.stringify(response)), 'error');
                         }
                     });
                 }

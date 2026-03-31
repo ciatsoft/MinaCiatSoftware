@@ -19,6 +19,7 @@
     @Html.HiddenFor(x => x.UpdatedBy, new { @Value = usuarioToken.UserID, @id = "idUserModalCanjeo" })
     @Html.HiddenFor(x => x.CreatedDt, new { @Value = fechaActual2, @id = "createdDtModalCanjeo" })
     @Html.HiddenFor(x => x.UpdatedDt, new { @Value = fechaActual2, @id = "updatedDtModalCanjeo" })
+    @Html.TextBoxFor(x => x.NoVale, new { @class = "form-control", @id = "noVale"})
 
     <br />
     <h2>Canjear Vale de Prepago</h2>
@@ -258,6 +259,7 @@
                             // Llenar campos con los datos de la venta
                             $("#folioModalCanjeo").val(venta.folio || '');
                             $("#montoFaltanteModelCanjeo").val(venta.m3Faltantes);
+                            $("#noVale").val(venta.noVale);
 
                             // Nuevos campos para el rango de folios
                             $("#folioInicioModelCanjeo").val(venta.folioInicio || venta.folio || '');
@@ -501,7 +503,8 @@
             TotalPago: 0,
             PrecioUnidad: 0,
             FolioInicio: getValue('folioInicioModelCanjeo') || 0,
-            FolioFinal: getValue('folioFinalModelCanjeo') || 0
+            FolioFinal: getValue('folioFinalModelCanjeo') || 0,
+            NoVale: getValue('noVale')
         };
 
         // Validaciones adicionales

@@ -8,8 +8,12 @@ $(document).ready(function () {
     });
 
     // También cuando cambia el tipo de material
+    $("#Ubicacion_Id").on("change", function () {
+        CambioUbicacion(this);
+    });
+
     $("#TipoMaterial_Id").on("change", function () {
-        ObtenerPrecioMaterial();
+        CambioMaterial(this);
     });
 
     // Función para manejar la búsqueda por nombre
@@ -293,28 +297,30 @@ $(document).ready(function () {
                 }
             },
             {
-                data: "carga",  // Esta es la columna que define si está cargado o no (0 o 1)
-                title: "Carga",
-                render: function (data, type, row) {  // Añade 'row' para acceder a todas las propiedades de la fila
-                    if (data == 0) {
-                        return `
-                        <input type="button" value="Cargar" class="btn btn-success" onclick="Cargar(${row.id})" />
-                    `;
-                    } else if (data == 1) {
-                        return `
-                        <span style="display: inline-flex; align-items: center; gap: 5px;">
-                          <span style="
-                            display: inline-block;
-                            width: 20px;
-                            height: 20px;
-                            background-color: red;
-                            border-radius: 50%;
-                          "></span> 
-                          Ya cargado
-                        </span>
-                    `;
+                data: "id",
+                render: function (data, type, row, meta) {
+                    return `
+                    <button 
+                        type="button"
+                        onclick="mostrarEstatus(${row.id})"
+                        style="background-color: blue; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; color: white;">
+                        Mostrar Estatus
+                    </button>
+                `;
+                }
+            },
+            {
+                data: "noVale",
+                visible: false,
+                title: "ValeCanjeable",
+                render: function (data, type, row) {
+                    // Si existe un valor en noVale (no es null, undefined o vacío)
+                    if (data !== null && data !== undefined && data !== "") {
+                        // Muestra el valor de noVale
+                        return data;
                     } else {
-                        return '';
+                        // Si no hay valor, retorna cadena vacía
+                        return "";
                     }
                 }
             }
@@ -343,71 +349,6 @@ $(document).ready(function () {
             }
         }
     });
-
-    //$("#tableDeducciones").DataTable({
-    //    processing: true,
-    //    destroy: true,
-    //    paging: true,
-    //    order: [[0, 'desc']],
-    //    searching: true,
-    //    columns: [
-    //        { data: "id", visible: true, title: "Id" },
-    //        { data: "nombreGasto", title: "Tipo Gasto" },
-    //        { data: "descripcion", title: "Descripcion de la Deduccion" },
-    //        { data: "usuarioName", title: "Encargado" },
-    //        {
-    //            data: "monto",
-    //            title: "Monto",
-    //            render: function (data) {
-    //                return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
-    //            }
-    //        },
-    //        {
-    //            data: "fecha",
-    //            title: "Fecha",
-    //            render: function (data) {
-    //                return new Date(data).toLocaleDateString('es-MX');
-    //            }
-    //        },
-    //        {
-    //            data: "id",
-    //            title: "Acciones",
-    //            render: function (data) {
-    //                return `
-    //                <input type="button" value="Cancelar" class="btn btn-custom-cancel" onclick="EliminarDeduccion(${data})" />
-    //                 <input type="button" value="Imprimir" class="btn btn-custom-cancel" style="background-color: yellow; border:
-    //                 none; color:black;  padding: 7px 10px; border-radius: 5px; cursor: pointer;" onclick="ImprimirDeduccion(${data})" />
-    //                 <input type="button" value="Editar" class="btn btn-custom-clean" style="width: 80px;" onclick="AbrirModalDeduccion(${data})" />
-    //            `;
-    //            }
-    //        }
-    //    ],
-    //    language: {
-    //        decimal: ",",
-    //        thousands: ".",
-    //        processing: "Procesando...",
-    //        lengthMenu: "Mostrar _MENU_ entradas",
-    //        zeroRecords: "No se encontraron resultados",
-    //        emptyTable: "Ningun dato disponible en esta tabla",
-    //        info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-    //        infoEmpty: "Mostrando 0 a 0 de 0 entradas",
-    //        infoFiltered: "(filtrado de un total de _MAX_ entradas)",
-    //        search: "Buscar:",
-    //        loadingRecords: "Cargando...",
-    //        paginate: {
-    //            first: "Primero",
-    //            last: "Último",
-    //            next: "Siguiente",
-    //            previous: "Anterior"
-    //        },
-    //        aria: {
-    //            sortAscending: ": activar para ordenar ascendente",
-    //            sortDescending: ": activar para ordenar descendente"
-    //        }
-    //    }
-
-    //});
-
     GetAllPV_Ventas();
 });
 
@@ -447,7 +388,7 @@ $(function () {
 
     // Al cambiar la ubicación, carga los materiales disponibles
     $("#Ubicacion_Id").on("change", function () {
-        CambioUbicacion();
+        CambioUbicacion(this); // Pasar el elemento select
     });
 
     // Al cambiar el material, actualiza el precio
@@ -471,11 +412,26 @@ $(function () {
     }
 });
 
-function CambioUbicacion() {
+function CambioUbicacion(selectElement) {
+    // Si no se pasa el elemento, obtenerlo por ID
+    if (!selectElement) {
+        selectElement = document.getElementById("Ubicacion_Id");
+    }
+
+    // Obtener todas las opciones y deshabilitar permanentemente la opción por defecto
+    var options = selectElement.options;
+    for (var i = 0; i < options.length; i++) {
+        if (options[i].value === "") {
+            options[i].disabled = true;
+            break;
+        }
+    }
+
     var ubicacionSeleccionada = $("#Ubicacion_Id").val();
 
     if (!ubicacionSeleccionada) {
-        $("#TipoMaterial_Id").empty().append('<option value="">Selecciona una opción</option>');
+        // Limpiar el dropdown de materiales y agregar opción por defecto
+        $("#TipoMaterial_Id").empty().append('<option value="" selected disabled>Selecciona una opción</option>');
         $("#precioMaterial").val(0);
         precioMaterial = 0;
         actualizarTotal();
@@ -485,14 +441,28 @@ function CambioUbicacion() {
     GetMVC("/VentaPublicoGeneral/GetMaterialUbicacionByUbicacion/" + ubicacionSeleccionada, function (r) {
         if (r.IsSuccess) {
             $("#TipoMaterial_Id").empty();
+
+            // Agregar opción por defecto al inicio (selected y disabled)
+            $("#TipoMaterial_Id").append('<option value="" selected disabled>Selecciona una opción</option>');
+
+            // Agregar los materiales
             $.each(r.Response, function (index, item) {
                 var templateoption = "<option value='" + item.material.id + "'>" + item.material.nombreTipoMaterial + "</option>";
                 $("#TipoMaterial_Id").append(templateoption);
             });
 
-            // Si solo hay un material, seleccionarlo automáticamente
+            // Si solo hay un material, seleccionarlo automáticamente y deshabilitar la opción por defecto
             if (r.Response.length === 1) {
                 $("#TipoMaterial_Id").val(r.Response[0].material.id).trigger('change');
+                // Deshabilitar la opción por defecto después de seleccionar el único material
+                var materialSelect = document.getElementById("TipoMaterial_Id");
+                var materialOptions = materialSelect.options;
+                for (var i = 0; i < materialOptions.length; i++) {
+                    if (materialOptions[i].value === "") {
+                        materialOptions[i].disabled = true;
+                        break;
+                    }
+                }
             } else {
                 // Limpiar precios si hay múltiples opciones
                 $("#precioMaterial").val(0);
@@ -504,6 +474,36 @@ function CambioUbicacion() {
             window.Swal.fire('Error', 'No es posible obtener los materiales de esta ubicación: ', 'error');
         }
     });
+}
+
+function CambioMaterial(selectElement) {
+    // Si no se pasa el elemento, obtenerlo por ID
+    if (!selectElement) {
+        selectElement = document.getElementById("TipoMaterial_Id");
+    }
+
+    // Deshabilitar la opción por defecto después de seleccionar otra
+    var options = selectElement.options;
+    for (var i = 0; i < options.length; i++) {
+        if (options[i].value === "") {
+            options[i].disabled = true;
+            break;
+        }
+    }
+
+    // Prevenir que se vuelva a seleccionar la opción por defecto
+    if ($(selectElement).val() === "") {
+        var lastValidValue = $(selectElement).attr('data-last-value');
+        if (lastValidValue) {
+            $(selectElement).val(lastValidValue);
+            return;
+        }
+    } else {
+        $(selectElement).attr('data-last-value', $(selectElement).val());
+    }
+
+    // Llamar a la función para obtener el precio
+    ObtenerPrecioMaterial();
 }
 
 // Función para obtener y asignar el precio dependiendo de la cantidad
@@ -872,33 +872,18 @@ function SearchPV_VentasByDate(fecha) {
                         }
                     },
                     {
-                        data: "carga",
-                        title: "Carga",
-                        render: function (data, type, row) {  // Añade 'row' para acceder a todas las propiedades de la fila
-                            if (data == 0) {
-                                return `
-                            <input type="button" value="Cargar" class="btn btn-success" onclick="Cargar(${row.id})" />
-                        `;
-                            } else if (data == 1) {
-                                return `
-                            <span style="display: inline-flex; align-items: center; gap: 5px;">
-                              <span style="
-                                display: inline-block;
-                                width: 20px;
-                                height: 20px;
-                                background-color: red;
-                                border-radius: 50%;
-                              "></span> 
-                              Ya cargado
-                            </span>
-                        `;
-                            } else {
-                                return '';
-                            }
-                        },
-                        orderable: false,
-                        searchable: false
-                    }
+                        data: "id",
+                        render: function (data, type, row, meta) {
+                            return `
+                    <button 
+                        type="button"
+                        onclick="mostrarEstatus(${row.id})"
+                        style="background-color: blue; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; color: white;">
+                        Mostrar Estatus
+                    </button>
+                `;
+                        }
+                    },
                 ],
                 language: {
                     decimal: ",",
@@ -944,6 +929,7 @@ async function printItem(rowIndex) {
     var rowData = table.row(rowIndex).data();
 
     // Datos comunes del ticket
+    var id = rowData.id;
     var folio = rowData.folio;
     var nombrePlanta = rowData.nombreUbicacion;
     var nombreMaterial = rowData.nombreTipoMaterial;
@@ -957,9 +943,34 @@ async function printItem(rowIndex) {
     var cantidad = parseFloat(rowData.cantidad).toFixed(2);
     var precioUnidad = parseFloat(rowData.precioUnidad).toFixed(2);
     var vendedor = rowData.userName;
-    var RFID = rowData.rfid;
+    var noVale = rowData.noVale;
+
+    // LIMPIAR RFID AQUÍ
+    var RFID = cleanRfidData(rowData.rfid);
+
     var nombreCliente = rowData.nombreCliente;
     var fecha = new Date(rowData.fecha).toLocaleString("es-MX");
+
+    // Función para limpiar RFID
+    function cleanRfidData(rfidValue) {
+        if (!rfidValue) return rfidValue;
+
+        // Eliminar prefijo '1Q' si existe
+        if (rfidValue.startsWith('1Q')) {
+            return rfidValue.substring(2);
+        }
+
+        // Eliminar cualquier otro prefijo común
+        const prefixes = ['1Q', '1q', 'IQ', 'iq', 'RF', 'rf'];
+        for (let prefix of prefixes) {
+            if (rfidValue.startsWith(prefix)) {
+                return rfidValue.substring(prefix.length);
+            }
+        }
+
+        // Si no hay prefijo conocido, eliminar cualquier carácter no hexadecimal al inicio
+        return rfidValue.replace(/^[^A-F0-9]+/i, '');
+    }
 
     // Función para enviar datos a Python
     async function enviarAPython(tituloSecundario) {
@@ -974,15 +985,17 @@ async function printItem(rowIndex) {
             Cantidad: cantidad,
             PrecioUnidad: precioUnidad,
             Vendedor: vendedor,
-            RFID: RFID,
+            RFID: RFID,  // Aquí ya está limpio
             NombreCliente: nombreCliente,
             Fecha: fecha,
-            TituloSecundario: tituloSecundario
+            TituloSecundario: tituloSecundario,
+            GitTicket: id + folio,
+            NoVale: noVale
         };
 
-        //const ipLocal = window.location.hostname; // o IP fija si sabes cual es
-        //console.log(ipLocal);
-        // Enviar a endpoint de Python
+        // Mostrar en consola para verificar
+        console.log('Datos enviados:', ticketData);
+
         const response = await fetch(`http://localhost:5000/imprimir-ticket`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -990,21 +1003,16 @@ async function printItem(rowIndex) {
         });
 
         if (!response.ok) {
-          Swal.fire({
-              icon: 'warning',
-              title: 'Error de Configuracion',
-              text: 'Por favor verifica la configuracion de la Impresora Termica',
-              confirmButtonText: 'Entendido',
-              confirmButtonColor: '#f27474',
-              showCancelButton: false,
-              allowOutsideClick: false
-          }).then((result) => {
-              if (result.isConfirmed) {
-                  // Opcional: puedes agregar alguna acción después de que el usuario haga clic
-                  // console.log('Usuario confirmó el error de configuración');
-              }
-          });
-      }
+            Swal.fire({
+                icon: 'warning',
+                title: 'Error de Configuracion',
+                text: 'Por favor verifica la configuracion de la Impresora Termica',
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#f27474',
+                showCancelButton: false,
+                allowOutsideClick: false
+            });
+        }
     }
 
     try {
@@ -1018,7 +1026,7 @@ async function printItem(rowIndex) {
             title: 'Error al imprimir',
             text: 'El aplicativo de Impresora no esta ejecutandose.',
             confirmButtonText: 'Aceptar'
-        })
+        });
     }
 }
 
@@ -1305,4 +1313,15 @@ async function ImprimirDeduccion(id) {
 function formatearTipoGasto(tipo) {
     // Mantén tu lógica actual de formateo
     return tipo.charAt(0).toUpperCase() + tipo.slice(1).toLowerCase();
+}
+
+//Function para mostrar modal de fotografias de las ventas 
+function mostrarEstatus(id) {
+    console.log('ID de la fila:', id);
+    $("#titleGenerciModal").text("Estatus de la Venta");
+
+    // Carga la vista parcial desde el backend
+    $("#boddyGeericModal").load(`/VentaPublicoGeneral/PartialmostrarEstatus?id=${id}`, function () {
+        $("#genericModal").modal("show");
+    });
 }

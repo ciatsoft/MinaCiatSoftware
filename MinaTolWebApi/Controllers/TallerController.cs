@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace MinaTolWebApi.Controllers
@@ -97,10 +98,10 @@ namespace MinaTolWebApi.Controllers
             return result;
         }
 
-        [HttpGet, Route("ComponenteVehiculo/{id:long}")]
-        public ModelResponse GetComponenteVehiculoById(long id)
+        [HttpGet, Route("AsignarComponenteVehiculo/ByVehiculo/{tipoVehiculo:int}/{idVehiculo:long}/{idReparacion:long}")]
+        public ModelResponse GetAllPiezasAsignadasReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo, long idReparacion)
         {
-            var result = wrapper.GetComponenteVehiculoById(id);
+            var result = wrapper.GetAllPiezasAsignadasReparacionByIdVehiculo(tipoVehiculo, idVehiculo, idReparacion);
             return result;
         }
 
@@ -110,7 +111,119 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.DeleteComponenteVehiculoById(id);
             return result;
         }
+        [HttpGet, Route("AsignarPiezaVehiculoReparacion/{id:long}")]
+        public ModelResponse GetAsignarPiezaVehiculoReparacionById(long id)
+        {
+            var result = wrapper.GetAsignarPiezaVehiculoReparacionById(id);
+            return result;
+        }
 
+        #endregion
+        #region ReparacionVehiculos
+        [HttpPost, Route("ReparacionVehiculos/")]
+        public ModelResponse SaveOrUpdateReparacionVehiculos(ReparacionVehiculos rv)
+        {
+            var result = wrapper.SaveOrUpdateReparacionVehiculos(rv);
+            return result;
+        }
+        [HttpGet, Route("ReparacionVehiculos/List")]
+        public ModelResponse GetAllReparacionVehiculos()
+        {
+            var result = wrapper.GetAllReparacionVehiculos();
+            return result;
+        }
+        [HttpGet, Route("ReparacionVehiculos/{id:long}")]
+        public ModelResponse GetReparacionVehiculosById(long id)
+        {
+            var result = wrapper.GetReparacionVehiculosById(id);
+            return result;
+        }
+        [HttpPost, Route("ReparacionVehiculos/{id:long}/{idVehiculo:long}/{tipoVehiculo:int}")]
+        public ModelResponse DeleteReparacionVehiculosById(long id, long idVehiculo, int tipoVehiculo)
+        {
+            var result = wrapper.DeleteReparacionVehiculosById(id, idVehiculo, tipoVehiculo);
+            return result;
+        }
+        [HttpPost, Route("ReparacionVehiculos/LiberarVehiculo/{id:long}/{idVehiculo:long}/{tipoVehiculo:int}")]
+        public async Task<ModelResponse> LiberarVehiculo(long id, long idVehiculo, int tipoVehiculo)
+        {
+            var result = await Task.Run(() => wrapper.LiberarVehiculo(id, idVehiculo, tipoVehiculo));
+            return result;
+        }
+        [HttpGet, Route("ReparacionVehiculos/AllList")]
+        public ModelResponse GetAllRegistersReparacionVehiculos()
+        {
+            var result = wrapper.GetAllRegistersReparacionVehiculos();
+            return result;
+        }
+        #endregion
+        #region RetirarPiezaVehiculoReparacion
+        [HttpPost, Route("RetirarPiezaVehiculoReparacion/")]
+        public ModelResponse SaveOrUpdateRetirarPiezaVehiculoReparacion(RetirarPiezaVehiculoReparacion rv)
+        {
+            var result = wrapper.SaveOrUpdateRetirarPiezaVehiculoReparacion(rv);
+            return result;
+        }
+        [HttpGet, Route("RetirarPiezaVehiculoReparacion/List")]
+        public ModelResponse GetAllRetirarPiezaVehiculoReparacion()
+        {
+            var result = wrapper.GetAllRetirarPiezaVehiculoReparacion();
+            return result;
+        }
+        [HttpGet, Route("RetirarPiezaVehiculoReparacion/{id:long}")]
+        public ModelResponse GetRetirarPiezaVehiculoReparacionById(long id)
+        {
+            var result = wrapper.GetRetirarPiezaVehiculoReparacionById(id);
+            return result;
+        }
+        [HttpPost, Route("RetirarPiezaVehiculoReparacion/{id:long}")]
+        public ModelResponse DeleteRetirarPiezaVehiculoReparacionById(long id)
+        {
+            var result = wrapper.DeleteRetirarPiezaVehiculoReparacionById(id);
+            return result;
+        }
+        [HttpGet, Route("RetirarPiezaVehiculoReparacion/ByVehiculo/{tipoVehiculo:int}/{idVehiculo:long}/{idReparacion:long}")]
+        public ModelResponse GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo, long idReparacion)
+        {
+            var result = wrapper.GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(tipoVehiculo, idVehiculo, idReparacion);
+            return result;
+        }
+        #endregion
+        #region AsignarPiezas
+        [HttpGet, Route("GetAllInventarioReutilizableByCategoria/{categoriaInventario:long}")]
+        public ModelResponse GetAllInventarioReutilizableByCategoria(long categoriaInventario)
+        {
+            var result = wrapper.GetAllInventarioReutilizableByCategoria(categoriaInventario);
+            return result;
+        }
+        [HttpGet, Route("GetAllInventarioByCategoria/{categoriaInventario:long}")]
+        public ModelResponse GetAllInventarioByCategoria(long categoriaInventario)
+        {
+            var result = wrapper.GetAllInventarioByCategoria(categoriaInventario);
+            return result;
+        }
+        #endregion
+        #region ResumenReparacion
+        [HttpPost, Route("ActualizarEstado/{Id:long}/{Estado:int}")]
+        public ModelResponse ActualizarEstado(long Id, int Estado)
+        {
+            var result = wrapper.ActualizarEstado(Id, Estado);
+            return result;
+        }
+        #endregion
+        #region Reportes
+        [HttpGet, Route("PiezasReutilizables/List")]
+        public ModelResponse GetAllRetirarPiezasReutilizables()
+        {
+            var result = wrapper.GetAllRetirarPiezasReutilizables();
+            return result;
+        }
+        [HttpGet, Route("PiezasNoReutilizables/List")]
+        public ModelResponse GetAllRetirarPiezasNoReutilizables()
+        {
+            var result = wrapper.GetAllRetirarPiezasNoReutilizables();
+            return result;
+        }
         #endregion
     }
 }
