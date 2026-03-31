@@ -512,3 +512,317 @@ function ActualizarEstado(id, estado) {
         }
     });
 }
+
+document.getElementById("btnGenerarPDF").addEventListener("click", function () {
+    generarReporteReparacionPDF();
+});
+
+document.getElementById("btnGenerarExcel").addEventListener("click", function () {
+    generarReporteExcel();
+});
+function generarReporteReparacionPDF() {
+    // Verificar si hay datos en al menos una tabla
+    var tablaRetiradas = $('#tblPiezasRetiradas').DataTable();
+    var tablaAsignadas = $('#tblPiezasAsignadas').DataTable();
+
+    var datosRetiradas = tablaRetiradas.data().toArray();
+    var datosAsignadas = tablaAsignadas.data().toArray();
+
+    if (datosRetiradas.length === 0 && datosAsignadas.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Sin datos',
+            text: 'No hay datos para exportar',
+            confirmButtonText: 'Entendido'
+        });
+        return;
+    }
+
+    // Mostrar loading
+    Swal.fire({
+        title: "Generando reporte...",
+        text: "Por favor espere mientras se genera el PDF",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    // Obtener información de la reparación
+    var idReparacion = $('#id').val();
+    var tipoVehiculoDesc = $('#tipoVehiculoDesc').val();
+    var vehiculoDesc = $('#vehiculoDesc').val();
+    var tipoServicioDesc = $('#tipoServicioDesc').val();
+
+    // Obtener estado de la reparación
+    var estado = $('#estado').val();
+    var estadoDescripcion = "";
+    switch (estado) {
+        case "1": estadoDescripcion = "Pendiente"; break;
+        case "2": estadoDescripcion = "En Proceso"; break;
+        case "3": estadoDescripcion = "Terminado"; break;
+        default: estadoDescripcion = "Desconocido";
+    }
+
+    // Crear tabla HTML para Piezas Retiradas
+    var tablaRetiradasHTML = '';
+    if (datosRetiradas.length > 0) {
+        tablaRetiradasHTML = '<h2 style="color: #2c3e50; margin-top: 20px;">Piezas Retiradas</h2>';
+        tablaRetiradasHTML += '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;margin-bottom:20px;">';
+        tablaRetiradasHTML += '<thead><tr>';
+        tablaRetiradasHTML += '<th>ID</th>';
+        tablaRetiradasHTML += '<th>Nombre</th>';
+        tablaRetiradasHTML += '<th>Categoria</th>';
+        tablaRetiradasHTML += '<th>Marca</th>';
+        tablaRetiradasHTML += '<th>Cantidad</th>';
+        tablaRetiradasHTML += '<th>Reutilizable</th>';
+        tablaRetiradasHTML += '</thead>';
+        tablaRetiradasHTML += '<tbody>';
+
+        datosRetiradas.forEach(function (item) {
+            tablaRetiradasHTML += '<tr>';
+            tablaRetiradasHTML += '<td>' + (item.id || '') + '</td>';
+            tablaRetiradasHTML += '<td>' + (item.nombre || '') + '</td>';
+            tablaRetiradasHTML += '<td>' + (item.nombreCategoria || '') + '</td>';
+            tablaRetiradasHTML += '<td>' + (item.marca || '') + '</td>';
+            tablaRetiradasHTML += '<td>' + (item.cantidadRetirada || '') + '</td>';
+            tablaRetiradasHTML += '<td>' + (item.reutilizable ? 'Si' : 'No') + '</td>';
+            tablaRetiradasHTML += '</tr>';
+        });
+        tablaRetiradasHTML += '</tbody></table>';
+    } else {
+        tablaRetiradasHTML = '<h2 style="color: #2c3e50; margin-top: 20px;">Piezas Retiradas</h2>';
+        tablaRetiradasHTML += '<p style="color: #7f8c8d;">No hay piezas retiradas registradas.</p>';
+    }
+
+    // Crear tabla HTML para Piezas Asignadas
+    var tablaAsignadasHTML = '';
+    if (datosAsignadas.length > 0) {
+        tablaAsignadasHTML = '<h2 style="color: #2c3e50; margin-top: 20px;">Piezas Instaladas</h2>';
+        tablaAsignadasHTML += '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
+        tablaAsignadasHTML += '<thead><tr>';
+        tablaAsignadasHTML += '<th>ID</th>';
+        tablaAsignadasHTML += '<th>Tipo de Inventario</th>';
+        tablaAsignadasHTML += '<th>Categoría</th>';
+        tablaAsignadasHTML += '<th>Componente Usado</th>';
+        tablaAsignadasHTML += '<th>Cantidad</th>';
+        tablaAsignadasHTML += '</thead>';
+        tablaAsignadasHTML += '<tbody>';
+
+        datosAsignadas.forEach(function (item) {
+            var tipoInventario = "";
+            if (item.tipoInventario == 1) tipoInventario = "Reutilizable";
+            else if (item.tipoInventario == 2) tipoInventario = "Nueva Pieza";
+            else tipoInventario = "Sin Tipo";
+
+            tablaAsignadasHTML += '<tr>';
+            tablaAsignadasHTML += '<td>' + (item.id || '') + '</td>';
+            tablaAsignadasHTML += '<td>' + tipoInventario + '</td>';
+            tablaAsignadasHTML += '<td>' + (item.nombreCategoria || '') + '</td>';
+            tablaAsignadasHTML += '<td>' + (item.nombreInventario || '') + '</td>';
+            tablaAsignadasHTML += '<td>' + (item.cantidadComponente || '') + '</td>';
+            tablaAsignadasHTML += '</tr>';
+        });
+        tablaAsignadasHTML += '</tbody></table>';
+    } else {
+        tablaAsignadasHTML = '<h2 style="color: #2c3e50; margin-top: 20px;">Piezas Instaladas</h2>';
+        tablaAsignadasHTML += '<p style="color: #7f8c8d;">No hay piezas instaladas registradas.</p>';
+    }
+
+    // Crear formulario y enviar
+    var form = $('<form>', {
+        method: 'POST',
+        action: '/PDF/GenerarReporteReparacionPDF'
+    });
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'tablaRetiradasHTML',
+        value: tablaRetiradasHTML
+    }).appendTo(form);
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'tablaAsignadasHTML',
+        value: tablaAsignadasHTML
+    }).appendTo(form);
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'idReparacion',
+        value: idReparacion
+    }).appendTo(form);
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'tipoVehiculo',
+        value: tipoVehiculoDesc
+    }).appendTo(form);
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'vehiculo',
+        value: vehiculoDesc
+    }).appendTo(form);
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'tipoServicio',
+        value: tipoServicioDesc
+    }).appendTo(form);
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'estado',
+        value: estadoDescripcion
+    }).appendTo(form);
+
+    form.appendTo('body').submit();
+
+    // Cerrar el loading después de enviar el formulario
+    setTimeout(() => {
+        Swal.close();
+        Swal.fire({
+            icon: 'success',
+            title: 'Reporte generado!',
+            text: 'El PDF se ha creado correctamente',
+            timer: 3000,
+            showConfirmButton: false
+        });
+    }, 2000);
+}
+function generarReporteExcel() {
+    // Verificar si hay datos en al menos una tabla
+    var tablaRetiradas = $('#tblPiezasRetiradas').DataTable();
+    var tablaAsignadas = $('#tblPiezasAsignadas').DataTable();
+
+    var datosRetiradas = tablaRetiradas.data().toArray();
+    var datosAsignadas = tablaAsignadas.data().toArray();
+
+    if (datosRetiradas.length === 0 && datosAsignadas.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Sin datos',
+            text: 'No hay datos para exportar',
+            confirmButtonText: 'Entendido'
+        });
+        return;
+    }
+
+    // Mostrar loading
+    Swal.fire({
+        title: "Generando Excel...",
+        text: "Por favor espere mientras se genera el archivo Excel",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    // Obtener informacion de la reparacion
+    var idReparacion = $('#id').val();
+    var tipoVehiculoDesc = $('#tipoVehiculoDesc').val();
+    var vehiculoDesc = $('#vehiculoDesc').val();
+    var tipoServicioDesc = $('#tipoServicioDesc').val();
+
+    // Obtener estado de la reparacion
+    var estado = $('#estado').val();
+    var estadoDescripcion = "";
+    switch (estado) {
+        case "1": estadoDescripcion = "Pendiente"; break;
+        case "2": estadoDescripcion = "En Proceso"; break;
+        case "3": estadoDescripcion = "Terminado"; break;
+        default: estadoDescripcion = "Desconocido";
+    }
+
+    // Crear array de datos para Piezas Retiradas
+    var datosRetiradasArray = [];
+    datosRetiradas.forEach(function (item) {
+        datosRetiradasArray.push({
+            id: item.id || '',
+            nombre: item.nombre || '',
+            nombreCategoria: item.nombreCategoria || '',
+            marca: item.marca || '',
+            cantidadRetirada: item.cantidadRetirada || '',
+            reutilizable: item.reutilizable ? 'Si' : 'No'
+        });
+    });
+
+    // Crear array de datos para Piezas Asignadas
+    var datosAsignadasArray = [];
+    datosAsignadas.forEach(function (item) {
+        var tipoInventario = "";
+        if (item.tipoInventario == 1) tipoInventario = "Reutilizable";
+        else if (item.tipoInventario == 2) tipoInventario = "Nueva Pieza";
+        else tipoInventario = "Sin Tipo";
+
+        datosAsignadasArray.push({
+            id: item.id || '',
+            tipoInventario: tipoInventario,
+            nombreCategoria: item.nombreCategoria || '',
+            nombreInventario: item.nombreInventario || '',
+            cantidadComponente: item.cantidadComponente || ''
+        });
+    });
+
+    // Crear formulario con datos en JSON - CORREGIDO: apuntando a ExcelController
+    var form = $('<form>', {
+        method: 'POST',
+        action: '/Excel/GenerarReporteReparacionExcel'
+    });
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'datosRetiradas',
+        value: JSON.stringify(datosRetiradasArray)
+    }).appendTo(form);
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'datosAsignadas',
+        value: JSON.stringify(datosAsignadasArray)
+    }).appendTo(form);
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'idReparacion',
+        value: idReparacion
+    }).appendTo(form);
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'tipoVehiculo',
+        value: tipoVehiculoDesc
+    }).appendTo(form);
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'vehiculo',
+        value: vehiculoDesc
+    }).appendTo(form);
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'tipoServicio',
+        value: tipoServicioDesc
+    }).appendTo(form);
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'estado',
+        value: estadoDescripcion
+    }).appendTo(form);
+
+    form.appendTo('body').submit();
+
+    setTimeout(() => {
+        Swal.close();
+        Swal.fire({
+            icon: 'success',
+            title: 'Excel generado!',
+            text: 'El archivo Excel se ha creado correctamente',
+            timer: 3000,
+            showConfirmButton: false
+        });
+    }, 2000);
+}
