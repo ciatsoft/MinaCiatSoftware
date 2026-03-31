@@ -246,7 +246,6 @@ namespace MinaTolWebApi.DAL
 
             return modelResponse;
         }
-
         public ModelResponse GetAllComponenteVehiculo()
         {
             var response = new ModelResponse();
@@ -272,7 +271,6 @@ namespace MinaTolWebApi.DAL
             return response;
 
         }
-
         public ModelResponse GetAllPiezasAsignadasReparacionByIdVehiculo(int tipoVehiculo, long idVehiculo, long idReparacion)
         {
             var response = new ModelResponse();
@@ -319,7 +317,38 @@ namespace MinaTolWebApi.DAL
             return response;
 
         }
+        public ModelResponse GetAsignarPiezaVehiculoReparacionById(long id)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = id,
+                    IsNullable = true,
+                    ParameterName = "@Id",
+                    SqlDbType = System.Data.SqlDbType.Int
+                });
 
+                var result = GetObject("GetAsignarPiezaVehiculoReparacionById", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, ComponenteVehiculo>((reader) =>
+                    {
+                        var r = FillEntity<ComponenteVehiculo>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+
+        }
         public ModelResponse DeleteComponenteVehiculoById(long id)
         {
             var response = new ModelResponse();
@@ -749,6 +778,93 @@ namespace MinaTolWebApi.DAL
                 response.Enum = Enumeration.ErrorNoControlado;
             }
             return response;
+        }
+        #endregion
+        #region ResumenReparacion
+        public ModelResponse ActualizarEstado(long Id, int Estado)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+
+                var parameters = new List<SqlParameter>();
+                // Corrección: Crear cada parámetro individualmente
+                parameters.Add(new SqlParameter()
+                {
+                    ParameterName = "@Id",
+                    Value = Id,
+                    SqlDbType = System.Data.SqlDbType.BigInt
+                });
+                parameters.Add(new SqlParameter()
+                {
+                    ParameterName = "@Estado",
+                    Value = Estado,
+                    SqlDbType = System.Data.SqlDbType.BigInt
+                });
+
+                var result = ExecuteNonQuery("ActualizarEstado", System.Data.CommandType.StoredProcedure, parameters);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+
+            return response;
+        }
+        #endregion
+        #region Reportes
+        public ModelResponse GetAllRetirarPiezasReutilizables()
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                var result = GetObjects("GetAllRetirarPiezasReutilizables", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, RetirarPiezaVehiculoReparacion>((reader) =>
+                    {
+                        var r = FillEntity<RetirarPiezaVehiculoReparacion>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+
+        }
+        public ModelResponse GetAllRetirarPiezasNoReutilizables()
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                var result = GetObjects("GetAllRetirarPiezasNoReutilizables", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, RetirarPiezaVehiculoReparacion>((reader) =>
+                    {
+                        var r = FillEntity<RetirarPiezaVehiculoReparacion>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+
         }
         #endregion
     }

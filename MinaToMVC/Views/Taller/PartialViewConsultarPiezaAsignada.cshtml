@@ -101,16 +101,11 @@
                     @Html.TextBoxFor(x => x.CantidadComponente, new { @class = "form-control", type = "number", @id = "cantidadItem", min = "1", step = "1", onkeypress = "return event.charCode >= 48 && event.charCode <= 57", oninput = "if(this.value < 1) this.value = 1" })
                 </div>
                 <div class="col-lg-4">
-                    <label>Cantidad Disponible</label>
-                    <input type="text" id="txtCantidad" class="form-control" readonly disabled />
+                    <input type="hidden" id="txtCantidad" class="form-control" readonly disabled />
                 </div>
             </div>
 
-            <div style="margin-top: 35px;">
-                <button type="button" class="btn btn-success" onclick="GenerarConsumo()">
-                    Generar Consumo
-                </button>
-
+            <div style="margin-top: 35px; align-items:end;">
                 <button type="button" class="btn btn-custom-cancel" data-dismiss="modal">
                     Cancelar
                 </button>
@@ -176,6 +171,7 @@
         $("#ddlCategoriaInventario").prop('disabled', true);
         $("#ddlTipoInventario").prop('disabled', true);
         $("#ddlInventarioItems").prop('disabled', true);
+        $("#cantidadItem").prop('disabled', true);
 
         // Cargar el inventario basado en la categoría y tipo seleccionados
         if (idCategoriaModel && idCategoriaModel !== "" && idCategoriaModel !== "null" &&
@@ -371,170 +367,5 @@
             $("#idInventario").val('');
             datosInventarioSeleccionado = null;
         }
-    }
-
-    function GenerarConsumo() {
-        var id = @ViewBag.Id;
-        var estatus = 1;
-        var createdBy = $("#createdBy").val();
-        var updatedBy = $("#updatedBy").val();
-        var createdDt = $("#createdDt").val();
-        var updatedDt = $("#updatedDt").val();
-        var idReparacion = $("#idReparacion").val();
-        var tipoVehiculo = $("#tipoVehiculo").val();
-        var idVehiculo = $("#idVehiculo").val();
-
-        var idCategoria = $("#ddlCategoriaInventario").val();
-        var idInventario = $("#ddlInventarioItems").val();
-        var tipoInventario = $("#ddlTipoInventario").val();
-
-        var nombreItem = $("#nombreItem").val();
-        var cantidadComponente = parseInt($("#cantidadItem").val()) || 0;
-        var cantidadExistente = parseInt($("#txtCantidad").val()) || 0;
-
-        // Validaciones existentes
-        if (!idCategoria || idCategoria === "") {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Categoria inválida',
-                text: 'Debes seleccionar una Categoria.'
-            });
-            return;
-        }
-
-        if (!tipoInventario || tipoInventario === "") {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Tipo de Inventario inválido',
-                text: 'Debes seleccionar un Tipo de Inventario.'
-            });
-            return;
-        }
-
-        if (!idInventario || idInventario === "") {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Item inválido',
-                text: 'Debes seleccionar un Item.'
-            });
-            return;
-        }
-
-        if (cantidadComponente <= 0) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Cantidad inválida',
-                text: 'Debes ingresar una cantidad mayor a 0.'
-            });
-            return;
-        }
-
-        // Crear el objeto parametro ANTES de las validaciones de stock
-        var parametro = {
-            Id: parseInt(id) || 0,
-            IdCategoria: parseInt(idCategoria),
-            TipoInventario: parseInt(tipoInventario),
-            IdInventario: parseInt(idInventario),
-            NombreInventario: nombreItem,
-            CantidadComponente: cantidadComponente,
-            IdVehiculo: parseInt(idVehiculo),
-            IdReparacion: parseInt(idReparacion),
-            TipoVehiculo: tipoVehiculo,
-            Estatus: estatus,
-            CreatedBy: createdBy,
-            CreatedDt: createdDt,
-            UpdatedBy: createdBy,
-            UpdatedDt: createdDt
-        }
-
-        // Validaciones de stock
-        if (id != 0) {
-            // Edición
-            var cantidadAnterior = cantidadComponenteModel;
-            var cambioNeto = cantidadComponente - cantidadAnterior;
-            var cantidadResultante = cantidadExistente - cambioNeto;
-
-            if (cantidadResultante < 0) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Stock insuficiente',
-                    text: `No se puede realizar la modificación. La cantidad disponible actual es ${cantidadExistente}, y el cambio solicitado (${cambioNeto > 0 ? '+' : ''}${cambioNeto}) resultaría en un stock negativo (${cantidadResultante}). Por favor, ajusta la cantidad.`,
-                    confirmButtonText: 'Aceptar'
-                });
-                return;
-            }
-
-            if (cantidadResultante === 0) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Stock se agotará',
-                    text: `Al modificar la cantidad de ${cantidadAnterior} a ${cantidadComponente}, el stock quedará en 0. ¿Deseas continuar?`,
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, continuar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        continuarConGuardado(parametro);
-                    }
-                });
-                return;
-            }
-
-            // Si pasa todas las validaciones, continuar con el guardado
-            continuarConGuardado(parametro);
-
-        } else {
-            // Nuevo registro
-            if (cantidadComponente > cantidadExistente) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Stock insuficiente',
-                    text: `No se puede realizar el consumo. La cantidad disponible (${cantidadExistente}) es insuficiente para cubrir el consumo solicitado (${cantidadComponente}).`,
-                    confirmButtonText: 'Aceptar'
-                });
-                return;
-            }
-
-            if (cantidadComponente === cantidadExistente) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Stock se agotará',
-                    text: `Al consumir ${cantidadComponente} unidades, el stock quedará en 0. ¿Deseas continuar?`,
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, continuar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        continuarConGuardado(parametro);
-                    }
-                });
-                return;
-            }
-
-            // Si pasa todas las validaciones, continuar con el guardado
-            continuarConGuardado(parametro);
-        }
-    }
-
-    function continuarConGuardado(parametro) {
-        PostMVC('/Taller/SaveOrUpdateComponenteVehiculo', parametro, function (r) {
-            if (r.IsSuccess) {
-                Swal.fire({
-                    title: "Registro guardado!",
-                    text: "El registro se ha guardado correctamente.",
-                    icon: "success",
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    window.location.reload();
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error al guardar los datos: ' + (r.ErrorMessage || 'Error desconocido'),
-                    confirmButtonText: 'Aceptar'
-                });
-            }
-        });
     }
 </script>

@@ -2,8 +2,11 @@
 var vehiculosLocalesTodos = [];
 var vehiculosCargaTodos = [];
 var categoriasInventario = []; // Nueva variable global para categorías
+var estadoReparacion = 0; // Variable global para almacenar el estado
 
 $(document).ready(function () {
+    // Obtener el estado desde el campo oculto
+    estadoReparacion = parseInt($('#estado').val());
 
     // Configuración de DataTable
     $("#tblPiezasRetiradas").DataTable({
@@ -14,7 +17,7 @@ $(document).ready(function () {
             { data: 'nombre', title: 'Nombre' },
             { data: 'nombreCategoria', title: 'Categoria' },
             { data: 'marca', title: 'Marca' },
-            { data: 'cantidad', title: 'Cantidad' },
+            { data: 'cantidadRetirada', title: 'Cantidad' },
             {
                 data: 'reutilizable',
                 title: 'Reutilizable',
@@ -41,8 +44,13 @@ $(document).ready(function () {
                 data: "id",
                 title: "Acciones",
                 render: function (data, type, row) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarPiezaRetirada(' + data + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarPiezaRetirada(' + data + ')"/>';
+                    // Si el estado es 3, mostrar solo botón de consultar
+                    if (estadoReparacion === 3) {
+                        return '<input type="button" value="Consultar Informacion" class="btn btn-custom-clean" onclick="ConsultarPiezaRetirada(' + data + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />';
+                    } else {
+                        return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarPiezaRetirada(' + data + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />' +
+                            ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarPiezaRetirada(' + data + ')"/>';
+                    }
                 }
             }
         ],
@@ -82,7 +90,7 @@ $(document).ready(function () {
                     if (data == 1) {
                         return 'Reutilizable';
                     } else if (data == 2) {
-                        return 'Stock Nuevo';
+                        return 'Nueva Pieza';
                     }
                     else {
                         return 'Sin Tipo';
@@ -99,8 +107,13 @@ $(document).ready(function () {
                 data: "id",
                 title: "Acciones",
                 render: function (data, type, row) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarPiezaRetirada(' + data + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarPiezaRetirada(' + data + ')"/>';
+                    // Si el estado es 3, mostrar solo botón de consultar
+                    if (estadoReparacion === 3) {
+                        return '<input type="button" value="Consultar Informacion" class="btn btn-custom-clean" onclick="ConsultarPiezaAsignada(' + row.id + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />';
+                    } else {
+                        return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarPiezaAsignada(' + row.id + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />' +
+                            ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarPiezaAsignada(' + row.id + ')"/>';
+                    }
                 }
             }
         ],
@@ -311,11 +324,10 @@ function ModalRetirarPiezas(id, tipoVehiculo, idVehiculo) {
     });
 }
 
-function ModalAsignarPiezas(id, tipoVehiculo, idVehiculo) {
-    console.log(id, tipoVehiculo, idVehiculo);
+function ModalAsignarPiezas(id, idReparacion, tipoVehiculo, idVehiculo) {
     $("#titleGenerciModal").text("Asignacion de Piezas");
 
-    $("#boddyGeericModal").load(`/Taller/PartialViewModalAsignarPiezas?id=${id}&tipoVehiculo=${tipoVehiculo}&idVehiculo=${idVehiculo}`, function () {
+    $("#boddyGeericModal").load(`/Taller/PartialViewModalAsignarPiezas?id=${id}&idReparacion=${idReparacion}&tipoVehiculo=${tipoVehiculo}&idVehiculo=${idVehiculo}`, function () {
         $("#genericModal").modal("show");
     });
 }
@@ -323,10 +335,10 @@ function ModalAsignarPiezas(id, tipoVehiculo, idVehiculo) {
 function GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(tipoVehiculo, idVehiculo, idReparacion) {
     GetMVC(`/Taller/GetAllRetirarPiezaVehiculoReparacionByIdVehiculo?tipoVehiculo=${tipoVehiculo}&idVehiculo=${idVehiculo}&idReparacion=${idReparacion}`, function (r) {
         if (r.IsSuccess) {
-            
+
             var datosProcesados = r.Response.map(function (pieza) {
                 var nombreCategoria = ObtenerNombreCategoria(pieza.idCategoriaInventario);
-                
+
                 return {
                     ...pieza,
                     nombreCategoria: nombreCategoria
@@ -344,13 +356,14 @@ function GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(tipoVehiculo, idVehicu
         }
     });
 }
+
 function GetAllPiezasAsignadasReparacionByIdVehiculo(tipoVehiculo, idVehiculo, idReparacion) {
     GetMVC(`/Taller/GetAllPiezasAsignadasReparacionByIdVehiculo?tipoVehiculo=${tipoVehiculo}&idVehiculo=${idVehiculo}&idReparacion=${idReparacion}`, function (r) {
         if (r.IsSuccess) {
-            
+
             var datosProcesados = r.Response.map(function (pieza) {
                 var nombreCategoria = ObtenerNombreCategoria(pieza.idCategoria);
-                
+
                 return {
                     ...pieza,
                     nombreCategoria: nombreCategoria
@@ -419,5 +432,83 @@ function EditarPiezaRetirada(id, idReparacion, tipoVehiculoCodigo, idVehiculo) {
 
     $("#boddyGeericModal").load(`/Taller/PartialViewEditarRetirarPieza?id=${id}&idReparacion=${idReparacion}&tipoVehiculo=${tipoVehiculoCodigo}&idVehiculo=${idVehiculo}`, function () {
         $("#genericModal").modal("show");
+    });
+}
+
+function ConsultarPiezaRetirada(id, idReparacion, tipoVehiculoCodigo, idVehiculo) {
+    $("#titleGenerciModal").text("Consultar Pieza Retirada");
+
+    $("#boddyGeericModal").load(`/Taller/PartialViewModalConsultarPiezaRetirada?id=${id}&idReparacion=${idReparacion}&tipoVehiculo=${tipoVehiculoCodigo}&idVehiculo=${idVehiculo}`, function () {
+        $("#genericModal").modal("show");
+    });
+}
+
+function EditarPiezaAsignada(id, idReparacion, tipoVehiculoCodigo, idVehiculo) {
+    $("#titleGenerciModal").text("Editar Retirar Piezas");
+
+    $("#boddyGeericModal").load(`/Taller/PartialViewModalAsignarPiezas?id=${id}&idReparacion=${idReparacion}&tipoVehiculo=${tipoVehiculoCodigo}&idVehiculo=${idVehiculo}`, function () {
+        $("#genericModal").modal("show");
+    });
+}
+
+function ConsultarPiezaAsignada(id, idReparacion, tipoVehiculoCodigo, idVehiculo) {
+    $("#titleGenerciModal").text("Consultar Pieza Asignada");
+
+    $("#boddyGeericModal").load(`/Taller/PartialViewConsultarPiezaAsignada?id=${id}&idReparacion=${idReparacion}&tipoVehiculo=${tipoVehiculoCodigo}&idVehiculo=${idVehiculo}`, function () {
+        $("#genericModal").modal("show");
+    });
+}
+
+function EliminarPiezaAsignada(id) {
+    Swal.fire({
+        title: 'Eliminar Registro',
+        text: "Desea eliminar el siguiente registro?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var parametro = { Id: id };
+
+            PostMVC('/Taller/DeleteComponenteVehiculoById', parametro, function (r) {
+                if (r.IsSuccess) {
+                    Swal.fire('Eliminado', 'El registro ha sido eliminado.', 'success')
+                        .then(() => { window.location.reload(); });
+                } else {
+                    Swal.fire('Eliminado', 'El registro ha sido eliminado.', 'success')
+                        .then(() => { window.location.reload(); });
+                }
+            });
+        }
+    });
+}
+
+function ActualizarEstado(id, estado) {
+    Swal.fire({
+        title: 'Actualizar Estado',
+        text: "Desea atualizar el estado del siguiente registro?",
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, actualizar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var parametro = { Id: id, Estado: estado };
+
+            PostMVC('/Taller/ActualizarEstado', parametro, function (r) {
+                if (r.IsSuccess) {
+                    Swal.fire('Actualizado', 'El registro ha sido actualizado.', 'success')
+                        .then(() => { window.location.reload(); });
+                } else {
+                    Swal.fire('Actualizado', 'El registro ha sido actualizado.', 'success')
+                        .then(() => { window.location.reload(); });
+                }
+            });
+        }
     });
 }

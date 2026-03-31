@@ -20,5 +20,7 @@ namespace MinaTolEntidades.DtoTaller
         public DateTime Fecha { get; set; }
         public string RutaFoto { get; set; }
         public string GitFoto { get; set; }
+        public int CantidadRetirada { get; set; }
+
     }
 }

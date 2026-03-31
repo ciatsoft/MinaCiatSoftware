@@ -111,6 +111,12 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.DeleteComponenteVehiculoById(id);
             return result;
         }
+        [HttpGet, Route("AsignarPiezaVehiculoReparacion/{id:long}")]
+        public ModelResponse GetAsignarPiezaVehiculoReparacionById(long id)
+        {
+            var result = wrapper.GetAsignarPiezaVehiculoReparacionById(id);
+            return result;
+        }
 
         #endregion
         #region ReparacionVehiculos
@@ -194,6 +200,28 @@ namespace MinaTolWebApi.Controllers
         public ModelResponse GetAllInventarioByCategoria(long categoriaInventario)
         {
             var result = wrapper.GetAllInventarioByCategoria(categoriaInventario);
+            return result;
+        }
+        #endregion
+        #region ResumenReparacion
+        [HttpPost, Route("ActualizarEstado/{Id:long}/{Estado:int}")]
+        public ModelResponse ActualizarEstado(long Id, int Estado)
+        {
+            var result = wrapper.ActualizarEstado(Id, Estado);
+            return result;
+        }
+        #endregion
+        #region Reportes
+        [HttpGet, Route("PiezasReutilizables/List")]
+        public ModelResponse GetAllRetirarPiezasReutilizables()
+        {
+            var result = wrapper.GetAllRetirarPiezasReutilizables();
+            return result;
+        }
+        [HttpGet, Route("PiezasNoReutilizables/List")]
+        public ModelResponse GetAllRetirarPiezasNoReutilizables()
+        {
+            var result = wrapper.GetAllRetirarPiezasNoReutilizables();
             return result;
         }
         #endregion

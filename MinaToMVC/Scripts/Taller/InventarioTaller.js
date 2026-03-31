@@ -13,7 +13,7 @@ $(document).ready(function () {
 
     // También puedes inicializar el valor si ya hay una selección al cargar la página
     if ($("#ddlCategoriaInventario").val() !== "") {
-        var initialText = $("#ddlCategoriaInventario option:selected").text();x
+        var initialText = $("#ddlCategoriaInventario option:selected").text();
         $("#nombreCategoria").val(initialText);
     }
 
@@ -260,13 +260,13 @@ function EditarInventario(id) {
 
 function EliminarInventario(id) {
     Swal.fire({
-        title: '¿Estas seguro?',
-        text: "¿Desea eliminar el siguiente registro?",
+        title: 'Eliminar Registro',
+        text: "Desea eliminar el siguiente registro?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, eliminar',
+        confirmButtonText: 'Si, eliminar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
