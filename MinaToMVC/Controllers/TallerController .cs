@@ -1134,6 +1134,11 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetAllRetirarPiezasNoReutilizables();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
+        public async Task<string> ReparacionVehiculosByDates(DateTime fechaInicio, DateTime fechaFin)
+        {
+            var result = await httpClientConnection.ReparacionVehiculosByDates(fechaInicio, fechaFin);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result);
+        }
         #endregion
 
 

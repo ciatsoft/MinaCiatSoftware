@@ -866,6 +866,45 @@ namespace MinaTolWebApi.DAL
             return response;
 
         }
+        public ModelResponse ReparacionVehiculosByDates(DateTime fechaInicio, DateTime fechaFin)
+        {
+            var response = new ModelResponse();
+            try
+            {
+                response.IsSuccess = true;
+                var parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    Value = fechaInicio,
+                    IsNullable = true,
+                    ParameterName = "@FechaInicio",
+                    SqlDbType = System.Data.SqlDbType.DateTime
+                });
+                parameters.Add(new SqlParameter()
+                {
+                    Value = fechaFin,
+                    IsNullable = true,
+                    ParameterName = "@FechaFin",
+                    SqlDbType = System.Data.SqlDbType.DateTime
+                });
+                
+                var result = GetObjects("ReparacionVehiculosByDates", System.Data.CommandType.StoredProcedure,
+                    parameters, new Func<System.Data.IDataReader, ReparacionVehiculos>((reader) =>
+                    {
+                        var r = FillEntity<ReparacionVehiculos>(reader);
+                        return r;
+                    }));
+                response.Response = result;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                response.Enum = Enumeration.ErrorNoControlado;
+            }
+            return response;
+
+        }
         #endregion
     }
 }
