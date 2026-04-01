@@ -2233,6 +2233,456 @@ namespace MinaToMVC.Controllers
                 return Content($"Error al generar Excel: {ex.Message}");
             }
         }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult GenerarReporteInventarioPiezasExcel(string datos, int totalRegistros)
+        {
+            try
+            {
+                var piezas = JsonConvert.DeserializeObject<List<dynamic>>(datos ?? "[]");
+
+                IWorkbook workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("Inventario_Piezas");
+
+                sheet.PrintSetup.Landscape = true;
+                sheet.PrintSetup.PaperSize = (short)PaperSize.A4;
+                sheet.SetMargin(MarginType.TopMargin, 0.5);
+                sheet.SetMargin(MarginType.BottomMargin, 0.5);
+                sheet.SetMargin(MarginType.LeftMargin, 0.3);
+                sheet.SetMargin(MarginType.RightMargin, 0.3);
+
+                int rowIndex = 0;
+
+                // Crear estilos (mantener los mismos estilos que antes)
+                ICellStyle titleStyle = workbook.CreateCellStyle();
+                IFont titleFont = workbook.CreateFont();
+                titleFont.FontName = "Calibri";
+                titleFont.FontHeightInPoints = 18;
+                titleFont.IsBold = true;
+                titleFont.Color = IndexedColors.White.Index;
+                titleStyle.SetFont(titleFont);
+                titleStyle.FillForegroundColor = IndexedColors.Black.Index;
+                titleStyle.FillPattern = FillPattern.SolidForeground;
+                titleStyle.Alignment = HorizontalAlignment.Center;
+
+                ICellStyle subtitleStyle = workbook.CreateCellStyle();
+                IFont subtitleFont = workbook.CreateFont();
+                subtitleFont.FontName = "Calibri";
+                subtitleFont.FontHeightInPoints = 14;
+                subtitleFont.IsBold = true;
+                subtitleStyle.SetFont(subtitleFont);
+                subtitleStyle.Alignment = HorizontalAlignment.Center;
+
+                ICellStyle headerStyle = workbook.CreateCellStyle();
+                IFont headerFont = workbook.CreateFont();
+                headerFont.FontName = "Calibri";
+                headerFont.FontHeightInPoints = 11;
+                headerFont.IsBold = true;
+                headerFont.Color = IndexedColors.White.Index;
+                headerStyle.SetFont(headerFont);
+                headerStyle.FillForegroundColor = IndexedColors.Grey50Percent.Index;
+                headerStyle.FillPattern = FillPattern.SolidForeground;
+                headerStyle.Alignment = HorizontalAlignment.Center;
+                headerStyle.BorderTop = BorderStyle.Thin;
+                headerStyle.BorderBottom = BorderStyle.Thin;
+                headerStyle.BorderLeft = BorderStyle.Thin;
+                headerStyle.BorderRight = BorderStyle.Thin;
+
+                ICellStyle dataStyle = workbook.CreateCellStyle();
+                IFont dataFont = workbook.CreateFont();
+                dataFont.FontName = "Calibri";
+                dataFont.FontHeightInPoints = 10;
+                dataStyle.SetFont(dataFont);
+                dataStyle.BorderTop = BorderStyle.Thin;
+                dataStyle.BorderBottom = BorderStyle.Thin;
+                dataStyle.BorderLeft = BorderStyle.Thin;
+                dataStyle.BorderRight = BorderStyle.Thin;
+                dataStyle.VerticalAlignment = VerticalAlignment.Center;
+
+                ICellStyle dataCenterStyle = workbook.CreateCellStyle();
+                dataCenterStyle.CloneStyleFrom(dataStyle);
+                dataCenterStyle.Alignment = HorizontalAlignment.Center;
+
+                ICellStyle dataLeftStyle = workbook.CreateCellStyle();
+                dataLeftStyle.CloneStyleFrom(dataStyle);
+                dataLeftStyle.Alignment = HorizontalAlignment.Left;
+
+                ICellStyle infoLabelStyle = workbook.CreateCellStyle();
+                IFont infoLabelFont = workbook.CreateFont();
+                infoLabelFont.FontName = "Calibri";
+                infoLabelFont.FontHeightInPoints = 11;
+                infoLabelFont.IsBold = true;
+                infoLabelStyle.SetFont(infoLabelFont);
+                infoLabelStyle.Alignment = HorizontalAlignment.Right;
+                infoLabelStyle.BorderTop = BorderStyle.Thin;
+                infoLabelStyle.BorderBottom = BorderStyle.Thin;
+                infoLabelStyle.BorderLeft = BorderStyle.Thin;
+                infoLabelStyle.BorderRight = BorderStyle.Thin;
+                infoLabelStyle.FillForegroundColor = IndexedColors.Grey25Percent.Index;
+                infoLabelStyle.FillPattern = FillPattern.SolidForeground;
+
+                ICellStyle infoValueStyle = workbook.CreateCellStyle();
+                IFont infoValueFont = workbook.CreateFont();
+                infoValueFont.FontName = "Calibri";
+                infoValueFont.FontHeightInPoints = 11;
+                infoValueStyle.SetFont(infoValueFont);
+                infoValueStyle.Alignment = HorizontalAlignment.Left;
+                infoValueStyle.BorderTop = BorderStyle.Thin;
+                infoValueStyle.BorderBottom = BorderStyle.Thin;
+                infoValueStyle.BorderLeft = BorderStyle.Thin;
+                infoValueStyle.BorderRight = BorderStyle.Thin;
+
+                // Titulo principal
+                IRow titleRow = sheet.CreateRow(rowIndex++);
+                titleRow.HeightInPoints = 30;
+                ICell titleCell = titleRow.CreateCell(0);
+                titleCell.SetCellValue("INVENTARIO DE PIEZAS NO REUTILIZABLES");
+                titleCell.CellStyle = titleStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 5));
+
+                IRow subtitleRow = sheet.CreateRow(rowIndex++);
+                ICell subtitleCell = subtitleRow.CreateCell(0);
+                subtitleCell.SetCellValue($"Fecha de generacion: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
+                subtitleCell.CellStyle = subtitleStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(1, 1, 0, 5));
+
+                rowIndex++;
+
+                // Informacion del reporte
+                IRow infoTitleRow = sheet.CreateRow(rowIndex++);
+                ICell infoTitleCell = infoTitleRow.CreateCell(0);
+                infoTitleCell.SetCellValue("INFORMACION DEL REPORTE");
+                infoTitleCell.CellStyle = headerStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 5));
+
+                IRow totalRow = sheet.CreateRow(rowIndex++);
+                totalRow.CreateCell(0).SetCellValue("Total de piezas:");
+                totalRow.GetCell(0).CellStyle = infoLabelStyle;
+                totalRow.CreateCell(1).SetCellValue(totalRegistros.ToString());
+                totalRow.GetCell(1).CellStyle = infoValueStyle;
+
+                rowIndex++;
+
+                // Tabla de datos con columna de fecha
+                IRow headerRow = sheet.CreateRow(rowIndex++);
+                string[] headers = { "ID", "NOMBRE", "CATEGORIA", "MARCA", "CANTIDAD", "FECHA" };
+
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    ICell headerCell = headerRow.CreateCell(i);
+                    headerCell.SetCellValue(headers[i]);
+                    headerCell.CellStyle = headerStyle;
+                    sheet.SetColumnWidth(i, 15 * 256);
+                }
+
+                int totalCantidad = 0;
+
+                foreach (var pieza in piezas)
+                {
+                    IRow dataRow = sheet.CreateRow(rowIndex++);
+                    int cantidad = Convert.ToInt32(pieza.cantidad);
+                    totalCantidad += cantidad;
+
+                    dataRow.CreateCell(0).SetCellValue(pieza.id.ToString());
+                    dataRow.GetCell(0).CellStyle = dataCenterStyle;
+
+                    dataRow.CreateCell(1).SetCellValue(pieza.nombre.ToString());
+                    dataRow.GetCell(1).CellStyle = dataLeftStyle;
+
+                    dataRow.CreateCell(2).SetCellValue(pieza.categoria.ToString());
+                    dataRow.GetCell(2).CellStyle = dataLeftStyle;
+
+                    dataRow.CreateCell(3).SetCellValue(pieza.marca.ToString());
+                    dataRow.GetCell(3).CellStyle = dataLeftStyle;
+
+                    dataRow.CreateCell(4).SetCellValue(cantidad);
+                    dataRow.GetCell(4).CellStyle = dataCenterStyle;
+
+                    dataRow.CreateCell(5).SetCellValue(pieza.fecha.ToString());
+                    dataRow.GetCell(5).CellStyle = dataCenterStyle;
+                }
+
+                rowIndex++;
+
+                // Resumen estadistico
+                IRow resumenTitleRow = sheet.CreateRow(rowIndex++);
+                ICell resumenTitleCell = resumenTitleRow.CreateCell(0);
+                resumenTitleCell.SetCellValue("RESUMEN ESTADISTICO");
+                resumenTitleCell.CellStyle = headerStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 5));
+
+                IRow totalCantidadRow = sheet.CreateRow(rowIndex++);
+                totalCantidadRow.CreateCell(0).SetCellValue("Total de piezas en inventario:");
+                totalCantidadRow.GetCell(0).CellStyle = infoLabelStyle;
+                totalCantidadRow.CreateCell(1).SetCellValue(totalCantidad.ToString("N0"));
+                totalCantidadRow.GetCell(1).CellStyle = infoValueStyle;
+
+                IRow promedioRow = sheet.CreateRow(rowIndex++);
+                promedioRow.CreateCell(0).SetCellValue("Promedio por pieza:");
+                promedioRow.GetCell(0).CellStyle = infoLabelStyle;
+                double promedio = piezas.Count > 0 ? (double)totalCantidad / piezas.Count : 0;
+                promedioRow.CreateCell(1).SetCellValue(promedio.ToString("F2"));
+                promedioRow.GetCell(1).CellStyle = infoValueStyle;
+
+                IRow variedadRow = sheet.CreateRow(rowIndex++);
+                variedadRow.CreateCell(0).SetCellValue("Variedad de piezas:");
+                variedadRow.GetCell(0).CellStyle = infoLabelStyle;
+                variedadRow.CreateCell(1).SetCellValue(piezas.Count.ToString("N0"));
+                variedadRow.GetCell(1).CellStyle = infoValueStyle;
+
+                // Autoajustar columnas
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    sheet.AutoSizeColumn(i);
+                }
+
+                byte[] excelBytes;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    workbook.Write(ms);
+                    excelBytes = ms.ToArray();
+                }
+
+                workbook.Close();
+
+                return File(
+                    excelBytes,
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    $"Inventario_Piezas_No_Reutilizables_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx"
+                );
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error al generar Excel: {ex.Message}");
+                return Content($"Error al generar el reporte Excel: {ex.Message}");
+            }
+        }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult GenerarReporteInventarioReutilizablesExcel(string datos, int totalRegistros)
+        {
+            try
+            {
+                var piezas = JsonConvert.DeserializeObject<List<dynamic>>(datos ?? "[]");
+
+                IWorkbook workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("Inventario_Reutilizables");
+
+                sheet.PrintSetup.Landscape = true;
+                sheet.PrintSetup.PaperSize = (short)PaperSize.A4;
+                sheet.SetMargin(MarginType.TopMargin, 0.5);
+                sheet.SetMargin(MarginType.BottomMargin, 0.5);
+                sheet.SetMargin(MarginType.LeftMargin, 0.3);
+                sheet.SetMargin(MarginType.RightMargin, 0.3);
+
+                int rowIndex = 0;
+
+                // Crear estilos (mantener los mismos estilos que antes)
+                ICellStyle titleStyle = workbook.CreateCellStyle();
+                IFont titleFont = workbook.CreateFont();
+                titleFont.FontName = "Calibri";
+                titleFont.FontHeightInPoints = 18;
+                titleFont.IsBold = true;
+                titleFont.Color = IndexedColors.White.Index;
+                titleStyle.SetFont(titleFont);
+                titleStyle.FillForegroundColor = IndexedColors.Black.Index;
+                titleStyle.FillPattern = FillPattern.SolidForeground;
+                titleStyle.Alignment = HorizontalAlignment.Center;
+
+                ICellStyle subtitleStyle = workbook.CreateCellStyle();
+                IFont subtitleFont = workbook.CreateFont();
+                subtitleFont.FontName = "Calibri";
+                subtitleFont.FontHeightInPoints = 14;
+                subtitleFont.IsBold = true;
+                subtitleStyle.SetFont(subtitleFont);
+                subtitleStyle.Alignment = HorizontalAlignment.Center;
+
+                ICellStyle headerStyle = workbook.CreateCellStyle();
+                IFont headerFont = workbook.CreateFont();
+                headerFont.FontName = "Calibri";
+                headerFont.FontHeightInPoints = 11;
+                headerFont.IsBold = true;
+                headerFont.Color = IndexedColors.White.Index;
+                headerStyle.SetFont(headerFont);
+                headerStyle.FillForegroundColor = IndexedColors.Grey50Percent.Index;
+                headerStyle.FillPattern = FillPattern.SolidForeground;
+                headerStyle.Alignment = HorizontalAlignment.Center;
+                headerStyle.BorderTop = BorderStyle.Thin;
+                headerStyle.BorderBottom = BorderStyle.Thin;
+                headerStyle.BorderLeft = BorderStyle.Thin;
+                headerStyle.BorderRight = BorderStyle.Thin;
+
+                ICellStyle dataStyle = workbook.CreateCellStyle();
+                IFont dataFont = workbook.CreateFont();
+                dataFont.FontName = "Calibri";
+                dataFont.FontHeightInPoints = 10;
+                dataStyle.SetFont(dataFont);
+                dataStyle.BorderTop = BorderStyle.Thin;
+                dataStyle.BorderBottom = BorderStyle.Thin;
+                dataStyle.BorderLeft = BorderStyle.Thin;
+                dataStyle.BorderRight = BorderStyle.Thin;
+                dataStyle.VerticalAlignment = VerticalAlignment.Center;
+
+                ICellStyle dataCenterStyle = workbook.CreateCellStyle();
+                dataCenterStyle.CloneStyleFrom(dataStyle);
+                dataCenterStyle.Alignment = HorizontalAlignment.Center;
+
+                ICellStyle dataLeftStyle = workbook.CreateCellStyle();
+                dataLeftStyle.CloneStyleFrom(dataStyle);
+                dataLeftStyle.Alignment = HorizontalAlignment.Left;
+
+                ICellStyle infoLabelStyle = workbook.CreateCellStyle();
+                IFont infoLabelFont = workbook.CreateFont();
+                infoLabelFont.FontName = "Calibri";
+                infoLabelFont.FontHeightInPoints = 11;
+                infoLabelFont.IsBold = true;
+                infoLabelStyle.SetFont(infoLabelFont);
+                infoLabelStyle.Alignment = HorizontalAlignment.Right;
+                infoLabelStyle.BorderTop = BorderStyle.Thin;
+                infoLabelStyle.BorderBottom = BorderStyle.Thin;
+                infoLabelStyle.BorderLeft = BorderStyle.Thin;
+                infoLabelStyle.BorderRight = BorderStyle.Thin;
+                infoLabelStyle.FillForegroundColor = IndexedColors.Grey25Percent.Index;
+                infoLabelStyle.FillPattern = FillPattern.SolidForeground;
+
+                ICellStyle infoValueStyle = workbook.CreateCellStyle();
+                IFont infoValueFont = workbook.CreateFont();
+                infoValueFont.FontName = "Calibri";
+                infoValueFont.FontHeightInPoints = 11;
+                infoValueStyle.SetFont(infoValueFont);
+                infoValueStyle.Alignment = HorizontalAlignment.Left;
+                infoValueStyle.BorderTop = BorderStyle.Thin;
+                infoValueStyle.BorderBottom = BorderStyle.Thin;
+                infoValueStyle.BorderLeft = BorderStyle.Thin;
+                infoValueStyle.BorderRight = BorderStyle.Thin;
+
+                // Titulo principal
+                IRow titleRow = sheet.CreateRow(rowIndex++);
+                titleRow.HeightInPoints = 30;
+                ICell titleCell = titleRow.CreateCell(0);
+                titleCell.SetCellValue("INVENTARIO DE PIEZAS REUTILIZABLES");
+                titleCell.CellStyle = titleStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 5));
+
+                IRow subtitleRow = sheet.CreateRow(rowIndex++);
+                ICell subtitleCell = subtitleRow.CreateCell(0);
+                subtitleCell.SetCellValue($"Fecha de generacion: {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
+                subtitleCell.CellStyle = subtitleStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(1, 1, 0, 5));
+
+                rowIndex++;
+
+                // Informacion del reporte
+                IRow infoTitleRow = sheet.CreateRow(rowIndex++);
+                ICell infoTitleCell = infoTitleRow.CreateCell(0);
+                infoTitleCell.SetCellValue("INFORMACION DEL REPORTE");
+                infoTitleCell.CellStyle = headerStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 5));
+
+                IRow totalRow = sheet.CreateRow(rowIndex++);
+                totalRow.CreateCell(0).SetCellValue("Total de piezas:");
+                totalRow.GetCell(0).CellStyle = infoLabelStyle;
+                totalRow.CreateCell(1).SetCellValue(totalRegistros.ToString());
+                totalRow.GetCell(1).CellStyle = infoValueStyle;
+
+                rowIndex++;
+
+                // Tabla de datos con columna de fecha
+                IRow headerRow = sheet.CreateRow(rowIndex++);
+                string[] headers = { "ID", "NOMBRE", "CATEGORIA", "MARCA", "CANTIDAD", "FECHA" };
+
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    ICell headerCell = headerRow.CreateCell(i);
+                    headerCell.SetCellValue(headers[i]);
+                    headerCell.CellStyle = headerStyle;
+                    sheet.SetColumnWidth(i, 15 * 256);
+                }
+
+                int totalCantidad = 0;
+
+                foreach (var pieza in piezas)
+                {
+                    IRow dataRow = sheet.CreateRow(rowIndex++);
+                    int cantidad = Convert.ToInt32(pieza.cantidad);
+                    totalCantidad += cantidad;
+
+                    dataRow.CreateCell(0).SetCellValue(pieza.id.ToString());
+                    dataRow.GetCell(0).CellStyle = dataCenterStyle;
+
+                    dataRow.CreateCell(1).SetCellValue(pieza.nombre.ToString());
+                    dataRow.GetCell(1).CellStyle = dataLeftStyle;
+
+                    dataRow.CreateCell(2).SetCellValue(pieza.categoria.ToString());
+                    dataRow.GetCell(2).CellStyle = dataLeftStyle;
+
+                    dataRow.CreateCell(3).SetCellValue(pieza.marca.ToString());
+                    dataRow.GetCell(3).CellStyle = dataLeftStyle;
+
+                    dataRow.CreateCell(4).SetCellValue(cantidad);
+                    dataRow.GetCell(4).CellStyle = dataCenterStyle;
+
+                    dataRow.CreateCell(5).SetCellValue(pieza.fecha.ToString());
+                    dataRow.GetCell(5).CellStyle = dataCenterStyle;
+                }
+
+                rowIndex++;
+
+                // Resumen estadistico
+                IRow resumenTitleRow = sheet.CreateRow(rowIndex++);
+                ICell resumenTitleCell = resumenTitleRow.CreateCell(0);
+                resumenTitleCell.SetCellValue("RESUMEN ESTADISTICO");
+                resumenTitleCell.CellStyle = headerStyle;
+                sheet.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex - 1, 0, 5));
+
+                IRow totalCantidadRow = sheet.CreateRow(rowIndex++);
+                totalCantidadRow.CreateCell(0).SetCellValue("Total de piezas en inventario:");
+                totalCantidadRow.GetCell(0).CellStyle = infoLabelStyle;
+                totalCantidadRow.CreateCell(1).SetCellValue(totalCantidad.ToString("N0"));
+                totalCantidadRow.GetCell(1).CellStyle = infoValueStyle;
+
+                IRow promedioRow = sheet.CreateRow(rowIndex++);
+                promedioRow.CreateCell(0).SetCellValue("Promedio por pieza:");
+                promedioRow.GetCell(0).CellStyle = infoLabelStyle;
+                double promedio = piezas.Count > 0 ? (double)totalCantidad / piezas.Count : 0;
+                promedioRow.CreateCell(1).SetCellValue(promedio.ToString("F2"));
+                promedioRow.GetCell(1).CellStyle = infoValueStyle;
+
+                IRow variedadRow = sheet.CreateRow(rowIndex++);
+                variedadRow.CreateCell(0).SetCellValue("Variedad de piezas:");
+                variedadRow.GetCell(0).CellStyle = infoLabelStyle;
+                variedadRow.CreateCell(1).SetCellValue(piezas.Count.ToString("N0"));
+                variedadRow.GetCell(1).CellStyle = infoValueStyle;
+
+                // Autoajustar columnas
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    sheet.AutoSizeColumn(i);
+                }
+
+                byte[] excelBytes;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    workbook.Write(ms);
+                    excelBytes = ms.ToArray();
+                }
+
+                workbook.Close();
+
+                return File(
+                    excelBytes,
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    $"Inventario_Piezas_Reutilizables_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx"
+                );
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error al generar Excel: {ex.Message}");
+                return Content($"Error al generar el reporte Excel: {ex.Message}");
+            }
+        }
         #endregion
 
         #region VentaPublicoGeneral

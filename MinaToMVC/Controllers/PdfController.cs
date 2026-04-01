@@ -1727,5 +1727,297 @@ namespace MinaToMVC.Controllers
                 return Content($"Error al generar el reporte PDF: {ex.Message}");
             }
         }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult GenerarReporteInventarioPiezasPDF(string tablaHTML, int totalRegistros)
+        {
+            byte[] pdfBytes = null;
+
+            try
+            {
+                string fechaGeneracion = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+                string tituloReporte = "Inventario de Piezas No Reutilizables";
+
+                string htmlCompleto = $@"
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='UTF-8'>
+            <title>Inventario de Piezas No Reutilizables</title>
+            <style>
+                body {{ 
+                    font-family: Arial, sans-serif; 
+                    margin: 15px; 
+                    font-size: 12px;
+                    color: #333;
+                }}
+                .header {{ 
+                    text-align: center; 
+                    margin-bottom: 20px;
+                    border-bottom: 2px solid #2c3e50;
+                    padding-bottom: 10px;
+                }}
+                h1 {{ 
+                    color: #2c3e50; 
+                    margin: 0 0 5px 0;
+                    font-size: 20px;
+                }}
+                .fecha {{
+                    font-size: 14px;
+                    color: #7f8c8d;
+                }}
+                .info-reporte {{
+                    background-color: #f8f9fa;
+                    border: 1px solid #dee2e6;
+                    border-radius: 5px;
+                    padding: 15px;
+                    margin-bottom: 20px;
+                }}
+                .info-row {{
+                    margin-bottom: 10px;
+                }}
+                .info-label {{
+                    font-weight: bold;
+                    display: inline-block;
+                    width: 150px;
+                    color: #2c3e50;
+                }}
+                .info-value {{
+                    display: inline-block;
+                    color: #555;
+                }}
+                table {{ 
+                    width: 100%; 
+                    border-collapse: collapse; 
+                    margin-top: 10px;
+                    margin-bottom: 20px;
+                    font-size: 10px;
+                    page-break-inside: auto;
+                }}
+                th, td {{ 
+                    padding: 8px; 
+                    text-align: left; 
+                    border: 1px solid #ddd; 
+                    word-wrap: break-word;
+                }}
+                th {{ 
+                    background-color: #34495e; 
+                    color: white;
+                    font-weight: bold;
+                    text-align: center;
+                }}
+                tr:nth-child(even) {{ 
+                    background-color: #f9f9f9; 
+                }}
+                tr {{ 
+                    page-break-inside: avoid;
+                    page-break-after: auto;
+                }}
+                .footer {{ 
+                    text-align: center; 
+                    margin-top: 30px; 
+                    font-size: 10px; 
+                    color: #7f8c8d;
+                    border-top: 1px solid #eee;
+                    padding-top: 10px;
+                }}
+                .total-registros {{
+                    text-align: right;
+                    font-weight: bold;
+                    margin-top: 10px;
+                    font-size: 11px;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class='header'>
+                <h1>{tituloReporte}</h1>
+                <p class='fecha'><strong>Fecha de generacion:</strong> {fechaGeneracion}</p>
+            </div>
+    
+            <div class='info-reporte'>
+                <div class='info-row'>
+                    <span class='info-label'>Total de piezas:</span>
+                    <span class='info-value'>{totalRegistros}</span>
+                </div>
+            </div>
+    
+            {tablaHTML}
+    
+            <div class='total-registros'>
+                <strong>Total de piezas mostradas: {totalRegistros}</strong>
+            </div>
+    
+            <div class='footer'>
+                <p>Reporte generado por Sistema de Taller - Mina San Miguel</p>
+                <p>Pagina 1 de 1</p>
+            </div>
+        </body>
+        </html>";
+
+                var htmlToPdf = new HtmlToPdfConverter();
+                htmlToPdf.Orientation = PageOrientation.Landscape;
+                htmlToPdf.Size = PageSize.Letter;
+                htmlToPdf.Margins = new PageMargins { Top = 15, Bottom = 15, Left = 10, Right = 10 };
+                htmlToPdf.LowQuality = false;
+                htmlToPdf.Quiet = true;
+
+                pdfBytes = htmlToPdf.GeneratePdf(htmlCompleto);
+
+                return File(pdfBytes, "application/pdf", $"Inventario_Piezas_No_Reutilizables_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error al generar PDF: {ex.Message}");
+                return Content($"Error al generar el reporte PDF: {ex.Message}");
+            }
+        }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult GenerarReporteInventarioReutilizablesPDF(string tablaHTML, int totalRegistros)
+        {
+            byte[] pdfBytes = null;
+
+            try
+            {
+                string fechaGeneracion = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+                string tituloReporte = "Inventario de Piezas Reutilizables";
+
+                string htmlCompleto = $@"
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='UTF-8'>
+            <title>Inventario de Piezas Reutilizables</title>
+            <style>
+                body {{ 
+                    font-family: Arial, sans-serif; 
+                    margin: 15px; 
+                    font-size: 12px;
+                    color: #333;
+                }}
+                .header {{ 
+                    text-align: center; 
+                    margin-bottom: 20px;
+                    border-bottom: 2px solid #2c3e50;
+                    padding-bottom: 10px;
+                }}
+                h1 {{ 
+                    color: #2c3e50; 
+                    margin: 0 0 5px 0;
+                    font-size: 20px;
+                }}
+                .fecha {{
+                    font-size: 14px;
+                    color: #7f8c8d;
+                }}
+                .info-reporte {{
+                    background-color: #f8f9fa;
+                    border: 1px solid #dee2e6;
+                    border-radius: 5px;
+                    padding: 15px;
+                    margin-bottom: 20px;
+                }}
+                .info-row {{
+                    margin-bottom: 10px;
+                }}
+                .info-label {{
+                    font-weight: bold;
+                    display: inline-block;
+                    width: 150px;
+                    color: #2c3e50;
+                }}
+                .info-value {{
+                    display: inline-block;
+                    color: #555;
+                }}
+                table {{ 
+                    width: 100%; 
+                    border-collapse: collapse; 
+                    margin-top: 10px;
+                    margin-bottom: 20px;
+                    font-size: 10px;
+                    page-break-inside: auto;
+                }}
+                th, td {{ 
+                    padding: 8px; 
+                    text-align: left; 
+                    border: 1px solid #ddd; 
+                    word-wrap: break-word;
+                }}
+                th {{ 
+                    background-color: #34495e; 
+                    color: white;
+                    font-weight: bold;
+                    text-align: center;
+                }}
+                tr:nth-child(even) {{ 
+                    background-color: #f9f9f9; 
+                }}
+                tr {{ 
+                    page-break-inside: avoid;
+                    page-break-after: auto;
+                }}
+                .footer {{ 
+                    text-align: center; 
+                    margin-top: 30px; 
+                    font-size: 10px; 
+                    color: #7f8c8d;
+                    border-top: 1px solid #eee;
+                    padding-top: 10px;
+                }}
+                .total-registros {{
+                    text-align: right;
+                    font-weight: bold;
+                    margin-top: 10px;
+                    font-size: 11px;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class='header'>
+                <h1>{tituloReporte}</h1>
+                <p class='fecha'><strong>Fecha de generacion:</strong> {fechaGeneracion}</p>
+            </div>
+    
+            <div class='info-reporte'>
+                <div class='info-row'>
+                    <span class='info-label'>Total de piezas:</span>
+                    <span class='info-value'>{totalRegistros}</span>
+                </div>
+            </div>
+    
+            {tablaHTML}
+    
+            <div class='total-registros'>
+                <strong>Total de piezas mostradas: {totalRegistros}</strong>
+            </div>
+    
+            <div class='footer'>
+                <p>Reporte generado por Sistema de Taller - Mina San Miguel</p>
+                <p>Pagina 1 de 1</p>
+            </div>
+        </body>
+        </html>";
+
+                var htmlToPdf = new HtmlToPdfConverter();
+                htmlToPdf.Orientation = PageOrientation.Landscape;
+                htmlToPdf.Size = PageSize.Letter;
+                htmlToPdf.Margins = new PageMargins { Top = 15, Bottom = 15, Left = 10, Right = 10 };
+                htmlToPdf.LowQuality = false;
+                htmlToPdf.Quiet = true;
+
+                pdfBytes = htmlToPdf.GeneratePdf(htmlCompleto);
+
+                return File(pdfBytes, "application/pdf", $"Inventario_Piezas_Reutilizables_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error al generar PDF: {ex.Message}");
+                return Content($"Error al generar el reporte PDF: {ex.Message}");
+            }
+        }
     }
 }

@@ -13,7 +13,6 @@ $(document).ready(function () {
                 data: 'idCategoriaInventario',
                 title: 'Categoria',
                 render: function (data, type, row) {
-                    // Buscar el nombre de la categoría por su ID
                     var categoria = categoriasInventario.find(c => c.id === data);
                     return categoria ? categoria.nombre : data;
                 }
@@ -21,10 +20,22 @@ $(document).ready(function () {
             { data: 'marca', title: 'Marca' },
             { data: 'cantidad', title: 'Cantidad' },
             {
+                data: 'fecha',
+                title: 'Fecha',
+                render: function (data) {
+                    if (data) {
+                        var fecha = new Date(data);
+                        return fecha.toLocaleDateString('es-MX') + ' ' +
+                            fecha.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+                    }
+                    return '';
+                }
+            },
+            {
                 data: "id",
                 title: "Acciones",
                 render: function (data, type, row) {
-                    return '<input type="button" value="Mas Detalles" class="btn btn-custom-clean" onclick="MasDetalles(' + data + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />' ;
+                    return '<input type="button" value="Mas Detalles" class="btn btn-custom-clean" onclick="MasDetalles(' + data + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />';
                 }
             }
         ],
@@ -55,6 +66,15 @@ $(document).ready(function () {
 
     // Cargar primero las categorías y luego las piezas
     GetAllCategoriaInventario();
+
+    // Eventos para los botones de exportacion
+    $('#btnGenerarPDF').on('click', function () {
+        generarReporteInventarioReutilizablesPDF();
+    });
+
+    $('#btnGenerarExcel').on('click', function () {
+        generarReporteInventarioReutilizablesExcel();
+    });
 });
 
 function GetAllRetirarPiezasReutilizables() {
@@ -75,10 +95,7 @@ function GetAllRetirarPiezasReutilizables() {
 function GetAllCategoriaInventario() {
     GetMVC("/Taller/GetAllCategoriaInventario", function (r) {
         if (r.IsSuccess) {
-            // Almacenar las categorías en la variable global
             categoriasInventario = r.Response;
-            
-            // Una vez cargadas las categorías, cargar las piezas
             GetAllRetirarPiezasReutilizables();
         } else {
             Swal.fire({
@@ -97,4 +114,209 @@ function MasDetalles(id, idReparacion, tipoVehiculoCodigo, idVehiculo) {
     $("#boddyGeericModal").load(`/Taller/PartialViewModalMostrarDetalles?id=${id}&idReparacion=${idReparacion}&tipoVehiculo=${tipoVehiculoCodigo}&idVehiculo=${idVehiculo}`, function () {
         $("#genericModal").modal("show");
     });
+}
+
+// ================= FUNCION PARA FORMATEAR FECHA =================
+function formatearFecha(fecha) {
+    if (!fecha) return '';
+    try {
+        var fechaDate = new Date(fecha);
+        if (isNaN(fechaDate.getTime())) return '';
+
+        var dia = fechaDate.getDate().toString().padStart(2, '0');
+        var mes = (fechaDate.getMonth() + 1).toString().padStart(2, '0');
+        var anio = fechaDate.getFullYear();
+        var horas = fechaDate.getHours().toString().padStart(2, '0');
+        var minutos = fechaDate.getMinutes().toString().padStart(2, '0');
+
+        return `${dia}/${mes}/${anio} ${horas}:${minutos}`;
+    } catch (e) {
+        return '';
+    }
+}
+
+// ================= FUNCIONES PARA EXPORTAR PDF =================
+function generarReporteInventarioReutilizablesPDF() {
+    var tabla = $('#tblPiezasRetiradas').DataTable();
+    var datos = tabla.data().toArray();
+
+    if (datos.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Sin datos',
+            text: 'No hay datos para exportar',
+            confirmButtonText: 'Entendido'
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: "Generando reporte...",
+        text: "Por favor espere mientras se genera el PDF",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    // Construir tabla HTML con fecha formateada
+    var tablaHTML = construirTablaInventarioReutilizablesHTML(datos);
+
+    var form = $('<form>', {
+        method: 'POST',
+        action: '/PDF/GenerarReporteInventarioReutilizablesPDF'
+    });
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'tablaHTML',
+        value: tablaHTML
+    }).appendTo(form);
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'totalRegistros',
+        value: datos.length
+    }).appendTo(form);
+
+    form.appendTo('body').submit();
+    form.remove();
+
+    setTimeout(function () {
+        Swal.close();
+        Swal.fire({
+            icon: 'success',
+            title: 'Reporte generado!',
+            text: 'El PDF se ha creado correctamente',
+            timer: 3000,
+            showConfirmButton: false
+        });
+    }, 2000);
+}
+
+function construirTablaInventarioReutilizablesHTML(datos) {
+    if (!datos || datos.length === 0) {
+        return "<p style='color: #7f8c8d;'>No hay datos disponibles.</p>";
+    }
+
+    var html = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
+    html += '<thead>';
+    html += '<tr>';
+    html += '<th>ID</th>';
+    html += '<th>Nombre</th>';
+    html += '<th>Categoria</th>';
+    html += '<th>Marca</th>';
+    html += '<th>Cantidad</th>';
+    html += '<th>Fecha</th>';
+    html += '</tr>';
+    html += '</thead>';
+    html += '<tbody>';
+
+    for (var i = 0; i < datos.length; i++) {
+        var item = datos[i];
+
+        // Obtener nombre de categoria
+        var categoriaNombre = item.idCategoriaInventario;
+        var categoria = categoriasInventario.find(c => c.id === item.idCategoriaInventario);
+        if (categoria) {
+            categoriaNombre = categoria.nombre;
+        }
+
+        // Formatear fecha
+        var fechaFormateada = formatearFecha(item.fecha);
+
+        html += '<tr>';
+        html += '<td style="text-align:center;">' + (item.id || '') + '</td>';
+        html += '<td>' + (item.nombre || '') + '</td>';
+        html += '<td>' + categoriaNombre + '</td>';
+        html += '<td>' + (item.marca || '') + '</td>';
+        html += '<td style="text-align:center;">' + (item.cantidad || 0) + '</td>';
+        html += '<td style="text-align:center;">' + fechaFormateada + '</td>';
+        html += '</tr>';
+    }
+
+    html += '</tbody>';
+    html += '</table>';
+
+    return html;
+}
+
+// ================= FUNCIONES PARA EXPORTAR EXCEL =================
+function generarReporteInventarioReutilizablesExcel() {
+    var tabla = $('#tblPiezasRetiradas').DataTable();
+    var datos = tabla.data().toArray();
+
+    if (datos.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Sin datos',
+            text: 'No hay datos para exportar',
+            confirmButtonText: 'Entendido'
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: "Generando Excel...",
+        text: "Por favor espere mientras se genera el archivo Excel",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    // Preparar datos para Excel con fecha formateada
+    var datosExcel = [];
+    for (var i = 0; i < datos.length; i++) {
+        var item = datos[i];
+
+        var categoriaNombre = item.idCategoriaInventario;
+        var categoria = categoriasInventario.find(c => c.id === item.idCategoriaInventario);
+        if (categoria) {
+            categoriaNombre = categoria.nombre;
+        }
+
+        // Formatear fecha
+        var fechaFormateada = formatearFecha(item.fecha);
+
+        datosExcel.push({
+            id: item.id || '',
+            nombre: item.nombre || '',
+            categoria: categoriaNombre,
+            marca: item.marca || '',
+            cantidad: item.cantidad || 0,
+            fecha: fechaFormateada
+        });
+    }
+
+    var form = $('<form>', {
+        method: 'POST',
+        action: '/Excel/GenerarReporteInventarioReutilizablesExcel'
+    });
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'datos',
+        value: JSON.stringify(datosExcel)
+    }).appendTo(form);
+
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'totalRegistros',
+        value: datos.length
+    }).appendTo(form);
+
+    form.appendTo('body').submit();
+    form.remove();
+
+    setTimeout(function () {
+        Swal.close();
+        Swal.fire({
+            icon: 'success',
+            title: 'Excel generado!',
+            text: 'El archivo Excel se ha creado correctamente',
+            timer: 3000,
+            showConfirmButton: false
+        });
+    }, 2000);
 }
