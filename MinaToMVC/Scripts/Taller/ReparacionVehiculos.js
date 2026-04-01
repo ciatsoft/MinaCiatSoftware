@@ -199,7 +199,6 @@ function inicializarTablaReparaciones() {
                 title: 'Vehiculo',
                 render: function (data, type, row) {
                     if (row.tipoVehiculo == 1) {
-                        // Buscar en TODOS los vehículos locales (incluye inactivos)
                         const vehiculo = vehiculosLocalesTodos.find(v => v.id == row.idVehiculo);
                         if (vehiculo) {
                             const tipoNombre = vehiculo.tipoVehiculo?.nombre || 'Sin tipo';
@@ -208,7 +207,6 @@ function inicializarTablaReparaciones() {
                         return `Vehículo Local ID: ${row.idVehiculo} (no encontrado)`;
                     }
                     else if (row.tipoVehiculo == 2) {
-                        // Buscar en TODOS los vehículos de carga (incluye inactivos)
                         const vehiculo = vehiculosCargaTodos.find(v => v.id == row.idVehiculo);
                         return vehiculo ? (vehiculo.descripcion || 'Sin descripción') : `Vehículo Carga ID: ${row.idVehiculo} (no encontrado)`;
                     }
@@ -264,26 +262,22 @@ function inicializarTablaReparaciones() {
             },
             {
                 data: "id",
-                title: "Asignar",
-                render: function (data, type, row) {
-                    if (row.estado != 4) {
-                        return `<input type="button" value="Asignar Piezas" class="btn btn-success btn-lg-custom" onclick="resumenVehiculo(${data})" />`;
-                    } else {
-                        return '';
-                    }
-                }
-            },
-            {
-                data: "id",
                 title: "Acciones",
                 render: function (data, type, row) {
-                    // Si el estado es 3, mostramos el botón Liberar
-                    if (row.estado == 3) {
-                        return `<input type="button" value="Liberar Vehiculo" class="btn btn-primary" style="background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;" onclick="LiberarVehiculo(${data}, ${row.idVehiculo}, ${row.tipoVehiculo})" />`;
+                    // Estado 1 o 2: Activo o En Proceso -> Solo boton Asignar Piezas
+                    if (row.estado == 1 || row.estado == 2) {
+                        return `<input type="button" value="Asignar Piezas" class="btn btn-success btn-lg-custom" onclick="resumenVehiculo(${data})" />`;
                     }
-                    // Si el estado es 4, mostramos solo el texto "Liberado" sin botón
+                    // Estado 3: Terminado -> Boton Consultar Resumen y Liberar Vehiculo
+                    else if (row.estado == 3) {
+                        return `<div style="display: flex; gap: 5px;">
+                                <input type="button" value="Consultar Resumen" class="btn btn-success btn-lg-custom" onclick="resumenVehiculo(${data})" />
+                                <input type="button" value="Liberar Vehiculo" class="btn btn-success btn-lg-custom" style="background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;" onclick="LiberarVehiculo(${data}, ${row.idVehiculo}, ${row.tipoVehiculo})" />
+                            </div>`;
+                    }
+                    // Estado 4: Liberado -> Solo boton Consultar Resumen
                     else if (row.estado == 4) {
-                        return ''; // o un guión
+                        return `<input type="button" value="Consultar Resumen" class="btn btn-success btn-lg-custom" onclick="resumenVehiculo(${data})" />`;
                     }
                     return '';
                 }
@@ -1025,24 +1019,22 @@ function ReparacionVehiculosByDates(fechaInicio, fechaFin) {
                     },
                     {
                         data: "id",
-                        title: "Asignar",
-                        render: function (data, type, row) {
-                            if (row.estado != 4) {
-                                return `<input type="button" value="Asignar Piezas" class="btn btn-success btn-lg-custom" onclick="resumenVehiculo(${data})" />`;
-                            } else {
-                                return '';
-                            }
-                        }
-                    },
-                    {
-                        data: "id",
                         title: "Acciones",
                         render: function (data, type, row) {
-                            if (row.estado == 3) {
-                                return `<input type="button" value="Liberar Vehiculo" class="btn btn-primary" style="background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;" onclick="LiberarVehiculo(${data}, ${row.idVehiculo}, ${row.tipoVehiculo})" />`;
+                            // Estado 1 o 2: Activo o En Proceso -> Solo boton Asignar Piezas
+                            if (row.estado == 1 || row.estado == 2) {
+                                return `<input type="button" value="Asignar Piezas" class="btn btn-success btn-lg-custom" onclick="resumenVehiculo(${data})" />`;
                             }
+                            // Estado 3: Terminado -> Boton Consultar Resumen y Liberar Vehiculo
+                            else if (row.estado == 3) {
+                                return `<div style="display: flex; gap: 5px;">
+                                <input type="button" value="Consultar Resumen" class="btn btn-success btn-lg-custom" onclick="resumenVehiculo(${data})" />
+                                <input type="button" value="Liberar Vehiculo" class="btn btn-success btn-lg-custom" style="background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;" onclick="LiberarVehiculo(${data}, ${row.idVehiculo}, ${row.tipoVehiculo})" />
+                            </div>`;
+                            }
+                            // Estado 4: Liberado -> Solo boton Consultar Resumen
                             else if (row.estado == 4) {
-                                return '';
+                                return `<input type="button" value="Consultar Resumen" class="btn btn-success btn-lg-custom" onclick="resumenVehiculo(${data})" />`;
                             }
                             return '';
                         }
@@ -1348,6 +1340,7 @@ function generarReporteReparacionVehiculosPDF() {
         });
     }, 2000);
 }
+
 document.getElementById("btnGenerarExcel").addEventListener("click", function () {
     generarReporteReparacionVehiculosExcel();
 });
