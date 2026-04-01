@@ -230,6 +230,18 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.ReparacionVehiculosByDates(fechaInicio, fechaFin);
             return result;
         }
+        [HttpGet, Route("InventarioPiezasNoReutilizablesByDates")]
+        public ModelResponse InventarioPiezasNoReutilizablesByDates(DateTime fechaInicio, DateTime fechaFin)
+        {
+            var result = wrapper.InventarioPiezasNoReutilizablesByDates(fechaInicio, fechaFin);
+            return result;
+        }
+        [HttpGet, Route("InventarioPiezasReutilizablesByDates")]
+        public ModelResponse InventarioPiezasReutilizablesByDates(DateTime fechaInicio, DateTime fechaFin)
+        {
+            var result = wrapper.InventarioPiezasReutilizablesByDates(fechaInicio, fechaFin);
+            return result;
+        }
         #endregion
     }
 }

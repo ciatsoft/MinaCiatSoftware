@@ -1,9 +1,10 @@
-﻿// Variable global para almacenar las categorías
+﻿// Variable global para almacenar las categorías y la instancia de DataTable
 var categoriasInventario = [];
+var dataTableReutilizables; // Variable global para la instancia de DataTable de piezas reutilizables
 
 $(document).ready(function () {
     // Configuración de DataTable
-    $("#tblPiezasRetiradas").DataTable({
+    dataTableReutilizables = $("#tblPiezasRetiradas").DataTable({
         data: [],
         columns: [
             { data: 'id', title: 'ID' },
@@ -35,7 +36,8 @@ $(document).ready(function () {
                 data: "id",
                 title: "Acciones",
                 render: function (data, type, row) {
-                    return '<input type="button" value="Mas Detalles" class="btn btn-custom-clean" onclick="MasDetalles(' + data + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />';
+                    // CORREGIDO: Agregar comillas simples para los parámetros string
+                    return '<input type="button" value="Mas Detalles" class="btn btn-custom-clean" onclick="MasDetalles(\'' + data + '\', \'' + row.idReparacion + '\', \'' + row.tipoVehiculo + '\', \'' + row.idVehiculo + '\')" />';
                 }
             }
         ],
@@ -80,7 +82,10 @@ $(document).ready(function () {
 function GetAllRetirarPiezasReutilizables() {
     GetMVC("/Taller/GetAllRetirarPiezasReutilizables", function (r) {
         if (r.IsSuccess) {
-            MapingPropertiesDataTable("tblPiezasRetiradas", r.Response);
+            // CORREGIDO: Usar la instancia global en lugar de MapingPropertiesDataTable
+            dataTableReutilizables.clear();
+            dataTableReutilizables.rows.add(r.Response);
+            dataTableReutilizables.draw();
         } else {
             Swal.fire({
                 title: 'Error',
@@ -111,8 +116,20 @@ function GetAllCategoriaInventario() {
 function MasDetalles(id, idReparacion, tipoVehiculoCodigo, idVehiculo) {
     $("#titleGenerciModal").text("Detalles de Pieza");
 
-    $("#boddyGeericModal").load(`/Taller/PartialViewModalMostrarDetalles?id=${id}&idReparacion=${idReparacion}&tipoVehiculo=${tipoVehiculoCodigo}&idVehiculo=${idVehiculo}`, function () {
-        $("#genericModal").modal("show");
+    // CORREGIDO: Agregar encodeURIComponent para seguridad y manejo correcto de URLs
+    var url = `/Taller/PartialViewModalMostrarDetalles?id=${encodeURIComponent(id)}&idReparacion=${encodeURIComponent(idReparacion)}&tipoVehiculo=${encodeURIComponent(tipoVehiculoCodigo)}&idVehiculo=${encodeURIComponent(idVehiculo)}`;
+
+    $("#boddyGeericModal").load(url, function (response, status, xhr) {
+        if (status === "error") {
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al cargar los detalles: ' + xhr.statusText,
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        } else {
+            $("#genericModal").modal("show");
+        }
     });
 }
 
@@ -137,8 +154,8 @@ function formatearFecha(fecha) {
 
 // ================= FUNCIONES PARA EXPORTAR PDF =================
 function generarReporteInventarioReutilizablesPDF() {
-    var tabla = $('#tblPiezasRetiradas').DataTable();
-    var datos = tabla.data().toArray();
+    // CORREGIDO: Usar la instancia global
+    var datos = dataTableReutilizables.data().toArray();
 
     if (datos.length === 0) {
         Swal.fire({
@@ -208,7 +225,7 @@ function construirTablaInventarioReutilizablesHTML(datos) {
     html += '<th>Marca</th>';
     html += '<th>Cantidad</th>';
     html += '<th>Fecha</th>';
-    html += '</tr>';
+    html += '\)';
     html += '</thead>';
     html += '<tbody>';
 
@@ -225,26 +242,26 @@ function construirTablaInventarioReutilizablesHTML(datos) {
         // Formatear fecha
         var fechaFormateada = formatearFecha(item.fecha);
 
-        html += '<tr>';
-        html += '<td style="text-align:center;">' + (item.id || '') + '</td>';
-        html += '<td>' + (item.nombre || '') + '</td>';
-        html += '<td>' + categoriaNombre + '</td>';
-        html += '<td>' + (item.marca || '') + '</td>';
-        html += '<td style="text-align:center;">' + (item.cantidad || 0) + '</td>';
-        html += '<td style="text-align:center;">' + fechaFormateada + '</td>';
-        html += '</tr>';
+        html += '骨';
+        html += '<td style="text-align:center;">' + (item.id || '') + '\(';
+        html += '<td>' + (item.nombre || '') + '\(';
+        html += '<td>' + categoriaNombre + '\(';
+        html += '<td>' + (item.marca || '') + '\(';
+        html += '<td style="text-align:center;">' + (item.cantidad || 0) + '\(';
+        html += '<td style="text-align:center;">' + fechaFormateada + '\(';
+        html += '\)';
     }
 
     html += '</tbody>';
-    html += '</table>';
+    html += ' caregory';
 
     return html;
 }
 
 // ================= FUNCIONES PARA EXPORTAR EXCEL =================
 function generarReporteInventarioReutilizablesExcel() {
-    var tabla = $('#tblPiezasRetiradas').DataTable();
-    var datos = tabla.data().toArray();
+    // CORREGIDO: Usar la instancia global
+    var datos = dataTableReutilizables.data().toArray();
 
     if (datos.length === 0) {
         Swal.fire({
@@ -319,4 +336,125 @@ function generarReporteInventarioReutilizablesExcel() {
             showConfirmButton: false
         });
     }, 2000);
+}
+
+// ================= FUNCIÓN DE FILTRADO =================
+document.getElementById("btnFiltrar").addEventListener("click", function () {
+    var fechaInicio = $("#fechaInicio").val();
+    var fechaFin = $("#fechaFin").val();
+
+    // Validación 1: Verificar que ambos campos estén llenos
+    if (!fechaInicio || !fechaFin) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Campos incompletos',
+            text: 'Por favor, complete ambas fechas',
+            confirmButtonColor: '#3085d6'
+        });
+        return;
+    }
+
+    // Convertir a objetos Date
+    var fechaInicioObj = new Date(fechaInicio);
+    var fechaFinObj = new Date(fechaFin);
+
+    // Validación 2: Verificar que sean fechas válidas
+    if (isNaN(fechaInicioObj.getTime()) || isNaN(fechaFinObj.getTime())) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Fechas invalidas',
+            text: 'Una o ambas fechas tienen un formato incorrecto',
+            confirmButtonColor: '#3085d6'
+        });
+        return;
+    }
+
+    // Validación 3: Fecha inicio no puede ser mayor que fecha fin
+    if (fechaInicioObj > fechaFinObj) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Rango de fechas invalido',
+            text: 'La fecha de inicio no puede ser mayor que la fecha de fin',
+            confirmButtonColor: '#3085d6'
+        });
+        return;
+    }
+
+    // Validación 4: Fecha fin no puede ser futura
+    const fechaActual = new Date();
+    fechaActual.setHours(0, 0, 0, 0);
+
+    if (fechaFinObj > fechaActual) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Fecha futura no permitida',
+            text: 'La fecha de fin no puede ser mayor a la fecha actual',
+            confirmButtonColor: '#3085d6'
+        });
+        return;
+    }
+
+    // Validación 5: Rango máximo de días (ajusta el valor según necesites)
+    const diffTime = Math.abs(fechaFinObj - fechaInicioObj);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const maxDays = 365; // Cambia este valor según tu necesidad
+
+    if (diffDays > maxDays) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Rango muy extenso',
+            text: `El rango de fechas no puede exceder los ${maxDays} días`,
+            confirmButtonColor: '#3085d6'
+        });
+        return;
+    }
+
+    // Si pasa todas las validaciones, ejecutar la función
+    InventarioPiezasReutilizablesByDates(fechaInicio, fechaFin);
+});
+
+function InventarioPiezasReutilizablesByDates(fechaInicio, fechaFin) {
+    var parametro = {
+        fechaInicio: fechaInicio,
+        fechaFin: fechaFin
+    };
+
+    // Mostrar loading
+    Swal.fire({
+        title: 'Filtrando datos...',
+        text: 'Por favor espere',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    PostMVC('/Taller/InventarioPiezasReutilizablesByDates', parametro, function (r, textStatus, jqXHR) {
+        Swal.close();
+
+        if (r.IsSuccess && Array.isArray(r.Response)) {
+            const data = r.Response;
+
+            // CORREGIDO: Usar la instancia global para limpiar y cargar los nuevos datos
+            dataTableReutilizables.clear();
+            dataTableReutilizables.rows.add(data);
+            dataTableReutilizables.draw();
+
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al filtrar las Piezas: ' + (r.ErrorMessage || 'Error desconocido'),
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    }).fail(function (xhr, status, error) {
+        Swal.close();
+        Swal.fire({
+            title: 'Error',
+            text: 'Error de conexión al servidor: ' + error,
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
+    });
 }

@@ -1,9 +1,10 @@
 ﻿// Variable global para almacenar las categorías
 var categoriasInventario = [];
+var dataTable; // Variable global para la instancia de DataTable
 
 $(document).ready(function () {
     // Configuración de DataTable
-    $("#tblPiezasRetiradas").DataTable({
+    dataTable = $("#tblPiezasRetiradas").DataTable({
         data: [],
         columns: [
             { data: 'id', title: 'ID' },
@@ -79,7 +80,10 @@ $(document).ready(function () {
 function GetAllRetirarPiezasNoReutilizables() {
     GetMVC("/Taller/GetAllRetirarPiezasNoReutilizables", function (r) {
         if (r.IsSuccess) {
-            MapingPropertiesDataTable("tblPiezasRetiradas", r.Response);
+            // Limpiar y cargar nuevos datos en la tabla existente
+            dataTable.clear();
+            dataTable.rows.add(r.Response);
+            dataTable.draw();
         } else {
             Swal.fire({
                 title: 'Error',
@@ -147,8 +151,7 @@ function formatearFecha(fecha) {
 
 // ================= FUNCIONES PARA EXPORTAR PDF =================
 function generarReporteInventarioPDF() {
-    var tabla = $('#tblPiezasRetiradas').DataTable();
-    var datos = tabla.data().toArray();
+    var datos = dataTable.data().toArray();
 
     if (datos.length === 0) {
         Swal.fire({
@@ -211,6 +214,7 @@ function construirTablaInventarioHTML(datos) {
 
     var html = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
     html += '<thead>';
+    html += '<tr>';
     html += '<th>ID</th>';
     html += '<th>Nombre</th>';
     html += '<th>Categoria</th>';
@@ -234,7 +238,7 @@ function construirTablaInventarioHTML(datos) {
         // Formatear fecha
         var fechaFormateada = formatearFecha(item.fecha);
 
-        html += '骨';
+        html += '<tr>';
         html += '<td style="text-align:center;">' + (item.id || '') + '</td>';
         html += '<td>' + (item.nombre || '') + '</td>';
         html += '<td>' + categoriaNombre + '</td>';
@@ -252,8 +256,7 @@ function construirTablaInventarioHTML(datos) {
 
 // ================= FUNCIONES PARA EXPORTAR EXCEL =================
 function generarReporteInventarioExcel() {
-    var tabla = $('#tblPiezasRetiradas').DataTable();
-    var datos = tabla.data().toArray();
+    var datos = dataTable.data().toArray();
 
     if (datos.length === 0) {
         Swal.fire({
@@ -329,4 +332,115 @@ function generarReporteInventarioExcel() {
             showConfirmButton: false
         });
     }, 2000);
+}
+
+// ================= FUNCIÓN DE FILTRADO =================
+document.getElementById("btnFiltrar").addEventListener("click", function () {
+    var fechaInicio = $("#fechaInicio").val();
+    var fechaFin = $("#fechaFin").val();
+
+    // Validación 1: Verificar que ambos campos estén llenos
+    if (!fechaInicio || !fechaFin) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Campos incompletos',
+            text: 'Por favor, complete ambas fechas',
+            confirmButtonColor: '#3085d6'
+        });
+        return;
+    }
+
+    // Convertir a objetos Date
+    var fechaInicioObj = new Date(fechaInicio);
+    var fechaFinObj = new Date(fechaFin);
+
+    // Validación 2: Verificar que sean fechas válidas
+    if (isNaN(fechaInicioObj.getTime()) || isNaN(fechaFinObj.getTime())) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Fechas invalidas',
+            text: 'Una o ambas fechas tienen un formato incorrecto',
+            confirmButtonColor: '#3085d6'
+        });
+        return;
+    }
+
+    // Validación 3: Fecha inicio no puede ser mayor que fecha fin
+    if (fechaInicioObj > fechaFinObj) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Rango de fechas invalido',
+            text: 'La fecha de inicio no puede ser mayor que la fecha de fin',
+            confirmButtonColor: '#3085d6'
+        });
+        return;
+    }
+
+    // Validación 4: Fecha fin no puede ser futura
+    const fechaActual = new Date();
+    fechaActual.setHours(0, 0, 0, 0);
+
+    if (fechaFinObj > fechaActual) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Fecha futura no permitida',
+            text: 'La fecha de fin no puede ser mayor a la fecha actual',
+            confirmButtonColor: '#3085d6'
+        });
+        return;
+    }
+
+    // Validación 5: Rango máximo de días (ajusta el valor según necesites)
+    const diffTime = Math.abs(fechaFinObj - fechaInicioObj);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const maxDays = 365; // Cambia este valor según tu necesidad
+
+    if (diffDays > maxDays) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Rango muy extenso',
+            text: `El rango de fechas no puede exceder los ${maxDays} días`,
+            confirmButtonColor: '#3085d6'
+        });
+        return;
+    }
+
+    // Si pasa todas las validaciones, ejecutar la función
+    InventarioPiezasNoReutilizablesByDates(fechaInicio, fechaFin);
+});
+
+function InventarioPiezasNoReutilizablesByDates(fechaInicio, fechaFin) {
+    var parametro = {
+        fechaInicio: fechaInicio,
+        fechaFin: fechaFin
+    };
+
+    PostMVC('/Taller/InventarioPiezasNoReutilizablesByDates', parametro, function (r, textStatus, jqXHR) {
+        Swal.close();
+
+        if (r.IsSuccess && Array.isArray(r.Response)) {
+            const data = r.Response;
+
+            // Limpiar la tabla existente y cargar los nuevos datos
+            dataTable.clear();
+            dataTable.rows.add(data);
+            dataTable.draw();
+
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al filtrar las Piezas: ' + (r.ErrorMessage || 'Error desconocido'),
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    }).fail(function (xhr, status, error) {
+        Swal.close();
+        Swal.fire({
+            title: 'Error',
+            text: 'Error de conexión al servidor: ' + error,
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
+    });
 }

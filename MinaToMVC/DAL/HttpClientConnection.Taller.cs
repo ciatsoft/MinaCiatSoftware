@@ -357,6 +357,34 @@ namespace MinaToMVC.DAL
 
             return modelResponse;
         }
+        public async Task<ModelResponse> InventarioPiezasNoReutilizablesByDates(DateTime fechaInicio, DateTime fechaFin)
+        {
+            var url = $"api/Taller/InventarioPiezasNoReutilizablesByDates?fechaInicio={fechaInicio.ToString("yyyy-MM-dd")}&fechaFin={fechaFin.ToString("yyyy-MM-dd")}";
+
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
+        public async Task<ModelResponse> InventarioPiezasReutilizablesByDates(DateTime fechaInicio, DateTime fechaFin)
+        {
+            var url = $"api/Taller/InventarioPiezasReutilizablesByDates?fechaInicio={fechaInicio.ToString("yyyy-MM-dd")}&fechaFin={fechaFin.ToString("yyyy-MM-dd")}";
+
+            var result = await RequestAsync<object>(url, HttpMethod.Get, null,
+                new Func<string, string>((responseString) =>
+                {
+                    return responseString;
+                }), token.Token.access_token);
+
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+
+            return modelResponse;
+        }
         #endregion
     }
 }

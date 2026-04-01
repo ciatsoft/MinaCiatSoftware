@@ -718,9 +718,6 @@ document.getElementById("btnFiltrar").addEventListener("click", function () {
     var fechaInicio = $("#fechaInicio").val();
     var fechaFin = $("#fechaFin").val();
 
-    console.log(fechaInicio);
-    console.log(fechaFin);
-
     // Validación 1: Verificar que ambos campos estén llenos
     if (!fechaInicio || !fechaFin) {
         Swal.fire({
