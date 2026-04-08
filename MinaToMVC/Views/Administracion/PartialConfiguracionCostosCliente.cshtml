@@ -588,11 +588,11 @@
         });
     }
 
-   // Función para enviar al servidor
+    // Función para enviar al servidor
     function AgregarPreciosMaterialACliente() {
         // Validaciones básicas
         const idDireccion = $('#idDireccion').val();
-        if (!idDireccion) {
+        if (!idDireccion || idDireccion === '0') {
             Swal.fire({
                 icon: 'warning',
                 title: 'Campo requerido',
@@ -605,7 +605,7 @@
         const clienteId = $('#clienteId').val();
         const tipoMaterialId = $('#materialId').val();
 
-        if (!clienteId) {
+        if (!clienteId || clienteId === '0') {
             Swal.fire({
                 icon: 'warning',
                 title: 'Campo requerido',
@@ -614,7 +614,7 @@
             return;
         }
 
-        if (!tipoMaterialId) {
+        if (!tipoMaterialId || tipoMaterialId === '0') {
             Swal.fire({
                 icon: 'warning',
                 title: 'Campo requerido',
@@ -623,11 +623,11 @@
             return;
         }
 
-        // Preparar datos - ENVIAR ID DEL CLIENTE COMO PROPERTY DIRECTA
+        // Preparar datos - VERSIÓN CORREGIDA
         var data = {
-            Id: $('#id').val() || 0,
-            IdDireccion: idDireccion,
-            Direccion: $('#direccion').val(),
+            Id: parseInt($('#id').val()) || 0,
+            IdDireccion: idDireccion.toString(),
+            Direccion: $('#direccion').val() || '',
             P_Mta_M3: parseFloat($('#p-mat-m3').data('raw-value')) || 0,
             P_Flete_M3: parseFloat($('#p-flete-m3').data('raw-value')) || 0,
             Precio_M3: currencyToNumber($('#precio-m3').val()),
@@ -642,44 +642,88 @@
             Subtotal_Ingreso_Viajes_M3: currencyToNumber($('#subtotal-ingreso').val()),
             Total_Gastos: currencyToNumber($('#total-gastos').val()),
             PrecioActivo: $('#precioActual').is(':checked'),
+            // Enviar solo los IDs, no objetos completos
             Cliente: {
-                Id: clienteId,  // Esto debe funcionar ahora
-                Nombre: '@ViewBag.ClienteNombre' // Si necesitas enviar el nombre también
+                Id: parseInt(clienteId),
             },
             TipoMaterial: {
-                Id: tipoMaterialId,
-                NombreTipoMaterial: '@ViewBag.MaterialNombre' // Si necesitas enviar el nombre también
+                Id: parseInt(tipoMaterialId),
             },
-            CreatedBy: $('#createdBy').val(),
-            UpdatedBy: $('#updatedBy').val(),
-            CreatedDt: $('#createdDt').val(),
-            UpdatedDt: $('#updatedDt').val()
+            CreatedBy: $('#createdBy').val() || '',
+            UpdatedBy: $('#updatedBy').val() || '',
+            CreatedDt: $('#createdDt').val() || '',
+            UpdatedDt: $('#updatedDt').val() || ''
         };
 
-        console.log('Datos a enviar:', data);
+        console.log('Datos a enviar (corregidos):', data);
 
         // Determinar endpoint
         const endpoint = '/Administracion/SaveOrUpdateClienteTipoMaterial';
 
-        PostMVC(endpoint, data, function (r) {
-            if (r.IsSuccess) {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Éxito!',
-                    text: data.Id > 0 ? 'Registro actualizado correctamente' : 'Registro guardado correctamente',
-                }).then(() => {
-                    // Recargar la tabla
-                    ClienteTipoMaterialByDireccionMaterialAndCliente(idDireccion);
-                    // Limpiar formulario si era nuevo
-                    if (data.Id === 0) {
-                        limpiarFormulario();
+        // Usar $.ajax directamente para mejor control del error
+        $.ajax({
+            url: endpoint,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(response) {
+                try {
+                    const r = typeof response === 'string' ? JSON.parse(response) : response;
+                    if (r.IsSuccess) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Éxito!',
+                            text: data.Id > 0 ? 'Registro actualizado correctamente' : 'Registro guardado correctamente',
+                        }).then(() => {
+                            // Recargar la tabla
+                            if (idDireccion) {
+                                ClienteTipoMaterialByDireccionMaterialAndCliente(idDireccion);
+                            }
+                            // Limpiar formulario si era nuevo
+                            if (data.Id === 0) {
+                                limpiarFormulario();
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: r.ErrorMessage || 'Error al guardar el registro',
+                        });
                     }
+                } catch (e) {
+                    console.error('Error parsing response:', e);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al procesar la respuesta del servidor',
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error en la petición:', {
+                    status: status,
+                    error: error,
+                    responseText: xhr.responseText,
+                    statusCode: xhr.status
                 });
-            } else {
+
+                let errorMessage = 'Error al guardar el registro. ';
+                if (xhr.responseText) {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        errorMessage += response.ErrorMessage || response.Message || xhr.responseText;
+                    } catch(e) {
+                        errorMessage += xhr.responseText.substring(0, 200);
+                    }
+                } else {
+                    errorMessage += `Código: ${xhr.status} - ${error}`;
+                }
+
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: r.ErrorMessage || 'Error al guardar el registro',
+                    text: errorMessage,
                 });
             }
         });

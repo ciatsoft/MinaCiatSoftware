@@ -28,7 +28,7 @@
 <div class="row">
     <div class="col-lg-12">
         <input type="button" name="btnGuardarSalario" id="btnGuardarSalario" onclick="SaveOrUpdateSalario();" value="Guardar" class="btn btn-success" />
-        <input type="button" name="btnGuardarCancelar" id="btnGuardarCancelar" value="Cancelar" class="btn btn-warning" />
+        <input type="button" name="btnGuardarCancelar" id="btnGuardarCancelar" value="Cancelar" class="btn btn-custom-cancel btn-lg-custom" onclick="CancelarSalario();"/>
     </div>
 </div>
 <div class="row">
@@ -91,4 +91,8 @@
             }
         });
     });
+
+    function CancelarSalario() {
+        window.location.reload();
+    }
 </script>
