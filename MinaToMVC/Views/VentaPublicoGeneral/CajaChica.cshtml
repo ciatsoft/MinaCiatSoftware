@@ -24,14 +24,10 @@
 
     <div class="content">
         <br>
-        <center><h1>CajaChica</h1></center>
+        <center><h1>Caja Chica</h1></center>
         <div class="tabla-consultas-roll">
             <div class="rectangulos" style="width: 100%;">
                 <div class="row">
-                    @*<div class="col-lg-3">
-                <label>ID Precio:</label>
-                <input type="text" id="txtidprecio" name="idprecio" class="form-control" disabled />
-            </div>*@
                     <div class="col-lg-3">
                         <label>Fecha:</label>
                         @Html.TextBoxFor(x => x.Fecha, new { @class = "form-control", type = "text", @Value = DateTime.Now.ToString("dd-MM-yyyy  :  HH:mm"), disabled = "true" })

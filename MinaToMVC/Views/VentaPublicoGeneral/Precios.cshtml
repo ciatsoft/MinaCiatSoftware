@@ -38,19 +38,19 @@
                         <label for="txtPrecioActivo">Precio Menudeo:</label>
                         <div class="row">
                             <div class="col-lg-12">
-                                @Html.TextBoxFor(x => x.PrecioMenudeo, new { @class = "form-control", @id = "precioMenudeo", @type = "text" })
+                                @Html.TextBoxFor(x => x.PrecioMenudeo, new { @class = "form-control", @id = "precioMenudeo", @type = "text", required = "required" })
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-4">
                         <label>Cantidad Minima para Precio Menudeo:</label>
-                        @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control", @type = "number", @min = "0" })
+                        @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control", @type = "number", @min = "0", required = "required" })
                     </div>
                     <div class="col-lg-4">
                         <label for="txtPrecioActivo">Precio Mayoreo:</label>
                         <div class="row">
                             <div class="col-lg-12">
-                                @Html.TextBoxFor(x => x.PrecioMayoreo, new { @class = "form-control", @id = "precioMayoreo", @type = "text" })
+                                @Html.TextBoxFor(x => x.PrecioMayoreo, new { @class = "form-control", @id = "precioMayoreo", @type = "text", required = "required" })
                             </div>
                         </div>
                     </div>
@@ -58,11 +58,11 @@
                 <div class="row">
                     <div class="col-lg-2">
                         <label for="txtPrecioActivo">Es precio Activo:</label>
-                        @Html.CheckBoxFor(x => x.EsPrecioActivo, new { @style = "width: 30px; height: 30px;" })
+                        @Html.CheckBoxFor(x => x.EsPrecioActivo, new { @style = "width: 30px; height: 30px;"})
                     </div>
                     <div class="col-lg-10">
                         <label>Comentarios:</label>
-                        @Html.TextBoxFor(x => x.Comentario, new { @class = "form-control" })
+                        @Html.TextBoxFor(x => x.Comentario, new { @class = "form-control", required = "required" })
                     </div>
                 </div>
                 <div class="row">

@@ -83,6 +83,9 @@ $(document).ready(function () {
     //Inicializar tabla vacia Dinero en Caja
     $('#tblEn_Caja').DataTable({
         data: [],
+        scrollX: true,  // Agrega scroll horizontal
+        responsive: true,  // Hace la tabla responsiva
+        autoWidth: false,  // Mejor control del ancho de columnas
         columns: [
             { data: "id", "visible": false, title: "id" },
             { data: "b1000", title: "Billetes de 1000" },
@@ -491,6 +494,9 @@ function SearchPV_VentasByDateAndUser(usuarioId, fecha, userName) {
 
                 $('#tblEn_Caja').DataTable({
                     data: cajaData,
+                    scrollX: true,  // Agrega scroll horizontal
+                    responsive: true,  // Hace la tabla responsiva
+                    autoWidth: false,  // Mejor control del ancho de columnas
                     columns: [
                         { data: "id", visible: false, title: "id" },
                         { data: "b1000", title: "Billetes de 1000" },

@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    // Inicializa la tabla vacía al cargar la página
+    // Inicializa la tabla vacía SIN la columna corte_Id
     $('#tblPV_CajaChica').DataTable({
         data: [],
         columns: [
@@ -21,8 +21,7 @@ $(document).ready(function () {
                     return new Date(data).toLocaleString('es-MX');
                 }
             },
-            { data: 'comentarios', title: 'Comentarios' },
-            { data: 'corte_Id', title: 'Corte Id' },
+            { data: 'comentarios', title: 'Comentarios' }
         ],
         language: {
             "decimal": ",",
@@ -90,34 +89,46 @@ function SearchPV_VajaChicaByDateAndUser(userName, fecha) {
         if (r.IsSuccess) {
             const data = r.Response;
 
-            // Destruye DataTable si ya existe (evita duplicados al hacer múltiples filtros)
+            // Destruye DataTable si ya existe
             if ($.fn.DataTable.isDataTable('#tblPV_CajaChica')) {
                 $('#tblPV_CajaChica').DataTable().clear().destroy();
             }
 
-            // Mapea los datos al DataTable
+            const existeCorteIdNoCero = data.some(item => {
+                const valor = item.corte_Id;
+                return valor !== 0 && valor !== null && valor !== undefined && valor !== '';
+            });
+
+            const columnas = [
+                { data: 'id', title: 'ID' },
+                { data: 'usuarioName', title: 'Usuario' },
+                {
+                    data: 'monto',
+                    title: 'Monto',
+                    render: function (data) {
+                        if (data === null || data === undefined) return '';
+                        return `$${parseFloat(data).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }).replace('$', '')}`;
+                    }
+                },
+                {
+                    data: 'fecha',
+                    title: 'Fecha',
+                    render: function (data) {
+                        if (!data) return '';
+                        return new Date(data).toLocaleString('es-MX');
+                    }
+                },
+                { data: 'comentarios', title: 'Comentarios' }
+            ];
+
+            if (existeCorteIdNoCero) {
+                columnas.push({ data: 'corte_Id', title: 'Corte Id' });
+            }
+
+            // Inicializar DataTable con las columnas dinámicas
             $('#tblPV_CajaChica').DataTable({
                 data: data,
-                columns: [
-                    { data: 'id', title: 'ID' },
-                    { data: 'usuarioName', title: 'Usuario' },
-                    {
-                        data: 'monto',
-                        title: 'Monto',
-                        render: function (data) {
-                            return `$${parseFloat(data).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }).replace('$', '')}`;
-                        }
-                    },
-                    {
-                        data: 'fecha',
-                        title: 'Fecha',
-                        render: function (data) {
-                            return new Date(data).toLocaleString('es-MX'); // muestra fecha + hora
-                        }
-                    },
-                    { data: 'comentarios', title: 'Comentarios' },
-                    { data: 'corte_Id', title: 'Corte Id' },
-                ],
+                columns: columnas,
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json'
                 }
