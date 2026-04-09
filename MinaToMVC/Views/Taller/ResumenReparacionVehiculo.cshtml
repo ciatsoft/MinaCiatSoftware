@@ -52,42 +52,50 @@
             </div>
             <div class="row">
                 <div class="col-lg-10">
-                    <input type="button" value="Retirar Piezas"
-                           class="btn btn-custom-cancel btn-lg-custom"
-                           onclick="ModalRetirarPiezas(@Model.Id, @Model.TipoVehiculo, @Model.IdVehiculo)" />
+                    @if (Model.Estado == 1 || Model.Estado == 2)
+                    {
+                        <input type="button" value="Retirar Piezas"
+                               class="btn btn-custom-cancel btn-lg-custom"
+                               onclick="ModalRetirarPiezas(@Model.Id, @Model.TipoVehiculo, @Model.IdVehiculo)" />
 
-                    <input style="margin-left:96px;" type="button"
-                           value="Asignar Piezas"
-                           class="btn btn-success btn-lg-custom"
-                           onclick="ModalAsignarPiezas(0, @Model.Id, @Model.TipoVehiculo, @Model.IdVehiculo)" />
+                        <input style="margin-left:96px;" type="button"
+                               value="Asignar Piezas"
+                               class="btn btn-success btn-lg-custom"
+                               onclick="ModalAsignarPiezas(0, @Model.Id, @Model.TipoVehiculo, @Model.IdVehiculo)" />
+                    }
+                    else if (Model.Estado == 3 || Model.Estado == 4)
+                    {
+                        <div class="alert alert-warning" style="display: inline-block; margin: 0; padding: 8px 15px; background-color: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+                            <strong style="color: #856404;">⚠️ Servicio Terminado / Liberado</strong>
+                            <span style="color: #856404; font-size: 12px; display: block;">No se pueden retirar o asignar piezas</span>
+                        </div>
+                    }
                 </div>
-                @if (Model.Estado == 1)
-                {
-                    <div class="col-lg-2" style="align-items:end;">
+                <div class="col-lg-2" style="align-items:end;">
+                    @if (Model.Estado == 1)
+                    {
                         <input style="align-items: end;" type="button"
                                value="Comenzar Reparacion"
                                class="btn btn-success btn-lg-custom"
                                onclick="ActualizarEstado(@Model.Id, 2)" />
-                    </div>
-                }
-                else if (Model.Estado == 2)
-                {
-                    <div class="col-lg-2" style="align-items:end;">
+                    }
+                    else if (Model.Estado == 2)
+                    {
                         <input style="align-items: end;" type="button"
                                value="Reparacion Terminada"
                                class="btn btn-custom-clean"
                                onclick="ActualizarEstado(@Model.Id, 3)" />
-                    </div>
-                }
-                else if (Model.Estado == 3)
-                {
-                    <div class="col-lg-2" style="display: flex; align-items: flex-end;">
-                        <div class="alert alert-warning" style="width: 100%; margin-bottom: 0; padding: 8px 12px; background-color: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
-                            <strong style="color: #856404;">Servicio Terminado</strong>
-                            <span style="color: #856404; font-size: 12px; display: block;">Por favor libere el vehículo</span>
+                    }
+                    else if (Model.Estado == 3 || Model.Estado == 4)
+                    {
+                        <div class="alert alert-info" style="margin: 0; padding: 8px 12px; background-color: #d1ecf1; border-left: 4px solid #17a2b8; border-radius: 4px;">
+                            <strong style="color: #0c5460;">📋 Reparacion @(Model.Estado == 3 ? "Terminada" : "Liberada")</strong>
+                            <span style="color: #0c5460; font-size: 12px; display: block;">
+                                @(Model.Estado == 3 ? "Lista para liberar vehiculo" : "Vehiculo liberado")
+                            </span>
                         </div>
-                    </div>
-                }
+                    }
+                </div>
             </div>
         </div>
     </div>

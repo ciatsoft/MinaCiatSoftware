@@ -203,8 +203,40 @@ function SaveOrUpdateClientePublicoGral() {
         };
 
         var isUpdating = parametro.Id && parametro.Id != 0;
+
+        // Si es NUEVO cliente (Id = 0 o vacío), guardar directamente sin verificar histórico
+        if (!isUpdating) {
+            Swal.fire({
+                title: 'Guardar nuevo registro',
+                html: `<strong>RFID:</strong> ${parametro.RFID}<br/>
+                       <strong>Nombre:</strong> ${parametro.nombre}<br/> 
+                       <strong>Telefono:</strong> ${parametro.telefono}<br/> 
+                       <strong>Email:</strong> ${parametro.email}<br/> 
+                       <strong>RFC:</strong> ${parametro.rfc}<br/> 
+                       <strong>Razon Social:</strong> ${parametro.razonSocial}<br/>
+                       <strong>Comentario:</strong> ${parametro.comentarios}<br/> `,
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    PostMVC("/VentaPublicoGeneral/SaveOrUpdateClientePublicoGral", parametro, function (success, response) {
+                        if (success) {
+                            Swal.fire('Exito', 'Datos guardados exitosamente.', 'success')
+                                .then(() => window.location.href = '/VentaPublicoGeneral/ClientePublicoGeneral');
+                        } else {
+                            Swal.fire('Error', 'Error al guardar los datos: ' + response.ErrorMessage, 'error');
+                        }
+                    });
+                }
+            });
+            return;
+        }
+
+        // Si es ACTUALIZACIÓN (Id existe)
         Swal.fire({
-            title: isUpdating ? 'Actualizar el registro' : 'Guardar nuevo registro',
+            title: 'Actualizar el registro',
             html: `<strong>Id:</strong> ${parametro.Id}<br/>
                    <strong>RFID:</strong> ${parametro.RFID}<br/>
                    <strong>Nombre:</strong> ${parametro.nombre}<br/> 
@@ -215,18 +247,27 @@ function SaveOrUpdateClientePublicoGral() {
                    <strong>Comentario:</strong> ${parametro.comentarios}<br/> `,
             icon: 'info',
             showCancelButton: true,
-            confirmButtonText: isUpdating ? 'Actualizar' : 'Guardar',
+            confirmButtonText: 'Actualizar',
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-
                 GetMVC("/VentaPublicoGeneral/GetClientePublicoGralById/" + parametro.Id, function (r) {
                     if (r.IsSuccess) {
                         var data = r.Response;
+                        console.log("Datos del cliente existente:", data);
+
+                        // Validar si data es null (no debería pasar en actualización, pero por seguridad)
+                        if (!data) {
+                            Swal.fire('Error', 'No se encontró el cliente a actualizar.', 'error');
+                            return;
+                        }
+
+                        // Comparar RFID actual con el nuevo
                         if (parametro.RFID == data.rfid) {
+                            // Mismo RFID - solo actualizar datos del cliente
                             PostMVC("/VentaPublicoGeneral/SaveOrUpdateClientePublicoGral", parametro, function (success, response) {
                                 if (success) {
-                                    Swal.fire('Exito', isUpdating ? 'Datos actualizados exitosamente.' : 'Datos guardados exitosamente.', 'success')
+                                    Swal.fire('Exito', 'Datos actualizados exitosamente.', 'success')
                                         .then(() => window.location.href = '/VentaPublicoGeneral/ClientePublicoGeneral');
                                 } else {
                                     Swal.fire('Error', 'Error al guardar los datos: ' + response.ErrorMessage, 'error');
@@ -234,6 +275,7 @@ function SaveOrUpdateClientePublicoGral() {
                             });
                         }
                         else {
+                            // RFID diferente - guardar en histórico y luego actualizar
                             var objeto = {
                                 Id: 0,
                                 IdCliente: parametro.Id,
@@ -245,32 +287,36 @@ function SaveOrUpdateClientePublicoGral() {
                                 CreatedDt: $("#fecha").val(),
                                 UpdatedBy: $("#createdBy").val(),
                                 UpdatedDt: $("#fecha").val()
-                            }
+                            };
+
                             PostMVC("/VentaPublicoGeneral/SaveOrUpdateHistoricoRFID", objeto, function (success, response) {
                                 if (success) {
-                                    GetMVC("/VentaPublicoGeneral/TotalHistoricoRFIDByIdCliente/" + parametro.Id, function (r) {
-                                        if (r.IsSuccess) {
-                                            var datosCliente = r.Response;
-                                            PostMVC("/VentaPublicoGeneral/SaveOrUpdateClientePublicoGral", parametro, function (success, response) {
-                                                Swal.fire({
-                                                    title: 'Exito',
-                                                    html: `${isUpdating ? 'Datos actualizados exitosamente.' : 'Datos guardados exitosamente.'}<br>
-                                                            Se han actualizado <strong>${datosCliente.totalRegistros}</strong> veces la tarjeta RFID`,
-                                                    icon: 'success'
-                                                }).then(() => window.location.href = '/VentaPublicoGeneral/ClientePublicoGeneral');
+                                    GetMVC("/VentaPublicoGeneral/TotalHistoricoRFIDByIdCliente/" + parametro.Id, function (r2) {
+                                        if (r2.IsSuccess) {
+                                            var datosCliente = r2.Response;
+                                            PostMVC("/VentaPublicoGeneral/SaveOrUpdateClientePublicoGral", parametro, function (success2, response2) {
+                                                if (success2) {
+                                                    Swal.fire({
+                                                        title: 'Registro Guardado!',
+                                                        html: `Datos actualizados exitosamente.<br>
+                                                               Se han actualizado <strong>${datosCliente.totalRegistros || 0}</strong> veces la tarjeta RFID`,
+                                                        icon: 'success'
+                                                    }).then(() => window.location.href = '/VentaPublicoGeneral/ClientePublicoGeneral');
+                                                } else {
+                                                    Swal.fire('Error', 'Error al guardar los datos: ' + response2.ErrorMessage, 'error');
+                                                }
                                             });
-                                        }
-                                        else {
-                                            Swal.fire('Error', 'Error al guardar los datos: ' + response.ErrorMessage, 'error');
+                                        } else {
+                                            Swal.fire('Error', 'Error al obtener total de cambios RFID: ' + r2.ErrorMessage, 'error');
                                         }
                                     });
                                 } else {
-                                    Swal.fire('Error', 'Error al guardar los datos: ' + response.ErrorMessage, 'error');
+                                    Swal.fire('Error', 'Error al guardar el histórico RFID: ' + response.ErrorMessage, 'error');
                                 }
                             });
                         }
                     } else {
-                        Swal.fire("Error", "Error al cargar los Datos del Clientes Venta Publico General: " + r.ErrorMessage, "error");
+                        Swal.fire("Error", "Error al cargar los Datos del Cliente: " + r.ErrorMessage, "error");
                     }
                 });
             }
@@ -307,4 +353,3 @@ function EliminarClientePublicoGral(id) {
         }
     });
 }
-

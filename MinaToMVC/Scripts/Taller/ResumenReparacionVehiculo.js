@@ -45,7 +45,7 @@ $(document).ready(function () {
                 title: "Acciones",
                 render: function (data, type, row) {
                     // Si el estado es 3, mostrar solo botón de consultar
-                    if (estadoReparacion === 3) {
+                    if (estadoReparacion === 3 || estadoReparacion === 4) {
                         return '<input type="button" value="Consultar Informacion" class="btn btn-custom-clean" onclick="ConsultarPiezaRetirada(' + data + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />';
                     } else {
                         return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarPiezaRetirada(' + data + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />' +
@@ -108,7 +108,7 @@ $(document).ready(function () {
                 title: "Acciones",
                 render: function (data, type, row) {
                     // Si el estado es 3, mostrar solo botón de consultar
-                    if (estadoReparacion === 3) {
+                    if (estadoReparacion === 3 || estadoReparacion === 4) {
                         return '<input type="button" value="Consultar Informacion" class="btn btn-custom-clean" onclick="ConsultarPiezaAsignada(' + row.id + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />';
                     } else {
                         return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarPiezaAsignada(' + row.id + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />' +

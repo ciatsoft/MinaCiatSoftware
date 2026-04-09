@@ -175,11 +175,38 @@
     <br />
     <center><h1>Historial de Reparaciones</h1></center>
     <br />
+    <div class="row align-items-end">
+        @* FILTRADO POR FECHA *@
+        <div class="col-auto">
+            <label for="fechaInicioLabel" class="form-label">Fecha:</label>
+            <input type="date" id="fechaInicio" name="fechaInicio" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+        </div>
+
+        <div class="col-auto">
+            <label for="fechaFinLabel" class="form-label">Fecha:</label>
+            <input type="date" id="fechaFin" name="fechaFin" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+        </div>
+
+        <div class="col-auto">
+            <input id="btnFiltrar" type="button" value="Buscar" class="btn btn-custom-clean" style="margin-top: -30px" />
+            <a href="/Taller/ReparacionVehiculos" class="btn btn-custom-cancel" style="margin-top: -30px; margin-left: 10px">Cancelar</a>
+        </div>
+    </div>
+    <br />
     <table id="tblReparacionVehiculos" class="table table-bordered table-striped" style="width: 100%;"></table>
     <br />
     <center><h1>Estatus y Asignacion de Refacciones</h1></center>
     <br />
     <table id="tblAllRegistersReparacionVehiculos" class="table table-bordered table-striped" style="width: 100%;"></table>
+    <br />
+    <div class="mb-2" style="text-align: left;">
+        <button id="btnGenerarPDF" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
+            Generar Reporte PDF
+        </button>
+        <button id="btnGenerarExcel" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
+            Generar Reporte Excel
+        </button>
+    </div>
 </div>
 
 <script>

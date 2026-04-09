@@ -4,6 +4,9 @@
     var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
     var usuario = @ViewBag.UserToken.UserName;
     var nombreCompleto = ViewBag.NombreTrabajador;
+
+    var idConcepto = Model?.Id ?? 0;
+
 }
 
 <link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
@@ -13,7 +16,7 @@
 <div class="content">
     @using (Html.BeginForm("SaveOrUpdateConceptoEmpleadoByIdEmpleado", "RH", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmConceptoEmpleado" }))
     {
-        @Html.HiddenFor(x => x.Id, new { @id = "id" })
+        @Html.HiddenFor(x => x.Id, new { @id = "idModal", @Value = idConcepto })
         @Html.HiddenFor(x => x.IdTrabajador, new { @id = "idTrabajador", Value = trabajadorId })
         @Html.HiddenFor(x => x.Estatus)
         @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy", Value = usuario })
@@ -474,7 +477,7 @@
             }
 
             var parametro = {
-                id: $("#id").val(),
+                id: $("#idModal").val(),
                 idTrabajador: $("#idTrabajador").val(),
                 idConceptoEmpleado: $("#ddlConceptoEmpleado").val(),
                 tipoCargo: $("#TipoCargo").val(),
