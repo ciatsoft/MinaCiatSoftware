@@ -18,7 +18,7 @@
     //Usuario Autenticado
     @Html.DropDownListFor(x => x.Usuario.Id, (IEnumerable<SelectListItem>)ViewBag.Usuarios, new { @class = "form-control", id = "usuarioDrop", style = "display:none;" })
     @Html.HiddenFor(x => x.UsuarioName, new { id = "usuarioName" })
-    @Html.Hidden("idcortecaja", "0", new { id = "txtidcortecaja", @class = "form-control" })
+    @Html.HiddenFor(x => x.Id, new { id = "txtidcortecaja" })
 
     <div class="content">
         <br>

@@ -144,7 +144,7 @@ function SaveOrUpdatePrestamos() {
 
         var isUpdating = parametro.Id && parametro.Id != 0;
         Swal.fire({
-            title: isUpdating ? '¿Desea actualizar el registro?' : '¿Desea guardar el nuevo registro?',
+            title: isUpdating ? 'Informacion' : 'Informacion',
             html: `<strong>Id:</strong> ${parametro.Id}<br/>
                    <strong>Nombre:</strong> ${parametro.nombre}<br/> 
                    <strong>Trabajador:</strong> ${parametro.nombreTrabajador}<br/> 
