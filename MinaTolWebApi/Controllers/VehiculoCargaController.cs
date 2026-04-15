@@ -104,10 +104,19 @@ namespace MinaTolWebApi.Controllers
         #endregion
 
         #region Eventos de App Python
-        [HttpGet, Route("EventoRFID/{rfid}")]
-        public void EventoRFID(string rfid)
+        [HttpGet, Route("EventoRFID/{entrada}/{rfid}")]
+        public IHttpActionResult EventoRFID(string entrada, string rfid)
         {
-            Console.WriteLine(rfid);
+            Console.WriteLine($"Entrada: {entrada}");
+            Console.WriteLine($"RFID: {rfid}");
+
+            return Ok(new
+            {
+                mensaje = "Valores recibidos correctamente",
+                entrada = entrada,
+                rfid = rfid,
+                timestamp = DateTime.Now
+            });
         }
         #endregion
     }
