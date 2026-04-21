@@ -14,130 +14,190 @@
 
     <link rel="icon" href="~/Assets/img/Logo.ico" type="image/x-icon">
 
-    <!-- bootstrap core css -->
-    <link rel="stylesheet" type="text/css" href="~/Assets/css/bootstrap.css" />
-
-    <!-- Custom styles for this template -->
-    <link href="~/Assets/css/style.css" rel="stylesheet" />
-    <!-- responsive style -->
-    <link href="~/Assets/css/responsive.css" rel="stylesheet" />
-    <link href="~/Assets/styles.css" rel="stylesheet" />
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-
-    <!-- Inicio a los llamados de js -->
-    <script src="~/Assets/js/script.js"></script>
-    <script src="~/Assets/administracion/js/script.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <!-- Fin a los llamados de js -->
-    <script src="~/Scripts/Comun/Comun.js"></script>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.css" rel="stylesheet" />
+    <link href="~/Content/sweetalert.css" rel="stylesheet" />
 
     <style>
-    body {
-        background-image: url('@Url.Content("~/Assets/img/minalogin.jpg")') !important;
-        background-size: cover;
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-        overflow: hidden; /* Opcional: para evitar scroll si el contenido es más grande que la vista */
-    }
+        body {
+            background-image: url('@Url.Content("~/Assets/img/minalogin.jpg")') !important;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            position: relative;
+        }
 
-    .sesion_login {
-        background-color: rgba(255, 255, 255, 0.8) !important;
-        padding: 20px;
-        border: 1px solid black;
-        width: 400px;
-        border-radius: 25px;
-        text-align: center;
-        position: absolute; /* Asegura que el elemento esté posicionado absolutamente */
-        top: 50%; /* Centra verticalmente */
-        left: 50%; /* Centra horizontalmente */
-        transform: translate(-50%, -50%); /* Ajusta el centro del elemento a la mitad de la pantalla */
-        z-index: 2;
-    }
+        /* Overlay oscuro para mejorar legibilidad */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 0;
+        }
 
-    .sesion_login .user-icon {
-        font-size: 50px;
-        color: black;
-        margin-bottom: 20px;
-    }
+        .container-fluid, .row, main {
+            position: relative;
+            z-index: 1;
+        }
 
-    h2 {
-        color: black;
-        margin-bottom: 20px;
-    }
+        /* Estilos del panel */
+        .panel-formal {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
 
-    .input-container {
-        position: relative;
-        margin-bottom: 20px;
-    }
+        /* Encabezado NEGRO */
+        .panel-formal > .panel-heading {
+            background: #000000;
+            border: none;
+            padding: 35px 20px;
+        }
 
-    .input-container i {
-        position: absolute;
-        left: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: black;
-    }
+        /* Cuerpo BLANCO */
+        .panel-formal > .panel-body {
+            background-color: #ffffff;
+            padding: 40px 35px;
+        }
 
-    .input-container input {
-        background-color: rgba(255, 255, 255, 0.5) !important;
-        border: none;
-        padding: 10px 10px 10px 30px; /* Ajustar el padding para dejar espacio para el icono */
-        width: calc(100% - 40px); /* Ajustar el ancho teniendo en cuenta el padding y el icono */
-        margin-bottom: 0;
-    }
+        /* Pie NEGRO */
+        .panel-formal > .panel-footer {
+            background-color: #000000;
+            border-top: 1px solid #222;
+            padding: 20px;
+        }
 
-    input[type="button"] {
-        width: 100%;
-        cursor: pointer;
-        background-color: #005087;
-        color: white;
-        padding: 10px;
-        border: none;
-        border-radius: 50px;
-        font-size: 25px;
-    }
-    .field-validation-error {
-        color: red;
-    }
-    form .error {
-        color: #ff0000;
-        font-size: 1rem;
-        position: relative;
-        line-height: 1;
-        width: 100%;
-    }
-    .requerid {
-        color: red !important;
-    }
-    td.details-control {
-        background: url('https://datatables.net/examples/resources/details_open.png') no-repeat center center;
-        cursor: pointer;
-    }
-    tr.shown td.details-control {
-        background: url('https://datatables.net/examples/resources/details_close.png') no-repeat center center;
-    }
-    searchTableButton {
-        background: url('/Assets/img/magnify.png');
-    }
+        /* Estilos para inputs */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        /* Iconos NEGROS */
+        .input-group-addon {
+            background-color: #f8f9fa !important;
+            border: 2px solid #ddd !important;
+            border-right: none !important;
+            color: #000000 !important;
+            padding: 12px 15px !important;
+            font-size: 18px !important;
+            transition: all 0.3s ease;
+        }
+
+        .form-control {
+            background-color: #ffffff !important;
+            border: 2px solid #ddd !important;
+            border-left: none !important;
+            color: #333 !important;
+            height: 52px !important;
+            font-size: 15px !important;
+            box-shadow: none !important;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #000000 !important;
+            box-shadow: none !important;
+        }
+
+        .form-control:focus + .input-group-addon {
+            border-color: #000000 !important;
+        }
+
+        .form-control::placeholder {
+            color: #999 !important;
+            font-size: 14px;
+        }
+
+        /* Botón de mostrar/ocultar contraseña */
+        .btn-toggle-password {
+            background-color: #f8f9fa !important;
+            border: 2px solid #ddd !important;
+            border-left: none !important;
+            color: #000000 !important;
+            height: 52px !important;
+            padding: 0 15px !important;
+            transition: all 0.3s ease;
+        }
+
+        .btn-toggle-password:hover {
+            background-color: #e9ecef !important;
+            color: #333 !important;
+        }
+
+        /* Botón de login NEGRO con letras BLANCAS */
+        .btn-login {
+            background: #000000;
+            border: none;
+            color: #ffffff;
+            font-weight: 600;
+            letter-spacing: 1px;
+            padding: 14px;
+            font-size: 16px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background: #222222;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            color: #ffffff;
+        }
+
+        /* Checkbox y enlaces */
+        .checkbox-custom label {
+            color: #666;
+            font-weight: normal;
+            font-size: 13px;
+        }
+
+        .checkbox-custom input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .link-forgot {
+            color: #000000;
+            font-size: 13px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .link-forgot:hover {
+            color: #333;
+            text-decoration: none;
+        }
+
+        hr {
+            border-top: 1px solid #e0e0e0;
+            margin: 25px 0;
+        }
+
+        /* Textos en el footer */
+        .footer-text {
+            color: #888;
+        }
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="row">
-            <div class="col-ml-12">
-                @RenderBody()
-            </div>
-        </div>
-    </div>
-    <div class="container body-content">
-    </div>
-</body>
+    @RenderBody()
 
+    <!-- SCRIPTS - ORDEN CORRECTO -->
+    <script src="~/Scripts/jquery-1.9.0.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/sweetalert.min.js"></script>
+    <script src="@(Url.StaticFile("Scripts/Home/Autenticacion.js"))"></script>
+</body>
 </html>
