@@ -341,7 +341,35 @@ namespace MinaTolWebApi.DAL
         #endregion
 
         #region EventosRFID
+        public ModelResponse ObtenerRFIDAsignado(string rfid)
+        {
+            var modelResponse = new ModelResponse();
+            var parameters = new List<SqlParameter>();
 
+            try
+            {
+                parameters.Add(new SqlParameter("@RFID", rfid));
+
+                var vehiculosCarga = GetObjects("ObtenerRFIDAsignado",
+                    CommandType.StoredProcedure,
+                    parameters,
+                    new Func<IDataReader, RFIDCarga>((reader) =>
+                    {
+                        var r = FillEntity<RFIDCarga>(reader);
+                        return r;
+                    }));
+
+                modelResponse.Response = vehiculosCarga;
+            }
+            catch (Exception ex)
+            {
+                modelResponse.IsSuccess = false;
+                modelResponse.Enum = Enumeration.ErrorNoControlado;
+                modelResponse.Message = ex.Message;
+            }
+
+            return modelResponse;
+        }
         #endregion
     }
 } 

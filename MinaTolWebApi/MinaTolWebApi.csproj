@@ -141,7 +141,6 @@
     <Compile Include="Controllers\ClientePublicoGralController.cs" />
     <Compile Include="Controllers\DocumentosController.cs" />
     <Compile Include="Controllers\HoraExtraTrabajadorController.cs" />
-    <Compile Include="Controllers\IActionResult.cs" />
     <Compile Include="Controllers\MovilAppController.cs" />
     <Compile Include="Controllers\PV_CorteCajaController.cs" />
     <Compile Include="Controllers\DireccionCliente.cs" />

@@ -104,20 +104,29 @@ namespace MinaTolWebApi.Controllers
         #endregion
 
         #region Eventos de App Python
-        [HttpGet, Route("EventoRFID/{entrada}/{rfid}")]
-        public IHttpActionResult EventoRFID(string entrada, string rfid)
-        {
-            Console.WriteLine($"Entrada: {entrada}");
-            Console.WriteLine($"RFID: {rfid}");
+        //[HttpGet, Route("EventoRFID/{entrada}/{rfid}")]
+        //public ModelResponse EventoRFID(string entrada, string rfid)
+        //{
 
-            return Ok(new
-            {
-                mensaje = "Valores recibidos correctamente",
-                entrada = entrada,
-                rfid = rfid,
-                timestamp = DateTime.Now
-            });
-        }
+        //    var asignado = wrapper.RFIDAsignado(rfid);
+        //    return asignado;
+
+
+
+        //    //var result = wrapper.EventoRFID(entrada, rfid);
+        //    //return result;
+
+        //    //Console.WriteLine($"Entrada: {entrada}");
+        //    //Console.WriteLine($"RFID: {rfid}");
+
+        //    //return Ok(new
+        //    //{
+        //    //    mensaje = "Valores recibidos correctamente",
+        //    //    entrada = entrada,
+        //    //    rfid = rfid,
+        //    //    timestamp = DateTime.Now
+        //    //});
+        //}
         #endregion
     }
 }

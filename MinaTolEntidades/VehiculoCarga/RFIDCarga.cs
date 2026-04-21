@@ -13,6 +13,7 @@ namespace MinaTolEntidades.VehiculoCarga
         public string RFIDAsignado { get; set; }
         public DateTime FechaHora { get; set; }
         public bool Devuelto { get; set; }
+        public bool Activo { get; set; }
 
     }
 }

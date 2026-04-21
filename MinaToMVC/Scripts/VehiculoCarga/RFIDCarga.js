@@ -276,6 +276,7 @@ function SaveOrUpdateRFIDCarga() {
         FechaHora: $("#fechaHoraHidden").val(), // Usar el hidden en lugar del visible
         Devuelto: 1,
         Estatus: 1,
+        Activo: 1,
         CreatedBy: $("#createdBy").val(),
         CreatedDt: $("#createdDt").val(),
         UpdatedBy: $("#updatedBy").val(),
@@ -1119,6 +1120,7 @@ function enviarDatosParaExcel(tablaHTML, fechaInicio, fechaFin, userName, totalR
         });
     }
 }
+
 function buscarRFID(rfid) {
     $.ajax({
         url: '/VehiculoCarga/GetRFIDCargaByRFID',
