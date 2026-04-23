@@ -18,13 +18,8 @@
     <link href="~/Content/bootstrap.css" rel="stylesheet" />
     <link href="~/Content/font-awesome.css" rel="stylesheet" />
     <link href="~/Content/sweetalert.css" rel="stylesheet" />
-
-    <!-- Tus estilos personalizados -->
-    <link href="@Url.Content("~/Assets/css/style.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Assets/css/estiloClientes.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Assets/css/responsive.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Assets/css/estiloVentas.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Assets/css/jquery.dataTables.min.css")" rel="stylesheet" />
+    <link href="~/Content/DataTables/css/jquery.dataTables.css" rel="stylesheet">
+    <link href="~/Content/DataTables/css/responsive.dataTables.css" rel="stylesheet">
 
     <style>
         /* Fondo negro para toda la página */
@@ -37,9 +32,11 @@
         .header_section {
             background-color: #000000;
             border-bottom: 1px solid #333;
+            position: relative;
+            z-index: 1000;
         }
 
-        /* Navbar negra - TAMAÑO AJUSTADO */
+        /* Navbar negra */
         .navbar {
             background-color: #000000 !important;
             border: none;
@@ -56,7 +53,7 @@
             width: auto;
         }
 
-        /* Links del menú principal - TAMAÑO OPTIMIZADO */
+        /* Links del menú principal */
         .navbar-nav > li > a {
             color: #ffffff !important;
             font-size: 14px;
@@ -71,39 +68,61 @@
             color: #ffffff !important;
         }
 
-        /* Iconos en menú principal */
         .navbar-nav > li > a i {
             margin-right: 6px;
             font-size: 14px;
         }
 
-        /* DROPDOWN MENU - FONDO BLANCO Y LETRAS NEGRAS */
-        .dropdown-menu {
-            background-color: #ffffff !important;
-            border: 1px solid #dddddd !important;
-            border-radius: 4px;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.175);
-            min-width: 220px;
+        /* Dropdown que sobresale del fondo negro */
+        .navbar-nav > li.dropdown {
+            position: relative;
         }
 
-        /* Items del dropdown - TAMAÑO AJUSTADO */
+        .dropdown-menu {
+            position: absolute !important;
+            top: 100% !important;
+            left: 0 !important;
+            background-color: #ffffff !important;
+            border: 1px solid #dddddd !important;
+            border-radius: 4px !important;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.175) !important;
+            min-width: 220px !important;
+            z-index: 1050 !important;
+            display: none;
+            float: left;
+            margin: 2px 0 0 0 !important;
+            padding: 5px 0 !important;
+        }
+
+        .navbar-nav > li.dropdown.open .dropdown-menu,
+        .navbar-nav > li.dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
         .dropdown-menu > li > a {
             color: #333333 !important;
-            padding: 8px 15px;
+            padding: 8px 15px !important;
             font-size: 13px;
             font-weight: normal;
             border-bottom: 1px solid #eeeeee;
             transition: all 0.2s ease;
+            display: block;
+            clear: both;
+            line-height: 1.42857143;
+            white-space: nowrap;
+        }
+
+        .dropdown-menu > li:last-child > a {
+            border-bottom: none;
         }
 
         .dropdown-menu > li > a:hover,
         .dropdown-menu > li > a:focus {
             background-color: #f5f5f5 !important;
             color: #000000 !important;
-            padding-left: 20px;
+            padding-left: 20px !important;
         }
 
-        /* Iconos en dropdown - negros */
         .dropdown-menu > li > a i {
             margin-right: 8px;
             color: #333333 !important;
@@ -111,14 +130,12 @@
             width: 18px;
         }
 
-        /* Caret (flecha) del dropdown */
         .dropdown-toggle .caret {
             margin-left: 5px;
             border-top-color: #ffffff;
             border-bottom-color: #ffffff;
         }
 
-        /* Botón toggler para móvil */
         .navbar-toggle {
             background-color: #333333;
             border: 1px solid #555555;
@@ -133,15 +150,17 @@
             border-radius: 1px;
         }
 
-        /* Slider section */
+        /* Slider section - Contenedor principal del contenido */
         .slider_section {
             background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url("@Url.Content("~/Assets/img/minas.png")") fixed center center;
             background-size: cover;
             padding: 40px 0;
             min-height: calc(100vh - 160px);
+            position: relative;
+            z-index: 1;
         }
 
-        /* Contacto - MANTENIENDO AZULES */
+        /* Contacto */
         .contacto-ciat {
             background-color: #002c53 !important;
             color: #ffffff;
@@ -152,7 +171,7 @@
             margin-right: 5px;
         }
 
-        /* Footer - TONOS AZULES COMO AL PRINCIPIO */
+        /* Footer */
         .footer {
             background-color: #002c53 !important;
             color: #ffffff;
@@ -164,43 +183,52 @@
             color: #cccccc !important;
         }
 
-            .dropdown-menu {
-                min-width: 200px;
-            }
+        .navbar-nav {
+            margin: 0;
         }
 
+        .contacto-ciat .row > div {
+            margin-bottom: 15px;
+        }
 
+        /* Asegurar que el modal se muestre correctamente */
+        .modal {
+            z-index: 1050 !important;
+        }
+
+        .modal-backdrop {
+            z-index: 1040 !important;
+        }
+
+        /* El contenido del modal debe ser visible */
+        .modal-content {
+            background-color: #fff;
+            color: #333;
+        }
+    </style>
+
+    <!-- Media Queries separadas fuera del bloque <style> o usando doble arroba -->
+    <style>
+        /* Responsive: En móviles, los dropdowns se comportan diferente */
+        @@media (max-width: 767px) {
             .dropdown-menu {
-                position: static;
-                float: none;
-                width: 100%;
+                position: static !important;
+                float: none !important;
+                width: 100% !important;
                 background-color: #ffffff !important;
-                margin-left: 15px;
+                margin-left: 15px !important;
                 border: none !important;
-                box-shadow: none;
+                box-shadow: none !important;
             }
 
-            .dropdown-menu > li > a {
-                padding: 8px 15px 8px 30px;
-            }
+                .dropdown-menu > li > a {
+                    padding: 8px 15px 8px 30px !important;
+                }
 
-            .dropdown-menu > li > a:hover {
-                padding-left: 35px;
-            }
-
-            .navbar-nav {
-                margin: 0;
-            }
-
-            .contacto-ciat .row > div {
-                margin-bottom: 15px;
-            }
-
-            .slider_section {
-                padding: 20px 0;
-            }
+                    .dropdown-menu > li > a:hover {
+                        padding-left: 35px !important;
+                    }
         }
-
     </style>
 </head>
 
@@ -311,34 +339,26 @@
         </div>
     </header>
 
-    <section class="slider_section position-relative" style="background-color: rgba(255, 255, 255, 0.85)">
+    <!-- CONTENIDO PRINCIPAL - Aquí se renderizan las vistas -->
+    <section class="slider_section">
         <div class="container">
-            <div class="row">
-                @RenderBody()
-            </div>
-        </div>
+            <!-- SCRIPTS - Siempre al final del body -->
+            <script src="~/Scripts/jquery-1.9.0.js"></script>
+            <script src="~/Scripts/bootstrap.js"></script>
+            <script src="~/Scripts/jquery.validate.js"></script>
+            <script src="~/Scripts/DataTables/jquery.dataTables.js"></script>
+            <script src="~/Scripts/DataTables/dataTables.responsive.js"></script>
+            <script src="~/Scripts/sweetalert.min.js"></script>
+            <script src="@Url.StaticFile("Assets/script.js")"></script>
+            <script src="@Url.StaticFile("Scripts/Comun/Comun.js")"></script>
 
-        <!-- Modal -->
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="modal fade" id="genericModal" role="dialog">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content" style="background-color: #000; color: #fff; width: 900px; max-width: 90%;">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" style="color: #fff;">&times;</button>
-                                <h4 class="modal-title" id="titleGenerciModal"></h4>
-                            </div>
-                            <div class="modal-body" id="boddyGeericModal">
-                                <p>Some text in the modal.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @RenderSection("scripts", required: false)
+            @RenderBody()
         </div>
     </section>
 
-    <div class="contacto-ciat" style="margin-top: 10px; padding: 15px 0;">
+    <!-- CONTACTO Y FOOTER -->
+    <div class="contacto-ciat">
         <div class="container">
             <div class="row">
                 <div class="col-md-4 text-center">
@@ -375,20 +395,28 @@
         </div>
     </div>
 
-    <footer class="footer" style="margin-top: -50px; padding: 10px 0;">
+    <footer class="footer">
         <div class="container text-center">
             <i class="fa fa-copyright" style="font-size: 14px;"></i>
             <span class="text-muted" style="font-size: 13px;">2024 Desarrollado por CIATSoftware</span>
         </div>
     </footer>
 
-    <!-- SCRIPTS - TODOS LOCALES -->
-    <script src="~/Scripts/jquery-1.9.0.js"></script>
-    <script src="~/Scripts/bootstrap.js"></script>
-    <script src="~/Scripts/jquery.validate.js"></script>
-    <script src="~/Scripts/sweetalert.min.js"></script>
-    <script src="~/Assets/js/jquery.dataTables.min.js"></script>
-    <script src="~/Assets/js/script.js"></script>
-    <script src="~/Scripts/Comun/Comun.js"></script>
+    <!-- MODAL - Debe estar fuera del section para que no interfiera -->
+    <div class="modal fade" id="genericModal" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" id="titleGenerciModal"></h4>
+                </div>
+                <div class="modal-body" id="boddyGeericModal">
+                    <p>Some text in the modal.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
+
 </html>

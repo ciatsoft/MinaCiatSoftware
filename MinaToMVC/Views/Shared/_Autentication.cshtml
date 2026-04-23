@@ -191,13 +191,11 @@
     </style>
 </head>
 <body>
-    @RenderBody()
-
     <!-- SCRIPTS - ORDEN CORRECTO -->
     <script src="~/Scripts/jquery-1.9.0.js"></script>
     <script src="~/Scripts/bootstrap.js"></script>
     <script src="~/Scripts/jquery.validate.js"></script>
     <script src="~/Scripts/sweetalert.min.js"></script>
-    <script src="@(Url.StaticFile("Scripts/Home/Autenticacion.js"))"></script>
+    @RenderBody()
 </body>
 </html>

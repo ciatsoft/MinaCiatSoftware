@@ -1,87 +1,84 @@
-﻿<!-- DataTables CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
-<!-- jQuery (requerido por DataTables) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- DataTables JS -->
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+﻿<div class="modal-header bg-dark text-white">
+    <h5 class="modal-title">Direcciones</h5>
+</div>
 
-<form id="contenedor">
-    <div class="modal-header bg-dark text-white">
-        <h5 class="modal-title" id="exampleModalLabel">Direcciones</h5>
-    </div>
-    <div class="modal-body">
-        <input hidden id="createdByParcialUbicacion" name="createdByParcialUbicacion" disabled />
-        <input hidden id="createdDtParcialUbicacion" name="createdDtParcialUbicacion" disabled />
-        <input hidden id="updatedByParcialUbicacion" name="updatedByParcialUbicacion" disabled />
-        <input hidden id="updatedDtParcialUbicacion" name="updatedDtParcialUbicacion" disabled />
-        <input hidden id="idCliente" name="idCliente" disabled />
-        <input hidden id="idDireccionCliente" name="idDireccionCliente" value="0" disabled />
-        <div class="row g-3 mt-4">
+<div class="modal-body">
+
+    <!-- ================= FORMULARIO ================= -->
+    <form id="formDireccion">
+
+        <input type="hidden" id="createdByParcialUbicacion" />
+        <input type="hidden" id="createdDtParcialUbicacion" />
+        <input type="hidden" id="updatedByParcialUbicacion" />
+        <input type="hidden" id="updatedDtParcialUbicacion" />
+        <input type="hidden" id="idCliente" />
+        <input type="hidden" id="idDireccionCliente" value="0" />
+
+        <div class="row g-3 mt-2">
+
             <div class="col-md-6">
-                <label class="form-label">Nombre del Cliente:</label>
-                <input type="text" class="form-control" id="nombreCliente" name="nombreCliente" disabled />
+                <label>Nombre del Cliente</label>
+                <input type="text" class="form-control" id="nombreCliente" disabled />
             </div>
+
             <div class="col-md-6">
-                <label class="form-label">Calle</label>
-                <input type="text" class="form-control" id="txtcalle" name="txtcalle" autocomplete="off" required/>
+                <label>Calle</label>
+                <input type="text" class="form-control" id="txtcalle" required />
             </div>
+
             <div class="col-md-6">
-                <label class="form-label">No. Interno</label>
-                <input type="text" class="form-control" id="txtnointerno" name="txtnointerno" autocomplete="off" required/>
+                <label>No. Interno</label>
+                <input type="text" class="form-control" id="txtnointerno" required />
             </div>
+
             <div class="col-md-6">
-                <label class="form-label">No. Externo</label>
-                <input type="text" class="form-control" id="txtnoexterno" name="txtnoexterno" autocomplete="off" required/>
+                <label>No. Externo</label>
+                <input type="text" class="form-control" id="txtnoexterno" required />
             </div>
+
             <div class="col-md-6">
-                <label class="form-label">Colonia</label>
-                <input type="text" class="form-control" id="txtcolonia" name="txtcolonia" autocomplete="off" required/>
+                <label>Colonia</label>
+                <input type="text" class="form-control" id="txtcolonia" required />
             </div>
+
             <div class="col-md-6">
-                <label class="form-label">C.P.</label>
-                <input type="number" class="form-control" id="txtcp" name="txtcp" autocomplete="off" required/>
+                <label>C.P.</label>
+                <input type="number" class="form-control" id="txtcp" required />
             </div>
+
             <div class="col-md-6">
-                <label class="form-label">Delegación</label>
-                <input type="text" class="form-control" id="txtdelegacion" name="txtdelegacion" autocomplete="off" required/>
+                <label>Delegación</label>
+                <input type="text" class="form-control" id="txtdelegacion" required />
             </div>
+
             <div class="col-md-6">
-                <label class="form-label">Municipio</label>
-                <input type="text" class="form-control" id="txtmunicipio" name="txtmunicipio" autocomplete="off" required/>
+                <label>Municipio</label>
+                <input type="text" class="form-control" id="txtmunicipio" required />
             </div>
+
             <div class="col-md-6">
-                <label class="form-label">Estado (Ubicación)</label>
-                <input type="text" class="form-control" id="txtestado" name="txtestado" autocomplete="off" required/>
+                <label>Estado</label>
+                <input type="text" class="form-control" id="txtestado" required />
             </div>
+
         </div>
+
         <div class="modal-footer mt-3">
             <button type="button" class="btn btn-danger" onclick="closeModal()">Cerrar</button>
             <button type="button" class="btn btn-success" onclick="GuardarDireccion()">Guardar</button>
         </div>
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <h5>Direcciones registradas</h5>
-                <table id="tbDirecciones" class="table table-bordered table-striped" style="width: 100%;">
-                    <thead>
-                    </thead>
-                    <tbody></tbody>
-                </table>
 
-            </div>
-        </div>
+    </form>
+
+    <hr />
+
+    <!-- ================= TABLA SEPARADA ================= -->
+    <div class="mt-3">
+        <h5>Direcciones registradas</h5>
+        <table id="tbDirecciones" class="table table-bordered table-striped" style="width:100%">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
     </div>
-</form>
 
-<script>
-    setTimeout(() => {
-        const fecha = new Date();
-
-        // Función auxiliar para agregar ceros a la izquierda
-        const pad = (n) => n.toString().padStart(2, '0');
-
-        const fechaFormateada = `${fecha.getFullYear()}-${pad(fecha.getMonth() + 1)}-${pad(fecha.getDate())} ${pad(fecha.getHours())}:${pad(fecha.getMinutes())}:${pad(fecha.getSeconds())}`;
-
-        document.getElementById("createdDtParcialUbicacion").value = fechaFormateada;
-        document.getElementById("updatedDtParcialUbicacion").value = fechaFormateada;
-    }, 100);
-</script>
+</div>

@@ -13,16 +13,19 @@ $(document).ready(function () {
         }
     });
 
-    // Inicialización de la tabla de clientes
-    $("#tbCliente").dataTable({
+    // Inicialización de la tabla de clientes con scroll horizontal
+    $("#tbCliente").DataTable({
         processing: true,
         destroy: true,
         paging: true,
         searching: true,
+        responsive: true,
+        scrollX: true,
+        autoWidth: false,
         columns: [
             { data: "id", "visible": false, title: "Id" },
             { data: "nombre", title: "Nombre" },
-            { data: "telefono", title: "Télefono" },
+            { data: "telefono", title: "Teléfono" },
             { data: "email", title: "Email" },
             { data: "comentarios", title: "Comentarios" },
             { data: "rfc", title: "RFC" },
@@ -40,36 +43,41 @@ $(document).ready(function () {
             },
             {
                 data: "estatus",
+                visible: false,
                 title: "Estatus",
                 render: function (data, type, row) {
-                    return data == 1 ? "Activo" : "Inactivo";
+                    return data == 1 ? '<span class="label label-success">Activo</span>' : '<span class="label label-danger">Inactivo</span>';
                 }
             },
             {
-                data: "id", title: "Acciones", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarCliente(' + data + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarCliente(' + data + ')"/>';
+                data: "id",
+                title: "Acciones",
+                render: function (data) {
+                    return '<button class="btn btn-sm btn-primary" onclick="EditarCliente(' + data + ')">' +
+                        '<i class="fa fa-edit"></i> Editar</button> ' +
+                        '<button class="btn btn-sm btn-danger" onclick="EliminarCliente(' + data + ')">' +
+                        '<i class="fa fa-trash"></i> Eliminar</button>';
                 }
-            },
+            }
         ],
-        order: [0, 'desc'],
+        order: [[0, 'desc']],
         language: {
             "decimal": ",",
             "thousands": ".",
-            "processing": "Procesando...",
+            "processing": '<i class="fa fa-spinner fa-spin"></i> Procesando...',
             "lengthMenu": "Mostrar _MENU_ entradas",
             "zeroRecords": "No se encontraron resultados",
             "emptyTable": "Ningún dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-            "search": "Buscar:",
+            "search": '<i class="fa fa-search"></i> Buscar:',
             "loadingRecords": "Cargando...",
             "paginate": {
-                "first": "Primero",
-                "last": "Último",
-                "next": "Siguiente",
-                "previous": "Anterior"
+                "first": '<i class="fa fa-fast-backward"></i>',
+                "last": '<i class="fa fa-fast-forward"></i>',
+                "next": '<i class="fa fa-forward"></i>',
+                "previous": '<i class="fa fa-backward"></i>'
             },
             "aria": {
                 "sortAscending": ": activar para ordenar la columna de manera ascendente",
@@ -78,18 +86,30 @@ $(document).ready(function () {
         }
     });
 
-    $("#tableTipodematerial").dataTable({
+    // Inicialización de tabla de materiales con scroll horizontal
+    $("#tableTipodematerial").DataTable({
+        responsive: true,
+        scrollX: true,
+        autoWidth: false,
+        paging: false,
+        searching: false,
+        ordering: false,
         columns: [
             { data: "id", "visible": false, title: "Id" },
             { data: "nombreTipoMaterial", title: "Nombre del material" },
             {
-                data: "id", title: "", render: function (data) {
+                data: "id",
+                title: "Asignar",
+                render: function (data) {
                     return '<input type="checkbox" class="material-check" data-id="' + data + '" />';
                 }
             },
             {
-                data: "id", title: "Configurar", render: function (data) {
-                    return '<input type="button" value="Precios" class="btn btn-custom-clean btn-precios" style="display:none;" data-material-id="' + data + '" />';
+                data: "id",
+                title: "Configurar",
+                render: function (data) {
+                    return '<button class="btn btn-sm btn-info btn-precios" style="display:none;" data-material-id="' + data + '">' +
+                        '<i class="fa fa-cog"></i> Precios</button>';
                 }
             }
         ],
@@ -98,46 +118,37 @@ $(document).ready(function () {
             var btnPrecios = $(row).find(".btn-precios");
             var materialExists = materialesClienteJson.find(x => x.TipoMaterial.Id == data.id);
 
-            // Si el material ya está asociado, marcar el checkbox y mostrar el botón
             if (materialExists != undefined) {
                 $(checkBox).prop('checked', true);
                 $(btnPrecios).show();
             }
 
-            // Manejar el evento de cambio del checkbox
             $(checkBox).on("change", function () {
                 var clienteId = clienteJson.Id;
                 var materialId = $(this).attr("data-id");
 
                 if ($(this).is(':checked')) {
-                    // Insertar material y mostrar el botón
                     AgregarMaterialACliente(clienteId, materialId);
                     $(btnPrecios).show();
                 } else {
-                    // Eliminar material y ocultar el botón
                     EliminarMaterialDelCliente(clienteId, materialId);
                     $(btnPrecios).hide();
                 }
             });
-            // codigo de ejemplo para el apartado de modales
+
             $(btnPrecios).on("click", function () {
                 var clienteId = clienteJson.Id;
                 var materialId = $(this).data("material-id");
 
-                // Cerrar el modal si está abierto y limpiar
                 $("#genericModal").modal("hide");
-
-                // Limpiar contenido anterior inmediatamente
-                $("#boddyGeericModal").empty();
+                $("#boddyGeericModal").html('');
                 $("#titleGenerciModal").text("Configuración de costos por cliente");
 
-                // Esperar a que el modal se cierre completamente antes de abrirlo de nuevo
                 setTimeout(() => {
                     $("#boddyGeericModal").load("/Administracion/PartialConfiguracionCostosCliente", {
                         clienteId: clienteId,
                         materialId: materialId
                     }, function () {
-                        // Mostrar el modal
                         $("#genericModal").modal("show");
                         SearchDireccionesCliente(clienteId);
                         GetPrecioActivoCombustible();
@@ -149,8 +160,7 @@ $(document).ready(function () {
             });
         }
     });
-    
-        
+
     if (clienteJson.Id != 0)
         GetAllTipoMaterial();
 
@@ -169,7 +179,6 @@ $(document).ready(function () {
 
         $("#btnmaterial").show();
         $("#btndirecciones").show();
-
     }
     else {
         $("#btnmaterial").hide();
@@ -543,56 +552,43 @@ function GuardarDireccion() {
 
 // Función modificada para aceptar parámetro de edición
 function AbrirModalDirecciones(idCliente, nombreCliente, idDireccion = 0) {
-    // Ocultar el modal si está visible
+
     if ($('#genericModal').hasClass('show')) {
         $('#genericModal').modal('hide');
     }
 
-    // Limpiar completamente el modal y el backdrop
     $('body').removeClass('modal-open');
     $('.modal-backdrop').remove();
-    $('#boddyGeericModal').empty();
 
-    // Resetear cualquier estado del modal
-    $('#genericModal').removeData('bs.modal');
+    $('#boddyGeericModal').html('');
 
-    // Establecer título
     $('#titleGenerciModal').text(idDireccion ? "Editar dirección" : "Nueva dirección");
 
-    // Cargar vista parcial en el body del modal
-    $('#boddyGeericModal').load(`/Administracion/PartialdireccionesClientes?direccionClientebyiD=${idDireccion}&clienteId=${idCliente}`, function () {
-        // Asignar valores básicos (siempre)
-        $('#idCliente').val(idCliente);
-        $('#nombreCliente').val(nombreCliente);
+    $('#boddyGeericModal').load(
+        `/Administracion/PartialdireccionesClientes?direccionClientebyiD=${idDireccion}&clienteId=${idCliente}`,
+        function () {
 
-        const createdBy = $('#txtCreatedBy').val();
-        const updatedBy = $('#txtUpdatedBy').val();
+            $('#idCliente').val(idCliente);
+            $('#nombreCliente').val(nombreCliente);
 
-        $('#createdByParcialUbicacion').val(createdBy);
-        $('#updatedByParcialUbicacion').val(updatedBy);
+            const createdBy = $('#txtCreatedBy').val();
+            const updatedBy = $('#txtUpdatedBy').val();
 
-        // Si estamos en modo edición, cargar los datos de la dirección
-        if (idDireccion !== 0) {
-            CargarDatosDireccion(idDireccion);
+            $('#createdByParcialUbicacion').val(createdBy);
+            $('#updatedByParcialUbicacion').val(updatedBy);
+
+            $('#genericModal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+
+            if (idDireccion && idDireccion != 0) {
+                CargarDatosDireccion(idDireccion);
+            }
+
             SearchDireccionesCliente(idCliente);
         }
-
-        // Mostrar modal con opciones
-        $('#genericModal').modal({
-            backdrop: 'static',
-            keyboard: false
-        }).on('hidden.bs.modal', function () {
-            // Redireccionar al cerrar el modal
-            window.location.href = '/Administracion/Clientes/' + idCliente;
-
-            // Limpiar al cerrar para futuras aperturas
-            $(this).removeData('bs.modal');
-            $('#boddyGeericModal').empty();
-        });
-
-        // Cargar tabla con direcciones
-        SearchDireccionesCliente(idCliente);
-    });
+    );
 }
 
 // Función para cargar los datos de una dirección específica
@@ -643,80 +639,56 @@ function CargarDatosDireccion(idDireccion) {
     });
 }
 
-
-
-// Función auxiliar para cargar direcciones y generar DataTable
+// Función para cargar direcciones con DataTable responsive
 function SearchDireccionesCliente(clienteId) {
+
     PostMVC('/Administracion/GetDireccionesCliente', { Id: clienteId }, function (r) {
-        if (r.IsSuccess) {
-            const data = r.Response;
 
-            if ($.fn.DataTable.isDataTable('#tbDirecciones')) {
-                $('#tbDirecciones').DataTable().clear().destroy();
-            }
+        if (!r.IsSuccess) return;
 
-            $('#tbDirecciones').DataTable({
-                data: data,
-                columns: [
-                    { data: 'id', title: 'ID', visible: false },
-                    { data: 'calle', title: 'Calle' },
-                    { data: 'noExterno', title: 'Numero Exterior' },
-                    { data: 'noInterno', title: 'Numero Interior' },
-                    { data: 'colonia', title: 'Colonia' },
-                    { data: 'cp', title: 'CP' },
-                    { data: 'delegacion', title: 'Delegación' },
-                    { data: 'municipio', title: 'Municipio' },
-                    { data: 'estado', title: 'Estado' },
-                    {
-                        data: null,
-                        title: 'Acciones',
-                        orderable: false,
-                        render: function (data, type, row) {
-                            return `
-                    <button class="btn btn-sm btn-primary btnEditar" data-id="${row.id}" title="Editar">
-                        Editar
-                    </button>
-                    <button class="btn btn-sm btn-danger btnEliminar" data-id="${row.id}" title="Eliminar">
-                        Eliminar
-                    </button>`;
-                        }
-                    }
-                ],
-                scrollX: true,           // habilita scroll horizontal
-                responsive: true,        // mejora la experiencia en pantallas pequeñas
-                autoWidth: false,        // evita el autoajuste de ancho que a veces rompe el diseño
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json'
-                }
-            });
-        } else {
-            swal({
-                icon: 'Error',
-                title: 'Error con los registros',
-                text: `Error al obtener los registros. Ver consola para consultar detalles.`,
-                confirmButtonText: 'Aceptar'
-            });
-            console.error(r);
+        var tabla = $('#tbDirecciones');
+
+        if ($.fn.dataTable && $.fn.dataTable.isDataTable(tabla)) {
+            tabla.DataTable().clear().destroy();
+            tabla.find('thead').html('');
+            tabla.find('tbody').html('');
         }
+
+        tabla.DataTable({
+            data: r.Response,
+            destroy: true,
+            responsive: true,
+            scrollX: true,
+            autoWidth: false,
+            columns: [
+                { data: 'id', visible: false },
+                { data: 'calle', title: 'Calle' },
+                { data: 'noExterno', title: 'No. Exterior' },
+                { data: 'noInterno', title: 'No. Interior' },
+                { data: 'colonia', title: 'Colonia' },
+                { data: 'cp', title: 'CP' },
+                { data: 'delegacion', title: 'Delegación' },
+                { data: 'municipio', title: 'Municipio' },
+                { data: 'estado', title: 'Estado' },
+                {
+                    data: null,
+                    title: 'Acciones',
+                    render: function (data, type, row) {
+                        return '<button type="button" class="btn btn-sm btn-primary btnEditar" data-id="' + row.id + '">' +
+                            '<i class="fa fa-edit"></i> Editar</button> ' +
+                            '<button type="button" class="btn btn-sm btn-danger btnEliminar" data-id="' + row.id + '">' +
+                            '<i class="fa fa-trash"></i> Eliminar</button>';
+                    }
+                }
+            ],
+            language: {
+                "zeroRecords": "No se encontraron resultados",
+                "emptyTable": "Ningún dato disponible",
+                "search": "Buscar:"
+            }
+        });
     });
 }
-
-$(document).on('click', '.btnEliminar', function () {
-    const id = $(this).data('id');
-    PostMVC('/Administracion/DeletDireccionCliente', { Id: id }, function (r) {
-        if (r.IsSuccess) {
-            const clienteId = $('#idCliente').val();
-            SearchDireccionesCliente(clienteId);
-        } else {
-            swal({
-                icon: 'error',
-                title: 'Error',
-                text: 'No se pudo eliminar la dirección',
-            });
-            console.error(r);
-        }
-    });
-});
 
 // TipoMaterial
 $(document).on('click', '.btnEliminarTipoMaterial', function () {
@@ -735,6 +707,31 @@ $(document).on('click', '.btnEliminarTipoMaterial', function () {
     });
 });
 
+$(document).on('click', '.btnEliminar', function () {
+
+    const id = $(this).data('id');
+
+    swal({
+        title: '¿Estás seguro?',
+        text: 'Se eliminará la dirección',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar'
+    }, function (isConfirmed) {
+
+        if (!isConfirmed) return;
+
+        PostMVC('/Administracion/DeletDireccionCliente', { Id: id }, function (r) {
+
+            if (r.IsSuccess) {
+                const clienteId = $('#idCliente').val();
+                SearchDireccionesCliente(clienteId);
+            }
+        });
+
+    });
+});
+
 // Modificación en el evento de edición
 $(document).on('click', '.btnEditar', function () {
     const idDireccion = $(this).data('id');
@@ -747,7 +744,7 @@ $(document).on('click', '.btnEditar', function () {
 
 function AbrirModalPrecioCombustible() {
     $("#genericModal").removeData('bs.modal');
-    $("#boddyGeericModal").empty();
+    $("#boddyGeericModal").html('');
 
     $("#titleGenerciModal").text("Configurar Precio Actual de Combustible");
 

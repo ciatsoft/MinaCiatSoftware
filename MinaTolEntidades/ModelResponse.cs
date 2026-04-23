@@ -48,7 +48,8 @@ namespace MinaTolEntidades
         Exito,
         ErrorCredencialesInvalidas,
         ErrorBaseDeDatos,
-        ErrorValidacion
+        ErrorValidacion,
+        ErrorRegistroNoEncontrado
     }
     public static class EnumExtensionMethods
     {

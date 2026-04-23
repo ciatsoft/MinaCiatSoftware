@@ -431,10 +431,10 @@ namespace MinaToMVC.Controllers
             var result = await httpClientConnection.GetPrecioActivoCombustible();
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
-        public async Task<ActionResult> DeletePrecioCombustible(long id)
+        public async Task<string> DeletePrecioCombustible(long id)
         {
             var result = httpClientConnection.DeletePrecioCombustible(id);
-            return Redirect("Clientes");
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result); 
         }
         #endregion
 

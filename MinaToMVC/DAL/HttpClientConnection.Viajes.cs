@@ -152,7 +152,7 @@ namespace MinaToMVC.DAL
                 new Func<string, string>((responseString) =>
                 {
                     return responseString;
-                }), token.Token.access_token);
+                }));
             return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
         }
         #endregion

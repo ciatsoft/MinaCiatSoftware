@@ -7,174 +7,207 @@
     var ubicacionCliente = (IEnumerable<MinaTolEntidades.DtoClientes.DireccionCliente>)ViewBag.UbicacionCliente;
 }
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
-
-<style>
-    .btn-success {
-        background-color: #28a745;
-        color: white;
-        border: none;
-        transition: all 0.3s ease;
-    }
-
-    .btn-success:hover {
-        background-color: #218838;
-        transform: scale(1.3);
-        color: white;
-    }
-
-    .btn-info {
-        background-color: dodgerblue;
-        color: white;
-        border: none;
-        transition: all 0.3s ease;
-    }
-
-    .btn-info:hover {
-        background-color: #1a39ee;
-        transform: scale(1.3);
-        color: white;
-    }
-
-    .btn-custom-cancel {
-        background-color: red;
-        color: white;
-        border: none;
-        transition: all 0.3s ease;
-    }
-
-    .btn-custom-cancel:hover {
-        background-color: darkred;
-        transform: scale(1.3);
-        color: white;
-    }
-
-    .btn-custom-direccion {
-        background-color: #f4f80a;
-        color: white;
-        border: none;
-        transition: all 0.3s ease;
-    }
-
-    .btn-custom-direccion:hover {
-    background-color: #dfe21d;
-    transform: scale(1.1);
-    color: white;
-    }
-
-    .btn-custom-clean {
-        background-color: dodgerblue;
-        color: white;
-        border: none;
-        transition: all 0.3s ease;
-    }
-
-    .btn-custom-clean:hover {
-    background-color: deepskyblue;
-    transform: scale(1.3);
-    color: white;
-    }
-
-    #contenedor {
-        width: 800px;
-        height: 700px;
-        overflow-y: auto;
-        margin: 0 auto;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        background-color: #f9f9f9;
-    }
-</style>
-
 <div id="contenedorMaterial"></div>
 
 <form id="frmCliente" name="frmCliente" method="post" enctype="multipart/form-data">
-    <div class="content">
-        <br>
-        <center><h1>Clientes</h1></center>
-        <div class="tabla-consultas-roll">
-            <div class="rectangulos" style="width: 100%;">
+    <div class="container-fluid" style="padding: 20px 15px;">
+
+        <!-- Panel Principal con fondo blanco y texto negro -->
+        <div class="panel panel-default" style="background-color: #ffffff;">
+            <div class="panel-body" style="background-color: #ffffff; color: #333333;">
+                
+                <!-- Título -->
                 <div class="row">
-                    <div class="col-lg-3">
-                        <label>ID Cliente:</label>
-                        <input type="text" id="txtIdCliente" name="IdCliente" class="form-control" disabled />
-                    </div>
-                    <div class="col-lg-3">
-                        <label>Nombre/Empresa:</label>
-                        <input type="text" id="txtNombre" name="txtNombre" class="form-control" />
-                    </div>
-                    <div class="col-lg-3">
-                        <label>Teléfono:</label>
-                        <input type="text" id="txtTelefono" name="txtTelefono" class="form-control" />
-                    </div>
-                    <div class="col-lg-3">
-                        <label>Email:</label>
-                        <input type="email" id="txtEmail" name="txtEmail" class="form-control" />
+                    <div class="col-md-12 text-center">
+                        <h1 class="text-primary" style="color: #005c8a !important;">
+                            <i class="fa fa-users"></i> Clientes
+                        </h1>
                     </div>
                 </div>
+
+                <!-- Fila 1: ID, Nombre, Teléfono, Email -->
+                <div class="row" style="margin-top:15px;">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label" style="color: #333333; font-weight: bold;">
+                                <i class="fa fa-id-card-o"></i> ID Cliente:
+                            </label>
+                            <input type="text" id="txtIdCliente" name="IdCliente" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label" style="color: #333333; font-weight: bold;">
+                                <i class="fa fa-building-o"></i> Nombre/Empresa:
+                            </label>
+                            <input type="text" id="txtNombre" name="txtNombre" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label" style="color: #333333; font-weight: bold;">
+                                <i class="fa fa-phone"></i> Teléfono:
+                            </label>
+                            <input type="text" id="txtTelefono" name="txtTelefono" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label" style="color: #333333; font-weight: bold;">
+                                <i class="fa fa-envelope-o"></i> Email:
+                            </label>
+                            <input type="email" id="txtEmail" name="txtEmail" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fila 2: RFC, Razón Social, Tipo Cliente -->
                 <div class="row">
-                    <div class="col-md-9">
-                        <div class="col-lg-4">
-                            <label>RFC:</label>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label" style="color: #333333; font-weight: bold;">
+                                <i class="fa fa-file-text-o"></i> RFC:
+                            </label>
                             <input type="text" id="txtRFC" name="txtRFC" class="form-control" />
                         </div>
-                        <div class="col-lg-4">
-                            <label>Razon social:</label>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label" style="color: #333333; font-weight: bold;">
+                                <i class="fa fa-balance-scale"></i> Razón social:
+                            </label>
                             <input type="text" id="txtrazon" name="txtrazon" class="form-control" />
                         </div>
-                        <div class="col-lg-4">
-                            <label>Tipo de Cliente:</label>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label" style="color: #333333; font-weight: bold;">
+                                <i class="fa fa-tag"></i> Tipo de Cliente:
+                            </label>
                             <select id="ddlTipoCliente" name="ddlTipoCliente" class="form-control">
-                                <option value="" disabled selected>Selecciona una opcion</option>
-                                <!-- Las opciones se cargarán desde el ViewBag -->
+                                <option value="" disabled selected>Selecciona una opción</option>
                                 @foreach (var item in ViewBag.TipoCliente)
                                 {
                                     <option value="@item.Value">@item.Text</option>
                                 }
                             </select>
                         </div>
-                        <div class="col-md-12">
-                            <label>Comentarios:</label>
-                            <textarea name="txtComentarios" id="txtComentarios" class="form-control" rows="6"></textarea>
-                        </div>
                     </div>
-                    <div class="col-md-3 table-responsive">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <table class="table table-bordered table-striped dataTable no-footer" id="tableTipodematerial"></table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <br />
-                        <input hidden id="txtCreatedBy" name="CreatedBy" value="@ViewBag.UserToken.UserName" />
-                        <input hidden id="txtCreatedDt" name="CreatedDt" value="@DateTime.Now" />
-                        <input hidden id="txtUpdatedBy" name="UpdatedBy" value="@ViewBag.UserToken.UserName" />
-                        <input hidden id="txtUpdatedDt" name="UpdatedDt" value="@DateTime.Now" />
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <input type="button" value="Guardar" onclick="SaveOrUpdateCliente()" class="btn btn-success" style="margin-right: 10px;" />
-                            <a href="/Administracion/Clientes" class="btn btn-custom-cancel" style="margin-right: 10px;">Cancelar</a>
-                            <input type="button" id="btndirecciones" value="Direcciones"
-                                   onclick="AbrirModalDirecciones($('#txtIdCliente').val(), $('#txtNombre').val())"
-                                   class="btn btn-info" style="display:none;" />
-                            <input type="button" value="Configurar Precio de Combustible" onclick="AbrirModalPrecioCombustible()" class="btn btn-success" style="margin-right: 10px;" />
+                </div>
+
+                <!-- Fila 3: Comentarios -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label" style="color: #333333; font-weight: bold;">
+                                <i class="fa fa-comment-o"></i> Comentarios:
+                            </label>
+                            <textarea name="txtComentarios" id="txtComentarios" class="form-control" rows="4"></textarea>
                         </div>
                     </div>
                 </div>
-                <br />
-                <table id="tbCliente" class="table table-bordered table-striped" style="width: 100%;"></table>
+
+                <!-- Fila 4: Materiales del Cliente -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-info" style="background-color: #ffffff;">
+                            <div class="panel-heading" style="background-color: #d9edf7; color: #31708f;">
+                                <i class="fa fa-cubes"></i> Materiales del Cliente
+                            </div>
+                            <div class="panel-body table-responsive" style="background-color: #ffffff;">
+                                <table class="table table-bordered table-striped" id="tableTipodematerial">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nombre del material</th>
+                                            <th>Asignar</th>
+                                            <th>Configurar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campos Ocultos -->
+                <input type="hidden" id="txtCreatedBy" name="CreatedBy" value="@ViewBag.UserToken.UserName" />
+                <input type="hidden" id="txtCreatedDt" name="CreatedDt" value="@DateTime.Now" />
+                <input type="hidden" id="txtUpdatedBy" name="UpdatedBy" value="@ViewBag.UserToken.UserName" />
+                <input type="hidden" id="txtUpdatedDt" name="UpdatedDt" value="@DateTime.Now" />
+
+                <!-- Botones de Acción -->
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <button type="button" onclick="SaveOrUpdateCliente()" class="btn btn-success">
+                            <i class="fa fa-save"></i> Guardar
+                        </button>
+                        <a href="/Administracion/Clientes" class="btn btn-danger">
+                            <i class="fa fa-times"></i> Cancelar
+                        </a>
+                        <button type="button" id="btndirecciones" onclick="AbrirModalDirecciones($('#txtIdCliente').val(), $('#txtNombre').val())"
+                                class="btn btn-info" style="display:none;">
+                            <i class="fa fa-map-marker"></i> Direcciones
+                        </button>
+                        <button type="button" id="btnmaterial" onclick="AbrirModalConfiguracionMateriales()" class="btn btn-warning" style="display:none;">
+                            <i class="fa fa-cog"></i> Configurar Materiales
+                        </button>
+                        <button type="button" onclick="AbrirModalPrecioCombustible()" class="btn btn-primary">
+                            <i class="fa fa-fire"></i> Configurar Precio Combustible
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabla de Clientes -->
+                <div class="row" style="margin-top: 25px;">
+                    <div class="col-md-12">
+                        <div class="panel panel-primary" style="background-color: #ffffff;">
+                            <div class="panel-heading" style="background-color: #337ab7; color: #ffffff;">
+                                <i class="fa fa-list"></i> Listado de Clientes
+                            </div>
+                            <div class="panel-body table-responsive" style="background-color: #ffffff;">
+                                <table id="tbCliente" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Nombre</th>
+                                            <th>Teléfono</th>
+                                            <th>Email</th>
+                                            <th>Comentarios</th>
+                                            <th>RFC</th>
+                                            <th>Razón Social</th>
+                                            <th>Tipo de Cliente</th>
+                                            <th>Estatus</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 </form>
 
-<script src="@(Url.StaticFile("Scripts/Catalogos/AltCliente.js"))"></script>
-
+<!-- SCRIPTS DE LA VISTA -->
 <script>
     var materialesClienteJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(materialesCliente))');
     var clienteJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Cliente))');
     var ubicacionClienteJson = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ubicacionCliente))');
+
+    function AbrirModalConfiguracionMateriales() {
+        $("#genericModal").removeData('bs.modal');
+        $("#boddyGeericModal").empty();
+        $("#titleGenerciModal").text("Configuración de costos por cliente");
+        $("#boddyGeericModal").load("/Administracion/PartialConfiguracionCostosCliente", function () {
+            $("#genericModal").modal("show");
+        });
+    }
 </script>
+
+<script src="@Url.StaticFile("Scripts/Catalogos/AltCliente.js")"></script>
