@@ -752,37 +752,8 @@ $(document).on("click", ".btn-precios", function () {
         $("#genericModal").modal("show");
 
         CargarDireccionesEnSelect(clienteId);
-
-        setTimeout(function () {
-            GetPrecioActivoCombustible();
-        }, 200);
-
-        TablaVacia();
-        BotonesEditarEliminar();
     });
 });
-
-function GetAllPrecioCombustible() {
-    GetMVC("/Administracion/GetAllPrecioCombustible", function (r) {
-        if (r.IsSuccess) {
-            // Filtrar solo los registros con Estatus = 1
-            var datosFiltrados = r.Response.filter(function (item) {
-                return item.estatus === true || item.Estatus === true;
-            });
-
-            // Mapear solo los datos filtrados
-            MapingPropertiesDataTable("tablePreciosCombustible", datosFiltrados);
-        } else {
-            swal({
-                title: 'Error',
-                text: 'Error al cargar los precios: ' + r.ErrorMessage,
-                type: 'error',
-                confirmButtonText: 'Aceptar'
-            });
-        }
-    });
-}
-
 function CargarDireccionesEnSelect(clienteId) {
 
     PostMVC('/Administracion/GetDireccionesCliente', { Id: clienteId }, function (r) {

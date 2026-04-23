@@ -147,5 +147,25 @@
             <table id="tblDireccionMaterial" class="table table-striped table-hover w-100"></table>
         </div>
     </div>
-
 </div>
+
+<script>
+    $(document).ready(function () {
+        GetPrecioActivoCombustible();
+    });
+
+    function GetPrecioActivoCombustible() {
+        GetMVC("/Administracion/GetPrecioActivoCombustible", function (r) {
+            if (r.IsSuccess) {
+                console.log(r.Response);
+            } else {
+                swal({
+                    title: 'Error',
+                    text: 'Error al cargar los precios: ' + r.ErrorMessage,
+                    type: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        });
+    }
+</script>

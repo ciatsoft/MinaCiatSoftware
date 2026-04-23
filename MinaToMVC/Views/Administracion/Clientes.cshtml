@@ -123,40 +123,55 @@
                         <a href="/Administracion/Clientes" class="btn btn-danger">
                             <i class="fa fa-times"></i> Cancelar
                         </a>
-                        <button type="button" id="btndirecciones" onclick="AbrirModalDirecciones($('#txtIdCliente').val(), $('#txtNombre').val())"
-                                class="btn btn-info" style="display:none;">
-                            <i class="fa fa-map-marker"></i> Direcciones
-                        </button>
-                        <button type="button" onclick="AbrirModalPrecioCombustible()" class="btn btn-primary">
-                            <i class="fa fa-fire"></i> Configurar Precio Combustible
-                        </button>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
 </form>
 
 <!-- ================= TABLA DE MATERIALES DEL CLIENTE ================= -->
-<div class="container-fluid" style="padding: 0 15px 20px 15px;">
-    <div class="panel panel-info" style="background-color: #ffffff;">
-        <div class="panel-heading" style="background-color: #5bc0de; color: #ffffff;">
-            <i class="fa fa-cubes"></i> Materiales del Cliente
+<div class="container-fluid">
+    <div class="panel panel-info shadow-panel">
+
+        <!-- HEADER DEL PANEL -->
+        <div class="panel-heading clearfix">
+            <h3 class="panel-title pull-left">
+                <i class="fa fa-cubes"></i> Materiales del Cliente
+            </h3>
+
+            <div class="pull-right">
+                <button type="button"
+                        id="btndirecciones"
+                        onclick="AbrirModalDirecciones($('#txtIdCliente').val(), $('#txtNombre').val())"
+                        class="btn btn-info btn-sm"
+                        style="display:none;">
+                    <i class="fa fa-map-marker"></i> Direcciones
+                </button>
+
+                <button type="button"
+                        onclick="AbrirModalPrecioCombustible()"
+                        class="btn btn-primary btn-sm">
+                    <i class="fa fa-fire"></i> Precio Combustible
+                </button>
+            </div>
         </div>
-        <div class="panel-body table-responsive" style="background-color: #ffffff;">
-            <table class="table table-bordered table-striped" id="tableTipodematerial">
-                <thead>
-                    <tr style="background-color: #f5f5f5;">
-                        <th style="color: #333333;">ID</th>
-                        <th style="color: #333333;">Nombre del material</th>
-                        <th style="color: #333333;">Asignar</th>
-                        <th style="color: #333333;">Configurar</th>
+
+        <!-- BODY -->
+        <div class="panel-body table-responsive">
+            <table class="table table-hover table-striped table-bordered" id="tableTipodematerial">
+                <thead class="thead-custom">
+                    <tr>
+                        <th class="col-id">ID</th>
+                        <th>Nombre del material</th>
+                        <th class="text-center">Asignar</th>
+                        <th class="text-center">Configurar</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
         </div>
+
     </div>
 </div>
 
