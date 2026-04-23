@@ -9,13 +9,14 @@
 
 <div id="contenedorMaterial"></div>
 
+<!-- ================= FORMULARIO DE CLIENTES ================= -->
 <form id="frmCliente" name="frmCliente" method="post" enctype="multipart/form-data">
     <div class="container-fluid" style="padding: 20px 15px;">
 
         <!-- Panel Principal con fondo blanco y texto negro -->
         <div class="panel panel-default" style="background-color: #ffffff;">
             <div class="panel-body" style="background-color: #ffffff; color: #333333;">
-                
+
                 <!-- Título -->
                 <div class="row">
                     <div class="col-md-12 text-center">
@@ -107,37 +108,13 @@
                     </div>
                 </div>
 
-                <!-- Fila 4: Materiales del Cliente -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="panel panel-info" style="background-color: #ffffff;">
-                            <div class="panel-heading" style="background-color: #d9edf7; color: #31708f;">
-                                <i class="fa fa-cubes"></i> Materiales del Cliente
-                            </div>
-                            <div class="panel-body table-responsive" style="background-color: #ffffff;">
-                                <table class="table table-bordered table-striped" id="tableTipodematerial">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Nombre del material</th>
-                                            <th>Asignar</th>
-                                            <th>Configurar</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Campos Ocultos -->
                 <input type="hidden" id="txtCreatedBy" name="CreatedBy" value="@ViewBag.UserToken.UserName" />
                 <input type="hidden" id="txtCreatedDt" name="CreatedDt" value="@DateTime.Now" />
                 <input type="hidden" id="txtUpdatedBy" name="UpdatedBy" value="@ViewBag.UserToken.UserName" />
                 <input type="hidden" id="txtUpdatedDt" name="UpdatedDt" value="@DateTime.Now" />
 
-                <!-- Botones de Acción -->
+                <!-- Botones de Acción del Formulario -->
                 <div class="row">
                     <div class="col-md-12 text-center">
                         <button type="button" onclick="SaveOrUpdateCliente()" class="btn btn-success">
@@ -150,42 +127,9 @@
                                 class="btn btn-info" style="display:none;">
                             <i class="fa fa-map-marker"></i> Direcciones
                         </button>
-                        <button type="button" id="btnmaterial" onclick="AbrirModalConfiguracionMateriales()" class="btn btn-warning" style="display:none;">
-                            <i class="fa fa-cog"></i> Configurar Materiales
-                        </button>
                         <button type="button" onclick="AbrirModalPrecioCombustible()" class="btn btn-primary">
                             <i class="fa fa-fire"></i> Configurar Precio Combustible
                         </button>
-                    </div>
-                </div>
-
-                <!-- Tabla de Clientes -->
-                <div class="row" style="margin-top: 25px;">
-                    <div class="col-md-12">
-                        <div class="panel panel-primary" style="background-color: #ffffff;">
-                            <div class="panel-heading" style="background-color: #337ab7; color: #ffffff;">
-                                <i class="fa fa-list"></i> Listado de Clientes
-                            </div>
-                            <div class="panel-body table-responsive" style="background-color: #ffffff;">
-                                <table id="tbCliente" class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Id</th>
-                                            <th>Nombre</th>
-                                            <th>Teléfono</th>
-                                            <th>Email</th>
-                                            <th>Comentarios</th>
-                                            <th>RFC</th>
-                                            <th>Razón Social</th>
-                                            <th>Tipo de Cliente</th>
-                                            <th>Estatus</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -193,6 +137,56 @@
         </div>
     </div>
 </form>
+
+<!-- ================= TABLA DE MATERIALES DEL CLIENTE ================= -->
+<div class="container-fluid" style="padding: 0 15px 20px 15px;">
+    <div class="panel panel-info" style="background-color: #ffffff;">
+        <div class="panel-heading" style="background-color: #5bc0de; color: #ffffff;">
+            <i class="fa fa-cubes"></i> Materiales del Cliente
+        </div>
+        <div class="panel-body table-responsive" style="background-color: #ffffff;">
+            <table class="table table-bordered table-striped" id="tableTipodematerial">
+                <thead>
+                    <tr style="background-color: #f5f5f5;">
+                        <th style="color: #333333;">ID</th>
+                        <th style="color: #333333;">Nombre del material</th>
+                        <th style="color: #333333;">Asignar</th>
+                        <th style="color: #333333;">Configurar</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ================= TABLA DE CLIENTES (SEPARADA DEL FORMULARIO) ================= -->
+<div class="container-fluid" style="padding: 0 15px 20px 15px;">
+    <div class="panel panel-primary" style="background-color: #ffffff;">
+        <div class="panel-heading" style="background-color: #337ab7; color: #ffffff;">
+            <i class="fa fa-list"></i> Listado de Clientes
+        </div>
+        <div class="panel-body table-responsive" style="background-color: #ffffff;">
+            <table id="tbCliente" class="table table-bordered table-striped">
+                <thead>
+                    <tr style="background-color: #f5f5f5;">
+                        <th style="color: #333333;">Id</th>
+                        <th style="color: #333333;">Nombre</th>
+                        <th style="color: #333333;">Teléfono</th>
+                        <th style="color: #333333;">Email</th>
+                        <th style="color: #333333;">Comentarios</th>
+                        <th style="color: #333333;">RFC</th>
+                        <th style="color: #333333;">Razón Social</th>
+                        <th style="color: #333333;">Tipo de Cliente</th>
+                        <th style="color: #333333;">Estatus</th>
+                        <th style="color: #333333;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 <!-- SCRIPTS DE LA VISTA -->
 <script>
@@ -211,3 +205,96 @@
 </script>
 
 <script src="@Url.StaticFile("Scripts/Catalogos/AltCliente.js")"></script>
+
+<style>
+    /* Estilos para asegurar que todo el contenido tenga fondo blanco y texto legible */
+    .container-fluid {
+        background-color: transparent;
+    }
+
+    /* Estilos para los botones dentro de las tablas - letras blancas */
+    .table .btn {
+        color: #ffffff !important;
+    }
+
+    .table .btn-primary {
+        background-color: #337ab7;
+        border-color: #2e6da4;
+    }
+
+    .table .btn-danger {
+        background-color: #d9534f;
+        border-color: #d43f3a;
+    }
+
+    .table .btn-warning {
+        background-color: #f0ad4e;
+        border-color: #eea236;
+    }
+
+    .table .btn-info {
+        background-color: #5bc0de;
+        border-color: #46b8da;
+    }
+
+    .table .btn-success {
+        background-color: #5cb85c;
+        border-color: #4cae4c;
+    }
+
+    /* Hover effects */
+    .table .btn:hover {
+        opacity: 0.9;
+        color: #ffffff !important;
+    }
+
+    /* Asegurar que el texto de los botones principales también sea blanco */
+    .btn-success, .btn-danger, .btn-info, .btn-primary {
+        color: #ffffff !important;
+    }
+
+    /* Estilos para DataTables - texto oscuro sobre fondo blanco */
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_processing,
+    .dataTables_wrapper .dataTables_paginate {
+        color: #333333 !important;
+    }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            color: #333333 !important;
+        }
+
+            .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+                background: #337ab7 !important;
+                color: #ffffff !important;
+            }
+
+    /* Tablas - celdas con texto oscuro */
+    .table tbody tr td {
+        color: #333333 !important;
+        background-color: #ffffff !important;
+    }
+
+    .table thead tr th {
+        color: #333333 !important;
+        background-color: #f5f5f5 !important;
+    }
+
+    /* Inputs y selects dentro del formulario */
+    .form-control {
+        color: #333333 !important;
+        background-color: #ffffff !important;
+    }
+
+        .form-control:disabled {
+            background-color: #e9ecef !important;
+            color: #495057 !important;
+        }
+
+    /* Labels */
+    .control-label {
+        color: #333333 !important;
+    }
+</style>

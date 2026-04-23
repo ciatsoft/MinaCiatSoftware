@@ -123,40 +123,20 @@ $(document).ready(function () {
                 $(btnPrecios).show();
             }
 
-            $(checkBox).on("change", function () {
+            $(document).on("change", ".material-check", function () {
+
                 var clienteId = clienteJson.Id;
-                var materialId = $(this).attr("data-id");
+                var materialId = $(this).data("id");
+                var row = $(this).closest("tr");
+                var btnPrecios = row.find(".btn-precios");
 
                 if ($(this).is(':checked')) {
                     AgregarMaterialACliente(clienteId, materialId);
-                    $(btnPrecios).show();
+                    btnPrecios.show();
                 } else {
                     EliminarMaterialDelCliente(clienteId, materialId);
-                    $(btnPrecios).hide();
+                    btnPrecios.hide();
                 }
-            });
-
-            $(btnPrecios).on("click", function () {
-                var clienteId = clienteJson.Id;
-                var materialId = $(this).data("material-id");
-
-                $("#genericModal").modal("hide");
-                $("#boddyGeericModal").html('');
-                $("#titleGenerciModal").text("Configuración de costos por cliente");
-
-                setTimeout(() => {
-                    $("#boddyGeericModal").load("/Administracion/PartialConfiguracionCostosCliente", {
-                        clienteId: clienteId,
-                        materialId: materialId
-                    }, function () {
-                        $("#genericModal").modal("show");
-                        SearchDireccionesCliente(clienteId);
-                        GetPrecioActivoCombustible();
-                        TablaVacia();
-                        DropListDirecciones();
-                        BotonesEditarEliminar();
-                    });
-                }, 500);
             });
         }
     });
@@ -751,5 +731,72 @@ function AbrirModalPrecioCombustible() {
     // Enviar nombreCompleto como parámetro en la URL
     $("#boddyGeericModal").load("/Administracion/PartialConfigurarCombustible", function () {
         $("#genericModal").modal("show");
+    });
+}
+
+// Delegación correcta para botones generados por DataTable
+$(document).on("click", ".btn-precios", function () {
+
+    var clienteId = clienteJson.Id;
+    var materialId = $(this).data("material-id");
+
+    $("#genericModal").modal("hide");
+    $("#boddyGeericModal").html('');
+    $("#titleGenerciModal").text("Configuración de costos por cliente");
+
+    $("#boddyGeericModal").load("/Administracion/PartialConfiguracionCostosCliente", {
+        clienteId: clienteId,
+        materialId: materialId
+    }, function () {
+
+        $("#genericModal").modal("show");
+
+        CargarDireccionesEnSelect(clienteId);
+
+        setTimeout(function () {
+            GetPrecioActivoCombustible();
+        }, 200);
+
+        TablaVacia();
+        BotonesEditarEliminar();
+    });
+});
+
+function GetAllPrecioCombustible() {
+    GetMVC("/Administracion/GetAllPrecioCombustible", function (r) {
+        if (r.IsSuccess) {
+            // Filtrar solo los registros con Estatus = 1
+            var datosFiltrados = r.Response.filter(function (item) {
+                return item.estatus === true || item.Estatus === true;
+            });
+
+            // Mapear solo los datos filtrados
+            MapingPropertiesDataTable("tablePreciosCombustible", datosFiltrados);
+        } else {
+            swal({
+                title: 'Error',
+                text: 'Error al cargar los precios: ' + r.ErrorMessage,
+                type: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
+}
+
+function CargarDireccionesEnSelect(clienteId) {
+
+    PostMVC('/Administracion/GetDireccionesCliente', { Id: clienteId }, function (r) {
+
+        if (!r.IsSuccess) return;
+
+        var ddl = $("#ddlDirecciones");
+        ddl.empty();
+        ddl.append('<option value="">Selecciona una dirección</option>');
+
+        r.Response.forEach(function (dir) {
+            var texto = dir.calle + ' #' + dir.noExterno + ', ' + dir.colonia;
+            ddl.append('<option value="' + dir.id + '">' + texto + '</option>');
+        });
+
     });
 }
