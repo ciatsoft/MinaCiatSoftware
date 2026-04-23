@@ -14,6 +14,11 @@
     <input type="hidden" id="createdDt" value="@fechaActual" />
     <input type="hidden" id="updatedDt" value="@fechaActual" />
 
+    <input type="hidden" id="id" value="0" />
+    <input type="hidden" id="idDireccion" />
+    <input type="hidden" id="direccion" />
+    <input type="hidden" id="PrecioCombustibleActual" />
+
     <!-- HEADER -->
     <div class="card mb-4 shadow-sm">
         <div class="card-body bg-light">
@@ -150,22 +155,161 @@
 </div>
 
 <script>
-    $(document).ready(function () {
-        GetPrecioActivoCombustible();
-    });
+let timeout;
 
-    function GetPrecioActivoCombustible() {
-        GetMVC("/Administracion/GetPrecioActivoCombustible", function (r) {
-            if (r.IsSuccess) {
-                console.log(r.Response);
-            } else {
-                swal({
-                    title: 'Error',
-                    text: 'Error al cargar los precios: ' + r.ErrorMessage,
-                    type: 'error',
-                    confirmButtonText: 'Aceptar'
-                });
-            }
-        });
+// ================= MONEDA =================
+function formatCurrency(value) {
+    if (isNaN(value) || value === 0) return '$ 0.00';
+    return '$ ' + value.toLocaleString('es-MX', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
+
+function currencyToNumber(currencyValue) {
+    if (!currencyValue) return 0;
+    return parseFloat(currencyValue.replace(/[^0-9.-]+/g, '')) || 0;
+}
+
+// ================= CALCULOS =================
+function calcular() {
+
+    const pMatM3 = $('#p-mat-m3').data('raw-value') || 0;
+    const pFleteM3 = $('#p-flete-m3').data('raw-value') || 0;
+    const kmCargado = parseFloat($('#km-cargado').val()) || 0;
+    const kmBasio = parseFloat($('#km-basio').val()) || 0;
+    const diesel = parseFloat($('#carga-diesel').val()) || 0;
+    const manoObra = $('#mano-obra').data('raw-value') || 0;
+    const casetas = $('#casetas').data('raw-value') || 0;
+    const precioCombustible = parseFloat($('#PrecioCombustibleActual').val()) || 0;
+
+    const precioM3 = pMatM3 + pFleteM3;
+    const totalKm = kmCargado + kmBasio;
+    const totalDiesel = diesel * precioCombustible;
+    const materialViajes = pMatM3 * 30;
+    const subtotalIngreso = precioM3 * 30;
+    const totalGastos = totalDiesel + manoObra + casetas + materialViajes;
+
+    $('#precio-m3').val(formatCurrency(precioM3));
+    $('#total-km-recorridos').val(totalKm.toFixed(1));
+    $('#total-diesel').val(formatCurrency(totalDiesel));
+    $('#material-viajes').val(formatCurrency(materialViajes));
+    $('#subtotal-ingreso').val(formatCurrency(subtotalIngreso));
+    $('#total-gastos').val(formatCurrency(totalGastos));
+}
+
+function debounceCalculo() {
+    clearTimeout(timeout);
+    timeout = setTimeout(calcular, 300);
+}
+
+// ================= MONEDA INPUTS =================
+function initMoneda(id) {
+    const $el = $('#' + id);
+    $el.data('raw-value', 0);
+
+    $el.on('input', function () {
+        let val = $(this).val().replace(/[^0-9.]/g, '');
+        $(this).data('raw-value', parseFloat(val) || 0);
+        debounceCalculo();
+    }).on('blur', function () {
+        $(this).val(formatCurrency($(this).data('raw-value')));
+    }).on('focus', function () {
+        $(this).val($(this).data('raw-value'));
+    });
+}
+
+// ================= TABLA =================
+function cargarDataTable(data) {
+    if ($.fn.DataTable.isDataTable('#tblDireccionMaterial')) {
+        $('#tblDireccionMaterial').DataTable().destroy();
     }
+
+    $('#tblDireccionMaterial').DataTable({
+        data: data,
+        columns: [
+            { title: 'Dirección', data: 'direccion' },
+            { title: 'Material', data: 'tipoMaterial.nombreTipoMaterial' },
+            { title: 'Cliente', data: 'cliente.nombre' },
+            {
+                title: 'Total',
+                data: 'total_Gastos',
+                render: d => formatCurrency(d)
+            },
+            {
+                data: null,
+                render: (d, t, row) => `
+                <button class="btn btn-sm btn-primary btnEditar" data-id="${row.id}">Editar</button>
+                <button class="btn btn-sm btn-danger btnEliminar" data-id="${row.id}">Eliminar</button>`
+            }
+        ]
+    });
+}
+
+// ================= FUNCION QUE FALTABA =================
+function ClienteTipoMaterialByDireccionMaterialAndCliente(idDireccion) {
+
+    const parametros = {
+        Cliente: { Id: $('#clienteId').val() },
+        TipoMaterial: { Id: $('#materialId').val() },
+        IdDireccion: idDireccion
+    };
+
+    PostMVC('/Administracion/GetClienteTipoMaterialByDireccion', parametros, function (r) {
+        if (r.IsSuccess) {
+            cargarDataTable(r.Response);
+        }
+    });
+}
+
+// ================= DIRECCIONES =================
+function DropListDirecciones() {
+    $('#ddlDirecciones').off('change').on('change', function () {
+        const id = $(this).val();
+        const text = $(this).find('option:selected').text();
+
+        $('#idDireccion').val(id);
+        $('#direccion').val(text);
+
+        if (id) {
+            ClienteTipoMaterialByDireccionMaterialAndCliente(id);
+        }
+    });
+}
+
+// ================= PRECIO COMBUSTIBLE =================
+function GetPrecioActivoCombustible() {
+    GetMVC('/Administracion/GetPrecioActivoCombustible', function (r) {
+        if (r.IsSuccess) {
+            $('#PrecioCombustibleActual').val(r.Response.precio);
+        }
+    });
+}
+
+// ================= INIT =================
+$(document).ready(function () {
+
+    initMoneda('p-mat-m3');
+    initMoneda('p-flete-m3');
+    initMoneda('mano-obra');
+    initMoneda('casetas');
+
+    $('#km-cargado, #km-basio, #carga-diesel').on('input', debounceCalculo);
+
+    DropListDirecciones();
+    GetPrecioActivoCombustible();
+
+    const clienteId = $('#clienteId').val();
+
+    if (clienteId) {
+        SearchDireccionesCliente(clienteId);
+
+        setTimeout(function () {
+            const $ddl = $('#ddlDirecciones');
+            if ($ddl.find('option').length > 1) {
+                $ddl.prop('selectedIndex', 1).trigger('change');
+            }
+        }, 500);
+    }
+});
 </script>
