@@ -15,8 +15,8 @@
     <input type="hidden" id="updatedDt" value="@fechaActual" />
 
     <input type="hidden" id="id" value="0" />
-    <input type="hidden" id="idDireccion" />
-    <input type="hidden" id="direccion" />
+    @*<input type="hidden" id="idDireccion" />
+        <input type="hidden" id="direccion" />*@
     <input type="hidden" id="PrecioCombustibleActual" />
 
     <!-- HEADER -->
@@ -24,19 +24,19 @@
         <div class="card-body bg-light">
             <div class="row text-center">
                 <div class="col-md-6">
-                    <h6 class="text-primary mb-1">Cliente</h6>
-                    <strong>@ViewBag.ClienteNombre</strong>
+                    <h4 class="text-primary mb-1">Cliente</h4>
+                    <h4><strong>@ViewBag.ClienteNombre</strong></h4>
                 </div>
                 <div class="col-md-6">
-                    <h6 class="text-primary mb-1">Material</h6>
-                    <strong>@ViewBag.MaterialNombre</strong>
+                    <h4 class="text-primary mb-1">Material</h4>
+                    <h4><strong>@ViewBag.MaterialNombre</strong></h4>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- FORM -->
-    <div class="card shadow-sm mb-4">
+    <!-- FORM CON ICONOS -->
+    <div class="card shadow-sm mb-4" style="margin-top:15px;">
         <div class="card-body">
 
             <div class="row">
@@ -45,28 +45,43 @@
                 <div class="col-md-6">
 
                     <div class="form-group mb-3">
-                        <label>Dirección</label>
-                        <select id="ddlDirecciones" class="form-control"></select>
+                        <label><i class="fa fa-map-marker"></i> Dirección</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-location-arrow"></i></span>
+                            <select id="ddlDirecciones" class="form-control"></select>
+                        </div>
                     </div>
 
                     <div class="form-group mb-3">
-                        <label>Precio Material M3</label>
-                        <input type="text" id="p-mat-m3" class="form-control text-end" />
+                        <label><i class="fa fa-cube"></i> Precio Material M3</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
+                            <input type="text" id="p-mat-m3" class="form-control text-end" />
+                        </div>
                     </div>
 
                     <div class="form-group mb-3">
-                        <label>Precio Flete M3</label>
-                        <input type="text" id="p-flete-m3" class="form-control text-end" />
+                        <label><i class="fa fa-truck"></i> Precio Flete M3</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
+                            <input type="text" id="p-flete-m3" class="form-control text-end" />
+                        </div>
                     </div>
 
                     <div class="form-group mb-3">
-                        <label>KM Cargado</label>
-                        <input type="number" id="km-cargado" class="form-control text-end" />
+                        <label><i class="fa fa-road"></i> KM Cargado</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-tachometer"></i></span>
+                            <input type="number" id="km-cargado" class="form-control text-end" />
+                        </div>
                     </div>
 
                     <div class="form-group mb-3">
-                        <label>KM Vacío</label>
-                        <input type="number" id="km-basio" class="form-control text-end" />
+                        <label><i class="fa fa-road"></i> KM Vacío</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-tachometer"></i></span>
+                            <input type="number" id="km-basio" class="form-control text-end" />
+                        </div>
                     </div>
 
                 </div>
@@ -75,23 +90,36 @@
                 <div class="col-md-6">
 
                     <div class="form-group mb-3">
-                        <label>Carga Diesel (Lt)</label>
-                        <input type="number" id="carga-diesel" class="form-control text-end" />
+                        <label><i class="fa fa-gas-pump"></i> Carga Diesel (Lt)</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-tint"></i></span>
+                            <input type="number" id="carga-diesel" class="form-control text-end" />
+                        </div>
                     </div>
 
                     <div class="form-group mb-3">
-                        <label>Casetas</label>
-                        <input type="text" id="casetas" class="form-control text-end" />
+                        <label><i class="fa fa-ticket"></i> Casetas</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-money"></i></span>
+                            <input type="text" id="casetas" class="form-control text-end" />
+                        </div>
                     </div>
 
                     <div class="form-group mb-3">
-                        <label>Mano de Obra</label>
-                        <input type="text" id="mano-obra" class="form-control text-end" />
+                        <label><i class="fa fa-users"></i> Mano de Obra</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
+                            <input type="text" id="mano-obra" class="form-control text-end" />
+                        </div>
                     </div>
 
                     <div class="form-check form-switch mt-4">
-                        <input type="checkbox" id="precioActual" class="form-check-input">
-                        <label class="form-check-label">Precio Actual</label>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="precioActual">
+                                <i class="fa fa-toggle-on"></i> Precio Actual
+                            </label>
+                        </div>
                     </div>
 
                 </div>
@@ -103,40 +131,58 @@
             <div class="row">
 
                 <div class="col-md-6 mb-3">
-                    <label>Precio M3</label>
-                    <input type="text" id="precio-m3" class="form-control text-end" />
+                    <label><i class="fa fa-calculator"></i> Precio M3</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
+                        <input type="text" id="precio-m3" class="form-control text-end" readonly />
+                    </div>
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label>Total Diesel</label>
-                    <input type="text" id="total-diesel" class="form-control text-end" />
+                    <label><i class="fa fa-gas-pump"></i> Total Diesel</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
+                        <input type="text" id="total-diesel" class="form-control text-end" readonly />
+                    </div>
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label>Total KM Recorridos</label>
-                    <input type="text" id="total-km-recorridos" class="form-control text-end" />
+                    <label><i class="fa fa-road"></i> Total KM Recorridos</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-tachometer"></i></span>
+                        <input type="text" id="total-km-recorridos" class="form-control text-end" readonly />
+                    </div>
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label>Material Viajes (30 M3)</label>
-                    <input type="text" id="material-viajes" class="form-control text-end" />
+                    <label><i class="fa fa-cubes"></i> Material Viajes (30 M3)</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-truck"></i></span>
+                        <input type="text" id="material-viajes" class="form-control text-end" readonly />
+                    </div>
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label>Subtotal Ingreso</label>
-                    <input type="text" id="subtotal-ingreso" class="form-control text-end" />
+                    <label><i class="fa fa-arrow-up"></i> Subtotal Ingreso</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
+                        <input type="text" id="subtotal-ingreso" class="form-control text-end" readonly />
+                    </div>
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label>Total Gastos</label>
-                    <input type="text" id="total-gastos" class="form-control text-end" />
+                    <label><i class="fa fa-arrow-down"></i> Total Gastos</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-dollar"></i></span>
+                        <input type="text" id="total-gastos" class="form-control text-end" readonly />
+                    </div>
                 </div>
 
             </div>
 
-            <div class="text-end mt-3">
+            <div class="text-end mt-3" style="margin-top:20px;">
                 <button class="btn btn-success px-5" onclick="AgregarPreciosMaterialACliente()">
-                    Guardar configuración
+                    <i class="fa fa-save"></i> Guardar configuración
                 </button>
             </div>
 
@@ -145,171 +191,651 @@
 
     <!-- TABLA -->
     <div class="card shadow-sm border-0">
-        <div class="card-header bg-primary text-white fw-semibold">
+        <div class="card-header bg-primary text-white fw-semibold" style="margin-top:15px;">
             Historial de configuraciones por dirección
         </div>
-        <div class="card-body">
+        <div class="card-body" style="margin-top:20px;">
             <table id="tblDireccionMaterial" class="table table-striped table-hover w-100"></table>
         </div>
     </div>
 </div>
 
 <script>
-let timeout;
+    let timeout;
 
-// ================= MONEDA =================
-function formatCurrency(value) {
-    if (isNaN(value) || value === 0) return '$ 0.00';
-    return '$ ' + value.toLocaleString('es-MX', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-}
-
-function currencyToNumber(currencyValue) {
-    if (!currencyValue) return 0;
-    return parseFloat(currencyValue.replace(/[^0-9.-]+/g, '')) || 0;
-}
-
-// ================= CALCULOS =================
-function calcular() {
-
-    const pMatM3 = $('#p-mat-m3').data('raw-value') || 0;
-    const pFleteM3 = $('#p-flete-m3').data('raw-value') || 0;
-    const kmCargado = parseFloat($('#km-cargado').val()) || 0;
-    const kmBasio = parseFloat($('#km-basio').val()) || 0;
-    const diesel = parseFloat($('#carga-diesel').val()) || 0;
-    const manoObra = $('#mano-obra').data('raw-value') || 0;
-    const casetas = $('#casetas').data('raw-value') || 0;
-    const precioCombustible = parseFloat($('#PrecioCombustibleActual').val()) || 0;
-
-    const precioM3 = pMatM3 + pFleteM3;
-    const totalKm = kmCargado + kmBasio;
-    const totalDiesel = diesel * precioCombustible;
-    const materialViajes = pMatM3 * 30;
-    const subtotalIngreso = precioM3 * 30;
-    const totalGastos = totalDiesel + manoObra + casetas + materialViajes;
-
-    $('#precio-m3').val(formatCurrency(precioM3));
-    $('#total-km-recorridos').val(totalKm.toFixed(1));
-    $('#total-diesel').val(formatCurrency(totalDiesel));
-    $('#material-viajes').val(formatCurrency(materialViajes));
-    $('#subtotal-ingreso').val(formatCurrency(subtotalIngreso));
-    $('#total-gastos').val(formatCurrency(totalGastos));
-}
-
-function debounceCalculo() {
-    clearTimeout(timeout);
-    timeout = setTimeout(calcular, 300);
-}
-
-// ================= MONEDA INPUTS =================
-function initMoneda(id) {
-    const $el = $('#' + id);
-    $el.data('raw-value', 0);
-
-    $el.on('input', function () {
-        let val = $(this).val().replace(/[^0-9.]/g, '');
-        $(this).data('raw-value', parseFloat(val) || 0);
-        debounceCalculo();
-    }).on('blur', function () {
-        $(this).val(formatCurrency($(this).data('raw-value')));
-    }).on('focus', function () {
-        $(this).val($(this).data('raw-value'));
-    });
-}
-
-// ================= TABLA =================
-function cargarDataTable(data) {
-    if ($.fn.DataTable.isDataTable('#tblDireccionMaterial')) {
-        $('#tblDireccionMaterial').DataTable().destroy();
+    // ================= MONEDA =================
+    function formatCurrency(value) {
+        if (isNaN(value) || value === 0) return '$ 0.00';
+        return '$ ' + value.toLocaleString('es-MX', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
     }
 
-    $('#tblDireccionMaterial').DataTable({
-        data: data,
-        columns: [
-            { title: 'Dirección', data: 'direccion' },
-            { title: 'Material', data: 'tipoMaterial.nombreTipoMaterial' },
-            { title: 'Cliente', data: 'cliente.nombre' },
-            {
-                title: 'Total',
-                data: 'total_Gastos',
-                render: d => formatCurrency(d)
-            },
-            {
-                data: null,
-                render: (d, t, row) => `
-                <button class="btn btn-sm btn-primary btnEditar" data-id="${row.id}">Editar</button>
-                <button class="btn btn-sm btn-danger btnEliminar" data-id="${row.id}">Eliminar</button>`
+    function currencyToNumber(currencyValue) {
+        if (!currencyValue) return 0;
+        return parseFloat(currencyValue.replace(/[^0-9.-]+/g, '')) || 0;
+    }
+
+    // ================= CALCULOS =================
+    function calcular() {
+        const pMatM3 = $('#p-mat-m3').data('raw-value') || 0;
+        const pFleteM3 = $('#p-flete-m3').data('raw-value') || 0;
+        const kmCargado = parseFloat($('#km-cargado').val()) || 0;
+        const kmBasio = parseFloat($('#km-basio').val()) || 0;
+        const diesel = parseFloat($('#carga-diesel').val()) || 0;
+        const manoObra = $('#mano-obra').data('raw-value') || 0;
+        const casetas = $('#casetas').data('raw-value') || 0;
+        const precioCombustible = parseFloat($('#PrecioCombustibleActual').val()) || 0;
+
+        const precioM3 = pMatM3 + pFleteM3;
+        const totalKm = kmCargado + kmBasio;
+        const totalDiesel = diesel * precioCombustible;
+        const materialViajes = pMatM3 * 30;
+        const subtotalIngreso = precioM3 * 30;
+        const totalGastos = totalDiesel + manoObra + casetas + materialViajes;
+
+        $('#precio-m3').val(formatCurrency(precioM3));
+        $('#total-km-recorridos').val(totalKm.toFixed(1));
+        $('#total-diesel').val(formatCurrency(totalDiesel));
+        $('#material-viajes').val(formatCurrency(materialViajes));
+        $('#subtotal-ingreso').val(formatCurrency(subtotalIngreso));
+        $('#total-gastos').val(formatCurrency(totalGastos));
+
+        return {
+            precioM3: precioM3,
+            totalDiesel: totalDiesel,
+            totalKm: totalKm,
+            materialViajes: materialViajes,
+            subtotalIngreso: subtotalIngreso,
+            totalGastos: totalGastos
+        };
+    }
+
+    function debounceCalculo() {
+        clearTimeout(timeout);
+        timeout = setTimeout(calcular, 300);
+    }
+
+    // ================= MONEDA INPUTS =================
+    function initMoneda(id) {
+        const $el = $('#' + id);
+        $el.data('raw-value', 0);
+
+        $el.on('input', function () {
+            let val = $(this).val().replace(/[^0-9.]/g, '');
+            $(this).data('raw-value', parseFloat(val) || 0);
+            debounceCalculo();
+        }).on('blur', function () {
+            $(this).val(formatCurrency($(this).data('raw-value')));
+        }).on('focus', function () {
+            $(this).val($(this).data('raw-value'));
+        });
+    }
+
+    // ================= FUNCIÓN PARA CARGAR CONFIGURACIÓN POR DIRECCIÓN =================
+    function CargarConfiguracionPorDireccion(idDireccion) {
+        if (!idDireccion || idDireccion === '') {
+            limpiarFormulario();
+            return;
+        }
+
+        const clienteId = $('#clienteId').val();
+        const materialId = $('#materialId').val();
+
+        const url = `/Administracion/ClienteTipoMaterialByDireccionMaterialAndCliente?id=${idDireccion}&idCliente=${clienteId}&idMaterial=${materialId}`;
+
+        GetMVC(url, function (r) {
+            if (r.IsSuccess && r.Response) {
+                const data = r.Response;
+
+                $('#id').val(data.id || 0);
+
+                $('#p-mat-m3').data('raw-value', data.p_Mta_M3 || 0).val(formatCurrency(data.p_Mta_M3 || 0));
+                $('#p-flete-m3').data('raw-value', data.p_Flete_M3 || 0).val(formatCurrency(data.p_Flete_M3 || 0));
+                $('#mano-obra').data('raw-value', data.mano_De_Obra || 0).val(formatCurrency(data.mano_De_Obra || 0));
+                $('#casetas').data('raw-value', data.casetas || 0).val(formatCurrency(data.casetas || 0));
+                $('#km-cargado').val(data.kM_Cargado || '');
+                $('#km-basio').val(data.kM_Basico || '');
+                $('#carga-diesel').val(data.carga_Disel || '');
+                $('#precioActual').prop('checked', data.precioActivo || false);
+
+                calcular();
+            } else {
+                limpiarFormulario();
             }
-        ]
-    });
-}
+        });
+    }
 
-// ================= FUNCION QUE FALTABA =================
-function ClienteTipoMaterialByDireccionMaterialAndCliente(idDireccion) {
+    function limpiarFormulario() {
+        $('#id').val(0);
+        $('#p-mat-m3').data('raw-value', 0).val('');
+        $('#p-flete-m3').data('raw-value', 0).val('');
+        $('#mano-obra').data('raw-value', 0).val('');
+        $('#casetas').data('raw-value', 0).val('');
+        $('#km-cargado').val('');
+        $('#km-basio').val('');
+        $('#carga-diesel').val('');
+        $('#precioActual').prop('checked', false);
+        $('#precio-m3').val('');
+        $('#total-km-recorridos').val('');
+        $('#total-diesel').val('');
+        $('#material-viajes').val('');
+        $('#subtotal-ingreso').val('');
+        $('#total-gastos').val('');
+    }
 
-    const parametros = {
-        Cliente: { Id: $('#clienteId').val() },
-        TipoMaterial: { Id: $('#materialId').val() },
-        IdDireccion: idDireccion
+    // ================= FUNCIÓN AGREGAR PRECIOS =================
+    window.AgregarPreciosMaterialACliente = function () {
+        const idDireccion = $("#ddlDirecciones").val();
+        const direccion = $("#ddlDirecciones option:selected").text();
+        const precioActivo = $("#precioActual").is(":checked");
+
+        const clienteId = $("#clienteId").val();
+        const materialId = $("#materialId").val();
+        const id = $("#id").val();
+
+        const pMatM3 = $("#p-mat-m3").data("raw-value") || 0;
+        const pFleteM3 = $("#p-flete-m3").data("raw-value") || 0;
+        const manoObra = $("#mano-obra").data("raw-value") || 0;
+        const casetas = $("#casetas").data("raw-value") || 0;
+        const kmCargado = parseFloat($("#km-cargado").val()) || 0;
+        const kmBasio = parseFloat($("#km-basio").val()) || 0;
+        const cargaDiesel = parseFloat($("#carga-diesel").val()) || 0;
+
+        // Calcular valores derivados
+        const precioM3 = pMatM3 + pFleteM3;
+        const totalKm = kmCargado + kmBasio;
+        const precioCombustible = parseFloat($('#PrecioCombustibleActual').val()) || 0;
+        const totalDiesel = cargaDiesel * precioCombustible;
+        const materialViajes = pMatM3 * 30;
+        const subtotalIngreso = precioM3 * 30;
+        const totalGastos = totalDiesel + manoObra + casetas + materialViajes;
+
+        if (!idDireccion || idDireccion === '') {
+            swal({
+                title: "Dirección requerida",
+                text: "Por favor seleccione una dirección",
+                type: "warning",
+                confirmButtonText: "Aceptar"
+            });
+            return;
+        }
+
+        // Construir el objeto que coincide con el modelo ClienteTipoMaterial
+        var dataToSend = {
+            Id: parseInt(id) || 0,
+            Cliente: { Id: parseInt(clienteId) },
+            TipoMaterial: { Id: parseInt(materialId) },
+            Estatus: true,
+
+            // Inputs del formulario
+            P_Mta_M3: pMatM3,
+            P_Flete_M3: pFleteM3,
+            KM_Cargado: kmCargado,
+            KM_Basico: kmBasio,
+            Carga_Disel: cargaDiesel,
+            Casetas: casetas,
+            Mano_De_Obra: manoObra,
+
+            // Valores calculados
+            Precio_M3: precioM3,
+            Total_KM_Recorridos: totalKm,
+            Total_Diesel_Precio_XLT: totalDiesel,
+            Material_Viajes_De_30M3: materialViajes,
+            Subtotal_Ingreso_Viajes_M3: subtotalIngreso,
+            Total_Gastos: totalGastos,
+
+            // Dirección
+            IdDireccion: parseInt(idDireccion),
+            Direccion: direccion,
+
+            // Flag
+            PrecioActivo: precioActivo,
+
+            // Auditoría
+            CreatedBy: $("#createdBy").val(),
+            UpdatedBy: $("#updatedBy").val(),
+            CreatedDt: $("#createdDt").val(),
+            UpdatedDt: $("#updatedDt").val()
+        };
+
+        console.log("Datos a enviar:", dataToSend);
+
+        // Usar PostMVC para enviar como JSON en el body
+        PostMVC('/Administracion/SaveOrUpdateClienteTipoMaterial', dataToSend, function (r) {
+            if (r.IsSuccess) {
+                swal({
+                    title: "¡Éxito!",
+                    text: "Configuración guardada correctamente",
+                    type: "success",
+                    confirmButtonText: "OK"
+                }, function () {
+                    CargarConfiguracionPorDireccion(idDireccion);
+                    CargarTablaPorDireccion(idDireccion);
+                });
+            } else {
+                swal({
+                    title: "Error",
+                    text: r.ErrorMessage || r.Message || "Error al guardar la configuración",
+                    type: "error",
+                    confirmButtonText: "Aceptar"
+                });
+            }
+        });
     };
 
-    PostMVC('/Administracion/GetClienteTipoMaterialByDireccion', parametros, function (r) {
-        if (r.IsSuccess) {
-            cargarDataTable(r.Response);
+    // ================= TABLA =================
+    function CargarTablaPorDireccion(idDireccion) {
+        if (!idDireccion || idDireccion === '') {
+            cargarDataTable([]);
+            return;
         }
-    });
-}
 
-// ================= DIRECCIONES =================
-function DropListDirecciones() {
-    $('#ddlDirecciones').off('change').on('change', function () {
-        const id = $(this).val();
-        const text = $(this).find('option:selected').text();
+        const clienteId = $('#clienteId').val();
+        const materialId = $('#materialId').val();
 
-        $('#idDireccion').val(id);
-        $('#direccion').val(text);
+        const url = `/Administracion/ClienteTipoMaterialByDireccionMaterialAndCliente?id=${idDireccion}&idCliente=${clienteId}&idMaterial=${materialId}`;
 
-        if (id) {
-            ClienteTipoMaterialByDireccionMaterialAndCliente(id);
-        }
-    });
-}
+        GetMVC(url, function (r) {
+            if (r.IsSuccess && r.Response) {
+                let dataArray = [];
 
-// ================= PRECIO COMBUSTIBLE =================
-function GetPrecioActivoCombustible() {
-    GetMVC('/Administracion/GetPrecioActivoCombustible', function (r) {
-        if (r.IsSuccess) {
-            $('#PrecioCombustibleActual').val(r.Response.precio);
-        }
-    });
-}
+                // Normalizar respuesta
+                if (Array.isArray(r.Response)) {
+                    dataArray = r.Response;
+                } else if (r.Response.id) {
+                    dataArray = [r.Response];
+                }
 
-// ================= INIT =================
-$(document).ready(function () {
+                // FILTRO MEJORADO: Solo mostrar registros que tienen dirección y al menos un campo con valor
+                const filteredData = dataArray.filter(function (record) {
+                    // Validar que tenga dirección
+                    if (!record.direccion || record.direccion === '') {
+                        return false;
+                    }
 
-    initMoneda('p-mat-m3');
-    initMoneda('p-flete-m3');
-    initMoneda('mano-obra');
-    initMoneda('casetas');
+                    // Validar que tenga al menos un campo con valor significativo
+                    const tieneCamposValidos = (
+                        (record.p_Mta_M3 && record.p_Mta_M3 > 0) ||
+                        (record.p_Flete_M3 && record.p_Flete_M3 > 0) ||
+                        (record.kM_Cargado && record.kM_Cargado > 0) ||
+                        (record.kM_Basico && record.kM_Basico > 0) ||
+                        (record.carga_Disel && record.carga_Disel > 0) ||
+                        (record.casetas && record.casetas > 0) ||
+                        (record.mano_De_Obra && record.mano_De_Obra > 0) ||
+                        record.precioActivo === true
+                    );
 
-    $('#km-cargado, #km-basio, #carga-diesel').on('input', debounceCalculo);
+                    return tieneCamposValidos;
+                });
 
-    DropListDirecciones();
-    GetPrecioActivoCombustible();
+                console.log(`Total registros: ${dataArray.length}, Filtrados: ${filteredData.length}`); // Para depuración
 
-    const clienteId = $('#clienteId').val();
-
-    if (clienteId) {
-        SearchDireccionesCliente(clienteId);
-
-        setTimeout(function () {
-            const $ddl = $('#ddlDirecciones');
-            if ($ddl.find('option').length > 1) {
-                $ddl.prop('selectedIndex', 1).trigger('change');
+                cargarDataTable(filteredData);
+            } else {
+                cargarDataTable([]);
             }
-        }, 500);
+        });
     }
-});
+
+    function cargarDataTable(data) {
+        if ($.fn.DataTable.isDataTable('#tblDireccionMaterial')) {
+            $('#tblDireccionMaterial').DataTable().destroy();
+        }
+
+        $('#tblDireccionMaterial').DataTable({
+            data: data,
+            columns: [
+                {
+                    title: 'ID',
+                    data: 'id',
+                    defaultContent: '-',
+                    visible: false
+                },
+                {
+                    title: '<i class="fa fa-map-marker"></i> Dirección',
+                    data: 'direccion',
+                    defaultContent: '-'
+                },
+                {
+                    title: '<i class="fa fa-cube"></i> Material',
+                    data: 'tipoMaterial.nombreTipoMaterial',
+                    defaultContent: '-'
+                },
+                {
+                    title: '<i class="fa fa-user"></i> Cliente',
+                    data: 'cliente.nombre',
+                    defaultContent: '-'
+                },
+                {
+                    title: '<i class="fa fa-dollar"></i> Precio Material M3',
+                    data: 'p_Mta_M3',
+                    render: d => formatCurrency(d || 0),
+                    className: 'text-end'
+                },
+                {
+                    title: '<i class="fa fa-truck"></i> Precio Flete M3',
+                    data: 'p_Flete_M3',
+                    render: d => formatCurrency(d || 0),
+                    className: 'text-end'
+                },
+                {
+                    title: '<i class="fa fa-calculator"></i> Precio M3',
+                    data: 'precio_M3',
+                    render: d => formatCurrency(d || 0),
+                    className: 'text-end'
+                },
+                {
+                    title: '<i class="fa fa-road"></i> KM Cargado',
+                    data: 'kM_Cargado',
+                    render: d => d ? d.toFixed(2) : '0.00',
+                    className: 'text-end'
+                },
+                {
+                    title: '<i class="fa fa-road"></i> KM Vacío',
+                    data: 'kM_Basico',
+                    render: d => d ? d.toFixed(2) : '0.00',
+                    className: 'text-end'
+                },
+                {
+                    title: '<i class="fa fa-arrows-h"></i> Total KM',
+                    data: 'total_KM_Recorridos',
+                    render: d => d ? d.toFixed(2) : '0.00',
+                    className: 'text-end'
+                },
+                {
+                    title: '<i class="fa fa-tachometer"></i> Carga Diesel (Lt)',
+                    data: 'carga_Disel',
+                    render: d => d ? d.toFixed(2) : '0.00',
+                    className: 'text-end'
+                },
+                {
+                    title: '<i class="fa fa-fire"></i> Total Diesel',
+                    data: 'total_Diesel_Precio_XLT',
+                    render: d => formatCurrency(d || 0),
+                    className: 'text-end'
+                },
+                {
+                    title: '<i class="fa fa-ticket"></i> Casetas',
+                    data: 'casetas',
+                    render: d => formatCurrency(d || 0),
+                    className: 'text-end'
+                },
+                {
+                    title: '<i class="fa fa-wrench"></i> Mano de Obra',
+                    data: 'mano_De_Obra',
+                    render: d => formatCurrency(d || 0),
+                    className: 'text-end'
+                },
+                {
+                    title: '<i class="fa fa-cubes"></i> Material Viajes',
+                    data: 'material_Viajes_De_30M3',
+                    render: d => formatCurrency(d || 0),
+                    className: 'text-end'
+                },
+                {
+                    title: '<i class="fa fa-money"></i> Subtotal Ingreso',
+                    data: 'subtotal_Ingreso_Viajes_M3',
+                    render: d => formatCurrency(d || 0),
+                    className: 'text-end'
+                },
+                {
+                    title: '<i class="fa fa-credit-card"></i> Total Gastos',
+                    data: 'total_Gastos',
+                    render: d => formatCurrency(d || 0),
+                    className: 'text-end'
+                },
+                {
+                    title: '<i class="fa fa-check-circle"></i> Precio Activo',
+                    data: 'precioActivo',
+                    render: d => d ? '<span class="label label-success"><i class="fa fa-check"></i> Activo</span>' : '<span class="label label-default"><i class="fa fa-minus"></i> Inactivo</span>',
+                    className: 'text-center',
+                    orderable: true
+                },
+                {
+                    title: '<i class="fa fa-cogs"></i> Acciones',
+                    data: null,
+                    render: (d, t, row) => `
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button class="btn btn-primary btnEditarPrecioDireccion" data-id="${row.id}" title="Editar">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btnEliminarPrecioDireccion" data-id="${row.id}" title="Eliminar">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                `,
+                    orderable: false,
+                    className: 'text-center',
+                    width: '80px'
+                }
+            ],
+            language: {
+                "decimal": ".",
+                "thousands": ",",
+                "processing": '<i class="fa fa-spinner fa-spin"></i> Procesando...',
+                "lengthMenu": '<i class="fa fa-list"></i> Mostrar _MENU_ registros',
+                "zeroRecords": '<i class="fa fa-info-circle"></i> No se encontraron resultados',
+                "emptyTable": '<i class="fa fa-database"></i> No hay datos disponibles',
+                "info": '<i class="fa fa-info-circle"></i> Mostrando _START_ a _END_ de _TOTAL_ registros',
+                "infoEmpty": '<i class="fa fa-info-circle"></i> Mostrando 0 a 0 de 0 registros',
+                "infoFiltered": '<i class="fa fa-filter"></i> (filtrado de _MAX_ registros totales)',
+                "search": '<i class="fa fa-search"></i> Buscar:',
+                "paginate": {
+                    "first": '<i class="fa fa-fast-backward"></i>',
+                    "last": '<i class="fa fa-fast-forward"></i>',
+                    "next": '<i class="fa fa-forward"></i>',
+                    "previous": '<i class="fa fa-backward"></i>'
+                },
+                "aria": {
+                    "sortAscending": ": activar para ordenar ascendente",
+                    "sortDescending": ": activar para ordenar descendente"
+                }
+            },
+            responsive: true,
+            scrollX: true,
+            autoWidth: false,
+            pageLength: 10,
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
+            order: [[0, 'asc']],
+            columnDefs: [
+                { className: 'text-center', targets: [16] }, // Precio Activo
+                { className: 'text-nowrap', targets: [17] }  // Acciones
+            ]
+        });
+    }
+
+    // ================= MANEJADORES =================
+    $(document).on('click', '.btnEliminarPrecioDireccion', function () {
+        const id = $(this).data('id');
+        const direccionActual = $("#ddlDirecciones").val();
+
+        if (!direccionActual) {
+            swal({
+                title: "Error",
+                text: "No hay dirección seleccionada",
+                type: "error",
+                confirmButtonText: "Aceptar"
+            });
+            return;
+        }
+
+        swal({
+            title: '¿Estás seguro?',
+            text: "¿Desea eliminar esta configuración?",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }, function (isConfirmed) {
+            if (isConfirmed) {
+                const url = `/Administracion/DeletTipoMaterial?Id=${id}`;
+
+                GetMVC(url, function (r) {
+                    if (r.IsSuccess) {
+                        swal({
+                            title: "¡Éxito!",
+                            text: "Configuración eliminada correctamente",
+                            type: "success",
+                            confirmButtonText: "OK"
+                        }, function () {
+                            CargarTablaPorDireccion(direccionActual);
+                            CargarConfiguracionPorDireccion(direccionActual);
+                        });
+                    } else {
+                        swal({
+                            title: "Error",
+                            text: r.ErrorMessage || "Error al eliminar",
+                            type: "error",
+                            confirmButtonText: "Aceptar"
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).on('click', '.btnEditarPrecioDireccion', function () {
+        // Obtener el ID directamente del botón
+        const id = $(this).data('id');
+
+        if (!id) {
+            swal({
+                title: "Error",
+                text: "ID no válido",
+                type: "error",
+                confirmButtonText: "Aceptar"
+            });
+            return;
+        }
+
+        // Obtener la dirección actual
+        const idDireccion = $("#ddlDirecciones").val();
+
+        if (!idDireccion) {
+            swal({
+                title: "Error",
+                text: "No hay dirección seleccionada",
+                type: "error",
+                confirmButtonText: "Aceptar"
+            });
+            return;
+        }
+
+        // Hacer una petición para obtener los datos completos
+        const clienteId = $('#clienteId').val();
+        const materialId = $('#materialId').val();
+        const url = `/Administracion/ClienteTipoMaterialByDireccionMaterialAndCliente?id=${idDireccion}&idCliente=${clienteId}&idMaterial=${materialId}`;
+
+        GetMVC(url, function (r) {
+            if (r.IsSuccess && r.Response) {
+                let dataArray = [];
+
+                if (Array.isArray(r.Response)) {
+                    dataArray = r.Response;
+                } else if (r.Response.id) {
+                    dataArray = [r.Response];
+                }
+
+                // Buscar el registro por ID
+                const data = dataArray.find(item => item.id == id);
+
+                if (!data) {
+                    swal({
+                        title: "Error",
+                        text: `No se encontró el registro con ID: ${id}`,
+                        type: "error",
+                        confirmButtonText: "Aceptar"
+                    });
+                    return;
+                }
+
+                // Precargar el formulario
+                $('#id').val(data.id || 0);
+
+                // Precargar campos de moneda
+                $('#p-mat-m3').data('raw-value', data.p_Mta_M3 || 0).val(formatCurrency(data.p_Mta_M3 || 0));
+                $('#p-flete-m3').data('raw-value', data.p_Flete_M3 || 0).val(formatCurrency(data.p_Flete_M3 || 0));
+                $('#mano-obra').data('raw-value', data.mano_De_Obra || 0).val(formatCurrency(data.mano_De_Obra || 0));
+                $('#casetas').data('raw-value', data.casetas || 0).val(formatCurrency(data.casetas || 0));
+
+                // Precargar campos numéricos
+                $('#km-cargado').val(data.kM_Cargado != null ? data.kM_Cargado : '');
+                $('#km-basio').val(data.kM_Basico != null ? data.kM_Basico : '');
+                $('#carga-diesel').val(data.carga_Disel != null ? data.carga_Disel : '');
+
+                // Precargar checkbox
+                $('#precioActual').prop('checked', data.precioActivo === true || data.precioActivo === 1);
+
+                // Ejecutar cálculos
+                calcular();
+
+            } else {
+                swal({
+                    title: "Error",
+                    text: r.ErrorMessage || "Error al cargar los datos",
+                    type: "error",
+                    confirmButtonText: "Aceptar"
+                });
+            }
+        });
+    });
+
+    // ================= DIRECCIONES =================
+    function configurarDropListDirecciones() {
+        $('#ddlDirecciones').off('change').on('change', function () {
+            const id = $(this).val();
+
+            if (id && id !== '') {
+                CargarConfiguracionPorDireccion(id);
+                CargarTablaPorDireccion(id);
+            } else {
+                limpiarFormulario();
+                cargarDataTable([]);
+            }
+        });
+    }
+
+    // ================= PRECIO COMBUSTIBLE =================
+    function GetPrecioActivoCombustible() {
+        GetMVC('/Administracion/GetPrecioActivoCombustible', function (r) {
+            if (r.IsSuccess && r.Response) {
+                $('#PrecioCombustibleActual').val(r.Response.precio || 0);
+                calcular();
+            }
+        });
+    }
+
+    // ================= INIT =================
+    $(document).ready(function () {
+        initMoneda('p-mat-m3');
+        initMoneda('p-flete-m3');
+        initMoneda('mano-obra');
+        initMoneda('casetas');
+
+        $('#km-cargado, #km-basio, #carga-diesel').on('input', debounceCalculo);
+
+        configurarDropListDirecciones();
+        GetPrecioActivoCombustible();
+
+        const clienteId = $('#clienteId').val();
+
+        if (clienteId && clienteId !== '') {
+            if (typeof CargarDireccionesEnSelect === 'function') {
+                CargarDireccionesEnSelect(clienteId);
+            } else {
+                console.error('CargarDireccionesEnSelect no está definida');
+            }
+
+            setTimeout(function () {
+                const $ddl = $('#ddlDirecciones');
+                if ($ddl.find('option').length > 1) {
+                    $ddl.prop('selectedIndex', 1).trigger('change');
+                }
+            }, 500);
+        }
+    });
 </script>

@@ -208,88 +208,61 @@ function AgregarMaterialACliente(clienteId, materialId) {
     });
 }
 
-function AgregarPreciosMaterialACliente() {
-    // Nuevos Campos
-    var idDireccion = $("#idDireccion").val();
-    var direccion = $("#direccion").val();
-    var precioActivo = $("#precioActual").is(":checked"); // CORRECCIÓN AQUÍ
-    var id = $("#id").val();
-    var createdBy = $("#createdBy").val();
-    var updatedBy = $("#updatedBy").val();
-    var createdDt = $("#createdDt").val();
-    var updatedDt = $("#updatedDt").val();
+//function AgregarPreciosMaterialACliente() {
 
-    // Recoger los valores de los campos de la vista parcial
-    var clienteId = $("#clienteId").val();
-    var materialId = $("#materialId").val();
-    var pMatM3 = parseFloat($("#p-mat-m3").val()) || 0;
-    var pFleteM3 = parseFloat($("#p-flete-m3").val()) || 0;
-    var precioM3 = parseFloat($("#precio-m3").val()) || 0;
-    var kmCargado = parseFloat($("#km-cargado").val()) || 0;
-    var kmBasio = parseFloat($("#km-basio").val()) || 0;
-    var totalKmRecorridos = parseFloat($("#total-km-recorridos").val()) || 0;
-    var cargaDiesel = parseFloat($("#carga-diesel").val()) || 0;
-    var totalDiesel = parseFloat($("#total-diesel").val()) || 0;
-    var casetas = parseFloat($("#casetas").val()) || 0;
-    var manoObra = parseFloat($("#mano-obra").val()) || 0;
-    var materialViajes = parseFloat($("#material-viajes").val()) || 0;
-    var totalGastos = parseFloat($("#total-gastos").val()) || 0;
-    var subtotalIngreso = parseFloat($("#subtotal-ingreso").val()) || 0;
+//    const idDireccion = $("#idDireccion").val();
+//    const direccion = $("#direccion").val();
+//    const precioActivo = $("#precioActual").is(":checked");
 
-    // Crear el objeto con los datos
-    var parametro = {
-        Id: id,
-        Cliente: {
-            Id: clienteId
-        },
-        TipoMaterial: {
-            Id: materialId
-        },
-        Estatus: true,
-        P_Mta_M3: pMatM3,
-        P_Flete_M3: pFleteM3,
-        Precio_M3: precioM3,
-        KM_Cargado: kmCargado,
-        KM_Basico: kmBasio,
-        Total_KM_Recorridos: totalKmRecorridos,
-        Carga_Disel: cargaDiesel,
-        Total_Diesel_Precio_XLT: totalDiesel,
-        Casetas: casetas,
-        Mano_De_Obra: manoObra,
-        Material_Viajes_De_30M3: materialViajes,
-        Total_Gastos: totalGastos,
-        Subtotal_Ingreso_Viajes_M3: subtotalIngreso,
-        IdDireccion: idDireccion,
-        Direccion: direccion,
-        PrecioActivo: precioActivo,
-        CreatedBy: createdBy,
-        CreatedDt: createdDt,
-        UpdatedBy: updatedBy,
-        UpdatedDt: updatedDt
-    };
+//    const clienteId = $("#clienteId").val();
+//    const materialId = $("#materialId").val();
+//    const id = $("#id").val();
 
-    // Llamar al método SaveOrUpdateClienteTipoMaterial a través de PostMVC
-    PostMVC('/Administracion/SaveOrUpdateClienteTipoMaterial', parametro, function (r) {
-        console.log(parametro);
-        if (r.IsSuccess) {
-            swal({
-                title: "¡Éxito!",
-                text: "Material Agregado",
-                type: "success",
-                confirmButtonText: "OK"
-            }, function () {
-                window.location.replace('/Administracion/Clientes/' + clienteId);
-            });
-        } else {
-            swal({
-                title: 'Error',
-                text: 'Error al guardar los precios: ' + r.ErrorMessage,
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
-            });
-        }
-    });
-}
+//    // ⚠️ usar los RAW VALUES, no el texto formateado
+//    const pMatM3 = $("#p-mat-m3").data("raw-value") || 0;
+//    const pFleteM3 = $("#p-flete-m3").data("raw-value") || 0;
+//    const manoObra = $("#mano-obra").data("raw-value") || 0;
+//    const casetas = $("#casetas").data("raw-value") || 0;
+
+//    const kmCargado = $("#km-cargado").val() || 0;
+//    const kmBasio = $("#km-basio").val() || 0;
+//    const cargaDiesel = $("#carga-diesel").val() || 0;
+
+//    const url =
+//        `/Administracion/SaveOrUpdateClienteTipoMaterial` +
+//        `?Id=${id}` +
+//        `&ClienteId=${clienteId}` +
+//        `&MaterialId=${materialId}` +
+//        `&IdDireccion=${idDireccion}` +
+//        `&Direccion=${encodeURIComponent(direccion)}` +
+//        `&PMatM3=${pMatM3}` +
+//        `&PFleteM3=${pFleteM3}` +
+//        `&KM_Cargado=${kmCargado}` +
+//        `&KM_Basico=${kmBasio}` +
+//        `&CargaDiesel=${cargaDiesel}` +
+//        `&ManoObra=${manoObra}` +
+//        `&Casetas=${casetas}` +
+//        `&PrecioActivo=${precioActivo}`;
+
+//    GetMVC(url, function (r) {
+
+//        if (r.IsSuccess) {
+
+//            swal({
+//                title: "¡Éxito!",
+//                text: "Configuración guardada correctamente",
+//                type: "success"
+//            }, function () {
+
+//                ClienteTipoMaterialByDireccionMaterialAndCliente(idDireccion);
+//            });
+
+//        } else {
+//            swal("Error", r.ErrorMessage, "error");
+//        }
+
+//    });
+//}
 
 function EliminarMaterialDelCliente(clienteId, materialId) {
     var parametros = {
@@ -654,9 +627,9 @@ function SearchDireccionesCliente(clienteId) {
                     data: null,
                     title: 'Acciones',
                     render: function (data, type, row) {
-                        return '<button type="button" class="btn btn-sm btn-primary btnEditar" data-id="' + row.id + '">' +
+                        return '<button type="button" class="btn btn-sm btn-primary btnEditarDireccion" data-id="' + row.id + '">' +
                             '<i class="fa fa-edit"></i> Editar</button> ' +
-                            '<button type="button" class="btn btn-sm btn-danger btnEliminar" data-id="' + row.id + '">' +
+                            '<button type="button" class="btn btn-sm btn-danger btnEliminarDireccion" data-id="' + row.id + '">' +
                             '<i class="fa fa-trash"></i> Eliminar</button>';
                     }
                 }
@@ -687,7 +660,7 @@ $(document).on('click', '.btnEliminarTipoMaterial', function () {
     });
 });
 
-$(document).on('click', '.btnEliminar', function () {
+$(document).on('click', '.btnEliminarDireccion', function () {
 
     const id = $(this).data('id');
 
@@ -702,23 +675,18 @@ $(document).on('click', '.btnEliminar', function () {
         if (!isConfirmed) return;
 
         PostMVC('/Administracion/DeletDireccionCliente', { Id: id }, function (r) {
-
             if (r.IsSuccess) {
                 const clienteId = $('#idCliente').val();
                 SearchDireccionesCliente(clienteId);
             }
         });
-
     });
 });
 
-// Modificación en el evento de edición
-$(document).on('click', '.btnEditar', function () {
+$(document).on('click', '.btnEditarDireccion', function () {
     const idDireccion = $(this).data('id');
     const idCliente = $('#idCliente').val();
     const nombreCliente = $('#nombreCliente').val();
-
-    // Abrir modal en modo edición
     AbrirModalDirecciones(idCliente, nombreCliente, idDireccion);
 });
 

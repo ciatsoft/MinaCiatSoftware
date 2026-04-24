@@ -264,7 +264,7 @@
             ordering: true,
             destroy: true,
             columns: [
-                { data: 'id', title: 'ID', visible: true },
+                { data: 'id', title: 'ID', visible: false },
                 {
                     data: 'precio',
                     title: 'Precio',
@@ -289,12 +289,10 @@
                     title: 'Acciones',
                     orderable: false,
                     render: function (data, type, row) {
-                        return '<div class="btn-group btn-group-xs">' +
-                            '<button class="btn btn-sm btn-primary" style="color: white !important;" onclick="EditarPrecioCombustible(' + row.id + ')">' +
-                            '<i class="fa fa-edit" style="color: white !important;"></i> Editar</button> ' +
-                            '<button class="btn btn-sm btn-danger" style="color: white !important;" onclick="EliminarPrecioCombustible(' + row.id + ')">' +
-                            '<i class="fa fa-trash" style="color: white !important;"></i> Eliminar</button>' +
-                            '</div>';
+                        return '<button class="btn btn-sm btn-primary btnEditarCombustible" data-id="' + row.id + '">' +
+                            '<i class="fa fa-edit"></i> Editar</button> ' +
+                            '<button class="btn btn-sm btn-danger btnEliminarCombustible" data-id="' + row.id + '">' +
+                            '<i class="fa fa-trash"></i> Eliminar</button>';
                     }
                 }
             ],
@@ -411,6 +409,16 @@
             });
         }, 300);
     }
+
+    $(document).on('click', '.btnEliminarCombustible', function () {
+        const id = $(this).data('id');
+        EliminarPrecioCombustible(id);
+    });
+
+    $(document).on('click', '.btnEditarCombustible', function () {
+        const id = $(this).data('id');
+        EditarPrecioCombustible(id);
+    });
 
     function EliminarPrecioCombustible(id) {
         swal({
