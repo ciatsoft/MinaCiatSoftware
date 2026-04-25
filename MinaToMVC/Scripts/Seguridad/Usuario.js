@@ -1,79 +1,190 @@
 ﻿$(document).ready(function () {
-    $("#frmUsuario").validate({
-        rules: {
-            "nombre": "required",
-            "username": "required",
-            "email": "required",
-            "password": "required",
+    // PREVENIR AUTOCOMPLETADO DEL NAVEGADOR
+    // Agregar atributos para evitar autocompletado
+    $('#password').attr('autocomplete', 'new-password');
+
+    // Limpiar campo de contraseña al cargar la página
+    $('#password').val('');
+
+    // Si es edición, permitir modificar la contraseña pero sin mostrar la actual
+    if (typeof UsuariosJson != 'undefined' && UsuariosJson.Id != 0 && UsuariosJson.Id != null) {
+        // En modo edición, limpiar el campo de contraseña
+        $('#password').val('');
+        $('#password').attr('placeholder', 'Dejar en blanco para mantener la contraseña actual');
+    }
+
+    // TOGGLE PARA MOSTRAR/OCULTAR CONTRASEÑA
+    $('#togglePassword').on('click', function () {
+        var passwordField = $('#password');
+        var icon = $(this).find('i');
+
+        if (passwordField.attr('type') === 'password') {
+            passwordField.attr('type', 'text');
+            icon.removeClass('fa-eye').addClass('fa-eye-slash');
+        } else {
+            passwordField.attr('type', 'password');
+            icon.removeClass('fa-eye-slash').addClass('fa-eye');
         }
     });
 
-    // Inicialización de la tabla de roles
-    $("#tblUsuarios").dataTable({
+    // RESTANTE DE TU CÓDIGO EXISTENTE...
+    $("#frmUsuario").validate({
+        rules: {
+            nombre: "required",
+            username: "required",
+            email: {
+                required: true,
+                email: true
+            },
+            password: {
+                required: function () {
+                    // La contraseña es obligatoria solo si es un nuevo usuario
+                    var id = $("#id").val();
+                    return !id || id === '0' || id === '';
+                }
+            }
+        },
+        messages: {
+            nombre: "Por favor ingrese el nombre",
+            username: "Por favor ingrese el username",
+            email: {
+                required: "Por favor ingrese el correo electrónico",
+                email: "Por favor ingrese un correo electrónico válido"
+            },
+            password: "Por favor ingrese la contraseña",
+        },
+        errorElement: "span",
+        errorClass: "help-block",
+        highlight: function (element) {
+            $(element).closest('.form-group').addClass('has-error');
+        },
+        unhighlight: function (element) {
+            $(element).closest('.form-group').removeClass('has-error');
+        }
+    });
+
+    $("#frmUsuario").validate({
+        rules: {
+            nombre: "required",
+            username: "required",
+            email: {
+                required: true,
+                email: true
+            },
+            password: "required",
+        },
+        messages: {
+            nombre: "Por favor ingrese el nombre",
+            username: "Por favor ingrese el username",
+            email: {
+                required: "Por favor ingrese el correo electrónico",
+                email: "Por favor ingrese un correo electrónico válido"
+            },
+            password: "Por favor ingrese la contraseña",
+        },
+        errorElement: "span",
+        errorClass: "help-block",
+        highlight: function (element) {
+            $(element).closest('.form-group').addClass('has-error');
+        },
+        unhighlight: function (element) {
+            $(element).closest('.form-group').removeClass('has-error');
+        }
+    });
+
+    // Inicialización de la tabla
+    var table = $("#tblUsuarios").DataTable({
         processing: true,
         destroy: true,
         paging: true,
         searching: true,
+        responsive: true,
+        autoWidth: false,
+        pageLength: 10,
+        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
         columns: [
-            { data: "id", "visible": false, title: "Id" },
-            { data: "userName", title: "UserName" },
-            { data: "password", title: "Contraseña", "visible": false },
-            { data: "nombre", title: "Nombre" },
-            { data: "email", title: "Correo" },
+            { data: "id", visible: false, title: "Id" },
+            { data: "userName", title: "UserName", className: "text-center" },
+            { data: "password", title: "Contraseña", visible: false },
+            { data: "nombre", title: "Nombre", className: "text-center" },
+            { data: "email", title: "Correo", className: "text-center" },
             {
                 data: "estatus",
+                visible:false,
                 title: "Estatus",
+                className: "text-center",
                 render: function (data, type, row) {
-                    return data == 1 ? "Activo" : "Inactivo";
+                    if (data == 1) {
+                        return '<span class="label label-success"><i class="fa fa-check"></i> Activo</span>';
+                    } else {
+                        return '<span class="label label-danger"><i class="fa fa-times"></i> Inactivo</span>';
+                    }
                 }
             },
             {
-                data: "id", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarUsuario(' + data + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarUsuario(' + data + ', this)" />'; // 'this' se pasa para obtener la fila
+                data: "id",
+                title: "Acciones",
+                className: "text-center",
+                orderable: false,
+                render: function (data) {
+                    return '<button class="btn btn-primary btn-sm btnEditarUsuario" data-id="' + data + '" title="Editar">' +
+                        '<i class="fa fa-edit"></i> Editar</button> ' +
+                        '<button class="btn btn-danger btn-sm btnEliminarUsuario" data-id="' + data + '" title="Eliminar">' +
+                        '<i class="fa fa-trash"></i> Eliminar</button>';
                 }
             }
-        ]
-        ,
+        ],
         language: {
-            "decimal": ",",
-            "thousands": ".",
-            "processing": "Procesando...",
-            "lengthMenu": "Mostrar _MENU_ entradas",
-            "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningún dato disponible en esta tabla",
-            "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-            "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-            "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-            "search": "Buscar:",
-            "loadingRecords": "Cargando...",
+            "decimal": ".",
+            "thousands": ",",
+            "processing": '<i class="fa fa-spinner fa-spin"></i> Procesando...',
+            "lengthMenu": '<i class="fa fa-list"></i> Mostrar _MENU_ registros',
+            "zeroRecords": '<i class="fa fa-info-circle"></i> No se encontraron resultados',
+            "emptyTable": '<i class="fa fa-database"></i> No hay datos disponibles',
+            "info": '<i class="fa fa-info-circle"></i> Mostrando _START_ a _END_ de _TOTAL_ registros',
+            "infoEmpty": '<i class="fa fa-info-circle"></i> Mostrando 0 a 0 de 0 registros',
+            "infoFiltered": '<i class="fa fa-filter"></i> (filtrado de _MAX_ registros totales)',
+            "search": '<i class="fa fa-search"></i> Buscar:',
             "paginate": {
-                "first": "Primero",
-                "last": "Último",
-                "next": "Siguiente",
-                "previous": "Anterior"
+                "first": '<i class="fa fa-fast-backward"></i> Primero',
+                "last": '<i class="fa fa-fast-forward"></i> Último',
+                "next": '<i class="fa fa-forward"></i> Siguiente',
+                "previous": '<i class="fa fa-backward"></i> Anterior'
             },
             "aria": {
-                "sortAscending": ": activar para ordenar la columna de manera ascendente",
-                "sortDescending": ": activar para ordenar la columna de manera descendente"
+                "sortAscending": ": activar para ordenar ascendente",
+                "sortDescending": ": activar para ordenar descendente"
             }
         }
     });
+
     GetAllUsuario();
 
-    if (typeof usuarioJson.Id != 0) {
+    if (typeof usuarioJson != 'undefined' && usuarioJson.Id != 0) {
         $("#id").val(usuarioJson.Id);
         $("#nombre").val(usuarioJson.nombre);
-        $("#username").val(usuarioJson.username);
+        $("#username").val(usuarioJson.userName);
         $("#email").val(usuarioJson.email);
         $("#password").val(usuarioJson.password);
     }
+
+    // Evento para editar usuario
+    $(document).on('click', '.btnEditarUsuario', function () {
+        var id = $(this).data('id');
+        EditarUsuario(id);
+    });
+
+    // Evento para eliminar usuario
+    $(document).on('click', '.btnEliminarUsuario', function () {
+        var id = $(this).data('id');
+        EliminarUsuario(id);
+    });
 });
 
 function SaveOrUpdateUsuario() {
     if ($("#frmUsuario").valid()) {
         var parametro = {
-            Id: $("#id").val(),
+            Id: $("#id").val() || 0,
             UserName: $("#username").val(),
             Password: $("#password").val(),
             Nombre: $("#nombre").val(),
@@ -84,32 +195,36 @@ function SaveOrUpdateUsuario() {
             UpdatedBy: $("#updatedBy").val(),
             UpdatedDt: $("#updatedDt").val()
         };
-        // Llamada al servidor para guardar o actualizar los datos
         PostMVC('/Administracion/SaveOrUpdateUsuario', parametro, function (r) {
             if (r.IsSuccess) {
-                // Mostrar una alerta de éxito con SweetAlert
-                Swal.fire({
-                    title: "Registro guardado!",
+                swal({
+                    title: "¡Éxito!",
                     text: "El usuario se ha guardado correctamente.",
-                    icon: "success",
-                    confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = '/Administracion/Usuarios';
-                    }
+                    type: "success",
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#337ab7'
+                }, function () {
+                    window.location.href = '/Administracion/Usuarios';
                 });
             } else {
-                Swal.fire({
-                    title: "Registro guardado!",
+                swal({
+                    title: "¡Éxito!",
                     text: "El usuario se ha guardado correctamente.",
-                    icon: "success",
-                    confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = '/Administracion/Usuarios';
-                    }
+                    type: "success",
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#337ab7'
+                }, function () {
+                    window.location.href = '/Administracion/Usuarios';
                 });
             }
+        });
+    } else {
+        swal({
+            title: "Validación",
+            text: "Por favor complete todos los campos requeridos.",
+            type: "warning",
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#f0ad4e'
         });
     }
 }
@@ -119,57 +234,103 @@ function EditarUsuario(id) {
 }
 
 function EliminarUsuario(id) {
-    PostMVC('/Administracion/DeleteUsuario', { id: id }, function (r) {
-        if (r.IsSuccess) {
-            Swal.fire({
-                title: "Registro Eliminado!",
-                text: "El usuario se ha eliminado correctamente.",
-                icon: "success",
-                confirmButtonText: 'OK'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '/Administracion/Usuarios';
+    swal({
+        title: "¿Estás seguro?",
+        text: "¿Deseas eliminar este usuario? Esta acción no se puede deshacer.",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d9534f",
+        cancelButtonColor: "#5bc0de",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+        closeOnConfirm: true
+    }, function (isConfirmed) {
+        if (isConfirmed) {
+            window.location.href = '/Administracion/Usuarios';
+            PostMVC('/Administracion/DeleteUsuario', { id: id }, function (r) {
+                if (r.IsSuccess) {
+                    swal({
+                        title: "¡Eliminado!",
+                        text: "El usuario se ha eliminado correctamente.",
+                        type: "success",
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#337ab7'
+                    }, function () {
+                        window.location.href = '/Administracion/Usuarios';
+                    });
+                } else {
+                    swal({
+                        title: "¡Eliminado!",
+                        text: "El usuario se ha eliminado correctamente.",
+                        type: "success",
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#337ab7'
+                    }, function () {
+                        window.location.href = '/Administracion/Usuarios';
+                    });
                 }
             });
-        } else {
-            Swal.fire("Error", "No se pudo eliminar el usuario.", "error");
         }
     });
 }
 
 function GetAllUsuario() {
     GetMVC("/Administracion/GetAllUsuario", function (r) {
-        if (r.IsSuccess) {
+        if (r.IsSuccess && r.Response) {
             MapingPropertiesDataTable("tblUsuarios", r.Response);
+        } else if (r.Response === null || r.Response.length === 0) {
+            // Limpiar tabla si no hay datos
+            var table = $("#tblUsuarios").DataTable();
+            table.clear().draw();
         } else {
-            alert("Error al cargar los roles: " + r.ErrorMessage);
+            swal({
+                title: "Error",
+                text: "Error al cargar los usuarios: " + (r.ErrorMessage || "Error desconocido"),
+                type: "error",
+                confirmButtonText: "Aceptar",
+                confirmButtonColor: '#d9534f'
+            });
         }
     });
 }
 
 // Función para limpiar el formulario
 function LimpiarFormulario() {
-    $("#txtUsuario").val('');
-    $("#txtNombreUsuario").val('');
-    $("#txtPassword").val('');
-    $("#txtNombre").val('');
-    $("#txtEmail").val('');
-    $("#chbEstatus").prop('checked', false);
+    $("#id").val('');
+    $("#nombre").val('');
+    $("#username").val('');
+    $("#password").val('');
+    $("#email").val('');
+    $("#frmUsuario").validate().resetForm();
+    $('.form-group').removeClass('has-error');
 }
 
-document.getElementById("btnPermisos").addEventListener("click", function () {
+// Evento para permisos
+$("#btnPermisos").on('click', function () {
     var id = $("#id").val();
-    AbrirModalPermisosUsuario(id);
+    if (id && id !== '0') {
+        AbrirModalPermisosUsuario(id);
+    } else {
+        swal({
+            title: "Advertencia",
+            text: "Primero debe guardar el usuario antes de asignar permisos.",
+            type: "warning",
+            confirmButtonText: "Aceptar",
+            confirmButtonColor: '#f0ad4e'
+        });
+    }
 });
 
 function AbrirModalPermisosUsuario(id) {
-    $("#genericModal").removeData('b s.modal');
+    $("#genericModal").removeData('modal');
     $("#boddyGeericModal").empty();
-
-    $("#titleGenerciModal").text("Roles para Usuario");
+    $("#titleGenerciModal").html('<i class="fa fa-key"></i> Roles para Usuario');
 
     $("#boddyGeericModal").load("/Administracion/AbrirModalPermisosUsuario/" + id, function () {
+        $("#genericModal").modal({
+            backdrop: 'static',
+            keyboard: false
+        });
         $("#genericModal").modal("show");
     });
 }
-
