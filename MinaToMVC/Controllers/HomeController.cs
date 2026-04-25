@@ -81,10 +81,19 @@ namespace MinaToMVC.Controllers
         #region Partial View
         public async Task<ActionResult> PartialMenus()
         {
-            var permisosResponse = await httpClientConnection.GetPermisosUsuarioByUsuarioid(SessionHelper.GetSessionUser().UserID);
-            var permisos = JsonConvert.DeserializeObject<List<Permisos>>(permisosResponse.Response.ToString());
+            try
+            {
+                var permisosResponse = await httpClientConnection.GetPermisosUsuarioByUsuarioid(SessionHelper.GetSessionUser().UserID);
+                var permisos = JsonConvert.DeserializeObject<List<Permisos>>(permisosResponse.Response.ToString());
 
-            return PartialView(permisos);
+                return PartialView(permisos);
+            }
+            catch (Exception ex)
+            {
+                // Log del error
+                System.Diagnostics.Debug.WriteLine("Error en PartialMenus: " + ex.Message);
+                return PartialView(new List<Permisos>()); // Retorna lista vacía para evitar error
+            }
         }
         #endregion
 

@@ -182,51 +182,36 @@
 });
 
 function SaveOrUpdateUsuario() {
-    if ($("#frmUsuario").valid()) {
-        var parametro = {
-            Id: $("#id").val() || 0,
-            UserName: $("#username").val(),
-            Password: $("#password").val(),
-            Nombre: $("#nombre").val(),
-            Email: $("#email").val(),
-            Estatus: 1,
-            CreatedBy: $("#createdBy").val(),
-            CreatedDt: $("#createdDt").val(),
-            UpdatedBy: $("#updatedBy").val(),
-            UpdatedDt: $("#updatedDt").val()
-        };
-        PostMVC('/Administracion/SaveOrUpdateUsuario', parametro, function (r) {
-            if (r.IsSuccess) {
-                swal({
-                    title: "¡Éxito!",
-                    text: "El usuario se ha guardado correctamente.",
-                    type: "success",
-                    confirmButtonText: 'Aceptar',
-                    confirmButtonColor: '#337ab7'
-                }, function () {
-                    window.location.href = '/Administracion/Usuarios';
-                });
-            } else {
-                swal({
-                    title: "¡Éxito!",
-                    text: "El usuario se ha guardado correctamente.",
-                    type: "success",
-                    confirmButtonText: 'Aceptar',
-                    confirmButtonColor: '#337ab7'
-                }, function () {
-                    window.location.href = '/Administracion/Usuarios';
-                });
-            }
-        });
-    } else {
-        swal({
-            title: "Validación",
-            text: "Por favor complete todos los campos requeridos.",
-            type: "warning",
-            confirmButtonText: 'Aceptar',
-            confirmButtonColor: '#f0ad4e'
-        });
+
+    if (!$("#frmUsuario").valid()) return;
+
+    var parametro = {
+        Id: $("#id").val() || 0,
+        UserName: $("#username").val(),
+        Nombre: $("#nombre").val(),
+        Email: $("#email").val(),
+        Estatus: 1,
+        CreatedBy: $("#createdBy").val(),
+        CreatedDt: $("#createdDt").val(),
+        UpdatedBy: $("#updatedBy").val(),
+        UpdatedDt: $("#updatedDt").val()
+    };
+
+    // SOLO enviar password si el usuario escribió algo
+    var pwd = $("#password").val().trim();
+    if (pwd !== "") {
+        parametro.Password = pwd;
     }
+
+    PostMVC('/Administracion/SaveOrUpdateUsuario', parametro, function (r) {
+        swal({
+            title: "Éxito",
+            text: "Usuario guardado correctamente",
+            type: "success"
+        }, function () {
+            window.location.href = '/Administracion/Usuarios';
+        });
+    });
 }
 
 function EditarUsuario(id) {

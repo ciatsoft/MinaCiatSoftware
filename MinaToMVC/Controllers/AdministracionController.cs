@@ -397,13 +397,37 @@ namespace MinaToMVC.Controllers
         }
         public async Task<ActionResult> SaveOrUpdateUsuario(Usuario u)
         {
-            // Extraer y encriptar el password
-            string passwordOld = u.Password;
-            string passwordEncrypted = Cryptography.Encrypt(passwordOld);
-            // Actualizar el valor en el objeto Usuario
-            u.Password = passwordEncrypted;
-            // Ahora el objeto u tiene el password encriptado
+            // ES EDICIÓN
+            if (u.Id != 0)
+            {
+                // Si el usuario NO escribió nueva contraseña
+                if (string.IsNullOrWhiteSpace(u.Password))
+                {
+                    // Traer el usuario actual desde la BD / API
+                    var result = await httpClientConnection.GetUsuarioById(u.Id);
+
+                    if (result != null && result.Response != null)
+                    {
+                        var usuarioActual = JsonConvert.DeserializeObject<Usuario>(result.Response.ToString());
+
+                        // Reusar el password ya encriptado que está en BD
+                        u.Password = usuarioActual.Password;
+                    }
+                }
+                else
+                {
+                    // Si escribió nueva → encriptar
+                    u.Password = Cryptography.Encrypt(u.Password);
+                }
+            }
+            else
+            {
+                // ES NUEVO → siempre encriptar
+                u.Password = Cryptography.Encrypt(u.Password);
+            }
+
             var r = await httpClientConnection.SaveOrUpdateUsuario(u);
+
             return Redirect("Usuarios");
         }
         public async Task<string> GetAllUsuario()

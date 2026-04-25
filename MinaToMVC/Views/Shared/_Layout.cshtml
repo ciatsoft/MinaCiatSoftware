@@ -22,214 +22,146 @@
     <link href="~/Content/DataTables/css/responsive.dataTables.css" rel="stylesheet">
 
     <style>
-        /* Fondo negro para toda la página */
-        body {
-            background-color: #000000 !important;
-            color: #ffffff;
-        }
+body{background:#000;color:#fff}
 
-        /* Header negro */
-        .header_section {
-            background-color: #000000;
-            border-bottom: 1px solid #333;
-            position: relative;
-            z-index: 1000;
-        }
+/* NAVBAR */
+.navbar{
+    background:#000;
+    border:0;
+    margin:0;
+}
 
-        /* Navbar negra */
-        .navbar {
-            background-color: #000000 !important;
-            border: none;
-            margin-bottom: 0;
-            min-height: 60px;
-        }
+.navbar-nav>li>a{
+    color:#fff!important;
+    padding:18px 12px;
+    font-weight:600;
+}
 
-        .navbar-brand {
-            padding: 5px 15px;
-        }
+.navbar-nav>li>a:hover{
+    background:#333!important;
+}
 
-        .navbar-brand img {
-            height: 45px;
-            width: auto;
-        }
+/* DROPDOWN SOLO ESTILO */
+.dropdown-menu{
+    background:#fff;
+    min-width:220px;
+}
 
-        /* Links del menú principal */
-        .navbar-nav > li > a {
-            color: #ffffff !important;
-            font-size: 14px;
-            font-weight: 600;
-            padding: 20px 12px;
-            transition: all 0.3s ease;
-        }
+.dropdown-menu>li>a{
+    color:#000!important;
+    padding:8px 15px;
+}
 
-        .navbar-nav > li > a:hover,
-        .navbar-nav > li > a:focus {
-            background-color: #333333 !important;
-            color: #ffffff !important;
-        }
+.dropdown-menu>li>a:hover{
+    background:#f5f5f5!important;
+}
 
-        .navbar-nav > li > a i {
-            margin-right: 6px;
-            font-size: 14px;
-        }
+/* HERO */
+.slider_section{
+    background:linear-gradient(rgba(0,0,0,.8),rgba(0,0,0,.8)),
+    url("@Url.Content("~/Assets/img/minas.png")") center/cover fixed;
+    min-height:calc(100vh - 140px);
+    padding:40px 0;
+}
 
-        /* Dropdown que sobresale del fondo negro */
-        .navbar-nav > li.dropdown {
-            position: relative;
-        }
+/* FOOTER */
+.footer,.contacto-ciat{
+    background:#002c53;
+    color:#fff;
+    padding:20px 0;
+}
 
-        .dropdown-menu {
-            position: absolute !important;
-            top: 100% !important;
-            left: 0 !important;
-            background-color: #ffffff !important;
-            border: 1px solid #dddddd !important;
-            border-radius: 4px !important;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.175) !important;
-            min-width: 220px !important;
-            z-index: 1050 !important;
-            display: none;
-            float: left;
-            margin: 2px 0 0 0 !important;
-            padding: 5px 0 !important;
-        }
+/* ================= MOBILE REAL BS3 ================= */
+@@media (max-width:767px){
 
-        .navbar-nav > li.dropdown.open .dropdown-menu,
-        .navbar-nav > li.dropdown:hover .dropdown-menu {
-            display: block;
-        }
+    .navbar-collapse{
+        position:absolute;
+        top:60px;
+        left:0;
+        right:0;
+        background:#000;
+        z-index:9999;
+    }
 
-        .dropdown-menu > li > a {
-            color: #333333 !important;
-            padding: 8px 15px !important;
-            font-size: 13px;
-            font-weight: normal;
-            border-bottom: 1px solid #eeeeee;
-            transition: all 0.2s ease;
-            display: block;
-            clear: both;
-            line-height: 1.42857143;
-            white-space: nowrap;
-        }
+    .navbar-nav>li{
+        float:none!important;
+        width:100%;
+    }
 
-        .dropdown-menu > li:last-child > a {
-            border-bottom: none;
-        }
+    .navbar-nav>li>a{
+        padding:14px 20px!important;
+    }
 
-        .dropdown-menu > li > a:hover,
-        .dropdown-menu > li > a:focus {
-            background-color: #f5f5f5 !important;
-            color: #000000 !important;
-            padding-left: 20px !important;
-        }
+    /* el submenu ahora baja correctamente */
+    .dropdown-menu{
+        position:static!important;
+        float:none;
+        width:100%;
+        background:#fff!important;
+    }
+}
+/* ===== 1) HOVER SOLO EN DESKTOP ===== */
+@@media (min-width:768px){
+    .navbar-nav > li.dropdown:hover > .dropdown-menu{
+        display:block;
+        margin-top:0;
+    }
+}
 
-        .dropdown-menu > li > a i {
-            margin-right: 8px;
-            color: #333333 !important;
-            font-size: 13px;
-            width: 18px;
-        }
+/* ===== 2) BOTÓN HAMBURGUESA BLANCO ===== */
+.navbar-toggle{
+    border-color:#fff!important;
+}
+.navbar-toggle .icon-bar{
+    background:#fff!important;
+}
 
-        .dropdown-toggle .caret {
-            margin-left: 5px;
-            border-top-color: #ffffff;
-            border-bottom-color: #ffffff;
-        }
+/* ===== 3) COLLAPSE TRANSPARENTE PARA VER LA IMAGEN ===== */
+@@media (max-width:767px){
+    .navbar-collapse{
+        background:#000!important;   /* clave */
+    }
 
-        .navbar-toggle {
-            background-color: #333333;
-            border: 1px solid #555555;
-            margin-top: 12px;
-            margin-bottom: 12px;
-        }
+    .navbar{
+        background:rgba(0,0,0);        /* nav con transparencia */
+    }
+}
+/* ===== FIX DEFINITIVO CAMBIO MOBILE -> DESKTOP BS3 ===== */
+@@media (min-width:768px){
+    .navbar-collapse{
+        position:relative!important;
+        top:auto!important;
+        left:auto!important;
+        right:auto!important;
+        background:transparent!important;
+        overflow:visible!important;
+        height:auto!important;
+    }
 
-        .navbar-toggle .icon-bar {
-            background-color: #ffffff;
-            width: 22px;
-            height: 2px;
-            border-radius: 1px;
-        }
-
-        /* Slider section - Contenedor principal del contenido */
-        .slider_section {
-            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url("@Url.Content("~/Assets/img/minas.png")") fixed center center;
-            background-size: cover;
-            padding: 40px 0;
-            min-height: calc(100vh - 160px);
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Contacto */
-        .contacto-ciat {
-            background-color: #002c53 !important;
-            color: #ffffff;
-            padding: 20px;
-        }
-
-        .contacto-ciat i {
-            margin-right: 5px;
-        }
-
-        /* Footer */
-        .footer {
-            background-color: #002c53 !important;
-            color: #ffffff;
-            padding: 15px 0;
-            border-top: 1px solid #004080;
-        }
-
-        .footer .text-muted {
-            color: #cccccc !important;
-        }
-
-        .navbar-nav {
-            margin: 0;
-        }
-
-        .contacto-ciat .row > div {
-            margin-bottom: 15px;
-        }
-
-        /* Asegurar que el modal se muestre correctamente */
-        .modal {
-            z-index: 1050 !important;
-        }
-
-        .modal-backdrop {
-            z-index: 1040 !important;
-        }
-
-        /* El contenido del modal debe ser visible */
-        .modal-content {
-            background-color: #fff;
-            color: #333;
+    .dropdown-menu{
+        position:absolute!important;
+    }
+}
+        /* ===== FIX COLOR AL HACER CLICK EN ITEM PADRE DEL DROPDOWN ===== */
+        .navbar-nav > li > a:focus,
+        .navbar-nav > li > a:active,
+        .navbar-nav > li.open > a,
+        .navbar-nav > li.open > a:focus,
+        .navbar-nav > li.open > a:hover {
+            background: #181818 !important;
+            color: #fff !important;
         }
     </style>
 
-    <!-- Media Queries separadas fuera del bloque <style> o usando doble arroba -->
-    <style>
-        /* Responsive: En móviles, los dropdowns se comportan diferente */
-        @@media (max-width: 767px) {
-            .dropdown-menu {
-                position: static !important;
-                float: none !important;
-                width: 100% !important;
-                background-color: #ffffff !important;
-                margin-left: 15px !important;
-                border: none !important;
-                box-shadow: none !important;
-            }
-
-                .dropdown-menu > li > a {
-                    padding: 8px 15px 8px 30px !important;
-                }
-
-                    .dropdown-menu > li > a:hover {
-                        padding-left: 35px !important;
-                    }
-        }
-    </style>
+    <script src="~/Scripts/jquery-1.9.0.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/DataTables/jquery.dataTables.js"></script>
+    <script src="~/Scripts/DataTables/dataTables.responsive.js"></script>
+    <script src="~/Scripts/sweetalert.min.js"></script>
+    <script src="@Url.StaticFile("Assets/script.js")"></script>
+    <script src="@Url.StaticFile("Scripts/Comun/Comun.js")"></script>
+    @RenderSection("scripts", required: false)
 </head>
 
 <body>
@@ -237,9 +169,6 @@
         <div class="container-fluid">
             <nav class="navbar">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="@Url.Action("Index", "Home")">
-                        <img src="@Url.Content("~/Assets/img/logow.png")" style="height: 45px; width: auto" />
-                    </a>
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbarSupportedContent">
                         <span class="sr-only">Toggle navigation</span>
                         <span class="icon-bar"></span>
@@ -249,110 +178,17 @@
                 </div>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="nav navbar-nav">
-                        <li>
-                            <a href="@Url.Action("Index", "Home")">
-                                <i class="fa fa-home"></i> Inicio
-                            </a>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-cogs"></i> Administración <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="@Url.Action("Clientes", "Administracion")"><i class="fa fa-users"></i> Clientes</a></li>
-                                <li><a href="@Url.Action("Usuarios", "Administracion")"><i class="fa fa-user-circle-o"></i> Usuarios</a></li>
-                                <li><a href="@Url.Action("locales", "Viajes")"><i class="fa fa-truck"></i> Viajes Almacenes</a></li>
-                                <li><a href="@Url.Action("Concreteras", "Viajes")"><i class="fa fa-building-o"></i> Viajes Concreteras</a></li>
-                                <li><a href="@Url.Action("ReportesViajesLocales", "Viajes")"><i class="fa fa-file-text-o"></i> Generar Reportes</a></li>
-                                <li><a href="@Url.Action("PreFactura", "Viajes")"><i class="fa fa-file-text-o"></i> Pre-Factura</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-users"></i> RRHH <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="@Url.Action("AltaEdicion", "Empleado")"><i class="fa fa-id-card-o"></i> Empleados</a></li>
-                                <li><a href="@Url.Action("ListaDocumentos", "Empleado")"><i class="fa fa-folder-open-o"></i> Catálogo Documentos</a></li>
-                                <li><a href="@Url.Action("ConceptosRH", "RH")"><i class="fa fa-list-ul"></i> Catálogo Conceptos</a></li>
-                                <li><a href="@Url.Action("NominaEmpleado", "RH")"><i class="fa fa-calculator"></i> Generar Nóminas</a></li>
-                                <li><a href="@Url.Action("BajaEmpleados", "RH")"><i class="fa fa-book"></i> Historial Bajas</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-wrench"></i> Taller <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="@Url.Action("Vehiculos", "Taller")"><i class="fa fa-car"></i> Vehículos</a></li>
-                                <li><a href="@Url.Action("Inventario_Taller", "Taller")"><i class="fa fa-shopping-cart"></i> Inventario Taller</a></li>
-                                <li><a href="@Url.Action("CategoriaInventario", "Taller")"><i class="fa fa-tags"></i> Categorías</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-book"></i> Catálogos <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="@Url.Action("UnidadMedida", "Catalog")"><i class="fa fa-arrows-h"></i> Unidades Medida</a></li>
-                                <li><a href="@Url.Action("TipoVehiculo", "Catalog")"><i class="fa fa-truck"></i> Tipo Vehículo</a></li>
-                                <li><a href="@Url.Action("AreaTrabajo", "Catalog")"><i class="fa fa-briefcase"></i> Área Trabajo</a></li>
-                                <li><a href="@Url.Action("Roll", "Catalog")"><i class="fa fa-user-o"></i> Roles</a></li>
-                                <li><a href="@Url.Action("Ubicacion", "Catalog")"><i class="fa fa-map-marker"></i> Ubicación</a></li>
-                                <li><a href="@Url.Action("TipoMaterialUbicacion", "Catalog")"><i class="fa fa-cube"></i> Tipo Material</a></li>
-                                <li><a href="@Url.Action("TipoGastos", "Catalog")"><i class="fa fa-money"></i> Tipo Gastos</a></li>
-                                <li><a href="@Url.Action("VehiculosPublicoGeneral", "Catalog")"><i class="fa fa-bus"></i> Vehículos Clientes</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-shopping-cart"></i> Ventas <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="@Url.Action("Precios", "VentaPublicoGeneral")"><i class="fa fa-tag"></i> Precios</a></li>
-                                <li><a href="@Url.Action("Index", "VentaPublicoGeneral")"><i class="fa fa-cart-plus"></i> Venta</a></li>
-                                <li><a href="@Url.Action("CajaChica", "VentaPublicoGeneral")"><i class="fa fa-money"></i> Caja Chica</a></li>
-                                <li><a href="@Url.Action("DineroCaja", "VentaPublicoGeneral")"><i class="fa fa-money"></i> Dinero Caja</a></li>
-                                <li><a href="@Url.Action("CorteDeCaja", "VentaPublicoGeneral")"><i class="fa fa-line-chart"></i> Reporte Diario</a></li>
-                                <li><a href="@Url.Action("Prestamos", "VentaPublicoGeneral")"><i class="fa fa-handshake-o"></i> Préstamos</a></li>
-                                <li><a href="@Url.Action("ClientePublicoGeneral", "VentaPublicoGeneral")"><i class="fa fa-users"></i> Clientes</a></li>
-                                <li><a href="@Url.Action("VentaPorPlanta", "VentaPublicoGeneral")"><i class="fa fa-industry"></i> Venta por Planta</a></li>
-                                <li><a href="@Url.Action("GastosDiarios", "VentaPublicoGeneral")"><i class="fa fa-credit-card"></i> Gastos Diarios</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-truck"></i> Vehículos Carga <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="@Url.Action("VehiculoCarga","VehiculoCarga")"><i class="fa fa-truck"></i> Vehículos Carga</a></li>
-                                <li><a href="@Url.Action("VehiculoCarga","RFIDCarga")"><i class="fa fa-rss"></i> RFID Carga</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="@Url.Action("LogOut", "Home")"><i class="fa fa-sign-out"></i> Salir</a></li>
+                    <ul class="nav navbar-nav" id="mainNavbar">
+                        <!-- Aquí se inyectan los <li> del menú dinámico -->
                     </ul>
                 </div>
             </nav>
         </div>
     </header>
 
-    <!-- CONTENIDO PRINCIPAL - Aquí se renderizan las vistas -->
+    <!-- CONTENIDO PRINCIPAL -->
     <section class="slider_section">
         <div class="container">
-            <!-- SCRIPTS - Siempre al final del body -->
-            <script src="~/Scripts/jquery-1.9.0.js"></script>
-            <script src="~/Scripts/bootstrap.js"></script>
-            <script src="~/Scripts/jquery.validate.js"></script>
-            <script src="~/Scripts/DataTables/jquery.dataTables.js"></script>
-            <script src="~/Scripts/DataTables/dataTables.responsive.js"></script>
-            <script src="~/Scripts/sweetalert.min.js"></script>
-            <script src="@Url.StaticFile("Assets/script.js")"></script>
-            <script src="@Url.StaticFile("Scripts/Comun/Comun.js")"></script>
-
-            @RenderSection("scripts", required: false)
             @RenderBody()
         </div>
     </section>
@@ -402,7 +238,7 @@
         </div>
     </footer>
 
-    <!-- MODAL - Debe estar fuera del section para que no interfiera -->
+    <!-- MODAL -->
     <div class="modal fade" id="genericModal" role="dialog">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -416,7 +252,11 @@
             </div>
         </div>
     </div>
-
+    <script>
+        $(document).ready(function () {
+            $("#mainNavbar").load("@Url.Action("PartialMenus", "Home")");
+        });
+    </script>
 </body>
 
 </html>

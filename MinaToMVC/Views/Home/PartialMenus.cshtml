@@ -1,64 +1,162 @@
 ﻿@model List<MinaTolEntidades.DtoCatalogos.Permisos>
 
 @{
-    // Eliminamos duplicados y ordenamos alfabéticamente
-    var permisosUnicos = Model
-        .Where(x => x.TipoMenu.Equals("MenuUnico"))
-        .GroupBy(x => x.Id)
-        .Select(g => g.First())
-        .OrderBy(x => x.Nombre)
-        .ToList();
+    // ===== VALIDACIÓN REAL DE PERMISOS =====
+    var tienePermisos = Model != null && Model.Any(x =>
+        x.TipoMenu == "MenuUnico" ||
+        x.TipoMenu == "Menu" ||
+        x.TipoMenu == "SubMenu"
+    );
 
-    var permisosPadres = Model
-        .Where(x => x.TipoMenu.Equals("Menu"))
-        .GroupBy(x => x.Id)
-        .Select(g => g.First())
-        .OrderBy(x => x.Nombre)
-        .ToList();
+    // ===== FUNCIÓN PARA OBTENER ICONOS =====
+    string GetIcon(string nombre)
+    {
+        if (string.IsNullOrEmpty(nombre)) return "fa-bars";
 
-    var permisosHijos = Model
-        .Where(x => x.TipoMenu.Equals("SubMenu"))
-        .GroupBy(x => x.Id)
-        .Select(g => g.First())
-        .OrderBy(x => x.Nombre)
-        .ToList();
+        var iconMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+{
+            { "Inicio", "fa-home" },
+            { "Administracion", "fa-cogs" },
+            { "Recursos Humanos", "fa-users" },
+            { "Taller", "fa-wrench" },
+            { "Catalogos", "fa-book" },
+            { "Venta Publico General", "fa-shopping-cart" },
+            { "Vehiculos de Carga", "fa-truck" },
+            { "Clientes", "fa-users" },
+            { "Usuario", "fa-user-circle-o" },
+            { "Viajes de Almacenes", "fa-truck" },
+            { "Viajes de Concreteras", "fa-building-o" },
+            { "Reportes Viajes Locales", "fa-file-text-o" },
+            { "Pre-Factura", "fa-file-text-o" },
+            { "Empleados", "fa-id-card-o" },
+            { "Catalogo de Documentos", "fa-folder-open-o" },
+            { "Catalogo de Conceptos", "fa-list-ul" },
+            { "Nomina Empleados", "fa-calculator" },
+            { "Bajas de Empleados", "fa-book" },
+            { "Vehiculos", "fa-car" },
+            { "Inventario Taller", "fa-shopping-cart" },
+            { "Categoria de inventario", "fa-tags" },
+            { "ReparacionVehiculos", "fa-wrench" },
+            { "Inventario de piezas reutilizables", "fa-recycle" },
+            { "Inventario de piezas no reutilizables", "fa-trash-o" },
+            { "Unidades de Medida", "fa-arrows-h" },
+            { "Tipo de Vehiculos", "fa-truck" },
+            { "Area Trabajo", "fa-briefcase" },
+            { "Roles", "fa-user-o" },
+            { "Ubicacion", "fa-map-marker" },
+            { "Tipo de Material", "fa-cube" },
+            { "Tipo de Gastos", "fa-money" },
+            { "Vehiculos Clientes Publico General", "fa-bus" },
+            { "Precios", "fa-tag" },
+            { "Venta", "fa-cart-plus" },
+            { "Caja Chica", "fa-money" },
+            { "Dinero en caja", "fa-money" },
+            { "Reporte Diario", "fa-line-chart" },
+            { "Prestamos", "fa-handshake-o" },
+            { "Cliente Publico General", "fa-users" },
+            { "Venta Por Planta", "fa-industry" },
+            { "Gastos Diarios", "fa-credit-card" },
+            { "VehiculoCarga", "fa-truck" },
+            { "RFIDCarga", "fa-rss" },
+            { "ReporteEficiencia", "fa-bar-chart" }
+        };
+
+        return iconMap.ContainsKey(nombre) ? iconMap[nombre] : "fa-bars";
+    }
+
+    // ===== DECLARAR VARIABLES FUERA DEL ÁMBITO =====
+    var permisosUnicos = new List<MinaTolEntidades.DtoCatalogos.Permisos>();
+    var permisosPadres = new List<MinaTolEntidades.DtoCatalogos.Permisos>();
+    var permisosHijos = new List<MinaTolEntidades.DtoCatalogos.Permisos>();
+
+    if (tienePermisos)
+    {
+        // ===== FILTRADO DE PERMISOS =====
+        permisosUnicos = Model
+            .Where(x => x.TipoMenu == "MenuUnico")
+            .GroupBy(x => x.Id)
+            .Select(g => g.First())
+            .OrderBy(x => x.Nombre)
+            .ToList();
+
+        permisosPadres = Model
+            .Where(x => x.TipoMenu == "Menu")
+            .GroupBy(x => x.Id)
+            .Select(g => g.First())
+            .OrderBy(x => x.Nombre)
+            .ToList();
+
+        permisosHijos = Model
+            .Where(x => x.TipoMenu == "SubMenu")
+            .GroupBy(x => x.Id)
+            .Select(g => g.First())
+            .OrderBy(x => x.Nombre)
+            .ToList();
+    }
 }
 
-<ul class="navbar-nav">
-    @* Menús únicos *@
-    <ul class="navbar-nav">
-        <li class="nav-item">
-            <a class="nav-link" data-title="Index" href="@Url.Action("Index", "Home")">Inicio</a>
-        </li>
-    </ul>
-    @foreach (var permiso in permisosUnicos)
+<!-- ===== LOGO ===== -->
+<li class="nav-brand">
+    <a href="@Url.Action("Index","Home")" style="padding:10px 10px;">
+        <img src="~/Assets/img/logow.png" style="height:35px;">
+    </a>
+</li>
+
+<!-- ===== INICIO ===== -->
+<li>
+    <a href="@Url.Action("Index", "Home")">
+        <i class="fa fa-home"></i> Inicio
+    </a>
+</li>
+
+@if (tienePermisos)
+{
+    <!-- ===== MENÚS ÚNICOS ===== -->
+    foreach (var permiso in permisosUnicos)
     {
-        <li class="nav-item">
-            <a class="nav-link" href="@Url.Content("~/" + permiso.URLVentana.TrimStart('/'))">
-                @permiso.Nombre
+        <li>
+            <a href="@Url.Content("~/" + permiso.URLVentana?.TrimStart('/'))">
+                <i class="fa @GetIcon(permiso.Nombre)"></i> @permiso.Nombre
             </a>
         </li>
     }
 
-    @* Menús con hijos *@
-    @foreach (var permisoPadre in permisosPadres)
+    <!-- ===== MENÚS PADRE + SUBMENÚS ===== -->
+    foreach (var permisoPadre in permisosPadres)
     {
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink-@permisoPadre.Id"
-               role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                @permisoPadre.Nombre
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink-@permisoPadre.Id">
-                @foreach (var permisoHijo in permisosHijos
-                              .Where(h => h.PermisoPadre.Id == permisoPadre.Id)
-                              .OrderBy(h => h.Nombre))
-                {
-                    <a class="dropdown-item" data-title="@permisoHijo.Nombre"
-                       href="@Url.Content("~/" + permisoHijo.URLVentana.TrimStart('/'))">
-                        @permisoHijo.Nombre
-                    </a>
-                }
-            </div>
-        </li>
+        var hijos = permisosHijos
+            .Where(h => h.PermisoPadre != null && h.PermisoPadre.Id == permisoPadre.Id)
+            .OrderBy(h => h.Nombre)
+            .ToList();
+
+        if (hijos.Any())
+        {
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa @GetIcon(permisoPadre.Nombre)"></i> @permisoPadre.Nombre <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    @foreach (var hijo in hijos)
+                    {
+                        <li>
+                            <a href="@Url.Content("~/" + hijo.URLVentana?.TrimStart('/'))">
+                                <i class="fa @GetIcon(hijo.Nombre)"></i> @hijo.Nombre
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </li>
+        }
     }
-</ul>
+}
+else
+{
+    <!-- ===== No hay permisos - solo mostrar mensaje opcional ===== -->
+}
+
+<!-- ===== SALIR ===== -->
+<li class="pull-right">
+    <a href="@Url.Action("LogOut", "Home")">
+        <i class="fa fa-sign-out"></i> Salir
+    </a>
+</li>

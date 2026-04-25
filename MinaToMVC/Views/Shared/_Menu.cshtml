@@ -6,194 +6,340 @@
 <html lang="es">
 
 <head>
-    <!-- Basic -->
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <!-- Mobile Metas -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
     <title>@ViewBag.Title</title>
 
-    <link rel="icon" href="@Url.Content("~/img/Logo.ico")" type="image/x-icon" />
+    <link rel="icon" href="@Url.Content("~/Assets/img/Logo.ico")" type="image/x-icon" />
 
-    <!-- bootstrap core css -->
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/css/bootstrap.css")" />
+    <!-- Bootstrap core CSS - LOCAL -->
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.css" rel="stylesheet" />
+    <link href="~/Content/sweetalert.css" rel="stylesheet" />
+    <link href="~/Content/DataTables/css/jquery.dataTables.css" rel="stylesheet">
+    <link href="~/Content/DataTables/css/responsive.dataTables.css" rel="stylesheet">
 
-    <!-- Custom styles for this template -->
-    <!-- responsive style -->
-    <!-- Inicio a los llamados de js -->
-    <script src="@Url.Content("~/Assets/script.js")"></script>
-    <script src="@Url.Content("~/Assets/Administracion/js/script.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/js/jquery-3.4.1.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Assets/js/bootstrap.js")"></script>
-    <!-- Fin a los llamados de js -->
+    <style>
+        /* Fondo negro para toda la página */
+        body {
+            background-color: #000000 !important;
+            color: #ffffff;
+        }
 
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/css/bootstrap.css")" />
-    <link href="@Url.Content("~/Assets/css/style.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Assets/css/estiloClientes.css")" rel="stylesheet" />
-    <link href="@Url.Content("~/Assets/css/responsive.css")" rel="stylesheet" />
+        /* Header negro */
+        .header_section {
+            background-color: #000000;
+            border-bottom: 1px solid #333;
+            position: relative;
+            z-index: 1000;
+        }
 
-    <script src="/Assets/js/script.js"></script>
-    <script type="text/javascript" src="/Assets/js/jquery-3.4.1.min.js"></script>
-    <script type="text/javascript" src="/Assets/js/bootstrap.js"></script>
+        /* Navbar negra */
+        .navbar {
+            background-color: #000000 !important;
+            border: none;
+            margin-bottom: 0;
+            min-height: 60px;
+        }
 
+        .navbar-brand {
+            padding: 5px 15px;
+        }
 
+        .navbar-brand img {
+            height: 45px;
+            width: auto;
+        }
 
+        /* Links del menú principal */
+        .navbar-nav > li > a {
+            color: #ffffff !important;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 20px 12px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav > li > a:hover,
+        .navbar-nav > li > a:focus {
+            background-color: #333333 !important;
+            color: #ffffff !important;
+        }
+
+        .navbar-nav > li > a i {
+            margin-right: 6px;
+            font-size: 14px;
+        }
+
+        /* Dropdown que sobresale del fondo negro */
+        .navbar-nav > li.dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute !important;
+            top: 100% !important;
+            left: 0 !important;
+            background-color: #ffffff !important;
+            border: 1px solid #dddddd !important;
+            border-radius: 4px !important;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.175) !important;
+            min-width: 220px !important;
+            z-index: 1050 !important;
+            display: none;
+            float: left;
+            margin: 2px 0 0 0 !important;
+            padding: 5px 0 !important;
+        }
+
+        .navbar-nav > li.dropdown.open .dropdown-menu,
+        .navbar-nav > li.dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-menu > li > a {
+            color: #333333 !important;
+            padding: 8px 15px !important;
+            font-size: 13px;
+            font-weight: normal;
+            border-bottom: 1px solid #eeeeee;
+            transition: all 0.2s ease;
+            display: block;
+            clear: both;
+            line-height: 1.42857143;
+            white-space: nowrap;
+        }
+
+        .dropdown-menu > li:last-child > a {
+            border-bottom: none;
+        }
+
+        .dropdown-menu > li > a:hover,
+        .dropdown-menu > li > a:focus {
+            background-color: #f5f5f5 !important;
+            color: #000000 !important;
+            padding-left: 20px !important;
+        }
+
+        .dropdown-menu > li > a i {
+            margin-right: 8px;
+            color: #333333 !important;
+            font-size: 13px;
+            width: 18px;
+        }
+
+        .dropdown-toggle .caret {
+            margin-left: 5px;
+            border-top-color: #ffffff;
+            border-bottom-color: #ffffff;
+        }
+
+        .navbar-toggle {
+            background-color: #333333;
+            border: 1px solid #555555;
+            margin-top: 12px;
+            margin-bottom: 12px;
+        }
+
+        .navbar-toggle .icon-bar {
+            background-color: #ffffff;
+            width: 22px;
+            height: 2px;
+            border-radius: 1px;
+        }
+
+        /* Slider section - Contenedor principal del contenido */
+        .slider_section {
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url("@Url.Content("~/Assets/img/minas.png")") fixed center center;
+            background-size: cover;
+            padding: 40px 0;
+            min-height: calc(100vh - 160px);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Contacto */
+        .contacto-ciat {
+            background-color: #002c53 !important;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .contacto-ciat i {
+            margin-right: 5px;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #002c53 !important;
+            color: #ffffff;
+            padding: 15px 0;
+            border-top: 1px solid #004080;
+        }
+
+        .footer .text-muted {
+            color: #cccccc !important;
+        }
+
+        .navbar-nav {
+            margin: 0;
+        }
+
+        .contacto-ciat .row > div {
+            margin-bottom: 15px;
+        }
+
+        /* Asegurar que el modal se muestre correctamente */
+        .modal {
+            z-index: 1050 !important;
+        }
+
+        .modal-backdrop {
+            z-index: 1040 !important;
+        }
+
+        /* El contenido del modal debe ser visible */
+        .modal-content {
+            background-color: #fff;
+            color: #333;
+        }
+    </style>
+
+    <!-- Media Queries separadas -->
+    <style>
+        /* Responsive: En móviles, los dropdowns se comportan diferente */
+        @@media (max-width: 767px) {
+            .dropdown-menu {
+                position: static !important;
+                float: none !important;
+                width: 100% !important;
+                background-color: #ffffff !important;
+                margin-left: 15px !important;
+                border: none !important;
+                box-shadow: none !important;
+            }
+
+                .dropdown-menu > li > a {
+                    padding: 8px 15px 8px 30px !important;
+                }
+
+                    .dropdown-menu > li > a:hover {
+                        padding-left: 35px !important;
+                    }
+        }
+    </style>
 </head>
 
-
-
-<style>
-    .main_title_html {
-        background-color: red;
-        font-family: Helvetica Neue;
-        font-size: 30px;
-        color: black;
-        width: 70%;
-        padding: 5px;
-        border: 20px;
-        border-radius: 100px;
-        border: 3px solid black;
-        position: relative;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
-    .tabla-clientes {
-        background-color: #e6e1cd;
-    }
-
-    .panel-body {
-        background-color: #e6e1cd;
-    }
-
-    body {
-        background-color: #83988e;
-    }
-</style>
-
 <body>
-
     <header class="header_section">
         <div class="container-fluid">
-            <nav class="navbar navbar-expand-lg custom_nav-container">
-                <a class="navbar-brand" href="@Url.Action("Index", "Home")">
-                    <img src="@Url.Content("~/Assets/img/logow.png")" style="height: 50px; width: 150px" />
-                </a>
-                <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse"
-                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                        aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+            <nav class="navbar">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="@Url.Action("Index", "Home")">
+                        <img src="@Url.Content("~/Assets/img/logow.png")" style="height: 45px; width: auto" />
+                    </a>
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbarSupportedContent">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
-                        <ul class="navbar-nav">
-                            <li class="nav-item active">
-                                <a class="nav-link" href="@Url.Content("~/Administrador/index.html")">Inicio </a>
-                            </li>
-
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Administración
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Administracion/index.html")">Clientes</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Administracion/solicitudes_de_compras.html")">Solicitudes</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Venta/precios.html")">Precios</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Venta/agregar_imagen.html")">Imágenes de precios</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Consultas/empleados.html")">Empleados</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Consultas/index.html")">Ingresos y egresos</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Consultas/plantas.html")">General</a>
-                                </div>
-                            </li>
-
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Almacén
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Inventario/index.html")">Inventario</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Inventario/solicitudes_procesadas.html")">Solicitudes procesadas</a>
-                                </div>
-                            </li>
-
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    R.H.
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/RH/index.html")">Agregar</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/RH/editar_empleado.html")">Editar</a>
-                                </div>
-                            </li>
-
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Venta
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Venta/index.html")">Material</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Venta/salidas/index.html")">Salidas</a>
-                                </div>
-                            </li>
-
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Taller
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Taller/index.html")">Vehículos</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Taller/inventarioTaller/index.html")">Inventario del taller</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Taller/reportes.html")">Reportes con stock</a>
-                                    <a class="dropdown-item" href="@Url.Content("~/Administrador/Taller/reportesinstock.html")">Reportes sin stock</a>
-                                </div>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="@Url.Content("~/index.html")">Cerrar Sesión</a>
-                            </li>
+                    <div id="divContentPermission">
+                        <ul class="nav navbar-nav">
+                            <!-- El menú se cargará dinámicamente desde PartialMenus -->
                         </ul>
                     </div>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="@Url.Action("LogOut", "Home")"><i class="fa fa-sign-out"></i> Salir</a></li>
+                    </ul>
                 </div>
             </nav>
         </div>
     </header>
-    <section class="slider_section position-relative">
+
+    <!-- CONTENIDO PRINCIPAL - Aquí se renderizan las vistas -->
+    <section class="slider_section">
         <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    @Html.ActionLink(" ", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-                </div>
-            </div>
-            <div class="row">
-                @RenderBody()
-            </div>
+            <!-- SCRIPTS - Siempre al final del body -->
+            <script src="~/Scripts/jquery-1.9.0.js"></script>
+            <script src="~/Scripts/bootstrap.js"></script>
+            <script src="~/Scripts/jquery.validate.js"></script>
+            <script src="~/Scripts/DataTables/jquery.dataTables.js"></script>
+            <script src="~/Scripts/DataTables/dataTables.responsive.js"></script>
+            <script src="~/Scripts/sweetalert.min.js"></script>
+            <script src="@Url.StaticFile("Assets/script.js")"></script>
+            <script src="@Url.StaticFile("Scripts/Comun/Comun.js")"></script>
+
+            @RenderSection("scripts", required: false)
+
+            @RenderBody()
         </div>
     </section>
 
-        <div class="contacto-ciat">
-            <div class="contacto">
-                <div class="puesto">Director General de CIATSoftware.</div>
-                <div class="nombre"><img src="@Url.Content("~/Assets/img/usuario.png")" alt="Teléfono" width="20" height="20">Juan Carlos Tinoco Herrera</div>
-                <div class="telefono"><img src="@Url.Content("~/Assets/img/tel-icono.png")" alt="Teléfono" width="20" height="20">Tel: +52 782 132 9772</div>
-            </div>
-            <div class="consulta">
-                <p>En caso de consultas sobre el funcionamiento del sistema, por favor contactar a CIATSoftware mediante los siguientes medios:</p>
-            </div>
-            <div class="contacto2">
-                <div class="puesto">Directora de Innovación Tecnológica.</div>
-                <div class="nombre"><img src="@Url.Content("~/Assets/img/usuario.png")" alt="Teléfono" width="20" height="20">Cesia Santiago Trejo</div>
-                <div class="telefono"><img src="@Url.Content("~/Assets/img/tel-icono.png")" alt="Teléfono" width="20" height="20">Tel: +52 228 182 7906</div>
+    <!-- CONTACTO Y FOOTER -->
+    <div class="contacto-ciat">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    <strong style="font-size: 16px; display: block; margin-bottom: 8px;">
+                        <i class="fa fa-user-circle" style="font-size: 18px;"></i> Director General
+                    </strong>
+                    <p style="font-size: 14px; margin-bottom: 4px;">
+                        <i class="fa fa-user" style="font-size: 14px;"></i> Juan Carlos Tinoco Herrera
+                    </p>
+                    <p style="font-size: 14px; margin-bottom: 0;">
+                        <i class="fa fa-phone" style="font-size: 14px;"></i> Tel: +52 782 132 9772
+                    </p>
+                </div>
+
+                <div class="col-md-4 text-center">
+                    <i class="fa fa-info-circle" style="font-size: 20px; margin-bottom: 5px; display: block;"></i>
+                    <p style="font-size: 13px; line-height: 1.4; max-width: 90%; margin: 0 auto;">
+                        Consultas sobre el funcionamiento del sistema, contactar a CIATSoftware
+                    </p>
+                </div>
+
+                <div class="col-md-4 text-center">
+                    <strong style="font-size: 16px; display: block; margin-bottom: 8px;">
+                        <i class="fa fa-lightbulb-o" style="font-size: 18px;"></i> Directora Innovación
+                    </strong>
+                    <p style="font-size: 14px; margin-bottom: 4px;">
+                        <i class="fa fa-user" style="font-size: 14px;"></i> Cesia Santiago Trejo
+                    </p>
+                    <p style="font-size: 14px; margin-bottom: 0;">
+                        <i class="fa fa-phone" style="font-size: 14px;"></i> Tel: +52 228 182 7906
+                    </p>
+                </div>
             </div>
         </div>
+    </div>
 
-        <footer class="footer">
-            <div class="container text-center">
-                <span class="text-muted">© 2024 Desarrollado por CIATSoftware</span>
+    <footer class="footer">
+        <div class="container text-center">
+            <i class="fa fa-copyright" style="font-size: 14px;"></i>
+            <span class="text-muted" style="font-size: 13px;">2024 Desarrollado por CIATSoftware</span>
+        </div>
+    </footer>
+
+    <!-- MODAL - Debe estar fuera del section para que no interfiera -->
+    <div class="modal fade" id="genericModal" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" id="titleGenerciModal"></h4>
+                </div>
+                <div class="modal-body" id="boddyGeericModal">
+                    <p>Some text in the modal.</p>
+                </div>
             </div>
-        </footer>
+        </div>
+    </div>
 
 </body>
 

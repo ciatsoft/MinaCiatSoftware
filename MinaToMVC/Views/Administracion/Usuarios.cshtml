@@ -51,20 +51,24 @@
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label style="color: #000000;"><i class="fa fa-lock"></i> Contraseña:</label>
+                            <label><i class="fa fa-lock"></i> Contraseña:</label>
                             <div class="input-group">
                                 @Html.PasswordFor(x => x.Password, new
                                 {
                                     @class = "form-control",
                                     id = "password",
-                                    placeholder = "Ingrese la contraseña"
+                                    placeholder = "Escriba nueva contraseña para cambiarla",
+                                    autocomplete = "new-password"
                                 })
                                 <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button" id="togglePassword" style="height: 34px;">
+                                    <button class="btn btn-default" type="button" id="togglePassword">
                                         <i class="fa fa-eye"></i>
                                     </button>
                                 </span>
                             </div>
+                            <small class="text-muted">
+                                Dejar en blanco para conservar la contraseña actual
+                            </small>
                         </div>
                     </div>
                 </div>
