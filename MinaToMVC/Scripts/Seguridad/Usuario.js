@@ -309,7 +309,7 @@ $("#btnPermisos").on('click', function () {
 function AbrirModalPermisosUsuario(id) {
     $("#genericModal").removeData('modal');
     $("#boddyGeericModal").empty();
-    $("#titleGenerciModal").html('<i class="fa fa-key"></i> Roles para Usuario');
+    $("#titleGenerciModal").html('<span style="color: black;">Roles para Usuario</span>');
 
     $("#boddyGeericModal").load("/Administracion/AbrirModalPermisosUsuario/" + id, function () {
         $("#genericModal").modal({

@@ -234,6 +234,8 @@ namespace MinaToMVC.Controllers
                 }
             };
             var usuarios = MappingPropertiToDropDownList<Usuario>(usuario, "Id", "Nombre");
+
+            ViewBag.UsuarioId = id;
             ViewBag.UserToken = usuarioToken;
             ViewBag.Usuarios = usuarios;
             ViewBag.CreatedBy = createdBy;

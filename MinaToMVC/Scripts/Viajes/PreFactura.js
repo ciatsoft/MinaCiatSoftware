@@ -25,13 +25,12 @@ $(document).ready(function () {
             { data: "cliente.nombre", title: "Cliente" },
             { data: "tipoMaterial.nombreTipoMaterial", title: "Material" },
             {
-                data: "facturado", // Asumiendo que tu modelo tiene esta propiedad
+                data: "facturado",
                 title: "Facturado",
                 orderable: false,
                 render: function (data, type, row) {
-                    // Si el dato viene como 1/0, true/false, o string
                     var isChecked = data === true || data === 1 || data === '1' || data === 'true';
-                    return '<input type="checkbox" class="completado-checkbox form-control" ' +
+                    return '<input type="checkbox" class="completado-checkbox" ' +
                         (isChecked ? 'checked' : '') +
                         ' data-id="' + row.id + '">';
                 }
@@ -104,63 +103,51 @@ document.getElementById("btnFiltrar2").addEventListener("click", function () {
     var fecha1 = $("#fechaFiltro1").val();
     var fecha2 = $("#fechaFiltro2").val();
     if (!fecha1 || !fecha2) {
-        alert("Por favor, seleccione una fecha válida.");
+        swal("Error", "Por favor, seleccione una fecha válida.", "error");
         return;
     }
-    // Convertir a objetos Date para comparación
     var date1 = new Date(fecha1);
     var date2 = new Date(fecha2);
 
-    // Validar que fecha2 no sea menor que fecha1
     if (date2 < date1) {
-        Swal.fire({
-            title: 'Error en fechas',
-            text: 'Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.',
-            icon: 'error',
-            confirmButtonText: 'Aceptar'
-        });
+        swal("Error en fechas", "Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.", "error");
         return;
     }
     GetAllViajeLocalByDatesFacturado(fecha1, fecha2);
 });
 
 function GetAllViajeLocalByDatesFacturado(fecha1, fecha2) {
-    // Usar GET con parámetros en la URL
     GetMVC(`/Viajes/GetAllViajeLocalByDatesFacturado?fecha1=${fecha1}&fecha2=${fecha2}`, function (r, textStatus, jqXHR) {
         if (r.IsSuccess) {
             console.log(r.Response);
             MapingPropertiesDataTable("tblPreFactura", r.Response);
         } else {
-            alert("Error al cargar los viajes: " + r.ErrorMessage);
+            swal("Error", "Error al cargar los viajes: " + r.ErrorMessage, "error");
         }
     });
 }
-
 
 document.getElementById("btnPreFacturaNoFacturados").addEventListener("click", function () {
     var fecha1 = $("#fechaFiltro1").val();
     var fecha2 = $("#fechaFiltro2").val();
     if (!fecha1 || !fecha2) {
-        alert("Por favor, seleccione una fecha válida.");
+        swal("Error", "Por favor, seleccione una fecha válida.", "error");
         return;
     }
-    // Convertir a objetos Date para comparación
     var date1 = new Date(fecha1);
     var date2 = new Date(fecha2);
 
-    // Validar que fecha2 no sea menor que fecha1
     if (date2 < date1) {
-        alert("Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.");
+        swal("Error", "Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.", "error");
         return;
     }
 
     GetMVC(`/Viajes/GetAllViajeLocalByDatesFacturado?fecha1=${fecha1}&fecha2=${fecha2}`, function (r, textStatus, jqXHR) {
         if (r.IsSuccess) {
-            // Filtrar solo los registros donde facturado es false o 0
             const datosFiltrados = r.Response.filter(item => item.facturado === false || item.facturado === 0);
-            GenerarPDFPreFacturas(datosFiltrados, 0)
+            GenerarPDFPreFacturas(datosFiltrados, 0);
         } else {
-            alert("Error al cargar los viajes: " + r.ErrorMessage);
+            swal("Error", "Error al cargar los viajes: " + r.ErrorMessage, "error");
         }
     });
 });
@@ -169,45 +156,40 @@ document.getElementById("btnPreFacturaSiFacturados").addEventListener("click", f
     var fecha1 = $("#fechaFiltro1").val();
     var fecha2 = $("#fechaFiltro2").val();
     if (!fecha1 || !fecha2) {
-        alert("Por favor, seleccione una fecha válida.");
+        swal("Error", "Por favor, seleccione una fecha válida.", "error");
         return;
     }
-    // Convertir a objetos Date para comparación
     var date1 = new Date(fecha1);
     var date2 = new Date(fecha2);
 
-    // Validar que fecha2 no sea menor que fecha1
     if (date2 < date1) {
-        alert("Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.");
+        swal("Error", "Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.", "error");
         return;
     }
 
     GetMVC(`/Viajes/GetAllViajeLocalByDatesFacturado?fecha1=${fecha1}&fecha2=${fecha2}`, function (r, textStatus, jqXHR) {
         if (r.IsSuccess) {
-            // Filtrar solo los registros donde facturado es true o 1
             const datosFiltrados = r.Response.filter(item => item.facturado === true || item.facturado === 1);
-            GenerarPDFPreFacturas(datosFiltrados, 1)
+            GenerarPDFPreFacturas(datosFiltrados, 1);
         } else {
-            alert("Error al cargar los viajes: " + r.ErrorMessage);
+            swal("Error", "Error al cargar los viajes: " + r.ErrorMessage, "error");
         }
     });
 });
 
 function GenerarPDFPreFacturas(data, bandera) {
-
     if (bandera == 1) {
         if (data.length === 0) {
-            alert("No existen vales pendientes");
+            swal("Sin datos", "No existen vales facturados", "warning");
             return;
         }
     } else if (bandera == 0) {
         if (data.length === 0) {
-            alert("No existen vales pendientes");
+            swal("Sin datos", "No existen vales pendientes", "warning");
             return;
         }
     }
 
-    // Calcular la sumatoria total de totalImporte
     var sumatoriaTotal = 0;
     data.forEach(function (item) {
         if (item.totalImporte) {
@@ -215,44 +197,23 @@ function GenerarPDFPreFacturas(data, bandera) {
         }
     });
 
-    // Swalfire de generando reporte
-    Swal.fire({
+    // Mostrar loading
+    swal({
         title: "Generando reporte...",
         text: "Por favor espere mientras se genera el PDF",
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-
-            // Cerrar automáticamente después de 8 segundos
-            setTimeout(() => {
-                Swal.close();
-
-                // Mostrar mensaje de éxito después de cerrar
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Reporte generado',
-                    text: 'El PDF se ha creado correctamente',
-                    timer: 3000, // Opcional: cerrar después de 3 segundos
-                    showConfirmButton: false
-                });
-            }, 4000); // 4000 ms = 4 segundos
-        }
+        showConfirmButton: false,
+        allowOutsideClick: false
     });
 
-    // Crear tabla HTML manualmente
     var tablaHTML = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
-
-    // Encabezados (excluyendo columnas ocultas y de acciones)
     tablaHTML += '<thead><tr>';
     tablaHTML += '<th>Folio</th>';
     tablaHTML += '<th>Fecha de transporte</th>';
     tablaHTML += '<th>Cliente</th>';
     tablaHTML += '<th>Material</th>';
     tablaHTML += '<th>Importe</th>';
-    tablaHTML += '</tr></thead>';
+    tablaHTML += '</tr></thead><tbody>';
 
-    // Datos - usar TODOS los registros (no solo los primeros 30)
-    tablaHTML += '<tbody>';
     data.forEach(function (item) {
         tablaHTML += '<tr>';
         tablaHTML += '<td>' + (item.folio || '') + '</td>';
@@ -262,34 +223,18 @@ function GenerarPDFPreFacturas(data, bandera) {
         })() : '') + '</td>';
         tablaHTML += '<td>' + (item.cliente.nombre || '') + '</td>';
         tablaHTML += '<td>' + (item.tipoMaterial.nombreTipoMaterial || '') + '</td>';
-        tablaHTML += '<td>' +
-            (item.totalImporte
-                ? parseFloat(item.totalImporte).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' })
-                : '$0.00'
-            ) +
-            '</td>';
+        tablaHTML += '<td>' + (item.totalImporte ? parseFloat(item.totalImporte).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) : '$0.00') + '</td>';
         tablaHTML += '</tr>';
     });
 
-    // Agregar fila de total
     tablaHTML += '<tr style="font-weight: bold; background-color: #f0f0f0;">';
     tablaHTML += '<td colspan="4" style="text-align: right;">TOTAL:</td>';
-    tablaHTML += '<td>' +
-        sumatoriaTotal.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) +
-        '</td>';
+    tablaHTML += '<td>' + sumatoriaTotal.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) + '</td>';
     tablaHTML += '</tr>';
-
     tablaHTML += '</tbody></table>';
 
-    // Determinar el endpoint según la bandera
-    var endpoint = '';
-    if (bandera === 1) {
-        endpoint = '/Pdf/GenerarPDFPreFacturas1';
-    } else if (bandera === 0) {
-        endpoint = '/Pdf/GenerarPDFPreFacturas2';
-    }
+    var endpoint = bandera === 1 ? '/Pdf/GenerarPDFPreFacturas1' : '/Pdf/GenerarPDFPreFacturas2';
 
-    // Crear formulario y enviar
     var form = $('<form>', {
         method: 'POST',
         action: endpoint
@@ -302,16 +247,20 @@ function GenerarPDFPreFacturas(data, bandera) {
     }).appendTo(form);
 
     form.appendTo('body').submit().remove();
+
+    // Cerrar el loading después de enviar
+    setTimeout(() => {
+        swal.close();
+        swal("Éxito", "El PDF se ha generado correctamente", "success");
+    }, 2000);
 }
 
-// Botón Excel No Facturados
 document.getElementById("btnExcelNoFacturados").addEventListener("click", function () {
-    generarExcel(0); // 0 = No Facturados
+    generarExcel(0);
 });
 
-// Botón Excel Facturados
 document.getElementById("btnExcelSiFacturados").addEventListener("click", function () {
-    generarExcel(1); // 1 = Facturados
+    generarExcel(1);
 });
 
 function generarExcel(bandera) {
@@ -319,7 +268,7 @@ function generarExcel(bandera) {
     var fecha2 = $("#fechaFiltro2").val();
 
     if (!fecha1 || !fecha2) {
-        alert("Por favor, seleccione ambas fechas.");
+        swal("Error", "Por favor, seleccione ambas fechas.", "error");
         return;
     }
 
@@ -327,13 +276,12 @@ function generarExcel(bandera) {
     var date2 = new Date(fecha2);
 
     if (date2 < date1) {
-        alert("La fecha final no puede ser menor que la fecha inicial.");
+        swal("Error", "La fecha final no puede ser menor que la fecha inicial.", "error");
         return;
     }
 
     GetMVC(`/Viajes/GetAllViajeLocalByDatesFacturado?fecha1=${fecha1}&fecha2=${fecha2}`, function (r) {
         if (r.IsSuccess) {
-            // Filtrar según bandera
             var datosFiltrados;
             var titulo;
 
@@ -346,21 +294,18 @@ function generarExcel(bandera) {
             }
 
             if (datosFiltrados.length === 0) {
-                alert(`No existen vales ${titulo.toLowerCase()} para el periodo seleccionado.`);
+                swal("Sin datos", `No existen vales ${titulo.toLowerCase()} para el periodo seleccionado.`, "warning");
                 return;
             }
 
-            // Generar Excel
             crearYEnviarExcel(datosFiltrados, titulo, fecha1, fecha2);
-
         } else {
-            alert("Error al cargar los viajes: " + r.ErrorMessage);
+            swal("Error", "Error al cargar los viajes: " + r.ErrorMessage, "error");
         }
     });
 }
 
 function crearYEnviarExcel(datos, titulo, fechaInicio, fechaFin) {
-    // Calcular total
     var total = 0;
     datos.forEach(function (item) {
         if (item.totalImporte) {
@@ -368,31 +313,26 @@ function crearYEnviarExcel(datos, titulo, fechaInicio, fechaFin) {
         }
     });
 
-    // Mostrar carga
-    Swal.fire({
+    swal({
         title: "Generando Excel...",
         text: "Por favor espere",
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
+        showConfirmButton: false,
+        allowOutsideClick: false
     });
 
-    // Crear tabla HTML (igual que para PDF)
     var tablaHTML = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
-
     tablaHTML += '<thead><tr>';
     tablaHTML += '<th>Folio</th>';
     tablaHTML += '<th>Fecha de transporte</th>';
     tablaHTML += '<th>Cliente</th>';
     tablaHTML += '<th>Material</th>';
     tablaHTML += '<th>Importe</th>';
-    tablaHTML += '</tr></thead>';
+    tablaHTML += '</tr></thead><tbody>';
 
-    tablaHTML += '<tbody>';
     datos.forEach(function (item) {
         tablaHTML += '<tr>';
         tablaHTML += '<td>' + (item.folio || '') + '</td>';
 
-        // Formatear fecha
         var fechaFormateada = '';
         if (item.fechaViaje) {
             var d = new Date(item.fechaViaje);
@@ -401,7 +341,6 @@ function crearYEnviarExcel(datos, titulo, fechaInicio, fechaFin) {
                 d.getFullYear();
         }
         tablaHTML += '<td>' + fechaFormateada + '</td>';
-
         tablaHTML += '<td>' + (item.cliente ? item.cliente.nombre || '' : '') + '</td>';
         tablaHTML += '<td>' + (item.tipoMaterial ? item.tipoMaterial.nombreTipoMaterial || '' : '') + '</td>';
         tablaHTML += '<td>' + (item.totalImporte ? parseFloat(item.totalImporte).toFixed(2) : '0.00') + '</td>';
@@ -409,18 +348,13 @@ function crearYEnviarExcel(datos, titulo, fechaInicio, fechaFin) {
     });
     tablaHTML += '</tbody></table>';
 
-    // Determinar endpoint
-    var endpoint = (titulo === "FACTURADOS")
-        ? '/Excel/GenerarExcelPreFacturas1'
-        : '/Excel/GenerarExcelPreFacturas2';
+    var endpoint = (titulo === "FACTURADOS") ? '/Excel/GenerarExcelPreFacturas1' : '/Excel/GenerarExcelPreFacturas2';
 
-    // Crear formulario (mismo método que PDF)
     var form = document.createElement('form');
     form.method = 'POST';
     form.action = endpoint;
     form.style.display = 'none';
 
-    // Agregar campos hidden
     function agregarCampo(nombre, valor) {
         var input = document.createElement('input');
         input.type = 'hidden';
@@ -435,7 +369,6 @@ function crearYEnviarExcel(datos, titulo, fechaInicio, fechaFin) {
     agregarCampo('fechaFin', fechaFin);
     agregarCampo('total', total.toFixed(2));
 
-    // Agregar token anti-falsificación si existe
     var token = document.querySelector('input[name="__RequestVerificationToken"]');
     if (token) {
         var tokenInput = document.createElement('input');
@@ -445,20 +378,12 @@ function crearYEnviarExcel(datos, titulo, fechaInicio, fechaFin) {
         form.appendChild(tokenInput);
     }
 
-    // Enviar formulario
     document.body.appendChild(form);
     form.submit();
     document.body.removeChild(form);
 
-    // Cerrar alerta después de un momento
     setTimeout(() => {
-        Swal.close();
-        Swal.fire({
-            icon: 'success',
-            title: 'Excel listo',
-            text: 'El archivo se esta descargando',
-            timer: 2000,
-            showConfirmButton: false
-        });
-    }, 500);
+        swal.close();
+        swal("Éxito", "El archivo Excel se está descargando", "success");
+    }, 1500);
 }

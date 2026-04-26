@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "ReportesViajesLocales";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var usuarioToken = (MinaTolEntidades.Security.TokenCookie)ViewBag.UserToken;
@@ -7,121 +6,313 @@
     var clientes = (List<MinaTolEntidades.DtoClientes.Cliente>)ViewBag.Clientes;
 }
 
-<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<div class="container-fluid" style="padding: 20px 15px;">
+    <!-- Panel Reporte de Venta General -->
+    <div class="panel panel-default" style="background-color: #ffffff; margin-bottom: 30px;">
+        <div class="panel-body" style="background-color: #ffffff; color: #333333;">
 
-<div class="content">
-    <br />
-    <center><h1>Reporte de Venta General</h1></center>
-    <br />
-    <div class="tabla-consultas-empleados">
-        <div class="row align-items-end">
-            @* FILTRADO POR FECHA *@
-            <div class="col-auto">
-                <label for="fechaFiltro1" class="form-label">Fecha Inicio:</label>
-                <input type="date" id="fechaFiltro1" name="fechaFiltro1" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
-            </div>
-
-            <div class="col-auto">
-                <label for="fechaFiltro2" class="form-label">Fecha Final:</label>
-                <input type="date" id="fechaFiltro2" name="fechaFiltro2" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
-            </div>
-
-            <div class="col-auto">
-                <label>Tipo de Cliente:</label>
-                <select id="ddlTipoCliente1" name="ddlTipoCliente" class="form-control">
-                    <option value="" disabled selected>Selecciona una opcion</option>
-                    <!-- Las opciones se cargarán desde el ViewBag -->
-                    @foreach (var item in ViewBag.TipoCliente)
-                    {
-                        <option value="@item.Value">@item.Text</option>
-                    }
-                </select>
-            </div>
-
-            <div class="col-auto">
-                <input id="btnFiltrar1" type="button" value="Buscar" class="btn btn-custom-clean" style="margin-top: -30px" />
-                <a href="/Viajes/ReportesViajesLocales" class="btn btn-custom-cancel" style="margin-top: -30px; margin-left: 10px">Cancelar</a>
-            </div>
-        </div>
-        <div class="rectangulos" style="width: 100%;">
-            <table id="tblVentasGenerales" class="table table-bordered table-striped" style="width: 100%;"></table>
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
-                <div class="mb-2" style="text-align: right;">
-                    <button id="btnGenerarPDFVentasGenerales" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
-                        Generar Reporte PDF
-                    </button>
-                    <button id="btnGenerarExcelVentasGenerales" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
-                        Generar Reporte Excel
-                    </button>
+            <!-- Título -->
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h1 class="text-primary" style="color: #005c8a !important;">
+                        <i class="fa fa-file-text-o"></i> Reporte de Venta General
+                    </h1>
                 </div>
             </div>
-        </div>
-    </div>
-    <center><h1>Reporte de Venta Filtrada</h1></center>
-    <br />
-    <div class="tabla-consultas-empleados">
-        <div class="row align-items-end">
-            @* FILTRADO POR FECHA *@
-            <div class="col-auto">
-                <label for="fechaFiltro3" class="form-label">Fecha Inicio:</label>
-                <input type="date" id="fechaFiltro3" name="fechaFiltro3" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
-            </div>
 
-            <div class="col-auto">
-                <label for="fechaFiltro4" class="form-label">Fecha Final:</label>
-                <input type="date" id="fechaFiltro4" name="fechaFiltro4" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
-            </div>
-
-            <div class="col-auto">
-                <label>Tipo de Cliente:</label>
-                <select id="ddlTipoCliente2" name="ddlTipoCliente" class="form-control">
-                    <option value="" disabled selected>Selecciona una opcion</option>
-                    <!-- Las opciones se cargarán desde el ViewBag -->
-                    @foreach (var item in ViewBag.TipoCliente)
-                    {
-                        <option value="@item.Value">@item.Text</option>
-                    }
-                </select>
-            </div>
-
-            <div class="col-auto">
-                <label>Cliente:</label>
-                <select id="ddlCliente" class="form-control">
-                    <option value="" disabled selected>Selecciona una opcion</option>
-                    @foreach (var i in clientes)
-                    {
-                        <option value="@i.Id">@i.Nombre</option>
-                    }
-                </select>
-            </div>
-
-            <div class="col-auto">
-                <label>Direcciones:</label>
-                <select id="ddlDireccionesCliente" class="form-control">
-                    <option value="" disabled selected>Selecciona una opcion</option>
-                </select>
-            </div>
-
-            <div class="col-auto">
-                <input id="btnFiltrar2" type="button" value="Buscar" class="btn btn-custom-clean" style="margin-top: -30px" />
-                <a href="/Viajes/ReportesViajesLocales" class="btn btn-custom-cancel" style="margin-top: -30px; margin-left: 10px">Cancelar</a>
-            </div>
-            <div class="rectangulos" style="width: 100%;">
-                <table id="tblVentasGeneralesFiltradas" class="table table-bordered table-striped" style="width: 100%;"></table>
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
-                    <div class="mb-2" style="text-align: right;">
-                        <button id="btnVentasGeneralesFiltradas" style="background-color: #28a745; margin-left:15px;  color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
-                            Generar Reporte PDF
+            <!-- Filtros -->
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label" style="color: #333333; font-weight: bold;">
+                            <i class="fa fa-calendar"></i> Fecha Inicio:
+                        </label>
+                        <input type="date" id="fechaFiltro1" name="fechaFiltro1" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label" style="color: #333333; font-weight: bold;">
+                            <i class="fa fa-calendar"></i> Fecha Final:
+                        </label>
+                        <input type="date" id="fechaFiltro2" name="fechaFiltro2" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label" style="color: #333333; font-weight: bold;">
+                            <i class="fa fa-tag"></i> Tipo de Cliente:
+                        </label>
+                        <select id="ddlTipoCliente1" name="ddlTipoCliente" class="form-control">
+                            <option value="" disabled selected>Selecciona una opcion</option>
+                            @foreach (var item in ViewBag.TipoCliente)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-12">
+                    <div class="form-group" style="margin-top: 25px;">
+                        <button id="btnFiltrar1" type="button" class="btn btn-primary">
+                            <i class="fa fa-search"></i> Buscar
                         </button>
-                        <button id="btnExcelVentasGeneralesFiltradas" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
-                            Generar Reporte Excel
-                        </button>
+                        <a href="/Viajes/ReportesViajesLocales" class="btn btn-danger">
+                            <i class="fa fa-times"></i> Cancelar
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <br />
+
+    <!-- Tabla de Ventas Generales -->
+    <div class="container-fluid" style="padding: 0 15px 20px 15px;">
+        <div class="panel panel-primary" style="background-color: #ffffff;">
+            <div class="panel-heading" style="background-color: #337ab7; color: #ffffff;">
+                <i class="fa fa-table"></i> Listado de Ventas Generales
+            </div>
+            <div class="panel-body table-responsive" style="background-color: #ffffff;">
+                <table id="tblVentasGenerales" class="table table-bordered table-striped" style="width: 100%;">
+                    <thead>
+                        <tr style="background-color: #f5f5f5;">
+                            <th style="color: #333333;">Id</th>
+                            <th style="color: #333333;">Folio</th>
+                            <th style="color: #333333;">Fecha de transporte</th>
+                            <th style="color: #333333;">Cliente</th>
+                            <th style="color: #333333;">Transportista</th>
+                            <th style="color: #333333;">Vehículo</th>
+                            <th style="color: #333333;">Origen</th>
+                            <th style="color: #333333;">Material</th>
+                            <th style="color: #333333;">Kilómetros</th>
+                            <th style="color: #333333;">Importe</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="text-center" style="margin-top: 15px;">
+                    <button id="btnGenerarPDFVentasGenerales" class="btn btn-success">
+                        <i class="fa fa-file-pdf-o"></i> Generar Reporte PDF
+                    </button>
+                    <button id="btnGenerarExcelVentasGenerales" class="btn btn-info">
+                        <i class="fa fa-file-excel-o"></i> Generar Reporte Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel Reporte de Venta Filtrada -->
+    <div class="panel panel-default" style="background-color: #ffffff; margin-bottom: 30px; margin-top: 30px;">
+        <div class="panel-body" style="background-color: #ffffff; color: #333333;">
+
+            <!-- Título -->
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h1 class="text-primary" style="color: #005c8a !important;">
+                        <i class="fa fa-filter"></i> Reporte de Venta Filtrada
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-md-2 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label" style="color: #333333; font-weight: bold;">
+                            <i class="fa fa-calendar"></i> Fecha Inicio:
+                        </label>
+                        <input type="date" id="fechaFiltro3" name="fechaFiltro3" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label" style="color: #333333; font-weight: bold;">
+                            <i class="fa fa-calendar"></i> Fecha Final:
+                        </label>
+                        <input type="date" id="fechaFiltro4" name="fechaFiltro4" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label" style="color: #333333; font-weight: bold;">
+                            <i class="fa fa-tag"></i> Tipo de Cliente:
+                        </label>
+                        <select id="ddlTipoCliente2" name="ddlTipoCliente" class="form-control">
+                            <option value="" disabled selected>Selecciona una opcion</option>
+                            @foreach (var item in ViewBag.TipoCliente)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label" style="color: #333333; font-weight: bold;">
+                            <i class="fa fa-building-o"></i> Cliente:
+                        </label>
+                        <select id="ddlCliente" class="form-control">
+                            <option value="" disabled selected>Selecciona una opcion</option>
+                            @foreach (var i in clientes)
+                            {
+                                <option value="@i.Id">@i.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label" style="color: #333333; font-weight: bold;">
+                            <i class="fa fa-map-marker"></i> Direcciones:
+                        </label>
+                        <select id="ddlDireccionesCliente" class="form-control">
+                            <option value="" disabled selected>Selecciona una opcion</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-12">
+                    <div class="form-group" style="margin-top: 25px;">
+                        <button id="btnFiltrar2" type="button" class="btn btn-primary">
+                            <i class="fa fa-search"></i> Buscar
+                        </button>
+                        <a href="/Viajes/ReportesViajesLocales" class="btn btn-danger">
+                            <i class="fa fa-times"></i> Cancelar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Ventas Generales Filtradas -->
+    <div class="container-fluid" style="padding: 0 15px 20px 15px;">
+        <div class="panel panel-primary" style="background-color: #ffffff;">
+            <div class="panel-heading" style="background-color: #337ab7; color: #ffffff;">
+                <i class="fa fa-table"></i> Listado de Ventas Filtradas
+            </div>
+            <div class="panel-body table-responsive" style="background-color: #ffffff;">
+                <table id="tblVentasGeneralesFiltradas" class="table table-bordered table-striped" style="width: 100%;">
+                    <thead>
+                        <tr style="background-color: #f5f5f5;">
+                            <th style="color: #333333;">Id</th>
+                            <th style="color: #333333;">Folio</th>
+                            <th style="color: #333333;">Fecha de transporte</th>
+                            <th style="color: #333333;">Cliente</th>
+                            <th style="color: #333333;">Transportista</th>
+                            <th style="color: #333333;">Vehículo</th>
+                            <th style="color: #333333;">Origen</th>
+                            <th style="color: #333333;">Material</th>
+                            <th style="color: #333333;">Kilómetros</th>
+                            <th style="color: #333333;">Importe</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="text-center" style="margin-top: 15px;">
+                    <button id="btnVentasGeneralesFiltradas" class="btn btn-success">
+                        <i class="fa fa-file-pdf-o"></i> Generar Reporte PDF
+                    </button>
+                    <button id="btnExcelVentasGeneralesFiltradas" class="btn btn-info">
+                        <i class="fa fa-file-excel-o"></i> Generar Reporte Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
 <script src="@(Url.StaticFile("Scripts/Viajes/ReportesViajesLocales.js"))"></script>
+
+<style>
+    /* Estilos para asegurar que todo el contenido tenga fondo blanco y texto legible */
+    .container-fluid {
+        background-color: transparent;
+    }
+
+    /* Estilos para los botones dentro de las tablas - letras blancas */
+    .table .btn {
+        color: #ffffff !important;
+    }
+
+    .table .btn-primary {
+        background-color: #337ab7;
+        border-color: #2e6da4;
+    }
+
+    .table .btn-danger {
+        background-color: #d9534f;
+        border-color: #d43f3a;
+    }
+
+    .table .btn-warning {
+        background-color: #f0ad4e;
+        border-color: #eea236;
+    }
+
+    .table .btn-info {
+        background-color: #5bc0de;
+        border-color: #46b8da;
+    }
+
+    .table .btn-success {
+        background-color: #5cb85c;
+        border-color: #4cae4c;
+    }
+
+    /* Hover effects */
+    .table .btn:hover {
+        opacity: 0.9;
+        color: #ffffff !important;
+    }
+
+    /* Asegurar que el texto de los botones principales también sea blanco */
+    .btn-success, .btn-danger, .btn-info, .btn-primary {
+        color: #ffffff !important;
+    }
+
+    /* Estilos para DataTables - texto oscuro sobre fondo blanco */
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_processing,
+    .dataTables_wrapper .dataTables_paginate {
+        color: #333333 !important;
+    }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            color: #333333 !important;
+        }
+
+            .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+                background: #337ab7 !important;
+                color: #ffffff !important;
+            }
+
+    /* Tablas - celdas con texto oscuro */
+    .table tbody tr td {
+        color: #333333 !important;
+        background-color: #ffffff !important;
+    }
+
+    .table thead tr th {
+        color: #333333 !important;
+        background-color: #f5f5f5 !important;
+    }
+
+    /* Inputs y selects dentro del formulario */
+    .form-control {
+        color: #333333 !important;
+        background-color: #ffffff !important;
+    }
+
+        .form-control:disabled {
+            background-color: #e9ecef !important;
+            color: #495057 !important;
+        }
+
+    /* Labels */
+    .control-label {
+        color: #333333 !important;
+    }
+</style>

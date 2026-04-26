@@ -4,6 +4,110 @@
     var usuario = ViewBag.UserToken.UserName;
 }
 
+<style>
+    /* Estilos personalizados para mantener la misma apariencia */
+    .btn-custom-clean {
+        background-color: #5bc0de;
+        border-color: #46b8da;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-custom-clean:hover {
+            background-color: #31b0d5;
+            border-color: #269abc;
+            color: white;
+        }
+
+    .btn-custom-cancel {
+        background-color: #d9534f;
+        border-color: #d43f3a;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-custom-cancel:hover {
+            background-color: #c9302c;
+            border-color: #ac2925;
+            color: white;
+        }
+
+    .text-success {
+        color: #3c763d;
+    }
+
+    .fw-bold {
+        font-weight: bold;
+    }
+
+    .panel-custom {
+        margin-bottom: 20px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+    }
+
+    .panel-custom-heading {
+        padding: 10px 15px;
+        border-bottom: 1px solid #ddd;
+        background-color: #f5f5f5;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+    }
+
+        .panel-custom-heading h4 {
+            margin: 0;
+            color: #333;
+        }
+
+    .panel-custom-body {
+        padding: 15px;
+    }
+
+    /* Estilos para DataTables */
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_processing,
+    .dataTables_wrapper .dataTables_paginate {
+        margin-bottom: 15px;
+    }
+
+        .dataTables_wrapper .dataTables_filter input {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 5px 10px;
+            margin-left: 10px;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 5px 12px;
+            margin: 0 2px;
+            border-radius: 4px;
+        }
+
+            .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+                background: #337ab7;
+                color: white !important;
+                border: 1px solid #2e6da4;
+            }
+
+    .table-bordered {
+        border: 1px solid #ddd;
+    }
+
+    .table-striped > tbody > tr:nth-of-type(odd) {
+        background-color: #f9f9f9;
+    }
+</style>
+
 <input type="hidden" id="trabajadorInput" value="@usuarioId" readonly />
 <input type="hidden" id="FechaActual" value="@fechaActual" readonly />
 <input type="hidden" id="CreatedDt" value="@fechaActual" readonly />
@@ -13,12 +117,50 @@
 
 <div class="row">
     <div class="col-md-6">
-        <h4>LISTA DE ROLES GENERALES</h4>
-        <table class="table table-bordered table-striped" id="tblListaRolesG" style="width: 100%;"></table>
+        <div class="panel-custom">
+            <div class="panel-custom-heading">
+                <h4><i class="fa fa-list"></i> LISTA DE ROLES GENERALES</h4>
+            </div>
+            <div class="panel-custom-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped" id="tblListaRolesG" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="col-md-6">
-        <h4>ROLES PERMITIDOS</h4>
-        <table class="table table-bordered table-striped" id="tblRolesPermitidos" style="width: 100%;"></table>
+        <div class="panel-custom">
+            <div class="panel-custom-heading">
+                <h4><i class="fa fa-check-circle"></i> ROLES PERMITIDOS</h4>
+            </div>
+            <div class="panel-custom-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped" id="tblRolesPermitidos" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>ID Usuario</th>
+                                <th>ID Rol</th>
+                                <th>Nombre del Rol</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -38,14 +180,36 @@
                     title: "Acciones",
                     render: function (data, type, row) {
                         if (rolesCargados.includes(row.id)) {
-                            return '<span class="text-success fw-bold">Rol ya asignado</span>';
+                            return '<span class="text-success fw-bold"><i class="fa fa-check-circle"></i> Rol ya asignado</span>';
                         } else {
                             var nombreEscapado = row.nombre.replace(/'/g, "\\'").replace(/"/g, '\\"');
-                            return '<input type="button" class="btn btn-custom-clean" value="Agregar Rol" onclick="AgregarRol(' + data + ', \'' + nombreEscapado + '\')" />';
+                            return '<button type="button" class="btn btn-custom-clean" onclick="AgregarRol(' + data + ', \'' + nombreEscapado + '\')"><i class="fa fa-plus"></i> Agregar</button>';
                         }
                     }
                 }
-            ]
+            ],
+            language: {
+                "decimal": ".",
+                "thousands": ",",
+                "processing": '<i class="fa fa-spinner fa-spin"></i> Procesando...',
+                "lengthMenu": '<i class="fa fa-list"></i> Mostrar _MENU_ registros',
+                "zeroRecords": '<i class="fa fa-info-circle"></i> No se encontraron resultados',
+                "emptyTable": '<i class="fa fa-database"></i> No hay datos disponibles',
+                "info": '<i class="fa fa-info-circle"></i> Mostrando _START_ a _END_ de _TOTAL_ registros',
+                "infoEmpty": '<i class="fa fa-info-circle"></i> Mostrando 0 a 0 de 0 registros',
+                "infoFiltered": '<i class="fa fa-filter"></i> (filtrado de _MAX_ registros totales)',
+                "search": '<i class="fa fa-search"></i> Buscar:',
+                "paginate": {
+                    "first": '<i class="fa fa-fast-backward"></i> Primero',
+                    "last": '<i class="fa fa-fast-forward"></i> Último',
+                    "next": '<i class="fa fa-forward"></i> Siguiente',
+                    "previous": '<i class="fa fa-backward"></i> Anterior'
+                },
+                "aria": {
+                    "sortAscending": ": activar para ordenar ascendente",
+                    "sortDescending": ": activar para ordenar descendente"
+                }
+            }
         });
 
         $("#tblRolesPermitidos").DataTable({
@@ -59,10 +223,32 @@
                     data: "id",
                     title: "Acciones",
                     render: function (data, type, row) {
-                        return '<input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarRol(' + data + ')" />';
+                        return '<button type="button" class="btn btn-custom-cancel" onclick="EliminarRol(' + data + ')"><i class="fa fa-trash"></i> Eliminar</button>';
                     }
                 }
-            ]
+            ],
+            language: {
+                "decimal": ".",
+                "thousands": ",",
+                "processing": '<i class="fa fa-spinner fa-spin"></i> Procesando...',
+                "lengthMenu": '<i class="fa fa-list"></i> Mostrar _MENU_ registros',
+                "zeroRecords": '<i class="fa fa-info-circle"></i> No se encontraron resultados',
+                "emptyTable": '<i class="fa fa-database"></i> No hay datos disponibles',
+                "info": '<i class="fa fa-info-circle"></i> Mostrando _START_ a _END_ de _TOTAL_ registros',
+                "infoEmpty": '<i class="fa fa-info-circle"></i> Mostrando 0 a 0 de 0 registros',
+                "infoFiltered": '<i class="fa fa-filter"></i> (filtrado de _MAX_ registros totales)',
+                "search": '<i class="fa fa-search"></i> Buscar:',
+                "paginate": {
+                    "first": '<i class="fa fa-fast-backward"></i> Primero',
+                    "last": '<i class="fa fa-fast-forward"></i> Último',
+                    "next": '<i class="fa fa-forward"></i> Siguiente',
+                    "previous": '<i class="fa fa-backward"></i> Anterior'
+                },
+                "aria": {
+                    "sortAscending": ": activar para ordenar ascendente",
+                    "sortDescending": ": activar para ordenar descendente"
+                }
+            }
         });
 
         GetAllUsuarioRolByUsuarioId(usuarioId);
@@ -74,7 +260,7 @@
                 MapingPropertiesDataTable("tblListaRolesG", r.Response);
                 actualizarEstadoRoles();
             } else {
-                Swal.fire("Error", "Error al cargar los Roles: " + r.ErrorMessage, "error");
+                swal("Error", "Error al cargar los Roles: " + r.ErrorMessage, "error");
             }
         });
     }
@@ -86,7 +272,7 @@
                 MapingPropertiesDataTable("tblRolesPermitidos", r.Response);
                 GetAllRoll();
             } else {
-                Swal.fire("Error", "Error al cargar los Roles del Usuario: " + r.ErrorMessage, "error");
+                swal("Error", "Error al cargar los Roles del Usuario: " + r.ErrorMessage, "error");
             }
         });
     }
@@ -104,10 +290,11 @@
             UpdatedDt: $("#UpdatedDt").val()
         };
 
-        Swal.fire({
-            title: 'Asignando rol...',
-            allowOutsideClick: false,
-            didOpen: () => Swal.showLoading()
+        swal({
+            title: "Asignando rol...",
+            text: "Por favor espere",
+            showConfirmButton: false,
+            allowOutsideClick: false
         });
 
         $.ajax({
@@ -115,69 +302,77 @@
             type: 'POST',
             data: data,
             success: function (response) {
-                Swal.close();
                 var r = typeof response === "string" ? JSON.parse(response) : response;
 
                 if (r.IsSuccess) {
                     rolesCargados.push(idRol);
                     actualizarEstadoRoles();
                     GetAllUsuarioRolByUsuarioId(usuarioId);
-                    Swal.fire("Éxito", "Rol asignado exitosamente.", "success");
+                    swal("Éxito", "Rol asignado exitosamente.", "success");
                 } else {
-                    Swal.fire("Error", r.ErrorMessage || "Error al asignar el rol.", "error");
+                    swal("Error", r.ErrorMessage || "Error al asignar el rol.", "error");
                 }
             },
             error: function (xhr, status, error) {
-                Swal.close();
-                Swal.fire("Error", "Error de conexión: " + error, "error");
+                swal("Error", "Error de conexión: " + error, "error");
             }
         });
     }
 
     function EliminarRol(idRegistro) {
-        Swal.fire({
-            title: '¿Estás seguro?',
+        swal({
+            title: "¿Estás seguro?",
             text: "¿Quieres eliminar este rol?",
-            icon: 'warning',
+            type: "warning",
             showCancelButton: true,
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                PostMVC("/Administracion/DeleteUsuarioRolById?id=" + idRegistro, function (r) {
-                    if (r.IsSuccess) {
-                        // Buscar el rol eliminado en la tabla de RolesPermitidos
-                        var table = $("#tblRolesPermitidos").DataTable();
-                        var row = table.rows().data().toArray().find(x => x.id === idRegistro);
+            confirmButtonColor: "#d9534f",
+            cancelButtonColor: "#5bc0de",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar",
+            closeOnConfirm: true
+        }, function (isConfirm) {
+            if (isConfirm) {
 
-                        if (row) {
-                            // Remover el rolId del array de roles cargados
-                            rolesCargados = rolesCargados.filter(function(id) {
-                                return id !== row.rolId;
-                            });
+                // AJAX con POST
+                $.ajax({
+                    url: '/Administracion/DeleteUsuarioRolById',
+                    type: 'POST',
+                    data: { id: idRegistro },
+                    dataType: 'json',
+                    success: function (response) {
+                        var r = typeof response === "string" ? JSON.parse(response) : response;
+
+                        if (r.IsSuccess) {
+                            // Buscar el rol eliminado en la tabla de RolesPermitidos
+                            var table = $("#tblRolesPermitidos").DataTable();
+                            var row = table.rows().data().toArray().find(x => x.id === idRegistro);
+
+                            if (row) {
+                                // Remover el rolId del array de roles cargados
+                                rolesCargados = rolesCargados.filter(function (id) {
+                                    return id !== row.rolId;
+                                });
+                            }
+
+                            // Actualizar ambas tablas
+                            actualizarEstadoRoles();
+                            GetAllUsuarioRolByUsuarioId(usuarioId);
+
+                            swal("¡Eliminado!", "El rol ha sido eliminado correctamente.", "success");
+                        } else {
+                            swal("Error!", "Error al eliminar el rol: " + (r.ErrorMessage || "Error desconocido"), "error");
                         }
-
-                        // Actualizar ambas tablas
-                        actualizarEstadoRoles();
-                        GetAllUsuarioRolByUsuarioId(usuarioId);
-
-                        Swal.fire(
-                            'Eliminado!',
-                            'El rol ha sido eliminado.',
-                            'success'
-                        );
-                    } else {
-                        Swal.fire(
-                            'Error!',
-                            'Error al eliminar el rol: ' + r.ErrorMessage,
-                            'error'
-                        );
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error en AJAX:", error);
+                        console.error("Status:", status);
+                        console.error("Response:", xhr.responseText);
+                        swal("Error!", "Error de conexión: " + error, "error");
                     }
                 });
             }
         });
     }
-
 
     function actualizarEstadoRoles() {
         var table = $("#tblListaRolesG").DataTable();

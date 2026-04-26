@@ -207,63 +207,6 @@ function AgregarMaterialACliente(clienteId, materialId) {
         }
     });
 }
-
-//function AgregarPreciosMaterialACliente() {
-
-//    const idDireccion = $("#idDireccion").val();
-//    const direccion = $("#direccion").val();
-//    const precioActivo = $("#precioActual").is(":checked");
-
-//    const clienteId = $("#clienteId").val();
-//    const materialId = $("#materialId").val();
-//    const id = $("#id").val();
-
-//    // ⚠️ usar los RAW VALUES, no el texto formateado
-//    const pMatM3 = $("#p-mat-m3").data("raw-value") || 0;
-//    const pFleteM3 = $("#p-flete-m3").data("raw-value") || 0;
-//    const manoObra = $("#mano-obra").data("raw-value") || 0;
-//    const casetas = $("#casetas").data("raw-value") || 0;
-
-//    const kmCargado = $("#km-cargado").val() || 0;
-//    const kmBasio = $("#km-basio").val() || 0;
-//    const cargaDiesel = $("#carga-diesel").val() || 0;
-
-//    const url =
-//        `/Administracion/SaveOrUpdateClienteTipoMaterial` +
-//        `?Id=${id}` +
-//        `&ClienteId=${clienteId}` +
-//        `&MaterialId=${materialId}` +
-//        `&IdDireccion=${idDireccion}` +
-//        `&Direccion=${encodeURIComponent(direccion)}` +
-//        `&PMatM3=${pMatM3}` +
-//        `&PFleteM3=${pFleteM3}` +
-//        `&KM_Cargado=${kmCargado}` +
-//        `&KM_Basico=${kmBasio}` +
-//        `&CargaDiesel=${cargaDiesel}` +
-//        `&ManoObra=${manoObra}` +
-//        `&Casetas=${casetas}` +
-//        `&PrecioActivo=${precioActivo}`;
-
-//    GetMVC(url, function (r) {
-
-//        if (r.IsSuccess) {
-
-//            swal({
-//                title: "¡Éxito!",
-//                text: "Configuración guardada correctamente",
-//                type: "success"
-//            }, function () {
-
-//                ClienteTipoMaterialByDireccionMaterialAndCliente(idDireccion);
-//            });
-
-//        } else {
-//            swal("Error", r.ErrorMessage, "error");
-//        }
-
-//    });
-//}
-
 function EliminarMaterialDelCliente(clienteId, materialId) {
     var parametros = {
         Cliente: {

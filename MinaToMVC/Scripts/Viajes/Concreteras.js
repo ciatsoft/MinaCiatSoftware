@@ -25,7 +25,6 @@ $(function () {
     });
 });
 
-
 $(document).ready(function () {
 
     // Asignar el mismo event listener a todos los dropdowns
@@ -43,7 +42,7 @@ $(document).ready(function () {
             { data: "ubicacionOrigen.nombreUbicacion", title: "Origen" },
             { data: "transportista.nombre", title: "Transportista" },
             { data: "tipoMaterial.nombreTipoMaterial", title: "Material" },
-            { data: "vehiculo.placa", title: "Vehículo" },
+            { data: "vehiculo.placa", title: "Vehiculo" },
             { data: "cliente.nombre", title: "Cliente" },
             { data: "unidadMedida.nombre", title: "Unidad de Medida" },
             {
@@ -65,16 +64,17 @@ $(document).ready(function () {
                 data: "estatus",
                 title: "Estatus",
                 render: function (data, type, row) {
-                    return data == 1 ? "Activo" : "Inactivo";
+                    return data == 1 ? '<span class="label label-success">Activo</span>' : '<span class="label label-danger">Inactivo</span>';
                 }
             },
             {
-                data: "id", title: "Acciones", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarViajeLocal(' + data + ', this)" />' +
-                        '<input type="button" value="Imprimir" class="btn btn-custom-clean" style="background-color: yellow; border:none; color: black; padding: 7px 10px; border - radius: 5px; cursor: pointer; "  onclick="ImprimirReporte(' + data + ', this)" />';
+                data: "id",
+                title: "Acciones",
+                render: function (data) {
+                    return '<button type="button" class="btn btn-primary btn-sm" onclick="EditarViajeLocal(' + data + ')"><i class="fa fa-edit"></i> Editar</button> ' +
+                        '<button type="button" class="btn btn-warning btn-sm" style="background-color: #ffc107; color: #000000;" onclick="ImprimirReporte(' + data + ')"><i class="fa fa-print"></i> Imprimir</button>';
                 }
             }
-
         ],
         order: [0, 'desc'],
         language: {
@@ -102,12 +102,10 @@ $(document).ready(function () {
         }
     });
 
-
     GetAllViajeLocal(); // Llamada a la función para cargar todos los viajes locales
 
     // Cargar el registro en caso de edición
     if (viajeLocalJson.Id != 0) {
-
         console.log("Datos recibidos: " + JSON.stringify(viajeLocalJson));
         $("#txtViajeinterno").val(viajeLocalJson.Id);
         $("#ddlUOrigen").val(viajeLocalJson.UbicacionOrigen.Id);
@@ -116,7 +114,14 @@ $(document).ready(function () {
         $("#ddlTransportistas").val(viajeLocalJson.Transportista.Id);
         $("#ddlVehiculo").val(viajeLocalJson.Vehiculo.Id);
         $("#ddlCliente").val(viajeLocalJson.Cliente.Id).prop('disabled', true);
-        $("#dtpFechaViaje").val(viajeLocalJson.FechaViaje.substring(0, 10));
+
+        // Formatear fecha para input date (YYYY-MM-DD)
+        if (viajeLocalJson.FechaViaje) {
+            var fecha = new Date(viajeLocalJson.FechaViaje);
+            var fechaFormateada = fecha.toISOString().split('T')[0];
+            $("#dtpFechaViaje").val(fechaFormateada);
+        }
+
         $("#txtObservaciones").val(viajeLocalJson.Observaciones);
         $("#totalKMRecorridos").val(viajeLocalJson.KilometrosRecorridos);
         $("#totalImporte").val(viajeLocalJson.TotalImporte);
@@ -125,7 +130,7 @@ $(document).ready(function () {
         actualizarTiposDeMaterial(viajeLocalJson.Cliente.Id);
         ObtenerDireccionCliente(viajeLocalJson.Cliente.Id);
 
-        // Mostrar botón de eliminar y ocultar el de guardar
+        // Mostrar botón de eliminar
         $("#btnEliminar").show();
         $("#btnGuardar").show();
     } else {
@@ -191,76 +196,77 @@ function SaveOrUpdateViajeLocal() {
         };
 
         // Mostrar los datos capturados en una alerta usando SweetAlert
-        window.Swal.fire({
+        swal({
             title: 'Datos del viaje',
-            html: `<strong>Origen:</strong> ${$("#ddlUOrigen option:selected").text()}<br/>
-                   <strong>Transportista:</strong> ${$("#ddlTransportistas option:selected").text()}<br/>
-                   <strong>Material:</strong> ${$("#ddlTipoMaterial option:selected").text()}<br/>
-                   <strong>Vehículo:</strong> ${$("#ddlVehiculo option:selected").text()}<br/>
-                   <strong>Cliente:</strong> ${$("#ddlCliente option:selected").text()}<br/>
-                   <strong>Direccion Destino:</strong> ${$("#ddlDireccionesCliente option:selected").text()}<br/>
-                   <strong>Unidad de Medida:</strong> ${$("#ddlUnidadM option:selected").text()}<br/>
-                   <strong>Fecha del Viaje:</strong> ${$("#dtpFechaViaje").val()}<br/>
-                   <strong>Kilometraje Aproximado Recorrido:</strong> ${$("#totalKMRecorridos").val()}<br/>
-                   <strong>Importe Total:</strong> ${$("#totalImporte").val()}<br/>
-                   <strong>Observaciones:</strong> ${$("#txtObservaciones").val()}`,
-            icon: 'info',
+            html: `<div style="text-align: left;">
+                       <strong>Origen:</strong> ${$("#ddlUOrigen option:selected").text() || 'N/A'}<br/>
+                       <strong>Transportista:</strong> ${$("#ddlTransportistas option:selected").text() || 'N/A'}<br/>
+                       <strong>Material:</strong> ${$("#ddlTipoMaterial option:selected").text() || 'N/A'}<br/>
+                       <strong>Vehículo:</strong> ${$("#ddlVehiculo option:selected").text() || 'N/A'}<br/>
+                       <strong>Cliente:</strong> ${$("#ddlCliente option:selected").text() || 'N/A'}<br/>
+                       <strong>Direccion Destino:</strong> ${$("#ddlDireccionesCliente option:selected").text() || 'N/A'}<br/>
+                       <strong>Unidad de Medida:</strong> ${$("#ddlUnidadM option:selected").text() || 'N/A'}<br/>
+                       <strong>Fecha del Viaje:</strong> ${$("#dtpFechaViaje").val() || 'N/A'}<br/>
+                       <strong>Kilometraje Aproximado Recorrido:</strong> ${$("#totalKMRecorridos").val() || '0'}<br/>
+                       <strong>Importe Total:</strong> ${$("#totalImporte").val() || '0'}<br/>
+                       <strong>Observaciones:</strong> ${$("#txtObservaciones").val() || 'N/A'}
+                   </div>`,
+            type: 'info',
             showCancelButton: true,
             confirmButtonText: 'Confirmar y Guardar',
             cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
+        }, function (isConfirm) {
+            if (isConfirm) {
                 PostMVC("/Viajes/SaveOrUpdateViajeLocal", parametro, function (r) {
                     if (r.IsSuccess) {
-                        window.location.href = '/Viajes/Concreteras';
+                        swal("Éxito", "Viaje guardado correctamente", "success").then(function () {
+                            window.location.href = '/Viajes/Concreteras';
+                        });
                     } else {
-                        window.Swal.fire('Error', 'Error al guardar los datos: ' + r.response.ErrorMessage, 'error');
+                        swal("Error", "Error al guardar los datos: " + (r.ErrorMessage || "Error desconocido"), "error");
                     }
                 });
             }
-            window.location.href = '/Viajes/Concreteras';
         });
     } else {
-        window.Swal.fire('Advertencia', 'Por favor, complete todos los campos obligatorios.', 'warning');
+        swal("Advertencia", "Por favor, complete todos los campos obligatorios.", "warning");
     }
 }
 
-// Función para eliminar con confirmación y estructura de mensajes de SweetAlert
+// Función para eliminar con confirmación
 function EliminarViajeLocal() {
-    Swal.fire({
-        title: '¿Estas seguro?',
+    swal({
+        title: "¿Estás seguro?",
         text: "¿Desea eliminar el siguiente registro?",
-        icon: 'warning',
+        type: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
+        confirmButtonColor: "#d9534f",
+        cancelButtonColor: "#5bc0de",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar"
+    }, function (isConfirm) {
+        if (isConfirm) {
             var id = $("#txtViajeinterno").val();
 
-            // Cambiar a GET y enviar el ID en la URL
             GetMVC('/Viajes/DeleteViajeLocal?id=' + id, function (r) {
                 if (r.IsSuccess) {
-                    Swal.fire('Eliminado', 'El registro ha sido eliminado.', 'success')
-                        .then(() => {
-                            window.location.href = '/Viajes/Concreteras';
-                        });
+                    swal("Eliminado", "El registro ha sido eliminado.", "success").then(function () {
+                        window.location.href = '/Viajes/Concreteras';
+                    });
                 } else {
-                    Swal.fire('Error', 'No se pudo eliminar el registro.', 'error');
+                    swal("Error", "No se pudo eliminar el registro: " + (r.ErrorMessage || "Error desconocido"), "error");
                 }
             });
         }
     });
 }
 
-// Función para editar con estilo de redireccionamiento 
+// Función para editar
 function EditarViajeLocal(id) {
-    actualizarTiposDeMaterial();
     location.href = "/Viajes/Concreteras/" + id;
     console.log(id);
 }
+
 function ImprimirReporte(id) {
     const ipLocal = window.location.hostname;
     console.log(ipLocal);
@@ -268,7 +274,7 @@ function ImprimirReporte(id) {
     console.log(id);
 }
 
-// Función para limpiar el formulario con estilo uniforme
+// Función para limpiar el formulario
 function LimpiarFormulario() {
     $("#txtidtipomaterial").val('');
     $("#txtNombreTipoMaterial").val('');
@@ -282,13 +288,11 @@ function LimpiarFormulario() {
 function GetAllViajeLocal() {
     GetMVC("/Viajes/GetAllViajeLocal", function (r) {
         if (r.IsSuccess) {
-
-            // Filtrar los datos donde cliente.tipoCliente sea igual a 1
+            // Filtrar los datos donde cliente.tipoCliente sea igual a 0 (Concreteras)
             const datosFiltrados = r.Response.filter(item => item.cliente && item.cliente.tipoCliente === 0);
-
             MapingPropertiesDataTable("tblViajesLocales", datosFiltrados);
         } else {
-            alert("Error al cargar los viajes: " + r.ErrorMessage);
+            swal("Error", "Error al cargar los viajes: " + r.ErrorMessage, "error");
         }
     });
 }
@@ -393,7 +397,7 @@ function ObtenerDireccionCliente(id, seleccionPrevia = null) {
                 preservandoSelecciones = false;
             }
         } else {
-            alert("Error al cargar las direcciones del cliente: " + r.ErrorMessage);
+            swal("Error", "Error al cargar las direcciones del cliente: " + r.ErrorMessage, "error");
             dropdown.append($('<option></option>')
                 .val("")
                 .text("Error al cargar direcciones"));
@@ -418,14 +422,15 @@ function ObtenerKilometrajeImporte(idCliente, idTipoMaterial, idDireccion) {
                 $("#totalKMRecorridos").val(item.total_KM_Recorridos);
                 $("#totalImporte").val(item.total_Gastos);
 
+                // Habilitar el botón guardar
+                document.getElementById('btnGuardar').disabled = false;
             } else {
-                alert("No se ha configurado algun precio especidifo para este filtro.");
+                swal("Advertencia", "No se ha configurado algún precio específico para este filtro.", "warning");
                 // Bloquear el botón
                 document.getElementById('btnGuardar').disabled = true;
             }
         } else {
-            alert("Error al cargar los datos: " + r.ErrorMessage);
+            swal("Error", "Error al cargar los datos: " + r.ErrorMessage, "error");
         }
     });
 }
-

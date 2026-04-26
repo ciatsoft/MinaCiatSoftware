@@ -160,14 +160,14 @@ function GetAllViajeLocal() {
         if (r.IsSuccess) {
             MapingPropertiesDataTable("tblVentasGenerales", r.Response);
         } else {
-            alert("Error al cargar los viajes: " + r.ErrorMessage);
+            swal("Error", "Error al cargar los viajes: " + r.ErrorMessage, "error");
         }
     });
 }
 
 function GetAllViajeLocalByDates(fecha1, fecha2, tipoCliente) {
     if (!fecha1 || !fecha2) {
-        alert("Por favor, seleccione una fecha válida.");
+        swal("Error", "Por favor, seleccione una fecha válida.", "error");
         return;
     }
 
@@ -176,18 +176,19 @@ function GetAllViajeLocalByDates(fecha1, fecha2, tipoCliente) {
         if (r.IsSuccess) {
             MapingPropertiesDataTable("tblVentasGenerales", r.Response);
         } else {
-            alert("Error al cargar los viajes: " + r.ErrorMessage);
+            swal("Error", "Error al cargar los viajes: " + r.ErrorMessage, "error");
         }
     });
 }
+
 function GetAllViajeLocalByDatesClientDireccion(fecha1, fecha2, clienteId, direccionId) {
-    
+
     // Usar GET con parámetros en la URL
     GetMVC(`/Viajes/GetAllViajeLocalByDatesClientDireccion?fecha1=${fecha1}&fecha2=${fecha2}&idCliente=${clienteId}&idDireccion=${direccionId}`, function (r, textStatus, jqXHR) {
         if (r.IsSuccess) {
             MapingPropertiesDataTable("tblVentasGeneralesFiltradas", r.Response);
         } else {
-            alert("Error al cargar los viajes: " + r.ErrorMessage);
+            swal("Error", "Error al cargar los viajes: " + r.ErrorMessage, "error");
         }
     });
 }
@@ -229,7 +230,7 @@ function ObtenerTipoCliente(id) {
                     .text("No hay clientes disponibles"));
             }
         } else {
-            alert("Error al cargar los clientes: " + r.ErrorMessage);
+            swal("Error", "Error al cargar los clientes: " + r.ErrorMessage, "error");
             dropdownCliente.append($('<option></option>')
                 .val("")
                 .text("Error al cargar clientes"));
@@ -272,7 +273,7 @@ function ObtenerDireccionCliente(id) {
                     .text("No hay direcciones disponibles"));
             }
         } else {
-            alert("Error al cargar las direcciones del cliente: " + r.ErrorMessage);
+            swal("Error", "Error al cargar las direcciones del cliente: " + r.ErrorMessage, "error");
             dropdown.append($('<option></option>')
                 .val("")
                 .text("Error al cargar direcciones"));
@@ -281,7 +282,6 @@ function ObtenerDireccionCliente(id) {
 }
 
 // Filtro 1
-
 document.getElementById("btnFiltrar1").addEventListener("click", function () {
     var fecha1 = $("#fechaFiltro1").val();
     var fecha2 = $("#fechaFiltro2").val();
@@ -293,19 +293,19 @@ document.getElementById("btnFiltrar1").addEventListener("click", function () {
 
     // Validar que ambas fechas tengan valor
     if (!fecha1 || !fecha2) {
-        alert("Filtrado inválido: Ambas fechas son requeridas.");
+        swal("Error", "Filtrado inválido: Ambas fechas son requeridas.", "error");
         return;
     }
 
     // Validar que fecha2 no sea menor que fecha1
     if (date2 < date1) {
-        alert("Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.");
+        swal("Error", "Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.", "error");
         return;
     }
 
     // Validar que se haya seleccionado un cliente
     if (cliente == null || cliente === "") {
-        alert("Filtrado invalido: Por favor selecciona un tipo de cliente.");
+        swal("Error", "Filtrado invalido: Por favor selecciona un tipo de cliente.", "error");
         return;
     }
 
@@ -330,15 +330,15 @@ document.getElementById("btnFiltrar2").addEventListener("click", function () {
     var direccionId = $("#ddlDireccionesCliente").val();
 
     if (!clienteId) {
-        alert("Por favor, seleccione un cliente.");
+        swal("Error", "Por favor, seleccione un cliente.", "error");
         return;
     }
     if (!fechaInicio || !fechaFinal) {
-        alert("Por favor, seleccione ambas fechas.");
+        swal("Error", "Por favor, seleccione ambas fechas.", "error");
         return;
     }
     if (!direccionId) {
-        alert("Por favor, seleccione una direccion.");
+        swal("Error", "Por favor, seleccione una direccion.", "error");
         return;
     }
     // Convertir a objetos Date para comparación
@@ -347,7 +347,7 @@ document.getElementById("btnFiltrar2").addEventListener("click", function () {
 
     // Validar que fecha2 no sea menor que fecha1
     if (date2 < date1) {
-        alert("Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.");
+        swal("Error", "Filtrado invalido: La fecha final no puede ser menor que la fecha inicial.", "error");
         return;
     }
 
@@ -355,10 +355,10 @@ document.getElementById("btnFiltrar2").addEventListener("click", function () {
 });
 
 // Reportes
-
 document.getElementById("btnGenerarPDFVentasGenerales").addEventListener("click", function () {
     btnGenerarPDFVentasGenerales();
 });
+
 document.getElementById("btnVentasGeneralesFiltradas").addEventListener("click", function () {
     btnGenerarPDFVentasGeneralesFiltradas();
 });
@@ -367,6 +367,7 @@ document.getElementById("btnVentasGeneralesFiltradas").addEventListener("click",
 document.getElementById("btnGenerarExcelVentasGenerales").addEventListener("click", function () {
     btnGenerarExcelVentasGenerales();
 });
+
 document.getElementById("btnExcelVentasGeneralesFiltradas").addEventListener("click", function () {
     btnGenerarExcelVentasGeneralesFiltradas();
 });
@@ -386,28 +387,12 @@ function btnGenerarPDFVentasGenerales() {
         }
     });
 
-    // Swalfire de generando reporte
-    Swal.fire({
+    // Mostrar loading
+    swal({
         title: "Generando reporte...",
         text: "Por favor espere mientras se genera el PDF",
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-
-            // Cerrar automáticamente después de 8 segundos
-            setTimeout(() => {
-                Swal.close();
-
-                // Mostrar mensaje de éxito después de cerrar
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Reporte generado',
-                    text: 'El PDF se ha creado correctamente',
-                    timer: 3000, // Opcional: cerrar después de 3 segundos
-                    showConfirmButton: false
-                });
-            }, 4000); // 4000 ms = 4 segundos
-        }
+        showConfirmButton: false,
+        allowOutsideClick: false
     });
 
     // Crear tabla HTML manualmente
@@ -457,7 +442,6 @@ function btnGenerarPDFVentasGenerales() {
         sumatoriaTotal.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) +
         '</td>';
     tablaHTML += '</tr>';
-
     tablaHTML += '</tbody></table>';
 
     // Crear formulario y enviar
@@ -473,6 +457,11 @@ function btnGenerarPDFVentasGenerales() {
     }).appendTo(form);
 
     form.appendTo('body').submit().remove();
+
+    setTimeout(() => {
+        swal.close();
+        swal("Éxito", "El PDF se ha generado correctamente", "success");
+    }, 2000);
 }
 
 function btnGenerarPDFVentasGeneralesFiltradas() {
@@ -481,7 +470,7 @@ function btnGenerarPDFVentasGeneralesFiltradas() {
 
     // Verificar si la tabla está vacía
     if (datos.length === 0) {
-        alert("La tabla esta vacia, no se puede proceder");
+        swal("Sin datos", "La tabla esta vacia, no se puede proceder", "warning");
         return;
     }
 
@@ -496,28 +485,12 @@ function btnGenerarPDFVentasGeneralesFiltradas() {
         }
     });
 
-    // Swalfire de generando reporte
-    Swal.fire({
+    // Mostrar loading
+    swal({
         title: "Generando reporte...",
         text: "Por favor espere mientras se genera el PDF",
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-
-            // Cerrar automáticamente después de 8 segundos
-            setTimeout(() => {
-                Swal.close();
-
-                // Mostrar mensaje de éxito después de cerrar
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Reporte generado',
-                    text: 'El PDF se ha creado correctamente',
-                    timer: 3000, // Opcional: cerrar después de 3 segundos
-                    showConfirmButton: false
-                });
-            }, 4000); // 4000 ms = 4 segundos
-        }
+        showConfirmButton: false,
+        allowOutsideClick: false
     });
 
     // Crear tabla HTML manualmente
@@ -549,7 +522,7 @@ function btnGenerarPDFVentasGeneralesFiltradas() {
         tablaHTML += '<td>' + (item.transportista.nombre || '') + '</td>';
         tablaHTML += '<td>' + (item.vehiculo.placa || '') + '</td>';
         tablaHTML += '<td>' + (item.ubicacionOrigen.nombreUbicacion || '') + '</td>';
-        tablaHTML += '<td>' + (item.tipoMaterial.nombreTipoMaterial || '') + '</td>';
+        tablaHTML += '<td>' + (item.tipoMaterial.nombreTipoMaterial || '') + '<td>';
         tablaHTML += '<td>' + (item.kilometrosRecorridos || '') + '</td>';
         tablaHTML += '<td>' +
             (item.totalImporte
@@ -557,7 +530,6 @@ function btnGenerarPDFVentasGeneralesFiltradas() {
                 : '$0.00'
             ) +
             '</td>';
-
         tablaHTML += '</tr>';
     });
 
@@ -568,7 +540,6 @@ function btnGenerarPDFVentasGeneralesFiltradas() {
         sumatoriaTotal.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) +
         '</td>';
     tablaHTML += '</tr>';
-
     tablaHTML += '</tbody></table>';
 
     // Crear formulario y enviar
@@ -584,6 +555,11 @@ function btnGenerarPDFVentasGeneralesFiltradas() {
     }).appendTo(form);
 
     form.appendTo('body').submit().remove();
+
+    setTimeout(() => {
+        swal.close();
+        swal("Éxito", "El PDF se ha generado correctamente", "success");
+    }, 2000);
 }
 
 function btnGenerarExcelVentasGenerales() {
@@ -601,31 +577,15 @@ function btnGenerarExcelVentasGenerales() {
         }
     });
 
-    // Swalfire de generando reporte
-    Swal.fire({
+    // Mostrar loading
+    swal({
         title: "Generando Excel...",
         text: "Por favor espere mientras se genera el archivo Excel",
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-
-            // Cerrar automáticamente después de 4 segundos
-            setTimeout(() => {
-                Swal.close();
-
-                // Mostrar mensaje de éxito después de cerrar
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Excel generado',
-                    text: 'El archivo Excel se ha creado correctamente',
-                    timer: 3000,
-                    showConfirmButton: false
-                });
-            }, 2000); // Reducido a 2 segundos para Excel
-        }
+        showConfirmButton: false,
+        allowOutsideClick: false
     });
 
-    // Crear tabla HTML manualmente (igual que antes)
+    // Crear tabla HTML manualmente
     var tablaHTML = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
 
     // Encabezados
@@ -672,7 +632,6 @@ function btnGenerarExcelVentasGenerales() {
         sumatoriaTotal.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) +
         '</td>';
     tablaHTML += '</tr>';
-
     tablaHTML += '</tbody></table>';
 
     // Crear formulario y enviar al controlador Excel
@@ -687,27 +646,12 @@ function btnGenerarExcelVentasGenerales() {
         value: tablaHTML
     }).appendTo(form);
 
-    // Opcional: agregar fechas si están disponibles
-    var fechaInicio = $('#FechaInicio').val();
-    var fechaFin = $('#FechaFin').val();
-
-    if (fechaInicio) {
-        $('<input>').attr({
-            type: 'hidden',
-            name: 'fechaInicio',
-            value: fechaInicio
-        }).appendTo(form);
-    }
-
-    if (fechaFin) {
-        $('<input>').attr({
-            type: 'hidden',
-            name: 'fechaFin',
-            value: fechaFin
-        }).appendTo(form);
-    }
-
     form.appendTo('body').submit().remove();
+
+    setTimeout(() => {
+        swal.close();
+        swal("Éxito", "El archivo Excel se ha generado correctamente", "success");
+    }, 2000);
 }
 
 function btnGenerarExcelVentasGeneralesFiltradas() {
@@ -716,11 +660,11 @@ function btnGenerarExcelVentasGeneralesFiltradas() {
 
     // Verificar si la tabla está vacía
     if (datos.length === 0) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Tabla vacía',
-            text: 'La tabla está vacía, no se puede generar el Excel',
-            confirmButtonText: 'Aceptar'
+        swal({
+            title: "Tabla vacía",
+            text: "La tabla está vacía, no se puede generar el Excel",
+            type: "warning",
+            confirmButtonText: "Aceptar"
         });
         return;
     }
@@ -764,28 +708,12 @@ function btnGenerarExcelVentasGeneralesFiltradas() {
         filtroAplicado = "Datos filtrados a criterios aplicados";
     }
 
-    // Swalfire de generando reporte
-    Swal.fire({
+    // Mostrar loading
+    swal({
         title: "Generando Excel...",
         text: "Por favor espere mientras se genera el archivo Excel",
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-
-            // Cerrar automáticamente después de 2 segundos
-            setTimeout(() => {
-                Swal.close();
-
-                // Mostrar mensaje de éxito después de cerrar
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Excel generado',
-                    text: 'El archivo Excel se ha creado correctamente',
-                    timer: 3000,
-                    showConfirmButton: false
-                });
-            }, 2000);
-        }
+        showConfirmButton: false,
+        allowOutsideClick: false
     });
 
     // Crear tabla HTML manualmente
@@ -835,7 +763,6 @@ function btnGenerarExcelVentasGeneralesFiltradas() {
         sumatoriaTotal.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }) +
         '</td>';
     tablaHTML += '</tr>';
-
     tablaHTML += '</tbody></table>';
 
     // Crear formulario y enviar
@@ -857,25 +784,10 @@ function btnGenerarExcelVentasGeneralesFiltradas() {
         value: filtroAplicado
     }).appendTo(form);
 
-    // Opcional: agregar fechas si están disponibles
-    var fechaInicio = $('#FechaInicio').val();
-    var fechaFin = $('#FechaFin').val();
-
-    if (fechaInicio) {
-        $('<input>').attr({
-            type: 'hidden',
-            name: 'fechaInicio',
-            value: fechaInicio
-        }).appendTo(form);
-    }
-
-    if (fechaFin) {
-        $('<input>').attr({
-            type: 'hidden',
-            name: 'fechaFin',
-            value: fechaFin
-        }).appendTo(form);
-    }
-
     form.appendTo('body').submit().remove();
+
+    setTimeout(() => {
+        swal.close();
+        swal("Éxito", "El archivo Excel se ha generado correctamente", "success");
+    }, 2000);
 }
