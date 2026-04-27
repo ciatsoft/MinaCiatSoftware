@@ -468,10 +468,12 @@ namespace MinaToMVC.Controllers
             return Newtonsoft.Json.JsonConvert.SerializeObject(result);
         }
 
-        public async Task<ActionResult> SaveOrUpdateVehiculosPublicoGral(DtoClientesVehiculoPublicoGral vehiculoPublicoGral)
+        public async Task<string> SaveOrUpdateVehiculosPublicoGral(DtoClientesVehiculoPublicoGral vehiculoPublicoGral)
         {
+            vehiculoPublicoGral.ClienteID = new ClientePublicoGral { Id = Convert.ToInt64(vehiculoPublicoGral.ClienteID.Id) };
+
             var r = await httpClientConnection.SaveOrUpdateVehiculosPublicoGral(vehiculoPublicoGral);
-            return Redirect("VehiculosPublicoGeneral");
+            return Newtonsoft.Json.JsonConvert.SerializeObject(r);
         }
 
         public async Task<String> DeleteVehiculosPublicoGral(long id)

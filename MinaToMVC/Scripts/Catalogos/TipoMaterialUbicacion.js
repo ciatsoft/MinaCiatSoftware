@@ -1,54 +1,65 @@
 ﻿$(document).ready(function () {
-    // Validación del formulario usando el mismo 
+    // Validación del formulario
     $("#frmTipoMaterialUbicacion").validate({
         rules: {
             "txtNombreTipoMaterial": "required",
             "txtDescripcionTipoMaterial": "required"
+        },
+        messages: {
+            txtNombreTipoMaterial: "El nombre es requerido",
+            txtDescripcionTipoMaterial: "La descripción es requerida"
         }
     });
 
-    // Inicialización de la tabla de tipo de material con formato 
+    // Inicialización de la tabla de tipo de material
     $("#tableTipodematerial").dataTable({
         processing: true,
         destroy: true,
         paging: true,
         searching: true,
+        scrollX: true,
+        autoWidth: false,
         columns: [
-            { data: "id", "visible": true, title: "Id" },
+            { data: "id", visible: false, title: "Id" },
             { data: "nombreTipoMaterial", title: "Nombre" },
             { data: "descripcionTipoMaterial", title: "Descripción Material" },
             { data: "unidadMedida.nombre", title: "Unidad Medida" },
             {
                 data: "estatus",
+                visible: false,
                 title: "Estatus",
-                render: function (data, type, row) {
-                    return data == 1 ? "Activo" : "Inactivo";
+                render: function (data) {
+                    return data == 1 ? '<span class="label label-success">Activo</span>' : '<span class="label label-danger">Inactivo</span>';
                 }
             },
             {
-                data: "id", title: "Acciones", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarTipoMaterial(' + data + ')" />' +
-                        '<input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarTipoMaterial(' + data + ', this)" />';
+                data: "id",
+                title: "Acciones",
+                render: function (data) {
+                    return '<button class="btn btn-sm btn-primary" onclick="EditarTipoMaterial(' + data + ')">' +
+                        '<i class="fa fa-edit"></i> Editar</button> ' +
+                        '<button class="btn btn-sm btn-danger" onclick="EliminarTipoMaterial(' + data + ')">' +
+                        '<i class="fa fa-trash"></i> Eliminar</button>';
                 }
             }
         ],
         language: {
             "decimal": ",",
             "thousands": ".",
-            "processing": "Procesando...",
+            "processing": '<i class="fa fa-spinner fa-spin"></i> Procesando...',
             "lengthMenu": "Mostrar _MENU_ entradas",
             "zeroRecords": "No se encontraron resultados",
             "emptyTable": "Ningún dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-            "search": "Buscar:",
+            "search": '<i class="fa fa-search"></i> Buscar:',
             "loadingRecords": "Cargando...",
             "paginate": {
-                "first": "Primero",
-                "last": "Último",
-                "next": "Siguiente",
-                "previous": "Anterior"
+                "first": '<i class="fa fa-fast-backward"></i>',
+                "last": '<i class="fa fa-fast-forward"></i>',
+                "next": '<i class="fa fa-forward"></i>',
+                "previous": '<i class="fa fa-backward"></i>'
             },
             "aria": {
                 "sortAscending": ": activar para ordenar la columna de manera ascendente",
@@ -59,215 +70,155 @@
 
     GetAllTipoMaterialUbicacion();
 
-    // Cargar el registro en caso de edición 
+    // Cargar el registro en caso de edición
     if (tipoMaterialUbicacionJson && tipoMaterialUbicacionJson.Id != 0) {
-
         console.log("Datos recibidos: " + JSON.stringify(tipoMaterialUbicacionJson));
         $("#txtidtipomaterial").val(tipoMaterialUbicacionJson.Id);
         $("#txtNombreTipoMaterial").val(tipoMaterialUbicacionJson.NombreTipoMaterial);
         $("#txtDescripcionTipoMaterial").val(tipoMaterialUbicacionJson.DescripcionTipoMaterial);
         $("#ddlUnidadDeMedida").val(tipoMaterialUbicacionJson.UnidadMedida.Id);
         $("#chbEstatus").prop('checked', tipoMaterialUbicacionJson.Estatus);
-        $("#btnEliminaru").hide();
+        // Actualizar el label del estatus
+        if (typeof updateEstatusLabel === 'function') {
+            updateEstatusLabel();
+        }
+        $("#btnEliminaru").show();
         $("#btnGuardaru").show();
-        $("#estatusContainer").show(); // Mostrar solo si se está editando
+        $("#estatusContainer").show();
     } else {
-        // Si el ID es 0 (nuevo registro)
         $("#btnEliminaru").hide();
         $("#btnGuardaru").show();
-        $("#estatusContainer").hide(); // No mostrar si no se está editando
+        $("#estatusContainer").hide();
     }
 });
 
-
 // Función para guardar o actualizar
 function SaveOrUpdateTipoMaterialUbicacion() {
+    // Validación manual de campos requeridos
+    var nombre = $("#txtNombreTipoMaterial").val();
+    var descripcion = $("#txtDescripcionTipoMaterial").val();
+
+    if (!nombre || nombre.trim() === "" || !descripcion || descripcion.trim() === "") {
+        swal({
+            title: "¡Campos incompletos!",
+            text: "Por favor llene todos los campos (Nombre y Descripción).",
+            type: "warning",
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
     if ($("#frmTipoMaterialUbicacion").valid()) {
-        // Se construye el objeto de parámetros para el tipo de material
         var parametro = {
-            Id: $("#txtidtipomaterial").val(),
-            NombreTipoMaterial: $("#txtNombreTipoMaterial").val(),
-            DescripcionTipoMaterial: $("#txtDescripcionTipoMaterial").val(),
+            Id: $("#txtidtipomaterial").val() || 0,
+            NombreTipoMaterial: nombre,
+            DescripcionTipoMaterial: descripcion,
             UnidadMedida: { Id: $("#ddlUnidadDeMedida").val() },
-            Estatus: $("#chbEstatus").is(':checked'),
+            Estatus: 1,
             CreatedBy: $("#txtCreatedBy").val(),
             CreatedDt: $("#txtCreatedDt").val(),
-            UpdatedBy: $("#txtUpdateBy").val(),
+            UpdatedBy: $("#txtUpdatedBy").val(),
             UpdatedDt: $("#txtUpdatedDt").val()
         };
 
-        console.log("Parámetros enviados:", parametro); // Depuración
-
-        // Determinar si es una actualización o un nuevo registro
-        var isUpdating = parametro.Id && parametro.Id != 0;
-        var titleText = isUpdating ? '¿Desea actualizar el registro?' : '¿Desea guardar el nuevo registro?';
-        var confirmButtonText = isUpdating ? 'Actualizar' : 'Guardar';
-
-        // Mostrar los datos capturados en una alerta usando SweetAlert
-        Swal.fire({
-            title: 'Datos del tipo de material',
-            html: `<strong>Nombre:</strong> ${$("#txtNombreTipoMaterial").val()}<br/>
-                   <strong>Descripción:</strong> ${$("#txtDescripcionTipoMaterial").val()}<br/>
-                   <strong>Unidad de Medida:</strong> ${$("#ddlUnidadDeMedida option:selected").text()}<br/>`,
-            icon: 'info',
-            showCancelButton: true, 
-            confirmButtonText: confirmButtonText,
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '/Catalog/TipoMaterialUbicacion';
-                // Enviar los datos al servidor
-                PostMVC("/Catalog/SaveOrUpdateTipoMaterialUbicacion", parametro, function (success, response) {
-
-                    if (success) {
-                        LimpiarFormulario();
-                        Swal.fire('Éxito', isUpdating ? 'Datos actualizados exitosamente.' : 'Datos guardados exitosamente.', 'success')
-                            .then(function () {
-                                window.location.href = '/Catalog/TipoMaterialUbicacion';
-                            });
-                    } else {
-                        Swal.fire('Error', 'Error al ' + (isUpdating ? 'actualizar' : 'guardar') + ' los datos: ' + response.ErrorMessage, 'error');
-                    }
+        console.log("Parámetros enviados:", parametro);
+        swal("Éxito", "Datos guardados exitosamente.", "success");
+        window.location.href = '/Catalog/TipoMaterialUbicacion';
+        PostMVC("/Catalog/SaveOrUpdateTipoMaterialUbicacion", parametro, function (r) {
+            window.location.href = '/Catalog/TipoMaterialUbicacion';
+            if (r.IsSuccess) {
+                LimpiarFormulario();
+                swal({
+                    title: 'Éxito',
+                    text: isUpdating ? 'Datos actualizados exitosamente.' : 'Datos guardados exitosamente.',
+                    type: 'success',
+                    confirmButtonText: 'OK'
+                }, function () {
+                    window.location.href = '/Catalog/TipoMaterialUbicacion';
+                });
+            } else {
+                swal({
+                    title: 'Error',
+                    text: 'Error al ' + (isUpdating ? 'actualizar' : 'guardar') + ' los datos: ' + r.ErrorMessage,
+                    type: 'error',
+                    confirmButtonText: 'OK'
                 });
             }
         });
     } else {
-        Swal.fire('Advertencia', 'Por favor, complete todos los campos obligatorios.', 'warning');
+        swal({
+            title: 'Advertencia',
+            text: 'Por favor, complete todos los campos obligatorios.',
+            type: 'warning',
+            confirmButtonText: 'OK'
+        });
     }
 }
 
+// Función para eliminar con confirmación
+function EliminarTipoMaterial(id) {
+    // Obtener datos actuales para mostrar en confirmación
+    var nombre = $("#txtNombreTipoMaterial").val();
+    var descripcion = $("#txtDescripcionTipoMaterial").val();
 
-// Función para eliminar con confirmación y estructura de mensajes de SweetAlert
-// Función para eliminar con confirmación y estructura de mensajes de SweetAlert
-function EliminarTipoMaterial(id, boton) {
-    var row = $(boton).closest("tr");
+    if (!id || id === "0") {
+        // Si no hay ID válido, obtener de algún otro lugar o usar valores por defecto
+        id = $("#txtidtipomaterial").val();
+    }
 
-    // Obtener los valores de la fila correspondiente
-    var nombreTipoMaterial = row.find("td:eq(0)").text();
-    var descripcionTipoMaterial = row.find("td:eq(1)").text();
-    var unidadMedidaId = row.find("td:eq(2)").text();
-
-    Swal.fire({
+    swal({
         title: '¿Está seguro?',
-        text: "¿Desea eliminar el siguiente tipo de material?\nNombre: " + nombreTipoMaterial + "\nDescripcion: " + descripcionTipoMaterial + unidadMedidaId,
-        icon: 'warning',
+        text: "¿Desea eliminar este tipo de material?",
+        type: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
+        confirmButtonColor: '#d9534f',
+        cancelButtonColor: '#3085d6',
         confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Construcción del objeto con todos los parámetros requeridos
+    }, function (isConfirmed) {
+        if (isConfirmed) {
             var parametro = {
                 Id: id,
-                NombreTipoMaterial: $("#txtNombreTipoMaterial").val(),
-                DescripcionTipoMaterial: $("#txtDescripcionTipoMaterial").val(),
-                UnidadMedida: { Id: $("#ddlUnidadDeMedida").val() },
-                Estatus: false,
-                CreatedBy: $("#txtCreatedBy").val(),
-                CreatedDt: $("#txtCreatedDt").val(),
-                UpdatedBy: $("#txtUpdateBy").val(),
-                UpdatedDt: $("#txtUpdatedDt").val()
+                Estatus: false
             };
 
-            // Se envían los datos al servidor
-            PostMVC('/Catalog/SaveOrUpdateTipoMaterialUbicacion', parametro, function (r) {
+            PostMVC('/Catalog/DeleteTipoMaterialUbicacion', { id: id }, function (r) {
                 if (r.IsSuccess) {
-                    Swal.fire(
-                        'Eliminado',
-                        'El tipo de material ha sido eliminado.',
-                        'success'
-                    ).then(() => {
+                    swal({
+                        title: 'Eliminado',
+                        text: 'El tipo de material ha sido eliminado correctamente.',
+                        type: 'success',
+                        confirmButtonText: 'OK'
+                    }, function () {
                         window.location.href = '/Catalog/TipoMaterialUbicacion';
                     });
                 } else {
-                    Swal.fire({
-                        icon: 'error',
+                    swal({
                         title: 'Error',
                         text: 'Error al eliminar el tipo de material: ' + r.ErrorMessage,
-                        confirmButtonText: 'Aceptar'
+                        type: 'error',
+                        confirmButtonText: 'OK'
                     });
                 }
             });
-            window.location.href = '/Catalog/TipoMaterialUbicacion';
         }
     });
 }
 
-
-//    var valid = true;
-
-//    // Validación de campos requeridos
-//    $(".required").each(function () {
-//        if ($(this).val() === "") {
-//            valid = false;
-//            $(this).addClass("is-invalid");
-//        } else {
-//            $(this).removeClass("is-invalid");
-//        }
-//    });
-
-//    if (valid) {
-//        // Se construye el objeto de parámetros con los datos del tipo de material
-//        var parametro = {
-//            Id: $("#txtidtipomaterial").val(),
-//            NombreTipoMaterial: $("#txtNombreTipoMaterial").val(),
-//            DescripcionTipoMaterial: $("#txtDescripcionTipoMaterial").val(),
-//            UnidadMedida: { Id: $("#ddlUnidadDeMedida").val() },
-//            Estatus: 0,
-//            CreatedBy: $("#txtCreatedBy").val(),
-//            CreatedDt: $("#txtCreatedDt").val(),
-//            UpdatedBy: $("#txtUpdateBy").val(),
-//            UpdatedDt: $("#txtUpdateDt").val()
-//        };
-
-//        // Mostrar los datos capturados en una alerta usando SweetAlert
-//        Swal.fire({
-//            title: 'Confirmar eliminación',
-//            html: `<strong>¿Está seguro de que desea eliminar este tipo de material?</strong><br/>
-//                   <strong>Nombre:</strong> ${$("#txtNombreTipoMaterial").val()}<br/>
-//                   <strong>Descripción:</strong> ${$("#txtDescripcionTipoMaterial").val()}<br/>
-//                   <strong>Ubicación:</strong> ${$("#ddlUbicacion option:selected").text()}<br/>
-//                   <strong>Unidad de Medida:</strong> ${$("#ddlUnidadDeMedida option:selected").text()}`,
-//            icon: 'warning',
-//            showCancelButton: true,
-//            confirmButtonText: 'Eliminar',
-//            cancelButtonText: 'Cancelar'
-//        }).then((result) => {
-//            if (result.isConfirmed) {
-//                window.location.href = '/Catalog/TipoMaterialUbicacion';
-//                // Enviar los datos al servidor para eliminar
-//                PostMVC("/Catalog/SaveOrUpdateTipoMaterialUbicacion", parametro, function (success, response) {
-//                    if (success) {
-//                        LimpiarFormulario();
-//                        Swal.fire('Éxito', 'El tipo de material ha sido eliminado exitosamente', 'success').then(function () {
-//                            window.location.href = '/Catalog/TipoMaterialUbicacion';
-//                        });
-//                    } else {
-//                        Swal.fire('Error', 'Error al eliminar el tipo de material: ' + response.ErrorMessage, 'error');
-//                    }
-//                });
-//            }
-//        });
-//    } else {
-//        Swal.fire('Advertencia', 'Por favor, complete todos los campos obligatorios antes de continuar.', 'warning');
-//    }
-//}
-
-
-
-// Función para editar con estilo de redireccionamiento 
+// Función para editar
 function EditarTipoMaterial(id) {
     location.href = "/Catalog/TipoMaterialUbicacion/" + id;
 }
 
-// Función para limpiar el formulario con estilo uniforme
+// Función para limpiar el formulario
 function LimpiarFormulario() {
     $("#txtidtipomaterial").val('');
     $("#txtNombreTipoMaterial").val('');
     $("#txtDescripcionTipoMaterial").val('');
     $("#chbEstatus").prop('checked', false);
+    if (typeof updateEstatusLabel === 'function') {
+        updateEstatusLabel();
+    }
 }
 
 // Función para obtener todos los tipos de material
@@ -276,12 +227,23 @@ function GetAllTipoMaterialUbicacion() {
         if (r.IsSuccess) {
             MapingPropertiesDataTable("tableTipodematerial", r.Response);
         } else {
-            Swal.fire({
+            swal({
                 title: 'Error',
                 text: 'Error al cargar los materiales: ' + r.ErrorMessage,
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
+                type: 'error',
+                confirmButtonText: 'OK'
             });
         }
     });
 }
+
+// Función global para actualizar el label del estatus
+window.updateEstatusLabel = function () {
+    var chkEstatus = document.getElementById('chbEstatus');
+    var lblEstatus = document.getElementById('lblEstatus');
+
+    if (chkEstatus && lblEstatus) {
+        lblEstatus.textContent = chkEstatus.checked ? 'Activo' : 'Inactivo';
+        lblEstatus.style.color = chkEstatus.checked ? '#5cb85c' : '#d9534f';
+    }
+};

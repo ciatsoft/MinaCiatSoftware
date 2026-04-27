@@ -1,6 +1,110 @@
 ﻿@model int
 
-<h3>Asociar materiales a la ubicación: <span id="lblNombreUbicacion">@ViewBag.NombreUbicacion</span></h3>
+<style>
+    /* Estilos personalizados para mantener la misma apariencia */
+    .btn-custom-clean {
+        background-color: #5bc0de;
+        border-color: #46b8da;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-custom-clean:hover {
+            background-color: #31b0d5;
+            border-color: #269abc;
+            color: white;
+        }
+
+    .btn-custom-cancel {
+        background-color: #d9534f;
+        border-color: #d43f3a;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-custom-cancel:hover {
+            background-color: #c9302c;
+            border-color: #ac2925;
+            color: white;
+        }
+
+    .text-success {
+        color: #3c763d;
+    }
+
+    .fw-bold {
+        font-weight: bold;
+    }
+
+    .panel-custom {
+        margin-bottom: 20px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    }
+
+    .panel-custom-heading {
+        padding: 10px 15px;
+        border-bottom: 1px solid #ddd;
+        background-color: #f5f5f5;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+    }
+
+        .panel-custom-heading h4 {
+            margin: 0;
+            color: #333;
+        }
+
+    .panel-custom-body {
+        padding: 15px;
+    }
+
+    /* Estilos para DataTables */
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_processing,
+    .dataTables_wrapper .dataTables_paginate {
+        margin-bottom: 15px;
+    }
+
+        .dataTables_wrapper .dataTables_filter input {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 5px 10px;
+            margin-left: 10px;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 5px 12px;
+            margin: 0 2px;
+            border-radius: 4px;
+        }
+
+            .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+                background: #337ab7;
+                color: white !important;
+                border: 1px solid #2e6da4;
+            }
+
+    .table-bordered {
+        border: 1px solid #ddd;
+    }
+
+    .table-striped > tbody > tr:nth-of-type(odd) {
+        background-color: #f9f9f9;
+    }
+</style>
+
+<!-- Campos ocultos -->
 <input type="hidden" id="txtNombreUbicacion" value="@ViewBag.NombreUbicacion" />
 <input type="hidden" id="txtIdUbicacion" value="@Model" />
 <input type="hidden" id="CreatedBy" value="@ViewBag.CreatedBy" />
@@ -10,18 +114,47 @@
 
 <div class="row">
     <div class="col-md-6">
-        <h2>TABLA DE MATERIALES</h2>
-        <div class="row">
-            <div class="col-lg-12">
-                <table class="table table-bordered table-striped" id="tableTipodematerial" style="width: 100%;"></table>
+        <div class="panel-custom">
+            <div class="panel-custom-heading">
+                <h4><i class="fa fa-list"></i> TABLA DE MATERIALES</h4>
+            </div>
+            <div class="panel-custom-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped" id="tableTipodematerial" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-6">
-        <h2>MATERIALES ASOCIADOS</h2>
-        <div class="row">
-            <div class="col-lg-12">
-                <table class="table table-bordered table-striped" id="tableUbicacionTipodematerial" style="width: 100%;"></table>
+        <div class="panel-custom">
+            <div class="panel-custom-heading">
+                <h4><i class="fa fa-check-circle"></i> MATERIALES ASOCIADOS</h4>
+            </div>
+            <div class="panel-custom-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped" id="tableUbicacionTipodematerial" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>ID Material</th>
+                                <th>Nombre</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -48,8 +181,6 @@
         const datosModal = sessionStorage.getItem("abrirModalUbicacion");
         if (datosModal) {
             sessionStorage.removeItem("abrirModalUbicacion");
-            // Aquí puedes reabrir tu modal si usas uno como Bootstrap Modal
-            // $('#modalAsociarMaterial').modal('show');
         }
     });
 
@@ -72,38 +203,82 @@
         }
 
         dataTableMateriales = $("#tableTipodematerial").DataTable({
-            processing: true,
-            serverSide: false,
-            paging: true,
-            searching: true,
+            data: [],
             columns: [
-                { data: "id", visible: false, title: "Id" },
+                { data: "id", visible: false, title: "ID" },
                 { data: "nombreTipoMaterial", title: "Nombre" },
                 {
-                    data: "id", title: "Agregar", render: function (data) {
-                        return '<input type="button" value="Añadir Material" class="btn btn-custom-clean" style="padding: 10px 14px; font-size: 13px;" onclick="AgregarMaterial(' + data + ')" />'
+                    data: "id",
+                    title: "Acciones",
+                    render: function (data, type, row) {
+                        if (materialesAsociadosIds.includes(data)) {
+                            return '<span class="text-success fw-bold"><i class="fa fa-check-circle"></i> Material ya asociado</span>';
+                        } else {
+                            return '<button type="button" class="btn btn-custom-clean" onclick="AgregarMaterial(' + data + ')"><i class="fa fa-plus"></i> Agregar</button>';
+                        }
                     }
                 }
             ],
-            language: languageES()
+            language: {
+                "decimal": ".",
+                "thousands": ",",
+                "processing": '<i class="fa fa-spinner fa-spin"></i> Procesando...',
+                "lengthMenu": '<i class="fa fa-list"></i> Mostrar _MENU_ registros',
+                "zeroRecords": '<i class="fa fa-info-circle"></i> No se encontraron resultados',
+                "emptyTable": '<i class="fa fa-database"></i> No hay datos disponibles',
+                "info": '<i class="fa fa-info-circle"></i> Mostrando _START_ a _END_ de _TOTAL_ registros',
+                "infoEmpty": '<i class="fa fa-info-circle"></i> Mostrando 0 a 0 de 0 registros',
+                "infoFiltered": '<i class="fa fa-filter"></i> (filtrado de _MAX_ registros totales)',
+                "search": '<i class="fa fa-search"></i> Buscar:',
+                "paginate": {
+                    "first": '<i class="fa fa-fast-backward"></i> Primero',
+                    "last": '<i class="fa fa-fast-forward"></i> Último',
+                    "next": '<i class="fa fa-forward"></i> Siguiente',
+                    "previous": '<i class="fa fa-backward"></i> Anterior'
+                },
+                "aria": {
+                    "sortAscending": ": activar para ordenar ascendente",
+                    "sortDescending": ": activar para ordenar descendente"
+                }
+            }
         });
 
         dataTableAsociados = $("#tableUbicacionTipodematerial").DataTable({
-            processing: true,
-            serverSide: false,
-            paging: true,
-            searching: true,
+            data: [],
             columns: [
-                { data: "id", visible: false, title: "Id" },
-                { data: "materialId", visible: false, title: "IdMaterial" },
+                { data: "id", visible: false, title: "ID" },
+                { data: "materialId", visible: false, title: "ID Material" },
                 { data: "nombreTipoMaterial", title: "Nombre" },
                 {
-                    data: "id", title: "Quitar", render: function (data) {
-                        return '<input type="button" value="Quitar Material" class="btn btn-custom-cancel" style="padding: 10px 14px; font-size: 13px;" onclick="QuitarMaterial(' + data + ')" />'
+                    data: "id",
+                    title: "Acciones",
+                    render: function (data, type, row) {
+                        return '<button type="button" class="btn btn-custom-cancel" onclick="QuitarMaterial(' + data + ')"><i class="fa fa-trash"></i> Eliminar</button>';
                     }
                 }
             ],
-            language: languageES()
+            language: {
+                "decimal": ".",
+                "thousands": ",",
+                "processing": '<i class="fa fa-spinner fa-spin"></i> Procesando...',
+                "lengthMenu": '<i class="fa fa-list"></i> Mostrar _MENU_ registros',
+                "zeroRecords": '<i class="fa fa-info-circle"></i> No se encontraron resultados',
+                "emptyTable": '<i class="fa fa-database"></i> No hay datos disponibles',
+                "info": '<i class="fa fa-info-circle"></i> Mostrando _START_ a _END_ de _TOTAL_ registros',
+                "infoEmpty": '<i class="fa fa-info-circle"></i> Mostrando 0 a 0 de 0 registros',
+                "infoFiltered": '<i class="fa fa-filter"></i> (filtrado de _MAX_ registros totales)',
+                "search": '<i class="fa fa-search"></i> Buscar:',
+                "paginate": {
+                    "first": '<i class="fa fa-fast-backward"></i> Primero',
+                    "last": '<i class="fa fa-fast-forward"></i> Último',
+                    "next": '<i class="fa fa-forward"></i> Siguiente',
+                    "previous": '<i class="fa fa-backward"></i> Anterior'
+                },
+                "aria": {
+                    "sortAscending": ": activar para ordenar ascendente",
+                    "sortDescending": ": activar para ordenar descendente"
+                }
+            }
         });
 
         GetGetMaterialUbicacionByUbicacion(idUbicacion, function () {
@@ -118,11 +293,11 @@
                 dataTableAsociados.clear().rows.add(r.Response).draw();
                 if (callback) callback();
             } else {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Error al cargar los materiales: ' + r.ErrorMessage,
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
+                swal({
+                    title: "Error",
+                    text: "Error al cargar los materiales: " + r.ErrorMessage,
+                    type: "error",
+                    confirmButtonText: 'OK'
                 });
                 ocultarCargando();
             }
@@ -137,16 +312,23 @@
                     !materialesAsociadosIds.includes(item.id)
                 );
                 dataTableMateriales.clear().rows.add(materialesFiltrados).draw();
+                actualizarEstadoMateriales();
             } else {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Error al cargar los materiales: ' + r.ErrorMessage,
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
+                swal({
+                    title: "Error",
+                    text: "Error al cargar los materiales: " + r.ErrorMessage,
+                    type: "error",
+                    confirmButtonText: 'OK'
                 });
             }
         });
     }
+
+    function actualizarEstadoMateriales() {
+        var table = $("#tableTipodematerial").DataTable();
+        table.rows().invalidate().draw();
+    }
+
     function AgregarMaterial(materialId) {
         mostrarCargando();
 
@@ -167,27 +349,35 @@
             UpdatedBy: $("#UpdatedBy").val(),
             UpdatedDt: $("#UpdatedDt").val()
         };
-
+        GetGetMaterialUbicacionByUbicacion(idUbicacion, function () {
+            GetAllTipoMaterialUbicacion();
+            ocultarCargando();
+            swal({
+                title: "¡Éxito!",
+                text: "Material asociado exitosamente.",
+                type: "success",
+                confirmButtonText: 'OK'
+            });
+        });
+        materialesAsociadosIds.push(parseInt(materialId));
+        actualizarEstadoMateriales();
+        window.location.reload();
         PostMVC('/Catalog/SaveOrUpdateMaterialUbicacion', data, function (resultado) {
             if (resultado.IsSuccess) {
-                location.reload(); // reload después del post
             } else {
                 ocultarCargando();
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Error al agregar material: ' + resultado.ErrorMessage,
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
+                swal({
+                    title: "Error",
+                    text: "Error al agregar material: " + resultado.ErrorMessage,
+                    type: "error",
+                    confirmButtonText: 'OK'
                 });
             }
         });
-        location.reload(); // reload después del post
     }
 
     function QuitarMaterial(id) {
         mostrarCargando();
-        window.location.reload();
-
 
         const idUbicacion = $("#txtIdUbicacion").val();
         const nombreUbicacion = $("#txtNombreUbicacion").val();
@@ -198,53 +388,76 @@
             nombre: nombreUbicacion
         }));
 
-
         const data = { Id: id };
 
+        GetGetMaterialUbicacionByUbicacion(idUbicacion, function () {
+            GetAllTipoMaterialUbicacion();
+            ocultarCargando();
+            swal({
+                title: "¡Eliminado!",
+                text: "Material desasociado exitosamente.",
+                type: "success",
+                confirmButtonText: 'OK'
+            });
+        });
 
+        var table = $("#tableUbicacionTipodematerial").DataTable();
+        var rowData = table.rows().data().toArray().find(x => x.id === id);
+        if (rowData) {
+            const index = materialesAsociadosIds.indexOf(rowData.materialId);
+            if (index !== -1) {
+                materialesAsociadosIds.splice(index, 1);
+            }
+        }
+        actualizarEstadoMateriales();
+        window.location.reload();
         PostMVC('/Catalog/QuitMaterialUbicacion', data, function (resultado) {
             if (resultado.IsSuccess) {
-                location.reload(); // reload después del post
-                const idUbicacion = $("#txtIdUbicacion").val();
-                GetGetMaterialUbicacionByUbicacion(idUbicacion, function () {
-                    GetAllTipoMaterialUbicacion();
-                    ocultarCargando();
-                });
+                
             } else {
                 ocultarCargando();
-                window.location.reload();
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Error al quitar material: ' + resultado.ErrorMessage,
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
+                swal({
+                    title: "Error",
+                    text: "Error al quitar material: " + resultado.ErrorMessage,
+                    type: "error",
+                    confirmButtonText: 'OK'
                 });
             }
         });
-        location.reload(); // reload después del post
-
     }
 
-    function languageES() {
-        return {
-            "decimal": ",",
-            "thousands": ".",
-            "processing": "Procesando...",
-            "lengthMenu": "Mostrar _MENU_ entradas",
-            "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningún dato disponible en esta tabla",
-            "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-            "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-            "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-            "search": "Buscar:",
-            "loadingRecords": "Cargando...",
-            "paginate": {
-                "first": "Primero",
-                "last": "Último",
-                "next": "Siguiente",
-                "previous": "Anterior"
+    function MapingPropertiesDataTable(tableId, data) {
+        var table = $("#" + tableId).DataTable();
+        table.clear();
+        table.rows.add(data).draw();
+    }
+
+    function GetMVC(url, callback) {
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function (response) {
+                var r = typeof response === "string" ? JSON.parse(response) : response;
+                callback(r);
+            },
+            error: function (xhr, status, error) {
+                callback({ IsSuccess: false, ErrorMessage: error });
             }
-        };
+        });
     }
 
+    function PostMVC(url, data, callback) {
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: data,
+            success: function (response) {
+                var r = typeof response === "string" ? JSON.parse(response) : response;
+                callback(r);
+            },
+            error: function (xhr, status, error) {
+                callback({ IsSuccess: false, ErrorMessage: error });
+            }
+        });
+    }
 </script>
