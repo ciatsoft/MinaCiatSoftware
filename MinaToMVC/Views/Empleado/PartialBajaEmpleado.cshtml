@@ -2,56 +2,136 @@
 @{
     var trabajadorId = (long)ViewBag.TrabajadorId;
     var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
-    var usuario = @ViewBag.UserToken.UserName;
+    var usuario = ViewBag.UserToken.UserName;
     var nombreCompleto = ViewBag.NombreTrabajador;
 }
 
-<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<style>
+    /* Estilos personalizados para mantener la misma apariencia */
+    .btn-custom-clean {
+        background-color: #5bc0de;
+        border-color: #46b8da;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        transition: all 0.3s ease;
+    }
 
-<div class="content">
-    @using (Html.BeginForm("SaveOrUpdateBajasEmpleado", "RH", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmBajaEmpleado" }))
-    {
-        @Html.HiddenFor(x => x.Id, new { Value = 0 })
-        @Html.HiddenFor(x => x.IdTrabajador, new { Value = trabajadorId })
-        @Html.HiddenFor(x => x.Nombre, new { Value = nombreCompleto })
-        @Html.HiddenFor(x => x.CreatedBy, new { Value = usuario })
-        @Html.HiddenFor(x => x.UpdatedBy, new { Value = usuario })
-        @Html.HiddenFor(x => x.CreatedDt, new { Value = fechaActual })
-        @Html.HiddenFor(x => x.UpdatedDt, new { Value = fechaActual })
+        .btn-custom-clean:hover {
+            background-color: #31b0d5;
+            border-color: #269abc;
+            color: white;
+        }
 
-        <br />
-        <div class="tabla-consultas-roll">
-            <div class="rectangulos" style="width: 100%;">
-                <h2>Dar de Baja a @nombreCompleto</h2>
+    .btn-custom-cancel {
+        background-color: #d9534f;
+        border-color: #d43f3a;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        transition: all 0.3s ease;
+    }
 
-                <div class="row" style="margin-top: 20px;">
-                    <div class="col-lg-6">
-                        <label>Fecha de Baja:</label>
-                        @Html.TextBoxFor(x => x.Fecha, new { type = "date", required = "required", @class = "form-control", Value = fechaActual })
-                    </div>
+        .btn-custom-cancel:hover {
+            background-color: #c9302c;
+            border-color: #ac2925;
+            color: white;
+        }
+
+    .text-success {
+        color: #3c763d;
+    }
+
+    .fw-bold {
+        font-weight: bold;
+    }
+
+    .panel-custom {
+        margin-bottom: 20px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    }
+
+    .panel-custom-heading {
+        padding: 10px 15px;
+        border-bottom: 1px solid #ddd;
+        background-color: #f5f5f5;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+    }
+
+        .panel-custom-heading h4 {
+            margin: 0;
+            color: #333;
+        }
+
+    .panel-custom-body {
+        padding: 15px;
+    }
+</style>
+
+<div class="container-fluid" style="padding: 20px 15px;">
+    <div class="panel panel-default" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <div class="panel-body">
+
+            <!-- Título centrado -->
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h3 class="text-primary" style="color: #005c8a !important; margin-bottom: 5px;">
+                        <i class="fa fa-user-times"></i> Dar de Baja
+                    </h3>
+                    <h4 style="color: #333; margin-bottom: 20px;">
+                        <i class="fa fa-user"></i> @nombreCompleto
+                    </h4>
                 </div>
+            </div>
 
-                <div class="row" style="margin-top: 20px;">
-                    <div class="col-lg-12">
-                        <label>Comentarios:</label>
-                        @Html.TextBoxFor(x => x.Comentario, new { type = "text", required = "required", @class = "form-control" })
-                    </div>
-                </div>
-
-                <div class="row" style="margin-top: 20px;">
-                    <div class="col-md-12">
-                        <input type="button" value="Guardar" onclick="SaveOrUpdateBajasEmpleado()" class="btn btn-success" />
-                        <a href="/Empleado/AltaEdicion" class="btn btn-custom-cancel">Cancelar</a>
+            <!-- Campos del formulario -->
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label" style="font-weight: bold;"><i class="fa fa-calendar"></i> Fecha de Baja:</label>
+                        <input type="date" id="fechaBaja" name="Fecha" required="required" class="form-control" value="@fechaActual" />
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="control-label" style="font-weight: bold;"><i class="fa fa-comment"></i> Comentarios:</label>
+                        <input type="text" id="comentarioBaja" name="Comentario" required="required" class="form-control" placeholder="Ingrese los motivos de la baja" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-md-12 text-center">
+                    <button type="button" onclick="SaveOrUpdateBajasEmpleado()" class="btn btn-danger">
+                        <i class="fa fa-exclamation-triangle"></i> Dar de Baja
+                    </button>
+                    <a href="/Empleado/AltaEdicion" class="btn btn-custom-cancel">
+                        <i class="fa fa-times"></i> Cancelar
+                    </a>
+                </div>
+            </div>
+
         </div>
-    }
+    </div>
 </div>
 
 <script>
+    // Variables con los datos del empleado
+    var trabajadorId = @trabajadorId;
+    var usuario = '@usuario';
+    var fechaActual = '@fechaActual';
+    var nombreCompleto = '@Html.Raw(nombreCompleto)';
+
     $(document).ready(function () {
         // Validación del formulario
         $("#frmBajaEmpleado").validate({
@@ -73,41 +153,104 @@
     });
 
     function SaveOrUpdateBajasEmpleado() {
-        if ($("#frmBajaEmpleado").valid()) {
-            // Usar el formulario directamente en lugar de construir el objeto manualmente
-            var formData = $("#frmBajaEmpleado").serialize();
+        // Validación manual de campos requeridos
+        var fecha = $("#fechaBaja").val();
+        var comentario = $("#comentarioBaja").val();
 
-            // Enviar usando el formulario serializado
-            $.post('/RH/SaveOrUpdateBajasEmpleado', formData, function (r) {
-                if (r.IsSuccess) {
-                    Swal.fire({
-                        title: "Baja registrada!",
-                        text: "La baja del empleado se ha registrado correctamente.",
-                        icon: "success",
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        // Redirigir directamente desde el cliente
-                        window.location.href = "/Empleado/AltaEdicion";
-                    });
-                } else {
-                    Swal.fire({
-                        title: "Baja registrada!",
-                        text: "La baja del empleado se ha registrado correctamente.",
-                        icon: "success",
-                        confirmButtonText: 'OK'
-                    }).then(() => {
-                        // Redirigir directamente desde el cliente
-                        window.location.href = "/Empleado/AltaEdicion";
-                    });
-                }
-            }).fail(function (xhr, status, error) {
-                Swal.fire({
-                    title: "Error!",
-                    text: "Error en la petición: " + error,
-                    icon: "error",
+        if (!fecha || fecha.trim() === "") {
+            swal({
+                title: "¡Campos incompletos!",
+                text: "Por favor ingrese la fecha de baja.",
+                type: "warning",
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        if (!comentario || comentario.trim() === "") {
+            swal({
+                title: "¡Campos incompletos!",
+                text: "Por favor ingrese un comentario.",
+                type: "warning",
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        // Construir el objeto parámetro para enviar al controlador
+        var parametro = {
+            Id: 0,
+            IdTrabajador: trabajadorId,
+            Nombre: nombreCompleto,
+            Fecha: fecha,
+            Comentario: comentario,
+            CreatedBy: usuario,
+            CreatedDt: fechaActual,
+            UpdatedBy: usuario,
+            UpdatedDt: fechaActual
+        };
+
+        // Enviar usando PostMVC (como en tus otros ejemplos)
+        PostMVC('/Empleado/DeleteEmpleadoById', parametro, function (r) {
+            swal({
+                title: "¡Baja registrada!",
+                text: "La baja del empleado se ha registrado correctamente.",
+                type: "success",
+                confirmButtonText: 'OK'
+            }, function () {
+                window.location.href = "/Empleado/AltaEdicion";
+            });
+            if (r.IsSuccess) {
+                swal({
+                    title: "¡Baja registrada!",
+                    text: "La baja del empleado se ha registrado correctamente.",
+                    type: "success",
+                    confirmButtonText: 'OK'
+                }, function () {
+                    window.location.href = "/Empleado/AltaEdicion";
+                });
+            } else {
+                swal({
+                    title: "Error",
+                    text: "Error al registrar la baja: " + (r.ErrorMessage || "Error desconocido"),
+                    type: "error",
                     confirmButtonText: 'OK'
                 });
-            });
-        }
+            }
+        });
     }
 </script>
+
+<style>
+    /* Estilos adicionales para mantener consistencia */
+    .container-fluid {
+        background-color: transparent;
+    }
+
+    .form-control {
+        color: #333333 !important;
+        background-color: #ffffff !important;
+    }
+
+        .form-control:disabled {
+            background-color: #e9ecef !important;
+            color: #495057 !important;
+        }
+
+    .control-label {
+        color: #333333 !important;
+    }
+
+    /* Asegurar que el texto de los botones principales también sea blanco */
+    .btn-success, .btn-danger, .btn-info, .btn-primary {
+        color: #ffffff !important;
+    }
+
+    .btn-custom-cancel {
+        color: #ffffff !important;
+    }
+
+        .btn-custom-cancel:hover {
+            color: #ffffff !important;
+        }
+</style>

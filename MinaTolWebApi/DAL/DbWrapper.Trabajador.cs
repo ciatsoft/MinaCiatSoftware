@@ -109,22 +109,17 @@ namespace MinaTolWebApi.DAL
             return response;
 
         }
-        public ModelResponse DeleteEmpleadoById(long id)
+        public ModelResponse DeleteEmpleadoById(DtoBajasEmpleado bemp)
         {
             var response = new ModelResponse();
             try
             {
                 response.IsSuccess = true;
+                var parameters = GenerateSQLParameters(bemp);
+                var result = ExecuteScalar("SaveOrUpdateBajasEmpleado", System.Data.CommandType.StoredProcedure, parameters);
+                bemp.Id = Convert.ToInt64(result);
 
-                var parameters = new List<SqlParameter>();
-                parameters.Add(new SqlParameter()
-                {
-                    Value = id,
-                    IsNullable = true,
-                    ParameterName = "@Id"
-                });
-
-                var result = ExecuteNonQuery("DeleteEmpleadoById", System.Data.CommandType.StoredProcedure, parameters);
+                response.Response = bemp;
             }
             catch (Exception ex)
             {

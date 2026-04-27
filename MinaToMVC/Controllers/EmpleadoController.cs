@@ -331,10 +331,10 @@ namespace MinaToMVC.Controllers
             }
         }
 
-        public async Task<ActionResult> DeleteEmpleadoById(long id)
+        public async Task<string> DeleteEmpleadoById(DtoBajasEmpleado bemp)
         {
-            var r = await httpClientConnection.DeleteEmpleadoById(id);
-            return Redirect("AltaEdicion");
+            var r = await httpClientConnection.DeleteEmpleadoById(bemp);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(r);
         }
         public async Task<string> ObtenerDatosEmpleado(long id)
         {

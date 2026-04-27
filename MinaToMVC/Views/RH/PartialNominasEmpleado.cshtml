@@ -18,40 +18,276 @@
     var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
 }
 
-<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<style>
+    /* Estilos para asegurar que todo el contenido tenga fondo blanco y texto legible */
+    .container-fluid {
+        background-color: transparent;
+    }
 
-<div class="content">
-    <div class="tabla-consultas-roll">
-        <div class="rectangulos" style="width: 100%;">
-            <h2>Generar Nomina para @nombreCompleto</h2>
+    /* Estilos para los botones dentro de las tablas - letras blancas */
+    .table .btn {
+        color: #ffffff !important;
+    }
+
+    .table .btn-primary {
+        background-color: #337ab7;
+        border-color: #2e6da4;
+    }
+
+    .table .btn-danger {
+        background-color: #d9534f;
+        border-color: #d43f3a;
+    }
+
+    .table .btn-warning {
+        background-color: #f0ad4e;
+        border-color: #eea236;
+    }
+
+    .table .btn-info {
+        background-color: #5bc0de;
+        border-color: #46b8da;
+    }
+
+    .table .btn-success {
+        background-color: #5cb85c;
+        border-color: #4cae4c;
+    }
+
+    /* Hover effects */
+    .table .btn:hover {
+        opacity: 0.9;
+        color: #ffffff !important;
+    }
+
+    /* Asegurar que el texto de los botones principales también sea blanco */
+    .btn-success, .btn-danger, .btn-info, .btn-primary {
+        color: #ffffff !important;
+    }
+
+    /* Estilos para DataTables - texto oscuro sobre fondo blanco */
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_processing,
+    .dataTables_wrapper .dataTables_paginate {
+        color: #333333 !important;
+    }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            color: #333333 !important;
+        }
+
+            .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+                background: #337ab7 !important;
+                color: #ffffff !important;
+            }
+
+    /* Tablas - celdas con texto oscuro */
+    .table tbody tr td {
+        color: #333333 !important;
+        background-color: #ffffff !important;
+    }
+
+    .table thead tr th {
+        color: #333333 !important;
+        background-color: #f5f5f5 !important;
+    }
+
+    /* Inputs y selects dentro del formulario */
+    .form-control {
+        color: #333333 !important;
+        background-color: #ffffff !important;
+    }
+
+        .form-control:disabled, .form-control[readonly] {
+            background-color: #e9ecef !important;
+            color: #495057 !important;
+        }
+
+    /* Labels */
+    .control-label, label {
+        color: #333333 !important;
+        font-weight: bold;
+    }
+
+    /* Botón cancelar personalizado */
+    .btn-custom-cancel {
+        background-color: #d9534f !important;
+        border-color: #d43f3a !important;
+        color: #ffffff !important;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+
+        .btn-custom-cancel:hover {
+            background-color: #c9302c !important;
+            border-color: #ac2925 !important;
+            color: #ffffff !important;
+            opacity: 0.9;
+            text-decoration: none;
+        }
+
+    /* Panel de rectángulos con fondo blanco */
+    .rectangulos {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    /* Títulos */
+    h1, h2, h3, h4, h5, h6 {
+        color: #005c8a !important;
+    }
+
+    h2 {
+        margin-top: 0;
+    }
+
+    /* Enlaces */
+    a {
+        color: #337ab7 !important;
+    }
+
+        a:hover {
+            color: #23527c !important;
+        }
+
+    /* Help block para validaciones */
+    .help-block {
+        color: #a94442 !important;
+    }
+
+    .has-error .form-control {
+        border-color: #a94442 !important;
+    }
+
+    /* Contenido general */
+    .content {
+        background-color: #f5f5f5;
+        padding: 15px;
+    }
+
+    /* Tabla responsive */
+    .table-responsive {
+        overflow-x: auto;
+        margin-bottom: 20px;
+    }
+
+    /* Panel principal */
+    .panel-primary {
+        border-color: #337ab7;
+    }
+
+        .panel-primary > .panel-heading {
+            background-color: #337ab7;
+            border-color: #337ab7;
+        }
+</style>
+
+<div class="container-fluid" style="padding: 20px 15px;">
+    <!-- Panel Principal con fondo blanco -->
+    <div class="panel panel-default" style="background-color: #ffffff;">
+        <div class="panel-body" style="background-color: #ffffff; color: #333333;">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1 class="text-primary" style="color: #005c8a !important; margin-top: 0;">
+                        <i class="fa fa-file-text-o"></i> Generar Nómina para @nombreCompleto
+                    </h1>
+                </div>
+            </div>
+
             <div class="row" style="margin-top: 20px;">
-                <div class="col-lg-3">
-                    <label>Fecha del Inicio:</label>
-                    <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" value="@fechaLunes" readonly>
+                <div class="col-md-6 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label" style="color: #333333; font-weight: bold;">
+                            <i class="fa fa-calendar"></i> Fecha Inicio:
+                        </label>
+                        <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" value="@fechaLunes" readonly>
+                    </div>
                 </div>
-                <div class="col-lg-3">
-                    <label>Fecha de Fin:</label>
-                    <input type="date" class="form-control" id="fechaFinal" name="fechaFinal" value="" readonly>
-                    <input type="hidden" class="form-control" id="diaNomina" name="diaNomina" readonly>
+                <div class="col-md-6 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label" style="color: #333333; font-weight: bold;">
+                            <i class="fa fa-calendar"></i> Fecha Fin:
+                        </label>
+                        <input type="date" class="form-control" id="fechaFinal" name="fechaFinal" value="" readonly>
+                        <input type="hidden" id="diaNomina" name="diaNomina" readonly>
+                        <input type="hidden" id="diaNominaHidden" name="diaNominaHidden" />
+                    </div>
                 </div>
-                <div class="col-lg-5">
-                    <input type="button" value="Calcular Nomina Semanal" onclick="GetAllConceptoEmpleadoByIdEmpleadoDates()" class="btn btn-success" />
+            </div>
+
+            <div class="row" style="margin-top: 10px;">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <button type="button" onclick="GetAllConceptoEmpleadoByIdEmpleadoDates()" class="btn btn-success" style="min-width: 200px; padding: 8px 24px;">
+                            <i class="fa fa-calculator"></i> Calcular Nómina Semanal
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="tabla-consultas-roll">
-        <div class="rectangulos" style="width: 100%;">
-            <h3>Conceptos Acumulados para Nomina Semanal</h3>
-            <br />
-            <table class="table table-bordered table-striped" id="tblConceptosEmpleado" style="width: 100%;"></table>
-            <h3>Prestamos solicitados en la Semana</h3>
-            <br />
-            <table class="table table-bordered table-striped" id="tblPrestamosEmpleado" style="width: 100%;"></table>
+</div>
+
+<!-- Tablas de Conceptos y Préstamos -->
+<div class="container-fluid" style="padding: 0 15px 20px 15px;">
+    <div class="panel panel-primary" style="background-color: #ffffff;">
+        <div class="panel-heading" style="background-color: #337ab7; color: #ffffff;">
+            <i class="fa fa-table"></i> Conceptos Acumulados para Nómina Semanal
+        </div>
+        <div class="panel-body table-responsive" style="background-color: #ffffff;">
+            <table id="tblConceptosEmpleado" class="table table-bordered table-striped" style="width: 100%;">
+                <thead>
+                    <tr style="background-color: #f5f5f5;">
+                        <th style="color: #333333;">ID</th>
+                        <th style="color: #333333;">Id Trabajador</th>
+                        <th style="color: #333333;">Id Concepto Empleado</th>
+                        <th style="color: #333333;">Nombre del Concepto</th>
+                        <th style="color: #333333;">Cantidad</th>
+                        <th style="color: #333333;">Valor</th>
+                        <th style="color: #333333;">Total Neto</th>
+                        <th style="color: #333333;">Fecha</th>
+                        <th style="color: #333333;">Tipo de Cargo</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
+
+    <div class="panel panel-primary" style="background-color: #ffffff; margin-top: 20px;">
+        <div class="panel-heading" style="background-color: #337ab7; color: #ffffff;">
+            <i class="fa fa-table"></i> Préstamos solicitados en la Semana
+        </div>
+        <div class="panel-body table-responsive" style="background-color: #ffffff;">
+            <table id="tblPrestamosEmpleado" class="table table-bordered table-striped" style="width: 100%;">
+                <thead>
+                    <tr style="background-color: #f5f5f5;">
+                        <th style="color: #333333;">ID</th>
+                        <th style="color: #333333;">Nombre</th>
+                        <th style="color: #333333;">Descripción de Préstamo</th>
+                        <th style="color: #333333;">Monto</th>
+                        <th style="color: #333333;">Fecha</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Formulario de Nómina -->
+<div class="container-fluid" style="padding: 0 15px 20px 15px;">
     @using (Html.BeginForm("SaveOrUpdateConceptoEmpleadoByIdEmpleado", "RH", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmConceptoEmpleado" }))
     {
         @Html.HiddenFor(x => x.Id, new { @id = "id" })
@@ -63,50 +299,96 @@
         @Html.HiddenFor(x => x.UpdatedDt, new { id = "updatedDt", Value = fechaActual })
         @Html.HiddenFor(x => x.FechaInicio, new { @class = "form-control", @id = "fechaInicioRazor", @readonly = "readonly" })
         @Html.HiddenFor(x => x.FechaFinal, new { @class = "form-control", @id = "fechaFinalRazor", @readonly = "readonly" })
-        <div class="tabla-consultas-roll">
-            <div class="rectangulos" style="width: 100%;">
-                <div class="row" style="margin-top: 20px;">
-                    <div class="col-lg-4">
-                        <label>Salario Semanal:</label>
-                        @Html.TextBoxFor(x => x.SalarioSemanal, new { @class = "form-control", @id = "salarioSemanal", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly", @type = "text" })
+
+        <div class="panel panel-primary" style="background-color: #ffffff;">
+            <div class="panel-heading" style="background-color: #337ab7; color: #ffffff;">
+                <i class="fa fa-calculator"></i> Resumen de Nómina
+            </div>
+            <div class="panel-body" style="background-color: #ffffff; color: #333333;">
+                <div class="row">
+                    <div class="col-md-4 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label" style="color: #333333; font-weight: bold;">
+                                <i class="fa fa-money"></i> Salario Semanal:
+                            </label>
+                            @Html.TextBoxFor(x => x.SalarioSemanal, new { @class = "form-control", @id = "salarioSemanal", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly", @type = "text" })
+                        </div>
                     </div>
-                    <div class="col-lg-4">
-                        <label>Total de Aumento:</label>
-                        @Html.TextBoxFor(x => x.Aumento, new { @class = "form-control", @id = "aumento", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly", @type = "text" })
+                    <div class="col-md-4 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label" style="color: #333333; font-weight: bold;">
+                                <i class="fa fa-plus-circle" style="color: #28a745;"></i> Total de Aumento:
+                            </label>
+                            @Html.TextBoxFor(x => x.Aumento, new { @class = "form-control", @id = "aumento", @readonly = "readonly", @type = "text" })
+                        </div>
                     </div>
-                    <div class="col-lg-4">
-                        <label>Total de Descuento:</label>
-                        @Html.TextBoxFor(x => x.Descuento, new { @class = "form-control", @id = "descuento", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly", @type = "text" })
+                    <div class="col-md-4 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label" style="color: #333333; font-weight: bold;">
+                                <i class="fa fa-minus-circle" style="color: #dc3545;"></i> Total de Descuento:
+                            </label>
+                            @Html.TextBoxFor(x => x.Descuento, new { @class = "form-control", @id = "descuento", @readonly = "readonly", @type = "text" })
+                        </div>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-lg-4">
-                        <label>Salario Final Semanal:</label>
-                        @Html.TextBoxFor(x => x.SalarioFinal, new { @class = "form-control", @id = "salarioFinal", @oninput = "this.value = this.value.replace(/[^0-9.]/g, '')", @readonly = "readonly", @type = "text" })
-                    </div> 
+                    <div class="col-md-4 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label" style="color: #333333; font-weight: bold;">
+                                <i class="fa fa-file-text-o"></i> Salario Final Semanal:
+                            </label>
+                            @Html.TextBoxFor(x => x.SalarioFinal, new { @class = "form-control", @id = "salarioFinal", @readonly = "readonly", @type = "text" })
+                        </div>
+                    </div>
                 </div>
 
                 <div class="row" style="margin-top: 20px;">
-                    <div class="col-md-12">
-                        <input type="button" value="Guardar" onclick="SearchNominaEmpleadoByDates()" class="btn btn-success" />
-                        <a href="/RH/NominaEmpleado" class="btn btn-custom-cancel">Cancelar</a>
+                    <div class="col-md-12 text-center">
+                        <button type="button" onclick="SearchNominaEmpleadoByDates()" class="btn btn-success">
+                            <i class="fa fa-save"></i> Guardar
+                        </button>
+                        <button type="button" onclick="cerrarModal()" class="btn btn-danger">
+                            <i class="fa fa-times"></i> Cancelar
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     }
 </div>
+
 <script>
+    function cerrarModal() {
+        $("#genericModal").modal("hide");
+    }
+
     $(document).ready(function () {
+        // Función para formatear como moneda MXN
+        function formatCurrency(value) {
+            if (value === '' || value === null || value === undefined) return '';
+            let num = parseFloat(value);
+            if (isNaN(num)) return value;
+            return num.toLocaleString('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function unformatCurrency(value) {
+            if (!value) return '';
+            return value.toString().replace(/[^\d.-]/g, '');
+        }
+
         ObtenerDatosEmpleadoYSalario(@trabajadorId);
-        // Actualizar al cambiar los inputs date
+
         $('#fechaInicio, #fechaFinal').change(function () {
             $('#fechaInicioRazor').val($('#fechaInicio').val());
             $('#fechaFinalRazor').val($('#fechaFinal').val());
         });
 
-        // Establecer valores iniciales
         $('#fechaInicioRazor').val($('#fechaInicio').val());
         $('#fechaFinalRazor').val($('#fechaFinal').val());
 
@@ -115,6 +397,8 @@
             destroy: true,
             paging: true,
             searching: true,
+            pageLength: 10,
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
             columns: [
                 { data: "id", visible: false, title: "Id" },
                 { data: "nombre", title: "Nombre", visible: false },
@@ -123,7 +407,7 @@
                     data: "monto",
                     title: "Monto",
                     render: function (data) {
-                        return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
+                        return formatCurrency(data);
                     }
                 },
                 {
@@ -135,31 +419,36 @@
             language: {
                 decimal: ",",
                 thousands: ".",
-                processing: "Procesando...",
-                lengthMenu: "Mostrar _MENU_ entradas",
-                zeroRecords: "No se encontraron resultados",
-                emptyTable: "Ningún dato disponible en esta tabla",
-                info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-                infoEmpty: "Mostrando 0 a 0 de 0 entradas",
-                infoFiltered: "(filtrado de un total de _MAX_ entradas)",
-                search: "Buscar:",
-                loadingRecords: "Cargando...",
-                paginate: {
-                    first: "Primero",
-                    last: "Último",
-                    next: "Siguiente",
-                    previous: "Anterior"
+                "processing": '<i class="fa fa-spinner fa-spin"></i> Procesando...',
+                "lengthMenu": '<i class="fa fa-list"></i> Mostrar _MENU_ entradas',
+                "zeroRecords": '<i class="fa fa-info-circle"></i> No se encontraron resultados',
+                "emptyTable": '<i class="fa fa-database"></i> Ningún dato disponible en esta tabla',
+                "info": '<i class="fa fa-info-circle"></i> Mostrando _START_ a _END_ de _TOTAL_ entradas',
+                "infoEmpty": '<i class="fa fa-info-circle"></i> Mostrando 0 a 0 de 0 entradas',
+                "infoFiltered": '<i class="fa fa-filter"></i> (filtrado de un total de _MAX_ entradas)',
+                "search": '<i class="fa fa-search"></i> Buscar:',
+                "loadingRecords": "Cargando...",
+                "paginate": {
+                    "first": '<i class="fa fa-fast-backward"></i> Primero',
+                    "last": '<i class="fa fa-fast-forward"></i> Último',
+                    "next": '<i class="fa fa-forward"></i> Siguiente',
+                    "previous": '<i class="fa fa-backward"></i> Anterior'
                 },
-                aria: {
-                    sortAscending: ": activar para ordenar ascendente",
-                    sortDescending: ": activar para ordenar descendente"
+                "aria": {
+                    "sortAscending": ": activar para ordenar ascendente",
+                    "sortDescending": ": activar para ordenar descendente"
                 }
             },
         });
 
-        // Inicializar DataTable con la función de cálculo automático
         $("#tblConceptosEmpleado").DataTable({
             data: [],
+            processing: true,
+            destroy: true,
+            paging: true,
+            searching: true,
+            pageLength: 10,
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
             columns: [
                 { data: 'id', title: 'ID', visible: false },
                 { data: 'idTrabajador', title: 'Id Trabajador', visible: false },
@@ -168,12 +457,12 @@
                 { data: 'cantidad', title: 'Cantidad' },
                 {
                     data: 'valor', title: 'Valor', render: function (data) {
-                        return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
+                        return formatCurrency(data);
                     }
                 },
                 {
                     data: 'totalNeto', title: 'Total Neto', render: function (data) {
-                        return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(data);
+                        return formatCurrency(data);
                     }
                 },
                 {
@@ -187,40 +476,54 @@
             language: {
                 "decimal": ",",
                 "thousands": ".",
-                "processing": "Procesando...",
-                "lengthMenu": "Mostrar _MENU_ entradas",
-                "zeroRecords": "No se encontraron resultados",
-                "emptyTable": "Ningun dato disponible en esta tabla",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-                "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-                "search": "Buscar:",
+                "processing": '<i class="fa fa-spinner fa-spin"></i> Procesando...',
+                "lengthMenu": '<i class="fa fa-list"></i> Mostrar _MENU_ entradas',
+                "zeroRecords": '<i class="fa fa-info-circle"></i> No se encontraron resultados',
+                "emptyTable": '<i class="fa fa-database"></i> Ningún dato disponible en esta tabla',
+                "info": '<i class="fa fa-info-circle"></i> Mostrando _START_ a _END_ de _TOTAL_ entradas',
+                "infoEmpty": '<i class="fa fa-info-circle"></i> Mostrando 0 a 0 de 0 entradas',
+                "infoFiltered": '<i class="fa fa-filter"></i> (filtrado de un total de _MAX_ entradas)',
+                "search": '<i class="fa fa-search"></i> Buscar:',
                 "loadingRecords": "Cargando...",
                 "paginate": {
-                    "first": "Primero",
-                    "last": "Último",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
+                    "first": '<i class="fa fa-fast-backward"></i> Primero',
+                    "last": '<i class="fa fa-fast-forward"></i> Último',
+                    "next": '<i class="fa fa-forward"></i> Siguiente',
+                    "previous": '<i class="fa fa-backward"></i> Anterior'
                 },
                 "aria": {
                     "sortAscending": ": activar para ordenar la columna de manera ascendente",
                     "sortDescending": ": activar para ordenar la columna de manera descendente"
                 }
             },
-            // Calcular automáticamente cuando se modifiquen los datos
             drawCallback: function() {
                 calcularSumatoriasYSalario();
             }
         });
 
-        // Actualizar cuando cambie el salario semanal
         $('#salarioSemanal').on('change', function() {
             calcularSumatoriasYSalario();
         });
     });
 
-    // Función para calcular sumatorias y salario final
     function calcularSumatoriasYSalario() {
+        function formatCurrency(value) {
+            if (value === '' || value === null || value === undefined) return '';
+            let num = parseFloat(value);
+            if (isNaN(num)) return value;
+            return num.toLocaleString('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function unformatCurrency(value) {
+            if (!value) return '';
+            return value.toString().replace(/[^\d.-]/g, '');
+        }
+
         var table = $('#tblConceptosEmpleado').DataTable();
         var data = table.data().toArray();
 
@@ -231,7 +534,6 @@
         var totalDescuento = 0;
         var totalPrestamos = 0;
 
-        // Calcular sumatorias por tipo de concepto (Aumento y Descuento)
         data.forEach(function (row) {
             if (row.tipoCargo === 'Aumento') {
                 totalAumento += parseFloat(row.totalNeto) || 0;
@@ -240,69 +542,32 @@
             }
         });
 
-        // Calcular sumatoria de préstamos (desde la tabla de préstamos)
         data2.forEach(function (row) {
             totalPrestamos += parseFloat(row.monto) || 0;
         });
 
-        // Obtener salario semanal (limpiar formato de moneda)
         var salarioSemanalTexto = $('#salarioSemanal').val();
-        var salarioSemanal = parseFloat(salarioSemanalTexto.replace(/[$,]/g, '')) || 0;
+        var salarioSemanal = parseFloat(unformatCurrency(salarioSemanalTexto)) || 0;
 
-        // Descuento total (descuentos + préstamos)
         var descuentoFinal = totalDescuento + totalPrestamos;
-
-        // Calcular salario final
         var salarioFinal = salarioSemanal + totalAumento - descuentoFinal;
 
-        // Función para formatear como moneda MXN (dentro de la función principal)
-        function formatCurrency(value) {
-            if (value === '' || value === null || value === undefined) return '';
-
-            let num = parseFloat(value);
-            if (isNaN(num)) return value;
-
-            return num.toLocaleString('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-        }
-
-        // Función para quitar formato de moneda (dentro de la función principal)
-        function unformatCurrency(value) {
-            if (!value) return '';
-            return value.toString().replace(/[^\d.-]/g, '');
-        }
-
-        // Actualizar los inputs con formato MXN inmediatamente
         $('#aumento').val(formatCurrency(totalAumento));
         $('#descuento').val(formatCurrency(descuentoFinal));
         $('#salarioFinal').val(formatCurrency(salarioFinal));
 
-        // Configurar eventos para salarioSemanal (si es editable)
+        // Configurar eventos para salarioSemanal
         $('#salarioSemanal').off('input blur focus').on('input', function () {
-            // Permitir números y un punto decimal
             let input = $(this).val();
-
-            // Remover todo excepto números y un punto decimal
             let value = input.replace(/[^0-9.]/g, '');
-
-            // Permitir solo un punto decimal
             let parts = value.split('.');
             if (parts.length > 2) {
                 value = parts[0] + '.' + parts.slice(1).join('');
             }
-
-            // Limitar a 2 decimales
             if (parts.length > 1 && parts[1].length > 2) {
                 value = parts[0] + '.' + parts[1].substring(0, 2);
             }
-
             $(this).val(value);
-
-            // Recalcular automáticamente si se modifica
             setTimeout(function () {
                 calcularSumatoriasYSalario();
             }, 100);
@@ -319,58 +584,8 @@
             $(this).val(value);
         });
 
-        // Hacer que los campos de resultado sean de solo lectura
         $('#aumento, #descuento, #salarioFinal').prop('readonly', true);
 
-        // Configurar eventos de formato para campos de resultados
-        $('#aumento').off('blur focus').on('blur', function () {
-            let value = $(this).val();
-            if (value && value.trim() !== '') {
-                let num = parseFloat(unformatCurrency(value));
-                if (!isNaN(num)) {
-                    $(this).val(formatCurrency(num));
-                }
-            }
-        }).on('focus', function () {
-            let value = unformatCurrency($(this).val());
-            $(this).val(value);
-        });
-
-        $('#descuento').off('blur focus').on('blur', function () {
-            let value = $(this).val();
-            if (value && value.trim() !== '') {
-                let num = parseFloat(unformatCurrency(value));
-                if (!isNaN(num)) {
-                    $(this).val(formatCurrency(num));
-                }
-            }
-        }).on('focus', function () {
-            let value = unformatCurrency($(this).val());
-            $(this).val(value);
-        });
-
-        $('#salarioFinal').off('blur focus').on('blur', function () {
-            let value = $(this).val();
-            if (value && value.trim() !== '') {
-                let num = parseFloat(unformatCurrency(value));
-                if (!isNaN(num)) {
-                    $(this).val(formatCurrency(num));
-                }
-            }
-        }).on('focus', function () {
-            let value = unformatCurrency($(this).val());
-            $(this).val(value);
-        });
-
-        // Para enviar al servidor - quitar formato antes de enviar
-        $('form').off('submit').on('submit', function () {
-            $('#aumento').val(unformatCurrency($('#aumento').val()));
-            $('#descuento').val(unformatCurrency($('#descuento').val()));
-            $('#salarioFinal').val(unformatCurrency($('#salarioFinal').val()));
-            $('#salarioSemanal').val(unformatCurrency($('#salarioSemanal').val()));
-        });
-
-        // También formatear salarioSemanal si tiene valor
         var salarioSemanalFormatted = $('#salarioSemanal').val();
         if (salarioSemanalFormatted && salarioSemanalFormatted.trim() !== '') {
             var salarioNum = parseFloat(unformatCurrency(salarioSemanalFormatted));
@@ -380,111 +595,51 @@
         }
     }
 
-    // Función para formatear visualmente como moneda
-    function formatearMonedaVisual() {
-        // Formatear aumento
-        var aumentoValor = parseFloat($('#aumento').val()) || 0;
-        $('#aumento').val(new Intl.NumberFormat('es-MX', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(aumentoValor));
-
-        // Formatear descuento
-        var descuentoValor = parseFloat($('#descuento').val()) || 0;
-        $('#descuento').val(new Intl.NumberFormat('es-MX', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(descuentoValor));
-
-        // Formatear salario final
-        var salarioFinalValor = parseFloat($('#salarioFinal').val()) || 0;
-        $('#salarioFinal').val(new Intl.NumberFormat('es-MX', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(salarioFinalValor));
-
-        // También asegurar que el salario semanal esté formateado correctamente
-        var salarioSemanalValor = parseFloat($('#salarioSemanal').val().replace(/[$,]/g, '')) || 0;
-        $('#salarioSemanal').val(new Intl.NumberFormat('es-MX', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(salarioSemanalValor));
-    }
-
-    // Actualizar cuando cambie el salario semanal (usando input event para mayor compatibilidad)
-    $('#salarioSemanal').on('input change', function () {
-        // Primero formatear el valor
-        var valor = parseFloat($(this).val().replace(/[$,]/g, '')) || 0;
-        $(this).val(new Intl.NumberFormat('es-MX', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(valor));
-
-        // Luego calcular
-        calcularSumatoriasYSalario();
-    });
-
-    function SearchConceptosEmpleado() {
-        // Asegurar que las fechas estén actualizadas
-        $('#fechaInicioRazor').val($('#fechaInicio').val());
-        $('#fechaFinalRazor').val($('#fechaFinal').val());
-    }
-
     function GetAllConceptoEmpleadoByIdEmpleadoDates() {
-        // Obtener el ID del empleado
         var idEmpleado = @trabajadorId;
-
-        // Obtener valores de los inputs de fecha
         var fechaInicio = document.getElementById('fechaInicio').value;
         var fechaFinal = document.getElementById('fechaFinal').value;
 
-        // Validar que las fechas no estén vacías
         if (!fechaInicio || !fechaFinal) {
-            Swal.fire({
-                title: 'Advertencia',
-                text: 'Por favor, seleccione ambas fechas',
-                icon: 'warning',
-                confirmButtonText: 'Aceptar'
+            swal({
+                title: "Advertencia",
+                text: "Por favor, seleccione ambas fechas",
+                type: "warning",
+                confirmButtonText: "Aceptar"
             });
             return;
         }
 
-        // Convertir strings a objetos Date
-        var fechaInicioDate = new Date(fechaInicio);
-        var fechaFinalDate = new Date(fechaFinal);
-
-        // Construir la URL
         const url = `/RH/GetAllConceptoEmpleadoByIdEmpleadoDates?id=${idEmpleado}&fechaInicio=${fechaInicio}&fechaFinal=${fechaFinal}`;
 
         GetMVC(url, function (r) {
             if (r.IsSuccess) {
                 MapingPropertiesDataTable("tblConceptosEmpleado", r.Response);
-                // Llamar a la función de cálculo después de cargar los datos
                 calcularSumatoriasYSalario();
                 GetAllPrestamosByIdEmpleadoDates(idEmpleado, fechaInicio, fechaFinal);
             } else {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Error al cargar los Conceptos del Empleado: ' + r.ErrorMessage,
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
+                swal({
+                    title: "Error",
+                    text: "Error al cargar los Conceptos del Empleado: " + r.ErrorMessage,
+                    type: "error",
+                    confirmButtonText: "Aceptar"
                 });
             }
         });
     }
 
     function GetAllPrestamosByIdEmpleadoDates(idEmpleado, fechaInicio, fechaFinal) {
-        const url = `/RH/GetAllPrestamosByIdEmpleadoDates?id=${idEmpleado}&fechaInicio=${fechaInicio}&fechaFinal=${fechaFinal}`
+        const url = `/RH/GetAllPrestamosByIdEmpleadoDates?id=${idEmpleado}&fechaInicio=${fechaInicio}&fechaFinal=${fechaFinal}`;
         GetMVC(url, function (r) {
             if (r.IsSuccess) {
                 MapingPropertiesDataTable("tblPrestamosEmpleado", r.Response);
                 calcularSumatoriasYSalario();
             } else {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Error al cargar los Prestamos del Empleado: ' + r.ErrorMessage,
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
+                swal({
+                    title: "Error",
+                    text: "Error al cargar los Prestamos del Empleado: " + r.ErrorMessage,
+                    type: "error",
+                    confirmButtonText: "Aceptar"
                 });
             }
         });
@@ -494,11 +649,11 @@
         GetMVC("/Empleado/ObtenerDatosEmpleado?id=" + id, function (r) {
             if (r.IsSuccess) {
                 if (r.Response === null || r.Response === undefined) {
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Error al cargar datos del Empleado.',
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
+                    swal({
+                        title: "Error",
+                        text: "Error al cargar datos del Empleado.",
+                        type: "error",
+                        confirmButtonText: "Aceptar"
                     });
                     setTimeout(function () {
                         $("#genericModal").modal("hide");
@@ -506,27 +661,25 @@
                 } else {
                     var diaNomina = r.Response.diaNomina;
                     $('#diaNomina').val(diaNomina);
+                    $('#diaNominaHidden').val(diaNomina);
 
-                    // Usar las fechas calculadas en Razor (pasarlas como variables JavaScript)
-                    var fechaViernes = '@fechaViernes'; // Viernes
-                    var fechaSabado = '@fechaSabado';   // Sábado
+                    var fechaViernes = '@fechaViernes';
+                    var fechaSabado = '@fechaSabado';
 
-                    // Actualizar la fecha final según el día de nómina
                     if (diaNomina === 'S') {
                         $('#fechaFinal').val(fechaSabado);
                     } else if (diaNomina === 'V') {
                         $('#fechaFinal').val(fechaViernes);
                     }
 
-                    // Llamar a la función para obtener el salario
                     GetSalarioActivoByIdEmpleado(id, diaNomina);
                 }
             } else {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Error al cargar el Dia de Nomina del Empleado: ' + r.ErrorMessage,
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
+                swal({
+                    title: "Error",
+                    text: "Error al cargar el Dia de Nomina del Empleado: " + r.ErrorMessage,
+                    type: "error",
+                    confirmButtonText: "Aceptar"
                 });
             }
         });
@@ -536,11 +689,11 @@
         GetMVC("/RH/GetSalarioActivoByIdEmpleado?id=" + id, function (r) {
             if (r.IsSuccess) {
                 if (r.Response === null || r.Response === undefined) {
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'El Empleado no tiene un Salario Activo establecido.',
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
+                    swal({
+                        title: "Error",
+                        text: "El Empleado no tiene un Salario Activo establecido.",
+                        type: "error",
+                        confirmButtonText: "Aceptar"
                     });
                     setTimeout(function () {
                         $("#genericModal").modal("hide");
@@ -549,43 +702,42 @@
                     var salarioActual = r.Response.monto;
                     var salarioSemanal;
 
-                    // Aplicar multiplicación según el día de nómina
                     if (diaNomina === 'V') {
-                        salarioSemanal = salarioActual * 5; // Viernes
+                        salarioSemanal = salarioActual * 5;
                     } else if (diaNomina === 'S') {
-                        salarioSemanal = salarioActual * 6; // Sábado
+                        salarioSemanal = salarioActual * 6;
                     } else {
-                        salarioSemanal = salarioActual * 5; // Valor por defecto
+                        salarioSemanal = salarioActual * 5;
                     }
 
-                    // Establecer el valor en el input y bloquearlo
-                    $('#salarioSemanal').val(
-                        new Intl.NumberFormat('es-MX', {
+                    function formatCurrency(value) {
+                        let num = parseFloat(value);
+                        if (isNaN(num)) return '0.00';
+                        return num.toLocaleString('es-MX', {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2
-                        }).format(parseFloat(salarioSemanal) || 0)
-                    );
+                        });
+                    }
+
+                    $('#salarioSemanal').val(formatCurrency(salarioSemanal));
                 }
             } else {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Error al cargar el Salario Activo del Empleado: ' + r.ErrorMessage,
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
+                swal({
+                    title: "Error",
+                    text: "Error al cargar el Salario Activo del Empleado: " + r.ErrorMessage,
+                    type: "error",
+                    confirmButtonText: "Aceptar"
                 });
             }
         });
     }
 
     function SaveOrUpdateNominasByIdEmpleado() {
-        // Función para limpiar formato de moneda
         function limpiarFormatoMoneda(valor) {
             if (!valor) return "0";
-            // Remover comas y convertir a número
-            return valor.toString().replace(/,/g, '');
+            return valor.toString().replace(/[^\d.-]/g, '');
         }
 
-        // Actualizar campos hidden antes de enviar
         $("#fechaInicioRazor").val($("#fechaInicio").val());
         $("#fechaFinalRazor").val($("#fechaFinal").val());
 
@@ -596,9 +748,9 @@
             FechaFinal: $("#fechaFinalRazor").val(),
             DiaNomina: $("#diaNominaHidden").val() || "5",
             SalarioSemanal: parseFloat(limpiarFormatoMoneda($("#salarioSemanal").val())) || 0,
-            Aumento: parseFloat(limpiarFormatoMoneda($("#aumento").val().replace(/[^\d.]/g, ''))) || 0,
-            Descuento: parseFloat(limpiarFormatoMoneda($("#descuento").val().replace(/[^\d.]/g, ''))) || 0,
-            SalarioFinal: parseFloat(limpiarFormatoMoneda($("#salarioFinal").val().replace(/[^\d.]/g, ''))) || 0,
+            Aumento: parseFloat(limpiarFormatoMoneda($("#aumento").val())) || 0,
+            Descuento: parseFloat(limpiarFormatoMoneda($("#descuento").val())) || 0,
+            SalarioFinal: parseFloat(limpiarFormatoMoneda($("#salarioFinal").val())) || 0,
             Estatus: true,
             CreatedBy: $("#createdBy").val(),
             CreatedDt: $("#createdDt").val(),
@@ -607,95 +759,109 @@
         }
 
         if (parametro.SalarioFinal == 0) {
-            Swal.fire('Error', 'No se ha calculado la nomina aun.', 'error');
+            swal({
+                title: "Error",
+                text: "No se ha calculado la nómina aún.",
+                type: "error",
+                confirmButtonText: "Aceptar"
+            });
             return;
         }
 
-        // Validaciones
         if (!parametro.IdTrabajador || parametro.IdTrabajador <= 0) {
-            Swal.fire('Error', 'ID de trabajador no válido', 'error');
+            swal({
+                title: "Error",
+                text: "ID de trabajador no válido",
+                type: "error",
+                confirmButtonText: "Aceptar"
+            });
             return;
         }
 
         if (!parametro.FechaInicio || !parametro.FechaFinal) {
-            Swal.fire('Error', 'Fechas de inicio y fin son requeridas', 'error');
+            swal({
+                title: "Error",
+                text: "Fechas de inicio y fin son requeridas",
+                type: "error",
+                confirmButtonText: "Aceptar"
+            });
             return;
         }
 
         PostMVC('/RH/SaveOrUpdateNominasByIdEmpleado', parametro, function (r) {
             if (r.IsSuccess) {
-                Swal.fire({
+                swal({
                     title: "Registro guardado!",
                     text: "El registro se ha guardado correctamente.",
-                    icon: "success",
+                    type: "success",
                     confirmButtonText: 'OK'
-                }).then(() => {
-                    window.location.reload();
+                }, function () {
+                    $("#genericModal").modal("hide");
+                    location.reload();
                 });
             } else {
-                Swal.fire({
+                swal({
                     title: "Registro guardado!",
                     text: "El registro se ha guardado correctamente.",
-                    icon: "success",
+                    type: "success",
                     confirmButtonText: 'OK'
-                }).then(() => {
-                    window.location.reload();
+                }, function () {
+                    $("#genericModal").modal("hide");
+                    location.reload();
                 });
             }
         });
     }
 
     function SearchNominaEmpleadoByDates() {
-        // Obtener el ID del empleado
         var idEmpleado = @trabajadorId;
-
-        // Obtener valores de los inputs de fecha
         var fechaInicio = document.getElementById('fechaInicio').value;
         var fechaFinal = document.getElementById('fechaFinal').value;
 
-        // Validar que las fechas no estén vacías
         if (!fechaInicio || !fechaFinal) {
-            Swal.fire({
-                title: 'Advertencia',
-                text: 'Por favor, seleccione ambas fechas',
-                icon: 'warning',
-                confirmButtonText: 'Aceptar'
+            swal({
+                title: "Advertencia",
+                text: "Por favor, seleccione ambas fechas",
+                type: "warning",
+                confirmButtonText: "Aceptar"
             });
             return;
         }
 
-        // Convertir strings a objetos Date
-        var fechaInicioDate = new Date(fechaInicio);
-        var fechaFinalDate = new Date(fechaFinal);
-
-        // Construir la URL
+        // CORRECCIÓN: Agregar fechaFinal a la URL
         const url = `/RH/SearchNominaEmpleadoByDates?id=${idEmpleado}&fechaInicio=${fechaInicio}&fechaFinal=${fechaFinal}`;
+        console.log("URL de búsqueda:", url); // Para depuración
 
         GetMVC(url, function (r) {
+            console.log("Respuesta del servidor:", r); // Para depuración
+
             if (r.IsSuccess) {
-                // CORRECCIÓN: Lógica invertida
-                if (r.Response != null && r.Response.length > 0) {
-                    // Si hay datos en la respuesta, significa que YA EXISTE una nómina
-                    Swal.fire({
-                        title: 'Nómina Ya Generada',
-                        text: 'Ya se generó la nómina semanal, no puedes generar una nueva. Por favor consulta el historial de nóminas del empleado y eliminala si es necesario.',
-                        icon: 'warning',
-                        confirmButtonText: 'Aceptar'
-                    });
-                    return;
-                } else {
-                    // Si NO hay datos, podemos generar una nueva nómina
-                    SaveOrUpdateNominasByIdEmpleado();
+                // Si r.Response tiene datos (no es null, no es undefined, no es vacío)
+                if (r.Response !== null && r.Response !== undefined && r.Response !== '') {
+                    // Verificar si es un objeto o array con datos
+                    if ((typeof r.Response === 'object' && Object.keys(r.Response).length > 0) ||
+                        (Array.isArray(r.Response) && r.Response.length > 0)) {
+
+                        swal({
+                            title: "Nómina Ya Generada",
+                            text: "Ya se generó la nómina semanal, no puedes generar una nueva. Por favor consulta el historial de nóminas del empleado y elimínala si es necesario.",
+                            type: "warning",
+                            confirmButtonText: "Aceptar"
+                        });
+                        return;
+                    }
                 }
+
+                // Si no existe nómina, proceder a guardar
+                SaveOrUpdateNominasByIdEmpleado();
             } else {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Error al cargar los Conceptos del Empleado: ' + r.ErrorMessage,
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
+                swal({
+                    title: "Error",
+                    text: "Error al verificar la nómina del empleado: " + (r.ErrorMessage || "Error desconocido"),
+                    type: "error",
+                    confirmButtonText: "Aceptar"
                 });
             }
         });
     }
-
 </script>

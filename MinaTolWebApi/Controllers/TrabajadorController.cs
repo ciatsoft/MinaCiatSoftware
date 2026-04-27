@@ -62,10 +62,10 @@ namespace MinaTolWebApi.Controllers
             var result = wrapper.GetTrabajadorById(id);
             return result;
         }
-        [HttpPost, Route("{id:long}")]
-        public ModelResponse DeleteEmpleadoById(long id)
+        [HttpPost, Route("Baja")]
+        public ModelResponse DeleteEmpleadoById(DtoBajasEmpleado bemp)
         {
-            var result = wrapper.DeleteEmpleadoById(id);
+            var result = wrapper.DeleteEmpleadoById(bemp);
             return result;
         }
         #endregion

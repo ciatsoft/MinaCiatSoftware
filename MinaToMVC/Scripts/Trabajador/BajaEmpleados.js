@@ -2,92 +2,69 @@ $(document).ready(function () {
     // Configuración de DataTable
     var table = $("#tablaBajasEmpleado").DataTable({
         data: [],
+        processing: true,
+        destroy: true,
+        paging: true,
+        searching: true,
+        scrollX: true,
+        autoWidth: false,
         columns: [
-            { data: 'id', title: 'ID' },
             {
                 data: null,
                 title: 'Nombre Completo',
                 render: function (data, type, row) {
                     if (type === 'sort') {
-                        return row.apellidoPaterno; // Para ordenamiento
+                        return row.apellidoPaterno;
                     }
-                    return `${row.apellidoPaterno} ${row.apellidoMaterno} ${row.nombre}`;
+                    return row.apellidoPaterno + ' ' + row.apellidoMaterno + ' ' + row.nombre;
                 }
             },
             { data: 'nss', title: 'NSS' },
-            { data: 'nombreDepartamento', title: 'Departamento' },
             { data: 'telefono', title: 'Telefono' },
-            { data: 'email', title: 'Email', visible: false },
-            { data: 'diaNomina', title: 'Dia Nomina', visible: false },
-            { data: 'idDepartamento', title: 'IdDepartamento', visible: false },
-            { data: 'comentario', title: 'Comentario', visible: false },
             {
                 data: 'fechaContratacion',
                 title: 'Fecha de Contratacion',
                 render: function (data) {
                     if (data) {
-                        return data.split('T')[0]; // Solo la fecha
+                        return data.split('T')[0];
                     }
                     return data;
                 }
             },
             {
-                data: null, // Columna de acciones
+                data: null,
                 title: "Acciones",
                 render: function (data, type, row) {
-                    return `
-                        <input 
-                            type="button" 
-                            value="Recontratar" 
-                            class="btn btn-success btn-lg-custom btn-recontratar" 
-                            data-id="${row.id}"
-                            data-nombre="${row.apellidoPaterno}"
-                            data-apellido-materno="${row.apellidoMaterno}"
-                            data-apellido-paterno="${row.nombre}"
-                        />
-                    `;
+                    var nombreCompleto = row.apellidoPaterno + ' ' + row.apellidoMaterno + ' ' + row.nombre;
+                    var nombreEscapado = nombreCompleto.replace(/'/g, "\\'").replace(/"/g, '\\"');
+                    return '<button class="btn btn-sm btn-success" onclick="RecontratarEmpleado(' + row.id + ', \'' + nombreEscapado + '\')">' +
+                        '<i class="fa fa-user-plus"></i> Recontratar</button>';
                 }
             }
         ],
-        // Orden inicial: por departamento y apellido paterno
-        order: [[3, 'asc'], [1, 'asc']],
         language: {
             "decimal": ",",
             "thousands": ".",
-            "processing": "Procesando...",
+            "processing": '<i class="fa fa-spinner fa-spin"></i> Procesando...',
             "lengthMenu": "Mostrar _MENU_ entradas",
             "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningún dato disponible en esta tabla",
+            "emptyTable": "Ningun dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-            "search": "Buscar:",
+            "search": '<i class="fa fa-search"></i> Buscar:',
             "loadingRecords": "Cargando...",
             "paginate": {
-                "first": "Primero",
-                "last": "Último",
-                "next": "Siguiente",
-                "previous": "Anterior"
+                "first": '<i class="fa fa-fast-backward"></i>',
+                "last": '<i class="fa fa-fast-forward"></i>',
+                "next": '<i class="fa fa-forward"></i>',
+                "previous": '<i class="fa fa-backward"></i>'
             },
             "aria": {
-                "sortAscending": ": activar para ordenar de manera ascendente",
-                "sortDescending": ": activar para ordenar de manera descendente"
+                "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                "sortDescending": ": activar para ordenar la columna de manera descendente"
             }
         }
-    });
-
-    // Event listener para los botones de recontratar
-    $('#tablaBajasEmpleado').on('click', '.btn-recontratar', function () {
-        var btn = $(this);
-        var id = btn.data('id');
-        var apellidoPaterno = btn.data('apellido-paterno');
-        var apellidoMaterno = btn.data('apellido-materno');
-        var nombre = btn.data('nombre');
-        var numRecontrataciones = btn.data('recontrataciones');
-
-        var nombreCompleto = `${apellidoPaterno} ${apellidoMaterno} ${nombre}`;
-
-        RecontratarEmpleado(id, nombreCompleto, numRecontrataciones);
     });
 
     GetAllBajasEmpleados();
@@ -98,64 +75,62 @@ function GetAllBajasEmpleados() {
         if (r.IsSuccess) {
             MapingPropertiesDataTable("tablaBajasEmpleado", r.Response);
         } else {
-            Swal.fire({
-                title: 'Error',
-                text: 'Error al cargar los empleados: ' + r.ErrorMessage,
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
-            });
+            swal("Error", "Error al cargar los empleados: " + r.ErrorMessage, "error");
         }
     });
 }
 
 function RecontratarEmpleado(id, nombreCompleto) {
-
-    Swal.fire({
+    swal({
         title: 'Recontratar empleado',
-        html: `Deseas recontratar a <strong>${nombreCompleto}</strong>`,
-        icon: 'question',
+        text: 'Deseas recontratar a ' + nombreCompleto,
+        type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#28a745',
-        cancelButtonColor: '#6c757d',
+        cancelButtonColor: '#d33',
         confirmButtonText: 'Si, recontratar',
         cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {7
-            // GET hacia el controlador, enviando ID como parámetro
-            GetMVC('/Empleado/RecontratarEmpleado?id=' + id, function (r) {
-                if (r.IsSuccess) {
-                    console.log(r.Response);
-                    respuesta = r.Response;
+    }, function (isConfirmed) {
+        if (isConfirmed) {
 
-                    if (respuesta.totalBajas > 3) {
-                        Swal.fire({
-                            title: 'Error de Contratacion',
-                            html: `<strong>${nombreCompleto}</strong> ha excedido el limite de recontrataciones.`,
-                            icon: 'error',
-                            confirmButtonText: 'Aceptar'
-                        }).then(() => {
-                            // Recargar la tabla de bajas para reflejar el cambio
-                            GetAllBajasEmpleados();
-                        });
+            GetMVC('/Empleado/RecontratarEmpleado?id=' + id, function (r) {
+                // Cerrar el mensaje de carga
+                swal.close();
+
+                setTimeout(function () {
+                    if (r.IsSuccess) {
+                        console.log(r.Response);
+                        var respuesta = r.Response;
+
+                        // Verificar si excedió el límite de recontrataciones
+                        if (respuesta.totalBajas > 3) {
+                            swal({
+                                title: "Error de Contratacion",
+                                text: nombreCompleto + " ha excedido el limite de recontrataciones (maximo 3).",
+                                type: "error",
+                                confirmButtonText: 'OK'
+                            }, function () {
+                                GetAllBajasEmpleados();
+                            });
+                        } else {
+                            swal({
+                                title: "Recontratacion exitosa",
+                                text: nombreCompleto + " ha sido recontratado correctamente.",
+                                type: "success",
+                                confirmButtonText: 'OK'
+                            }, function () {
+                                window.location.reload();
+                            });
+                        }
                     } else {
-                        Swal.fire({
-                            title: 'Recontratacion exitosa',
-                            html: `<strong>${nombreCompleto}</strong> ha sido recontratado correctamente.`,
-                            icon: 'success',
-                                confirmButtonText: 'Aceptar'
-                            }).then(() => {
-                            // Recargar la tabla de bajas para reflejar el cambio
-                            GetAllBajasEmpleados();
+                        swal({
+                            title: "Error",
+                            text: r.ErrorMessage || "No se pudo completar la recontratacion.",
+                            type: "error",
+                            confirmButtonText: 'OK'
                         });
                     }
-                } else {
-                    Swal.fire({
-                        title: 'Error',
-                        text: r.ErrorMessage || 'No se pudo completar la recontratacion.',
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
-                    });
-                }
+                }, 500);
             });
         }
     });

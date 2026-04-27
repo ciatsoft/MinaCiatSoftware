@@ -26,72 +26,71 @@
     // Configuración de DataTable
     $("#tblEmpleados").DataTable({
         data: [],
+        processing: true,
+        destroy: true,
+        paging: true,
+        searching: true,
+        scrollX: true,
+        autoWidth: false,
         columns: [
-            { data: 'id', title: 'ID' },
+            { data: 'id', visible: false, title: 'ID' },
             {
                 data: null,
                 title: 'Nombre Completo',
                 render: (data, type, row) => `${row.apellidoPaterno} ${row.apellidoMaterno} ${row.nombre}`,
-                // Agregar campo para ordenamiento por apellido paterno
                 type: 'string',
-                // Función para extraer el apellido paterno para ordenamiento
                 render: function (data, type, row) {
                     if (type === 'sort') {
-                        return row.apellidoPaterno; // Para ordenamiento, usar solo apellido paterno
+                        return row.apellidoPaterno;
                     }
-                    return `${row.apellidoPaterno} ${row.apellidoMaterno} ${row.nombre}`; // Para display normal
+                    return `${row.apellidoPaterno} ${row.apellidoMaterno} ${row.nombre}`;
                 }
             },
             { data: 'nss', title: 'NSS' },
             { data: 'nombreDepartamento', title: 'Departamento' },
-            { data: 'telefono', title: 'Telefono' },
-            { data: 'email', title: 'Email', visible: false },
-            { data: 'diaNomina', title: 'Dia Nomina', visible: false },
-            { data: 'idDepartamento', title: 'IdDepartamento', visible: false },
-            { data: 'comentario', title: 'Comentario', visible: false },
+            { data: 'telefono', title: 'Teléfono' },
             {
                 data: 'fechaContratacion',
                 title: 'Fecha de Contratación',
                 render: function (data) {
                     if (data) {
-                        return data.split('T')[0]; // Extrae solo la parte de la fecha
+                        return data.split('T')[0];
                     }
                     return data;
                 }
             },
             {
-                data: null, // Accede a TODA la fila 
+                data: null,
                 title: "Acciones",
                 render: function (data, type, row) {
-
-                    var nombreCompleto = `${row.apellidoPaterno} ${row.apellidoMaterno} ${row.nombre}`; // Aqui se contruye el nombre completo
-
-                    //Agregaremos Nombre aparte del Id SOLO para Eliminar
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarEmpleado(' + row.id + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarEmpleado(' + row.id + ', \'' + nombreCompleto + '\')"/>' + //Aqui se implementa ID y NOMBRECOMPLETO
-                        ' <input type="button" value="Salarios" class="btn btn-success btn-lg-custom" onclick="AsignarSalario(' + row.id + ')"/>';
+                    var nombreCompleto = `${row.apellidoPaterno} ${row.apellidoMaterno} ${row.nombre}`;
+                    return '<button class="btn btn-sm btn-primary" onclick="EditarEmpleado(' + row.id + ')">' +
+                        '<i class="fa fa-edit"></i> Editar</button> ' +
+                        '<button class="btn btn-sm btn-danger" onclick="EliminarEmpleado(' + row.id + ', \'' + nombreCompleto.replace(/'/g, "\\'") + '\')">' +
+                        '<i class="fa fa-trash"></i> Eliminar</button> ' +
+                        '<button class="btn btn-sm btn-success" onclick="AsignarSalario(' + row.id + ')">' +
+                        '<i class="fa fa-money"></i> Salarios</button>';
                 }
-            },
+            }
         ],
-        // Orden inicial: primero por departamento (columna 3), luego por apellido paterno (columna 1)
         order: [[3, 'asc'], [1, 'asc']],
         language: {
             "decimal": ",",
             "thousands": ".",
-            "processing": "Procesando...",
+            "processing": '<i class="fa fa-spinner fa-spin"></i> Procesando...',
             "lengthMenu": "Mostrar _MENU_ entradas",
             "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningun dato disponible en esta tabla",
+            "emptyTable": "Ningún dato disponible en esta tabla",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-            "search": "Buscar:",
+            "search": '<i class="fa fa-search"></i> Buscar:',
             "loadingRecords": "Cargando...",
             "paginate": {
-                "first": "Primero",
-                "last": "Último",
-                "next": "Siguiente",
-                "previous": "Anterior"
+                "first": '<i class="fa fa-fast-backward"></i>',
+                "last": '<i class="fa fa-fast-forward"></i>',
+                "next": '<i class="fa fa-forward"></i>',
+                "previous": '<i class="fa fa-backward"></i>'
             },
             "aria": {
                 "sortAscending": ": activar para ordenar la columna de manera ascendente",
@@ -104,7 +103,7 @@
     $("#frmEmpleado").validate({
         rules: {
             nombre: "required",
-            apellidoPaterno: "required",  // Asegúrate de que coincida con el nombre de la propiedad
+            apellidoPaterno: "required",
             apellidoMaterno: "required",
             telefono: "required",
             email: "required",
@@ -114,12 +113,12 @@
         },
         messages: {
             nombre: "Por favor ingrese el nombre",
-            apellidoPaterno: "Por favor ingrese el apellido",
-            apellidoMaterno: "Por favor ingrese el apellido",
-            telefono: "Por favor ingrese el telefono",
+            apellidoPaterno: "Por favor ingrese el apellido paterno",
+            apellidoMaterno: "Por favor ingrese el apellido materno",
+            telefono: "Por favor ingrese el teléfono",
             email: "Por favor ingrese el email",
-            nss: "Por favor ingrese el Numero de Seguro Social",
-            diaNomina: "Por favor ingrese el dia de Nomina",
+            nss: "Por favor ingrese el Número de Seguro Social",
+            diaNomina: "Por favor ingrese el día de Nómina",
             comentario: "Por favor ingrese un Comentario"
         }
     });
@@ -136,11 +135,11 @@ function GetAllEmpleados() {
         if (r.IsSuccess) {
             MapingPropertiesDataTable("tblEmpleados", r.Response);
         } else {
-            Swal.fire({
-                title: 'Error',
-                text: 'Error al cargar el Inventario: ' + r.ErrorMessage,
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
+            swal({
+                title: "Error",
+                text: "Error al cargar los empleados: " + r.ErrorMessage,
+                type: "error",
+                confirmButtonText: 'OK'
             });
         }
     });
@@ -152,12 +151,9 @@ function cargarFotoExistente(empleadoId) {
         type: 'GET',
         success: function (response) {
             if (response.success && response.fotoBase64) {
-                // Mostrar la foto precargada
                 $("#preview-image").attr("src", response.fotoBase64);
                 $("#preview-container").show();
                 $("#no-image-message").hide();
-
-                // Marcar que hay foto existente
                 window.tieneFotoExistente = true;
             }
         },
@@ -171,11 +167,11 @@ function SaveOrupdateEmpleado() {
     if ($("#frmEmpleado").valid()) {
         // Validación adicional para la categoría
         if ($("#ddlDepartamento").val() === "") {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Por favor seleccione un departamento',
-                confirmButtonText: 'Aceptar'
+            swal({
+                title: "Error",
+                text: "Por favor seleccione un departamento",
+                type: "error",
+                confirmButtonText: 'OK'
             });
             return false;
         }
@@ -224,29 +220,29 @@ function SaveOrupdateEmpleado() {
             contentType: false,
             success: function (response) {
                 if (response.success) {
-                    Swal.fire({
-                        title: "Registro guardado!",
+                    swal({
+                        title: "¡Registro guardado!",
                         text: response.message || "El registro se ha guardado correctamente.",
-                        icon: "success",
+                        type: "success",
                         confirmButtonText: 'OK'
-                    }).then(() => {
+                    }, function () {
                         window.location.href = '/Empleado/AltaEdicion/';
                     });
                 } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: response.message || 'Error al guardar los datos',
-                        confirmButtonText: 'Aceptar'
+                    swal({
+                        title: "Error",
+                        text: response.message || "Error al guardar los datos",
+                        type: "error",
+                        confirmButtonText: 'OK'
                     });
                 }
             },
             error: function (xhr, status, error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error en la solicitud: ' + error,
-                    confirmButtonText: 'Aceptar'
+                swal({
+                    title: "Error",
+                    text: "Error en la solicitud: " + error,
+                    type: "error",
+                    confirmButtonText: 'OK'
                 });
             }
         });
@@ -258,15 +254,9 @@ function EditarEmpleado(id) {
 }
 
 function EliminarEmpleado(id, nombreCompleto) {
-
-    //Agregamos funciones para abrir el modal y mandar esos parametros
-
     $("#genericModal").removeData('bs.modal');
     $("#boddyGeericModal").empty();
-
-    $("#titleGenerciModal").text("Baja de Empleado");
-
-    // Enviar nombreCompleto como parámetro en la URL
+    $("#titleGenerciModal").html('<span style="color: black;">Baja de Empleado</span>');
     $("#boddyGeericModal").load("/Empleado/PartialBajaEmpleado/" + id + "?nombreCompleto=" + encodeURIComponent(nombreCompleto), function () {
         $("#genericModal").modal("show");
     });
@@ -285,55 +275,38 @@ function generarReportePDF() {
     var table = $('#tblEmpleados').DataTable();
     var datos = table.data().toArray();
 
-    // Swalfire de generando reporte
-    Swal.fire({
+    swal({
         title: "Generando reporte...",
         text: "Por favor espere mientras se genera el PDF",
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-
-            // Cerrar automáticamente después de 8 segundos
-            setTimeout(() => {
-                Swal.close();
-
-                // Mostrar mensaje de éxito después de cerrar
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Reporte generado!',
-                    text: 'El PDF se ha creado correctamente',
-                    timer: 3000, // Opcional: cerrar después de 3 segundos
-                    showConfirmButton: false
-                });
-            }, 4000); // 4000 ms = 4 segundos
-        }
+        showConfirmButton: false,
+        allowOutsideClick: false
     });
+
+    setTimeout(() => {
+        swal.close();
+        swal({
+            title: "¡Reporte generado!",
+            text: "El PDF se ha creado correctamente",
+            type: "success",
+            confirmButtonText: 'OK'
+        });
+    }, 4000);
 
     // Crear tabla HTML manualmente
     var tablaHTML = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
-
-    // Encabezados (excluyendo columnas ocultas y de acciones)
     tablaHTML += '<thead><tr>';
     tablaHTML += '<th>Nombre Completo</th>';
     tablaHTML += '<th>NSS</th>';
     tablaHTML += '<th>Departamento</th>';
-    tablaHTML += '<th>Telefono</th>';
-    tablaHTML += '<th>Fecha de Contratacion</th>';
-    tablaHTML += '</tr></thead>';
-
-    // Datos
-    tablaHTML += '<tbody>';
+    tablaHTML += '<th>Teléfono</th>';
+    tablaHTML += '<th>Fecha de Contratación</th>';
+    tablaHTML += '</tr></thead><tbody>';
     datos.forEach(function (item) {
         tablaHTML += '<tr>';
-        // Nombre completo: apellidoPaterno + apellidoMaterno + nombre
-        tablaHTML += '<td>' + (item.apellidoPaterno || '') + ' ' +
-            (item.apellidoMaterno || '') + ' ' +
-            (item.nombre || '') + '</td>';
+        tablaHTML += '<td>' + (item.apellidoPaterno || '') + ' ' + (item.apellidoMaterno || '') + ' ' + (item.nombre || '') + '</td>';
         tablaHTML += '<td>' + (item.nss || '') + '</td>';
-        // Departamento: usar nombreDepartamento en lugar de NombreDepartamento
         tablaHTML += '<td>' + (item.nombreDepartamento || '') + '</td>';
         tablaHTML += '<td>' + (item.telefono || '') + '</td>';
-        // Fecha de contratación: extraer solo la parte de la fecha (antes de 'T')
         var fechaContratacion = item.fechaContratacion || '';
         if (fechaContratacion && fechaContratacion.includes('T')) {
             fechaContratacion = fechaContratacion.split('T')[0];
@@ -343,18 +316,8 @@ function generarReportePDF() {
     });
     tablaHTML += '</tbody></table>';
 
-    // Crear formulario y enviar
-    var form = $('<form>', {
-        method: 'POST',
-        action: '/Pdf/GenerarReporteEmpleados'
-    });
-
-    $('<input>').attr({
-        type: 'hidden',
-        name: 'tablaHTML',
-        value: tablaHTML
-    }).appendTo(form);
-
+    var form = $('<form>', { method: 'POST', action: '/Pdf/GenerarReporteEmpleados' });
+    $('<input>').attr({ type: 'hidden', name: 'tablaHTML', value: tablaHTML }).appendTo(form);
     form.appendTo('body').submit().remove();
 }
 
@@ -362,77 +325,51 @@ function generarReporteExcelEmpleados() {
     var table = $('#tblEmpleados').DataTable();
     var datos = table.data().toArray();
 
-    // Verificar si la tabla está vacía
     if (datos.length === 0) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Tabla vacía',
-            text: 'No hay empleados para generar el reporte',
-            confirmButtonText: 'Aceptar'
+        swal({
+            title: "Tabla vacía",
+            text: "No hay empleados para generar el reporte",
+            type: "warning",
+            confirmButtonText: 'OK'
         });
         return;
     }
 
-    // Swalfire de generando reporte
-    Swal.fire({
+    swal({
         title: "Generando Excel...",
         text: "Por favor espere mientras se genera el archivo Excel",
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-
-            // Cerrar automáticamente después de 2 segundos
-            setTimeout(() => {
-                Swal.close();
-
-                // Mostrar mensaje de éxito después de cerrar
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Excel generado!',
-                    text: 'El archivo Excel se ha creado correctamente',
-                    timer: 3000,
-                    showConfirmButton: false
-                });
-            }, 2000);
-        }
+        showConfirmButton: false,
+        allowOutsideClick: false
     });
 
-    // Crear tabla HTML manualmente
-    var tablaHTML = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
+    setTimeout(() => {
+        swal.close();
+        swal({
+            title: "¡Excel generado!",
+            text: "El archivo Excel se ha creado correctamente",
+            type: "success",
+            confirmButtonText: 'OK'
+        });
+    }, 2000);
 
-    // Encabezados
+    var tablaHTML = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
     tablaHTML += '<thead><tr>';
     tablaHTML += '<th>Nombre Completo</th>';
     tablaHTML += '<th>NSS</th>';
     tablaHTML += '<th>Departamento</th>';
-    tablaHTML += '<th>Telefono</th>';
-    tablaHTML += '<th>Fecha de Contratacion</th>';
-    tablaHTML += '</tr></thead>';
-
-    // Datos
-    tablaHTML += '<tbody>';
+    tablaHTML += '<th>Teléfono</th>';
+    tablaHTML += '<th>Fecha de Contratación</th>';
+    tablaHTML += '</tr></thead><tbody>';
     datos.forEach(function (item) {
         tablaHTML += '<tr>';
-        // Nombre completo: apellidoPaterno + apellidoMaterno + nombre
-        var nombreCompleto = (item.apellidoPaterno || '') + ' ' +
-            (item.apellidoMaterno || '') + ' ' +
-            (item.nombre || '');
+        var nombreCompleto = (item.apellidoPaterno || '') + ' ' + (item.apellidoMaterno || '') + ' ' + (item.nombre || '');
         tablaHTML += '<td>' + nombreCompleto.trim() + '</td>';
-
-        // NSS - mantener formato original
         tablaHTML += '<td>' + (item.nss || '') + '</td>';
-
-        // Departamento
         tablaHTML += '<td>' + (item.nombreDepartamento || '') + '</td>';
-
-        // Teléfono
         tablaHTML += '<td>' + (item.telefono || '') + '</td>';
-
-        // Fecha de contratación
         var fechaContratacion = item.fechaContratacion || '';
         if (fechaContratacion && fechaContratacion.includes('T')) {
             fechaContratacion = fechaContratacion.split('T')[0];
-            // Convertir a formato dd/MM/yyyy
             var fechaParts = fechaContratacion.split('-');
             if (fechaParts.length === 3) {
                 fechaContratacion = fechaParts[2] + '/' + fechaParts[1] + '/' + fechaParts[0];
@@ -443,23 +380,13 @@ function generarReporteExcelEmpleados() {
     });
     tablaHTML += '</tbody></table>';
 
-    // Crear formulario y enviar
-    var form = $('<form>', {
-        method: 'POST',
-        action: '/Excel/GenerarReporteEmpleados'
-    });
-
-    $('<input>').attr({
-        type: 'hidden',
-        name: 'tablaHTML',
-        value: tablaHTML
-    }).appendTo(form);
-
+    var form = $('<form>', { method: 'POST', action: '/Excel/GenerarReporteEmpleados' });
+    $('<input>').attr({ type: 'hidden', name: 'tablaHTML', value: tablaHTML }).appendTo(form);
     form.appendTo('body').submit().remove();
 }
 
 function AsignarSalario(trabajadorId) {
-    $("#titleGenerciModal").text("Asignación de salario");
+    $("#titleGenerciModal").html('<span style="color: black;">Asignación de salario</span>');
     $("#boddyGeericModal").empty().load("/Empleado/PartialCrudSalario/" + trabajadorId, function () {
         CargarTablasalarios();
         GetSalarioByTrabajador();
@@ -474,13 +401,12 @@ function SaveOrUpdateSalario() {
         var dateF = new Date($("#drpFF").val());
         var ff = ((dateF.getDate() > 9) ? dateF.getDate() : ('0' + dateF.getDate())) + '/' + ((dateF.getMonth() > 8) ? (dateF.getMonth() + 1) : ('0' + (dateF.getMonth() + 1))) + '/' + dateF.getFullYear();
 
-        // Fecha y hora actual en formato ISO (ESTÁNDAR RECOMENDADO)
         var fechaHoraActual = new Date().toISOString();
 
         var parametros = {
             Id: $("#idRegistro").val(),
-            CreatedDt: fechaHoraActual,  // Fecha y hora actual
-            UpdatedDt: fechaHoraActual,  // Fecha y hora actual
+            CreatedDt: fechaHoraActual,
+            UpdatedDt: fechaHoraActual,
             FechaInicio: fi,
             FechaFinal: ff,
             Monto: $("#txtMonto").val().replace(/[^\d.]/g, ''),
@@ -493,14 +419,22 @@ function SaveOrUpdateSalario() {
         PostMVC('/Empleado/SaveOrupdateSalario', parametros, function (r) {
             if (r.IsSuccess) {
                 $("#genericModal").modal("hide");
-            }
-            else {
-                alert(r.Message);
+            } else {
+                swal({
+                    title: "Error",
+                    text: r.Message || "Error al guardar el salario",
+                    type: "error",
+                    confirmButtonText: 'OK'
+                });
             }
         });
-    }
-    else {
-        alert("Faltan datos requeridos.");
+    } else {
+        swal({
+            title: "Campos incompletos",
+            text: "Faltan datos requeridos.",
+            type: "warning",
+            confirmButtonText: 'OK'
+        });
     }
 }
 
@@ -510,23 +444,24 @@ function CargarTablasalarios() {
         destroy: true,
         paging: true,
         searching: true,
-        //order: [[2, "asc"]],
+        scrollX: true,
+        autoWidth: false,
         columns: [
-            { data: "id", "visible": false, title: "Id" },
+            { data: "id", visible: false, title: "Id" },
             {
                 data: "fechaInicio", title: "Fecha Inicial", render: function (data) {
                     return formatDate(data);
                 }
             },
             {
-                data: "fechaFinal", title: "Fecha Termino", render: function (data) {
+                data: "fechaFinal", title: "Fecha Término", render: function (data) {
                     return formatDate(data);
                 }
             },
             {
-            data: "monto", title: "Monto", render: function (data) {
-                return formatMoney(data);
-            }
+                data: "monto", title: "Monto", render: function (data) {
+                    return formatMoney(data);
+                }
             },
             {
                 data: "esSalarioActual",
@@ -535,15 +470,10 @@ function CargarTablasalarios() {
                     if (type === 'display') {
                         const color = data === true || data === 'true' || data === 1 ? 'green' : 'red';
                         const texto = data === true || data === 'true' || data === 1 ? 'Sí' : 'No';
-
-                        return `
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <svg width="16" height="16">
-                                    <circle cx="8" cy="8" r="6" fill="${color}" />
-                                </svg>
-                                <span>${texto}</span>
-                            </div>
-                        `;
+                        return `<div style="display: flex; align-items: center; gap: 8px;">
+                                    <svg width="16" height="16"><circle cx="8" cy="8" r="6" fill="${color}" /></svg>
+                                    <span>${texto}</span>
+                                </div>`;
                     }
                     return data;
                 }
@@ -551,23 +481,39 @@ function CargarTablasalarios() {
             {
                 data: "id",
                 render: function (data, type, row) {
-                    // Convertir el objeto row a string JSON seguro para HTML
                     const rowData = encodeURIComponent(JSON.stringify(row));
-                    return '<input type="button" value="Editar" class="btn btn-primary" onclick="EditarSalario(' + data + ', \'' + rowData + '\')" />';
+                    return '<button class="btn btn-sm btn-primary" onclick="EditarSalario(' + data + ', \'' + rowData + '\')">' +
+                        '<i class="fa fa-edit"></i> Editar</button>';
                 }
             }
-        ]
+        ],
+        language: {
+            "decimal": ",",
+            "thousands": ".",
+            "processing": '<i class="fa fa-spinner fa-spin"></i> Procesando...',
+            "lengthMenu": "Mostrar _MENU_ entradas",
+            "zeroRecords": "No se encontraron resultados",
+            "emptyTable": "Ningún dato disponible en esta tabla",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+            "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+            "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
+            "search": '<i class="fa fa-search"></i> Buscar:',
+            "loadingRecords": "Cargando...",
+            "paginate": {
+                "first": '<i class="fa fa-fast-backward"></i>',
+                "last": '<i class="fa fa-fast-forward"></i>',
+                "next": '<i class="fa fa-forward"></i>',
+                "previous": '<i class="fa fa-backward"></i>'
+            }
+        }
     });
 }
 
 function EditarSalario(id, rowData) {
     try {
-        // Decodificar y parsear el objeto
         const row = JSON.parse(decodeURIComponent(rowData));
         console.log("Editando registro ID:", id);
-        console.log("Datos recibidos:", row);
 
-        // Formatear fechas
         const formatDate = (dateStr) => {
             if (!dateStr) return '';
             try {
@@ -577,19 +523,14 @@ function EditarSalario(id, rowData) {
             }
         };
 
-        // Llenar campos
         $('#idRegistro').val(id);
         $('#dtpFI').val(formatDate(row.fechaInicio));
         $('#drpFF').val(formatDate(row.fechaFinal));
         $('#txtMonto').val(row.monto || 0);
 
-        // MANEJO DEL CHECKBOX - VARIAS OPCIONES
         const checkbox = $('#chbEsSalarioActual');
-
-        // Opción 1: La más robusta
         let isChecked = false;
 
-        // Verificar diferentes formatos posibles
         if (row.esSalarioActual !== undefined && row.esSalarioActual !== null) {
             if (typeof row.esSalarioActual === 'boolean') {
                 isChecked = row.esSalarioActual;
@@ -601,16 +542,12 @@ function EditarSalario(id, rowData) {
         }
         checkbox.prop('checked', isChecked);
 
-        // Crear o actualizar campo hidden para el ID
         if ($('#currentEditId').length === 0) {
             $('<input type="hidden" id="currentEditId" />').appendTo('body');
         }
         $('#currentEditId').val(id);
-
-        // Cambiar texto del botón si es necesario
         $('#btnGuardarSalario').val('Actualizar');
 
-        // Ejecutar función onchange si existe
         if (typeof ChanegChebSalariOActual === 'function') {
             setTimeout(() => {
                 ChanegChebSalariOActual();
@@ -618,7 +555,12 @@ function EditarSalario(id, rowData) {
         }
 
     } catch (error) {
-        alert('Error al cargar los datos para edición: ' + error.message);
+        swal({
+            title: "Error",
+            text: "Error al cargar los datos para edición: " + error.message,
+            type: "error",
+            confirmButtonText: 'OK'
+        });
     }
 }
 
@@ -627,9 +569,13 @@ function GetSalarioByTrabajador() {
     GetMVC("/Empleado/GetSalarioByTrabajador/" + trabajadorId, function (r) {
         if (r.IsSuccess) {
             MapingPropertiesDataTable("tableSalario", r.Response);
-        }
-        else {
-            alert("Error");
+        } else {
+            swal({
+                title: "Error",
+                text: "Error al cargar los salarios",
+                type: "error",
+                confirmButtonText: 'OK'
+            });
         }
     });
 }
@@ -640,11 +586,9 @@ document.getElementById("btnDocumentosEmpleado").addEventListener("click", funct
 });
 
 function AbrirModalDocumentosEmpleado(id) {
-    $("#genericModal").removeData('b s.modal');
+    $("#genericModal").removeData('bs.modal');
     $("#boddyGeericModal").empty();
-
-    $("#titleGenerciModal").text("Lista de Documentos");
-
+    $("#titleGenerciModal").html('<span style="color: black;">Lista de Documentos</span>');
     $("#boddyGeericModal").load("/Empleado/PartialDocumentosEmpleado/" + id, function () {
         $("#genericModal").modal("show");
     });
@@ -659,21 +603,16 @@ document.getElementById('fotografia').addEventListener('change', function (event
 
     if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
-
         reader.onload = function (e) {
             previewImage.src = e.target.result;
             previewContainer.style.display = 'block';
             noImageMessage.style.display = 'none';
         };
-
         reader.readAsDataURL(file);
     } else {
-        // Si no es una imagen válida
         previewContainer.style.display = 'none';
         noImageMessage.style.display = 'block';
         noImageMessage.textContent = 'Por favor, selecciona una imagen válida';
-
-        // Limpiar el input de archivo
         event.target.value = '';
     }
 });
@@ -685,14 +624,9 @@ function eliminarFoto() {
     const noImageMessage = document.getElementById('no-image-message');
     const fileInput = document.getElementById('fotografia');
 
-    // Limpiar la vista previa
     previewImage.src = '';
     previewContainer.style.display = 'none';
-
-    // Limpiar el input de archivo
     fileInput.value = '';
-
-    // Mostrar mensaje de que no hay imagen
     noImageMessage.style.display = 'block';
     noImageMessage.textContent = 'No hay imagen seleccionada';
 }

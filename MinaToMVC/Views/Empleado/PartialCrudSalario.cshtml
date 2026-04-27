@@ -1,45 +1,217 @@
-﻿@{ 
+﻿@{
     var trabajadorId = (long)ViewBag.TrabajadorId;
 }
 
-@Html.Hidden("txtTrabajadorId", trabajadorId)
-<div class="row">
-    <div class="col-lg-12"></div>
+<style>
+    /* Estilos personalizados para mantener la misma apariencia */
+    .btn-custom-clean {
+        background-color: #5bc0de;
+        border-color: #46b8da;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-custom-clean:hover {
+            background-color: #31b0d5;
+            border-color: #269abc;
+            color: white;
+        }
+
+    .btn-custom-cancel {
+        background-color: #d9534f;
+        border-color: #d43f3a;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-custom-cancel:hover {
+            background-color: #c9302c;
+            border-color: #ac2925;
+            color: white;
+        }
+
+    .text-success {
+        color: #3c763d;
+    }
+
+    .fw-bold {
+        font-weight: bold;
+    }
+
+    .panel-custom {
+        margin-bottom: 20px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    }
+
+    .panel-custom-heading {
+        padding: 10px 15px;
+        border-bottom: 1px solid #ddd;
+        background-color: #f5f5f5;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+    }
+
+        .panel-custom-heading h4 {
+            margin: 0;
+            color: #333;
+        }
+
+    .panel-custom-body {
+        padding: 15px;
+    }
+
+    /* Estilos para DataTables */
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_processing,
+    .dataTables_wrapper .dataTables_paginate {
+        margin-bottom: 15px;
+    }
+
+        .dataTables_wrapper .dataTables_filter input {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 5px 10px;
+            margin-left: 10px;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 5px 12px;
+            margin: 0 2px;
+            border-radius: 4px;
+        }
+
+            .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+                background: #337ab7;
+                color: white !important;
+                border: 1px solid #2e6da4;
+            }
+
+    .table-bordered {
+        border: 1px solid #ddd;
+    }
+
+    .table-striped > tbody > tr:nth-of-type(odd) {
+        background-color: #f9f9f9;
+    }
+</style>
+
+<input type="hidden" id="txtTrabajadorId" value="@trabajadorId" />
+
+<div class="container-fluid" style="padding: 20px 15px;">
+    <div class="panel panel-default" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <div class="panel-body">
+
+            <!-- Título centrado -->
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h3 class="text-primary" style="color: #005c8a !important; margin-bottom: 20px;">
+                        <i class="fa fa-money"></i> Gestión de Salarios
+                    </h3>
+                </div>
+            </div>
+
+            <!-- Campos ocultos -->
+            <input type="hidden" name="idregistro" id="idRegistro" value="0" />
+
+            <!-- Campos del formulario -->
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label" style="font-weight: bold;"><i class="fa fa-calendar"></i> Fecha Inicial:</label>
+                        <input type="date" name="dtpFI" id="dtpFI" value="" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label" style="font-weight: bold;"><i class="fa fa-calendar"></i> Fecha Final:</label>
+                        <input type="date" name="drpFF" id="drpFF" value="" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label" style="font-weight: bold;"><i class="fa fa-dollar"></i> Monto:</label>
+                        <input type="text" name="txtMonto" id="txtMonto" value="" class="form-control" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label" style="font-weight: bold;"><i class="fa fa-star"></i> ¿Es el salario actual?:</label>
+                        <div style="padding-top: 8px;">
+                            <input type="checkbox" name="chbEsSalarioActual" id="chbEsSalarioActual" value="" onchange="ChanegChebSalariOActual()" style="transform: scale(1.2); margin-right: 5px;" />
+                            <span id="lblSalarioActual">No</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <button type="button" id="btnGuardarSalario" onclick="SaveOrUpdateSalario();" class="btn btn-success">
+                        <i class="fa fa-save"></i> Guardar
+                    </button>
+                    <button type="button" id="btnGuardarCancelar" onclick="CancelarSalario();" class="btn btn-danger">
+                        <i class="fa fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
-<div class="row">
-    <input type="hidden" name="idregistro" id="idRegistro" value="0" class="form-control" />
-    <div class="col-lg-3">
-        <label>Fecha inicial</label>
-        <input type="date" name="dtpFI" id="dtpFI" value="" class="form-control" />
-    </div>
-    <div class="col-lg-3">
-        <label>Fecha Final</label>
-        <input type="date" name="drpFF" id="drpFF" value="" class="form-control" />
-    </div>
-    <div class="col-lg-3">
-        <label>Monto</label>
-        <input type="text" name="txtMonto" id="txtMonto" value="" class="form-control" />
-    </div>
-    <div class="col-lg-3">
-        <label>¿Es el salario actual?</label>
-        <input type="checkbox" name="chbEsSalarioActual" id="chbEsSalarioActual" value="" class="form-control" onchange="ChanegChebSalariOActual()" />
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-12">
-        <input type="button" name="btnGuardarSalario" id="btnGuardarSalario" onclick="SaveOrUpdateSalario();" value="Guardar" class="btn btn-success" />
-        <input type="button" name="btnGuardarCancelar" id="btnGuardarCancelar" value="Cancelar" class="btn btn-custom-cancel btn-lg-custom" onclick="CancelarSalario();"/>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-12 table-responsive">
-        <table id="tableSalario" class="table" style="width:100%;">
-        </table>
+
+<div class="container-fluid" style="padding: 0 15px 20px 15px;">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <i class="fa fa-list"></i> Historial de Salarios
+        </div>
+        <div class="panel-body table-responsive">
+            <table id="tableSalario" class="table table-bordered table-striped" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha Inicial</th>
+                        <th>Fecha Final</th>
+                        <th>Monto</th>
+                        <th>Salario Actual</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <script>
     $(document).ready(function () {
+        // Script para actualizar el label del checkbox
+        var chkSalarioActual = document.getElementById('chbEsSalarioActual');
+        var lblSalarioActual = document.getElementById('lblSalarioActual');
+
+        if (chkSalarioActual && lblSalarioActual) {
+            function updateSalarioActualLabel() {
+                lblSalarioActual.textContent = chkSalarioActual.checked ? 'Sí' : 'No';
+                lblSalarioActual.style.color = chkSalarioActual.checked ? '#5cb85c' : '#d9534f';
+            }
+            chkSalarioActual.addEventListener('change', updateSalarioActualLabel);
+            updateSalarioActualLabel();
+        }
+
         $('#txtMonto').on('input', function () {
             // Permitir números y un punto decimal
             let input = $(this).val();
@@ -96,3 +268,94 @@
         window.location.reload();
     }
 </script>
+
+<style>
+    /* Estilos adicionales para mantener consistencia */
+    .container-fluid {
+        background-color: transparent;
+    }
+
+    .table .btn {
+        color: #ffffff !important;
+    }
+
+    .table .btn-primary {
+        background-color: #337ab7;
+        border-color: #2e6da4;
+    }
+
+    .table .btn-danger {
+        background-color: #d9534f;
+        border-color: #d43f3a;
+    }
+
+    .table .btn-warning {
+        background-color: #f0ad4e;
+        border-color: #eea236;
+    }
+
+    .table .btn-info {
+        background-color: #5bc0de;
+        border-color: #46b8da;
+    }
+
+    .table .btn-success {
+        background-color: #5cb85c;
+        border-color: #4cae4c;
+    }
+
+    .table .btn:hover {
+        opacity: 0.9;
+        color: #ffffff !important;
+    }
+
+    .btn-success, .btn-danger, .btn-info, .btn-primary {
+        color: #ffffff !important;
+    }
+
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_processing,
+    .dataTables_wrapper .dataTables_paginate {
+        color: #333333 !important;
+    }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            color: #333333 !important;
+        }
+
+            .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+                background: #337ab7 !important;
+                color: #ffffff !important;
+            }
+
+    .table tbody tr td {
+        color: #333333 !important;
+        background-color: #ffffff !important;
+    }
+
+    .table thead tr th {
+        color: #333333 !important;
+        background-color: #f5f5f5 !important;
+    }
+
+    .form-control {
+        color: #333333 !important;
+        background-color: #ffffff !important;
+    }
+
+        .form-control:disabled {
+            background-color: #e9ecef !important;
+            color: #495057 !important;
+        }
+
+    .control-label {
+        color: #333333 !important;
+    }
+
+    #lblSalarioActual {
+        font-weight: bold;
+        transition: color 0.2s ease;
+    }
+</style>

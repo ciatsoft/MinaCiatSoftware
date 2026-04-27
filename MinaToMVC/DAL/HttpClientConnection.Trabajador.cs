@@ -3,6 +3,7 @@ using MinaTolEntidades.DtoClientes;
 using MinaTolEntidades.DtoEmpleados;
 using MinaTolEntidades.DtoSucursales;
 using Newtonsoft.Json;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -89,14 +90,15 @@ namespace MinaToMVC.DAL
             return modelResponse;
 
         }
-        public async Task<ModelResponse> DeleteEmpleadoById(long Id)
+        public async Task<ModelResponse> DeleteEmpleadoById(DtoBajasEmpleado bemp)
         {
-            var result = await RequestAsync($"api/Trabajador/{Id}", HttpMethod.Post, null,
-                new Func<string, string>((responseString) =>
-                {
-                    return responseString;
-                }), token.Token.access_token);
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            var result = await RequestAsync<object>("api/Trabajador/Baja", HttpMethod.Post, bemp,
+            new Func<string, string>((responseString) =>
+            {
+                return responseString;
+            }));
+            var modelResponse = JsonConvert.DeserializeObject<ModelResponse>(result.ToString());
+            return modelResponse;
         }
 
         public async Task<ModelResponse> GetSalarioByTrabajador(long id)

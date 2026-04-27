@@ -1,9 +1,114 @@
 ﻿@{
     var trabajadorId = (long)ViewBag.TrabajadorId;
     var fechaActual = DateTime.Now.ToString("yyyy-MM-dd");
-    var usuario = @ViewBag.UserToken.UserName;
+    var usuario = ViewBag.UserToken.UserName;
 }
 
+<style>
+    /* Estilos personalizados para mantener la misma apariencia */
+    .btn-custom-clean {
+        background-color: #5bc0de;
+        border-color: #46b8da;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-custom-clean:hover {
+            background-color: #31b0d5;
+            border-color: #269abc;
+            color: white;
+        }
+
+    .btn-custom-cancel {
+        background-color: #d9534f;
+        border-color: #d43f3a;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-custom-cancel:hover {
+            background-color: #c9302c;
+            border-color: #ac2925;
+            color: white;
+        }
+
+    .text-success {
+        color: #3c763d;
+    }
+
+    .fw-bold {
+        font-weight: bold;
+    }
+
+    .panel-custom {
+        margin-bottom: 20px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    }
+
+    .panel-custom-heading {
+        padding: 10px 15px;
+        border-bottom: 1px solid #ddd;
+        background-color: #f5f5f5;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+    }
+
+        .panel-custom-heading h4 {
+            margin: 0;
+            color: #333;
+        }
+
+    .panel-custom-body {
+        padding: 15px;
+    }
+
+    /* Estilos para DataTables */
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_processing,
+    .dataTables_wrapper .dataTables_paginate {
+        margin-bottom: 15px;
+    }
+
+        .dataTables_wrapper .dataTables_filter input {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 5px 10px;
+            margin-left: 10px;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 5px 12px;
+            margin: 0 2px;
+            border-radius: 4px;
+        }
+
+            .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+                background: #337ab7;
+                color: white !important;
+                border: 1px solid #2e6da4;
+            }
+
+    .table-bordered {
+        border: 1px solid #ddd;
+    }
+
+    .table-striped > tbody > tr:nth-of-type(odd) {
+        background-color: #f9f9f9;
+    }
+</style>
+
+<!-- Campos ocultos -->
 <input type="hidden" id="trabajadorInput" value="@trabajadorId" readonly />
 <input type="hidden" id="FechaActual" value="@fechaActual" readonly />
 <input type="hidden" id="CreatedDt" value="@fechaActual" readonly />
@@ -13,19 +118,46 @@
 
 <div class="row">
     <div class="col-md-6">
-        <h4>LISTA DE DOCUMENTOS SOLICITADOS</h4>
-        <div class="row">
-            <div class="col-lg-12">
-                <table class="table table-bordered table-striped" id="tblListaDocumentos" style="width: 100%;"></table>
-
+        <div class="panel-custom">
+            <div class="panel-custom-heading">
+                <h4><i class="fa fa-list"></i> LISTA DE DOCUMENTOS SOLICITADOS</h4>
+            </div>
+            <div class="panel-custom-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped" id="tblListaDocumentos" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-6">
-        <h4>DOCUMENTOS CARGADOS</h4>
-        <div class="row">
-            <div class="col-lg-12">
-                <table class="table table-bordered table-striped" id="tblCargarDocumentos" style="width: 100%;"></table>
+        <div class="panel-custom">
+            <div class="panel-custom-heading">
+                <h4><i class="fa fa-check-circle"></i> DOCUMENTOS CARGADOS</h4>
+            </div>
+            <div class="panel-custom-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped" id="tblCargarDocumentos" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>ID Trabajador</th>
+                                <th>ID Tipo Documento</th>
+                                <th>Nombre del Documento</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -39,6 +171,12 @@
         // Configuración de DataTable para lista de documentos disponibles
         $("#tblListaDocumentos").DataTable({
             data: [],
+            processing: true,
+            destroy: true,
+            paging: true,
+            searching: true,
+            scrollX: true,
+            autoWidth: false,
             columns: [
                 { data: 'id', title: 'ID', visible: false },
                 { data: 'nombre', title: 'Nombre' },
@@ -47,37 +185,35 @@
                     title: "Acciones",
                     render: function (data, type, row) {
                         if (documentosCargados.includes(data)) {
-                            return '<span class="text-success">Documento Ya cargado</span>';
+                            return '<span class="text-success fw-bold"><i class="fa fa-check-circle"></i> Documento ya cargado</span>';
                         } else {
-                            // Escapar comillas en el nombre para evitar errores
                             var nombreEscapado = row.nombre.replace(/'/g, "\\'").replace(/"/g, '\\"');
-                            return '<input type="button" value="Cargar Documento" class="btn btn-custom-clean" onclick="CargarDocumento(' + data + ', \'' + nombreEscapado + '\')" />';
+                            return '<button type="button" class="btn btn-custom-clean" onclick="CargarDocumento(' + data + ', \'' + nombreEscapado + '\')"><i class="fa fa-upload"></i> Cargar</button>';
                         }
                     }
                 }
             ],
             order: [[1, 'asc']],
             language: {
-                "decimal": ",",
-                "thousands": ".",
-                "processing": "Procesando...",
-                "lengthMenu": "Mostrar _MENU_ entradas",
-                "zeroRecords": "No se encontraron resultados",
-                "emptyTable": "Ningun dato disponible en esta tabla",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-                "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-                "search": "Buscar:",
-                "loadingRecords": "Cargando...",
+                "decimal": ".",
+                "thousands": ",",
+                "processing": '<i class="fa fa-spinner fa-spin"></i> Procesando...',
+                "lengthMenu": '<i class="fa fa-list"></i> Mostrar _MENU_ registros',
+                "zeroRecords": '<i class="fa fa-info-circle"></i> No se encontraron resultados',
+                "emptyTable": '<i class="fa fa-database"></i> No hay datos disponibles',
+                "info": '<i class="fa fa-info-circle"></i> Mostrando _START_ a _END_ de _TOTAL_ registros',
+                "infoEmpty": '<i class="fa fa-info-circle"></i> Mostrando 0 a 0 de 0 registros',
+                "infoFiltered": '<i class="fa fa-filter"></i> (filtrado de _MAX_ registros totales)',
+                "search": '<i class="fa fa-search"></i> Buscar:',
                 "paginate": {
-                    "first": "Primero",
-                    "last": "Último",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
+                    "first": '<i class="fa fa-fast-backward"></i> Primero',
+                    "last": '<i class="fa fa-fast-forward"></i> Último',
+                    "next": '<i class="fa fa-forward"></i> Siguiente',
+                    "previous": '<i class="fa fa-backward"></i> Anterior'
                 },
                 "aria": {
-                    "sortAscending": ": activar para ordenar la columna de manera ascendente",
-                    "sortDescending": ": activar para ordenar la columna de manera descendente"
+                    "sortAscending": ": activar para ordenar ascendente",
+                    "sortDescending": ": activar para ordenar descendente"
                 }
             }
         });
@@ -85,40 +221,47 @@
         // Configuración de DataTable para documentos del empleado
         $("#tblCargarDocumentos").DataTable({
             data: [],
+            processing: true,
+            destroy: true,
+            paging: true,
+            searching: true,
+            scrollX: true,
+            autoWidth: false,
             columns: [
                 { data: 'id', title: 'ID', visible: false },
                 { data: 'idTrabajador', title: 'ID Trabajador', visible: false },
                 { data: 'idTipoDocumento', title: 'ID Tipo Documento', visible: false },
                 { data: 'nombreDocumento', title: 'Nombre del Documento' },
                 {
-                    data: "id", title: "Acciones", render: function (data, type, row) {
-                        return ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarDocumento(' + data + ', ' + row.idTipoDocumento + ')" /> ' +
-                               ' <input type="button" value="Descargar" class="btn btn-custom-clean" onclick="BuscarDocumento(' + data + ')" />';
+                    data: "id",
+                    title: "Acciones",
+                    render: function (data, type, row) {
+                        return '<button type="button" class="btn btn-custom-cancel" onclick="EliminarDocumento(' + data + ', ' + row.idTipoDocumento + ')"><i class="fa fa-trash"></i> Eliminar</button> ' +
+                               '<button type="button" class="btn btn-custom-clean" onclick="BuscarDocumento(' + data + ')"><i class="fa fa-download"></i> Descargar</button>';
                     }
-                },
+                }
             ],
             order: [[3, 'asc']],
             language: {
-                "decimal": ",",
-                "thousands": ".",
-                "processing": "Procesando...",
-                "lengthMenu": "Mostrar _MENU_ entradas",
-                "zeroRecords": "No se encontraron resultados",
-                "emptyTable": "Ningun dato disponible en esta tabla",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-                "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-                "search": "Buscar:",
-                "loadingRecords": "Cargando...",
+                "decimal": ".",
+                "thousands": ",",
+                "processing": '<i class="fa fa-spinner fa-spin"></i> Procesando...',
+                "lengthMenu": '<i class="fa fa-list"></i> Mostrar _MENU_ registros',
+                "zeroRecords": '<i class="fa fa-info-circle"></i> No se encontraron resultados',
+                "emptyTable": '<i class="fa fa-database"></i> No hay datos disponibles',
+                "info": '<i class="fa fa-info-circle"></i> Mostrando _START_ a _END_ de _TOTAL_ registros',
+                "infoEmpty": '<i class="fa fa-info-circle"></i> Mostrando 0 a 0 de 0 registros',
+                "infoFiltered": '<i class="fa fa-filter"></i> (filtrado de _MAX_ registros totales)',
+                "search": '<i class="fa fa-search"></i> Buscar:',
                 "paginate": {
-                    "first": "Primero",
-                    "last": "Último",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
+                    "first": '<i class="fa fa-fast-backward"></i> Primero',
+                    "last": '<i class="fa fa-fast-forward"></i> Último',
+                    "next": '<i class="fa fa-forward"></i> Siguiente',
+                    "previous": '<i class="fa fa-backward"></i> Anterior'
                 },
                 "aria": {
-                    "sortAscending": ": activar para ordenar la columna de manera ascendente",
-                    "sortDescending": ": activar para ordenar la columna de manera descendente"
+                    "sortAscending": ": activar para ordenar ascendente",
+                    "sortDescending": ": activar para ordenar descendente"
                 }
             }
         });
@@ -133,11 +276,11 @@
             if (r.IsSuccess) {
                 MapingPropertiesDataTable("tblListaDocumentos", r.Response);
             } else {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Error al cargar Documentos: ' + r.ErrorMessage,
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
+                swal({
+                    title: "Error",
+                    text: "Error al cargar Documentos: " + r.ErrorMessage,
+                    type: "error",
+                    confirmButtonText: 'OK'
                 });
             }
         });
@@ -157,11 +300,11 @@
                 // Ahora cargar los documentos generales
                 GetAllDocumentos();
             } else {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Error al cargar Documentos del empleado: ' + r.ErrorMessage,
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
+                swal({
+                    title: "Error",
+                    text: "Error al cargar Documentos del empleado: " + r.ErrorMessage,
+                    type: "error",
+                    confirmButtonText: 'OK'
                 });
             }
         });
@@ -193,13 +336,11 @@
             formData.append('UpdatedDt', $("#UpdatedDt").val());
 
             // Mostrar indicador de carga
-            Swal.fire({
-                title: 'Subiendo documento',
-                text: 'Por favor espere...',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
+            swal({
+                title: "Subiendo documento",
+                text: "Por favor espere...",
+                showConfirmButton: false,
+                allowOutsideClick: false
             });
 
             // Enviar el archivo al servidor
@@ -210,7 +351,7 @@
                 processData: false,
                 contentType: false,
                 success: function (response) {
-                    Swal.close();
+                    swal.close();
 
                     // Parsear la respuesta si es una cadena JSON
                     var r = typeof response === 'string' ? JSON.parse(response) : response;
@@ -223,24 +364,30 @@
                         // Recargar documentos del empleado
                         GetAllDocumentosEmpleado($("#trabajadorInput").val());
 
-                        Swal.fire('Éxito', 'Documento guardado exitosamente.', 'success');
+                        swal({
+                            title: "¡Éxito!",
+                            text: "Documento guardado exitosamente.",
+                            type: "success",
+                            confirmButtonText: 'OK'
+                        });
                     } else {
-                        // Manejar el caso donde ErrorMessage podría ser undefined
                         var errorMsg = r.ErrorMessage || 'Error desconocido al guardar el documento';
-                        Swal.fire(
-                            'Error!',
-                            'Error al guardar el documento: ' + errorMsg,
-                            'error'
-                        );
+                        swal({
+                            title: "Error",
+                            text: "Error al guardar el documento: " + errorMsg,
+                            type: "error",
+                            confirmButtonText: 'OK'
+                        });
                     }
                 },
                 error: function (xhr, status, error) {
-                    Swal.close();
-                    Swal.fire(
-                        'Error!',
-                        'Error al subir el documento: ' + (error || 'Error de conexión'),
-                        'error'
-                    );
+                    swal.close();
+                    swal({
+                        title: "Error",
+                        text: "Error al subir el documento: " + (error || 'Error de conexión'),
+                        type: "error",
+                        confirmButtonText: 'OK'
+                    });
                 }
             });
         };
@@ -251,19 +398,17 @@
 
     // 4. Función para Eliminar Documento
     function EliminarDocumento(idDocumento, idTipoDocumento) {
-        // Confirmar eliminación
-        Swal.fire({
+        swal({
             title: '¿Estás seguro?',
             text: "¿Quieres eliminar este documento?",
-            icon: 'warning',
+            type: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
+            confirmButtonColor: '#d9534f',
+            cancelButtonColor: '#3085d6',
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Aquí va tu lógica para eliminar el documento
+        }, function (isConfirmed) {
+            if (isConfirmed) {
                 GetMVC("/Empleado/DeleteDocumentoEmpleadoById?id=" + idDocumento, function(r) {
                     if (r.IsSuccess) {
                         // Remover el ID del array de documentos cargados
@@ -275,17 +420,19 @@
                         actualizarEstadoDocumentos();
                         GetAllDocumentosEmpleado(@trabajadorId);
 
-                        Swal.fire(
-                            'Eliminado!',
-                            'El documento ha sido eliminado.',
-                            'success'
-                        );
+                        swal({
+                            title: "¡Eliminado!",
+                            text: "El documento ha sido eliminado correctamente.",
+                            type: "success",
+                            confirmButtonText: 'OK'
+                        });
                     } else {
-                        Swal.fire(
-                            'Error!',
-                            'Error al eliminar el documento: ' + r.ErrorMessage,
-                            'error'
-                        );
+                        swal({
+                            title: "Error",
+                            text: "Error al eliminar el documento: " + r.ErrorMessage,
+                            type: "error",
+                            confirmButtonText: 'OK'
+                        });
                     }
                 });
             }
@@ -294,24 +441,27 @@
 
     // 5. Función para Abrir Documento
     function BuscarDocumento(idDocumento) {
-        // Mostrar indicador de carga
         console.log('Buscando documento ID:', idDocumento);
+
+        swal({
+            title: "Cargando documento",
+            text: "Por favor espere...",
+            showConfirmButton: false,
+            allowOutsideClick: false
+        });
 
         $.ajax({
             url: '/Empleado/GetDocumentoEmpleadoById?id=' + idDocumento,
             type: 'GET',
             success: function (response) {
+                swal.close();
                 try {
-                    // Parsear la respuesta JSON
                     const parsedResponse = JSON.parse(response);
 
                     if (parsedResponse.IsSuccess) {
                         const datos = parsedResponse.Response;
 
-                        // Verificar que los datos necesarios existan
                         if (datos && datos.RutaArchivo && datos.GitDocumento) {
-
-                            // Construir URL de descarga
                             const urlDescarga = '/Empleado/DescargarDocumento?' +
                                 'rutaArchivo=' + encodeURIComponent(datos.RutaArchivo) +
                                 '&nombreArchivo=' + encodeURIComponent(datos.GitDocumento);
@@ -319,30 +469,45 @@
                             console.log('Documento:', datos.GitDocumento);
                             console.log('URL de descarga:', urlDescarga);
 
-                            // Abrir el documento en una nueva pestaña
-                            // Los PDFs se mostrarán automáticamente, otros archivos se descargarán
                             window.open(urlDescarga, '_blank');
-
                         } else {
                             console.error('Datos incompletos:', datos);
-                            alert('El documento no tiene información de archivo válida');
+                            swal({
+                                title: "Error",
+                                text: "El documento no tiene información de archivo válida",
+                                type: "error",
+                                confirmButtonText: 'OK'
+                            });
                         }
                     } else {
                         const mensaje = parsedResponse.Message || 'Error desconocido';
                         console.error('Error del servidor:', mensaje);
-                        alert('Error: ' + mensaje);
+                        swal({
+                            title: "Error",
+                            text: "Error: " + mensaje,
+                            type: "error",
+                            confirmButtonText: 'OK'
+                        });
                     }
                 } catch (error) {
                     console.error('Error al procesar la respuesta:', error);
-                    console.error('Respuesta original:', response);
-                    alert('Error al procesar la respuesta del servidor');
+                    swal({
+                        title: "Error",
+                        text: "Error al procesar la respuesta del servidor",
+                        type: "error",
+                        confirmButtonText: 'OK'
+                    });
                 }
             },
             error: function (xhr, status, error) {
+                swal.close();
                 console.error('Error en la petición AJAX:', error);
-                console.error('Status:', status);
-                console.error('Response:', xhr.responseText);
-                alert('Error de conexión al servidor');
+                swal({
+                    title: "Error",
+                    text: "Error de conexión al servidor",
+                    type: "error",
+                    confirmButtonText: 'OK'
+                });
             }
         });
     }
@@ -350,10 +515,10 @@
     // 6. Función para actualizar el estado de los documentos
     function actualizarEstadoDocumentos() {
         var table = $("#tblListaDocumentos").DataTable();
-        table.rows().invalidate().draw(); // Forzar redibujado de la tabla
+        table.rows().invalidate().draw();
     }
 
-    // 7. Función MapingPropertiesDataTable (asegúrate de que existe)
+    // 7. Función MapingPropertiesDataTable
     function MapingPropertiesDataTable(tableId, data) {
         var table = $("#" + tableId).DataTable();
         table.clear();
