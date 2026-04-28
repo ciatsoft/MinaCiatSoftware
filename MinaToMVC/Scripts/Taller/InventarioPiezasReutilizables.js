@@ -144,7 +144,7 @@ function GetAllCategoriaInventario() {
 }
 
 function MasDetalles(id, idReparacion, tipoVehiculoCodigo, idVehiculo) {
-    $("#titleGenerciModal").text("Detalles de Pieza");
+    $("#titleGenerciModal").html('<span style="color: black;">Detalles de Pieza</span>');
 
     var url = `/Taller/PartialViewModalMostrarDetalles?id=${encodeURIComponent(id)}&idReparacion=${encodeURIComponent(idReparacion)}&tipoVehiculo=${encodeURIComponent(tipoVehiculoCodigo)}&idVehiculo=${encodeURIComponent(idVehiculo)}`;
 

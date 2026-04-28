@@ -445,61 +445,6 @@ function InventarioPiezasNoReutilizablesByDates(fechaInicio, fechaFin) {
         fechaFin: fechaFin
     };
 
-    // Mostrar loading
-    swal({
-        title: "Filtrando datos...",
-        text: "Por favor espere",
-        type: "info",
-        showConfirmButton: false,
-        allowOutsideClick: false
-    });
-
-    PostMVC('/Taller/InventarioPiezasNoReutilizablesByDates', parametro, function (r, textStatus, jqXHR) {
-        // Cerrar el loading
-        swal.close();
-
-        if (r.IsSuccess && Array.isArray(r.Response)) {
-            const data = r.Response;
-
-            // Limpiar la tabla existente y cargar los nuevos datos
-            dataTable.clear();
-            dataTable.rows.add(data);
-            dataTable.draw();
-
-            // CORRECCIÓN: Mostrar mensaje de sin resultados con temporizador que no se cierra automáticamente
-            if (data.length === 0) {
-                swal({
-                    title: "Sin resultados",
-                    text: "No se encontraron registros en el rango de fechas seleccionado",
-                    type: "info",
-                    confirmButtonText: "Aceptar"
-                });
-            }
-        } else {
-            swal({
-                title: "Error",
-                text: "Error al filtrar las Piezas: " + (r.ErrorMessage || 'Error desconocido'),
-                type: "error",
-                confirmButtonText: "Aceptar"
-            });
-        }
-    }).fail(function (xhr, status, error) {
-        swal.close();
-        swal({
-            title: "Error",
-            text: "Error de conexión al servidor: " + error,
-            type: "error",
-            confirmButtonText: "Aceptar"
-        });
-    });
-}
-
-function InventarioPiezasNoReutilizablesByDates(fechaInicio, fechaFin) {
-    var parametro = {
-        fechaInicio: fechaInicio,
-        fechaFin: fechaFin
-    };
-
     PostMVC('/Taller/InventarioPiezasNoReutilizablesByDates', parametro, function (r, textStatus, jqXHR) {
 
         // Verificar si la respuesta es válida
