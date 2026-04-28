@@ -11,8 +11,16 @@ $(document).ready(function () {
     // Configuración de DataTable
     $("#tblPiezasRetiradas").DataTable({
         data: [],
+        processing: true,
+        destroy: true,
+        paging: true,
+        searching: true,
+        responsive: true,
+        autoWidth: false,
+        pageLength: 10,
+        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
         columns: [
-            { data: 'id', title: 'ID' },
+            { data: 'id', title: 'ID', visible: false },
             { data: 'idReparacion', title: 'Reparacion', visible: false },
             { data: 'nombre', title: 'Nombre' },
             { data: 'nombreCategoria', title: 'Categoria' },
@@ -23,18 +31,18 @@ $(document).ready(function () {
                 title: 'Reutilizable',
                 render: function (data, type, row) {
                     if (data === true) {
-                        return '<div style="display: flex; align-items: center; gap: 8px;">' +
-                            '<div style="width: 12px; height: 12px; border-radius: 50%; background-color: green;"></div>' +
+                        return '<div class="estado-indicador" style="display: flex; align-items: center; gap: 8px;">' +
+                            '<span class="estado-circulo" style="width: 12px; height: 12px; border-radius: 50%; background-color: #28a745;"></span>' +
                             '<span>Si</span>' +
                             '</div>';
                     } else if (data === false) {
-                        return '<div style="display: flex; align-items: center; gap: 8px;">' +
-                            '<div style="width: 12px; height: 12px; border-radius: 50%; background-color: red;"></div>' +
+                        return '<div class="estado-indicador" style="display: flex; align-items: center; gap: 8px;">' +
+                            '<span class="estado-circulo" style="width: 12px; height: 12px; border-radius: 50%; background-color: #dc3545;"></span>' +
                             '<span>No</span>' +
                             '</div>';
                     } else {
-                        return '<div style="display: flex; align-items: center; gap: 8px;">' +
-                            '<div style="width: 12px; height: 12px; border-radius: 50%; background-color: gray;"></div>' +
+                        return '<div class="estado-indicador" style="display: flex; align-items: center; gap: 8px;">' +
+                            '<span class="estado-circulo" style="width: 12px; height: 12px; border-radius: 50%; background-color: #6c757d;"></span>' +
                             '<span>Sin dato</span>' +
                             '</div>';
                     }
@@ -43,13 +51,17 @@ $(document).ready(function () {
             {
                 data: "id",
                 title: "Acciones",
+                orderable: false,
                 render: function (data, type, row) {
                     // Si el estado es 3, mostrar solo botón de consultar
                     if (estadoReparacion === 3 || estadoReparacion === 4) {
-                        return '<input type="button" value="Consultar Informacion" class="btn btn-custom-clean" onclick="ConsultarPiezaRetirada(' + data + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />';
+                        return '<button class="btn btn-info btn-sm" onclick="ConsultarPiezaRetirada(' + data + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')">' +
+                            '<i class="fa fa-info-circle"></i> Consultar</button>';
                     } else {
-                        return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarPiezaRetirada(' + data + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />' +
-                            ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarPiezaRetirada(' + data + ')"/>';
+                        return '<button class="btn btn-info btn-sm" onclick="EditarPiezaRetirada(' + data + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')">' +
+                            '<i class="fa fa-edit"></i> Editar</button> ' +
+                            '<button class="btn btn-danger btn-sm" onclick="EliminarPiezaRetirada(' + data + ')">' +
+                            '<i class="fa fa-trash"></i> Eliminar</button>';
                     }
                 }
             }
@@ -57,20 +69,20 @@ $(document).ready(function () {
         language: {
             "decimal": ",",
             "thousands": ".",
-            "processing": "Procesando...",
-            "lengthMenu": "Mostrar _MENU_ entradas",
-            "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningun dato disponible en esta tabla",
-            "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-            "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-            "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-            "search": "Buscar:",
+            "processing": '<i class="fa fa-spinner fa-spin"></i> Procesando...',
+            "lengthMenu": '<i class="fa fa-list"></i> Mostrar _MENU_ entradas',
+            "zeroRecords": '<i class="fa fa-info-circle"></i> No se encontraron resultados',
+            "emptyTable": '<i class="fa fa-database"></i> Ningun dato disponible en esta tabla',
+            "info": '<i class="fa fa-info-circle"></i> Mostrando _START_ a _END_ de _TOTAL_ entradas',
+            "infoEmpty": '<i class="fa fa-info-circle"></i> Mostrando 0 a 0 de 0 entradas',
+            "infoFiltered": '<i class="fa fa-filter"></i> (filtrado de un total de _MAX_ entradas)',
+            "search": '<i class="fa fa-search"></i> Buscar:',
             "loadingRecords": "Cargando...",
             "paginate": {
-                "first": "Primero",
-                "last": "Último",
-                "next": "Siguiente",
-                "previous": "Anterior"
+                "first": '<i class="fa fa-fast-backward"></i> Primero',
+                "last": '<i class="fa fa-fast-forward"></i> Último',
+                "next": '<i class="fa fa-forward"></i> Siguiente',
+                "previous": '<i class="fa fa-backward"></i> Anterior'
             },
             "aria": {
                 "sortAscending": ": activar para ordenar la columna de manera ascendente",
@@ -81,8 +93,16 @@ $(document).ready(function () {
 
     $("#tblPiezasAsignadas").DataTable({
         data: [],
+        processing: true,
+        destroy: true,
+        paging: true,
+        searching: true,
+        responsive: true,
+        autoWidth: false,
+        pageLength: 10,
+        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
         columns: [
-            { data: 'id', title: 'ID' },
+            { data: 'id', title: 'ID', visible: false },
             {
                 data: 'tipoInventario',
                 title: 'Tipo de Inventario',
@@ -106,13 +126,17 @@ $(document).ready(function () {
             {
                 data: "id",
                 title: "Acciones",
+                orderable: false,
                 render: function (data, type, row) {
                     // Si el estado es 3, mostrar solo botón de consultar
                     if (estadoReparacion === 3 || estadoReparacion === 4) {
-                        return '<input type="button" value="Consultar Informacion" class="btn btn-custom-clean" onclick="ConsultarPiezaAsignada(' + row.id + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />';
+                        return '<button class="btn btn-info btn-sm" onclick="ConsultarPiezaAsignada(' + row.id + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')">' +
+                            '<i class="fa fa-info-circle"></i> Consultar</button>';
                     } else {
-                        return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarPiezaAsignada(' + row.id + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')" />' +
-                            ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarPiezaAsignada(' + row.id + ')"/>';
+                        return '<button class="btn btn-info btn-sm" onclick="EditarPiezaAsignada(' + row.id + ',' + row.idReparacion + ',' + row.tipoVehiculo + ',' + row.idVehiculo + ')">' +
+                            '<i class="fa fa-edit"></i> Editar</button> ' +
+                            '<button class="btn btn-danger btn-sm" onclick="EliminarPiezaAsignada(' + row.id + ')">' +
+                            '<i class="fa fa-trash"></i> Eliminar</button>';
                     }
                 }
             }
@@ -120,20 +144,20 @@ $(document).ready(function () {
         language: {
             "decimal": ",",
             "thousands": ".",
-            "processing": "Procesando...",
-            "lengthMenu": "Mostrar _MENU_ entradas",
-            "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningun dato disponible en esta tabla",
-            "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-            "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-            "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-            "search": "Buscar:",
+            "processing": '<i class="fa fa-spinner fa-spin"></i> Procesando...',
+            "lengthMenu": '<i class="fa fa-list"></i> Mostrar _MENU_ entradas',
+            "zeroRecords": '<i class="fa fa-info-circle"></i> No se encontraron resultados',
+            "emptyTable": '<i class="fa fa-database"></i> Ningun dato disponible en esta tabla',
+            "info": '<i class="fa fa-info-circle"></i> Mostrando _START_ a _END_ de _TOTAL_ entradas',
+            "infoEmpty": '<i class="fa fa-info-circle"></i> Mostrando 0 a 0 de 0 entradas',
+            "infoFiltered": '<i class="fa fa-filter"></i> (filtrado de un total de _MAX_ entradas)',
+            "search": '<i class="fa fa-search"></i> Buscar:',
             "loadingRecords": "Cargando...",
             "paginate": {
-                "first": "Primero",
-                "last": "Último",
-                "next": "Siguiente",
-                "previous": "Anterior"
+                "first": '<i class="fa fa-fast-backward"></i> Primero',
+                "last": '<i class="fa fa-fast-forward"></i> Último',
+                "next": '<i class="fa fa-forward"></i> Siguiente',
+                "previous": '<i class="fa fa-backward"></i> Anterior'
             },
             "aria": {
                 "sortAscending": ": activar para ordenar la columna de manera ascendente",
@@ -213,11 +237,11 @@ function GetAllRegistersVehiculos() {
 
             MostrarDescripcionVehiculo();
         } else {
-            Swal.fire({
-                title: 'Error',
-                text: 'Error al cargar los vehículos viajes locales: ' + r.ErrorMessage,
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
+            swal({
+                title: "Error",
+                text: "Error al cargar los vehículos viajes locales: " + r.ErrorMessage,
+                type: "error",
+                confirmButtonText: "Aceptar"
             });
         }
     });
@@ -230,11 +254,11 @@ function GetAllRegistersVehiculoCarga() {
 
             MostrarDescripcionVehiculo();
         } else {
-            Swal.fire({
-                title: 'Error',
-                text: 'Error al cargar los vehículos de carga: ' + r.ErrorMessage,
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
+            swal({
+                title: "Error",
+                text: "Error al cargar los vehículos de carga: " + r.ErrorMessage,
+                type: "error",
+                confirmButtonText: "Aceptar"
             });
         }
     });
@@ -258,11 +282,11 @@ function MostrarDescripcionVehiculo() {
     }
 
     if (!idVehiculo || idVehiculo === "0" || idVehiculo === "") {
-        $('#vehiculoDesc').val("Sin vehículo");
+        $('#vehiculoDesc').val("Sin vehiculo");
         return;
     }
 
-    var descripcion = "Vehículo no encontrado";
+    var descripcion = "Vehiculo no encontrado";
 
     if (tipoVehiculoCodigo === "1") {
 
@@ -311,13 +335,13 @@ function MostrarDescripcionVehiculo() {
             }
         }
     } else {
-        descripcion = "Tipo de vehículo no válido";
+        descripcion = "Tipo de vehiculo no válido";
     }
     $('#vehiculoDesc').val(descripcion);
 }
 
 function ModalRetirarPiezas(id, tipoVehiculo, idVehiculo) {
-    $("#titleGenerciModal").text("Retirar Piezas");
+    $("#titleGenerciModal").html('<span style="color: black;">Retirar Piezas</span>');
 
     $("#boddyGeericModal").load(`/Taller/PartialViewModalRetirarPiezas?id=${id}&tipoVehiculo=${tipoVehiculo}&idVehiculo=${idVehiculo}`, function () {
         $("#genericModal").modal("show");
@@ -325,7 +349,7 @@ function ModalRetirarPiezas(id, tipoVehiculo, idVehiculo) {
 }
 
 function ModalAsignarPiezas(id, idReparacion, tipoVehiculo, idVehiculo) {
-    $("#titleGenerciModal").text("Asignacion de Piezas");
+    $("#titleGenerciModal").html('<span style="color: black;">Asignacion de Piezas</span>');
 
     $("#boddyGeericModal").load(`/Taller/PartialViewModalAsignarPiezas?id=${id}&idReparacion=${idReparacion}&tipoVehiculo=${tipoVehiculo}&idVehiculo=${idVehiculo}`, function () {
         $("#genericModal").modal("show");
@@ -347,11 +371,11 @@ function GetAllRetirarPiezaVehiculoReparacionByIdVehiculo(tipoVehiculo, idVehicu
 
             MapingPropertiesDataTable("tblPiezasRetiradas", datosProcesados);
         } else {
-            Swal.fire({
-                title: 'Error',
-                text: 'Error al cargar las piezas retiradas: ' + r.ErrorMessage,
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
+            swal({
+                title: "Error",
+                text: "Error al cargar las piezas retiradas: " + r.ErrorMessage,
+                type: "error",
+                confirmButtonText: "Aceptar"
             });
         }
     });
@@ -372,11 +396,11 @@ function GetAllPiezasAsignadasReparacionByIdVehiculo(tipoVehiculo, idVehiculo, i
 
             MapingPropertiesDataTable("tblPiezasAsignadas", datosProcesados);
         } else {
-            Swal.fire({
-                title: 'Error',
-                text: 'Error al cargar las piezas retiradas: ' + r.ErrorMessage,
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
+            swal({
+                title: "Error",
+                text: "Error al cargar las piezas asignadas: " + r.ErrorMessage,
+                type: "error",
+                confirmButtonText: "Aceptar"
             });
         }
     });
@@ -389,11 +413,11 @@ function GetAllCategoriaInventario(callback) {
 
             if (callback) callback();
         } else {
-            Swal.fire({
-                title: 'Error',
-                text: 'Error al cargar las Categorias del Inventario: ' + r.ErrorMessage,
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
+            swal({
+                title: "Error",
+                text: "Error al cargar las Categorias del Inventario: " + r.ErrorMessage,
+                type: "error",
+                confirmButtonText: "Aceptar"
             });
             if (callback) callback();
         }
@@ -401,26 +425,44 @@ function GetAllCategoriaInventario(callback) {
 }
 
 function EliminarPiezaRetirada(id) {
-    Swal.fire({
-        title: 'Eliminar Registro',
-        text: "Desea eliminar el siguiente registro?",
-        icon: 'warning',
+    swal({
+        title: "Eliminar Registro",
+        text: "Se eliminara el siguiente registro",
+        type: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Si, eliminar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si, eliminar",
+        cancelButtonText: "Cancelar"
+    }, function (isConfirmed) {
+        if (isConfirmed) {
             var parametro = { Id: id };
-
+            swal({
+                title: "Eliminado",
+                text: "El registro ha sido eliminado.",
+                type: "success",
+                confirmButtonText: "Aceptar"
+            }, function () {
+                window.location.reload();
+            });
+            window.location.reload();
             PostMVC('/Taller/DeleteRetirarPiezaVehiculoReparacionById', parametro, function (r) {
                 if (r.IsSuccess) {
-                    Swal.fire('Eliminado', 'El registro ha sido eliminado.', 'success')
-                        .then(() => { window.location.reload(); });
+                    swal({
+                        title: "Eliminado",
+                        text: "El registro ha sido eliminado.",
+                        type: "success",
+                        confirmButtonText: "Aceptar"
+                    }, function () {
+                        window.location.reload();
+                    });
                 } else {
-                    Swal.fire('Eliminado', 'El registro ha sido eliminado.', 'success')
-                        .then(() => { window.location.reload(); });
+                    swal({
+                        title: "Error",
+                        text: r.ErrorMessage || "Error al eliminar el registro",
+                        type: "error",
+                        confirmButtonText: "Aceptar"
+                    });
                 }
             });
         }
@@ -428,7 +470,7 @@ function EliminarPiezaRetirada(id) {
 }
 
 function EditarPiezaRetirada(id, idReparacion, tipoVehiculoCodigo, idVehiculo) {
-    $("#titleGenerciModal").text("Editar Retirar Piezas");
+    $("#titleGenerciModal").html('<span style="color: black;">Editar Retirar Piezas</span>');
 
     $("#boddyGeericModal").load(`/Taller/PartialViewEditarRetirarPieza?id=${id}&idReparacion=${idReparacion}&tipoVehiculo=${tipoVehiculoCodigo}&idVehiculo=${idVehiculo}`, function () {
         $("#genericModal").modal("show");
@@ -436,7 +478,7 @@ function EditarPiezaRetirada(id, idReparacion, tipoVehiculoCodigo, idVehiculo) {
 }
 
 function ConsultarPiezaRetirada(id, idReparacion, tipoVehiculoCodigo, idVehiculo) {
-    $("#titleGenerciModal").text("Consultar Pieza Retirada");
+    $("#titleGenerciModal").html('<span style="color: black;">Consultar Pieza Retirada</span>');
 
     $("#boddyGeericModal").load(`/Taller/PartialViewModalConsultarPiezaRetirada?id=${id}&idReparacion=${idReparacion}&tipoVehiculo=${tipoVehiculoCodigo}&idVehiculo=${idVehiculo}`, function () {
         $("#genericModal").modal("show");
@@ -444,7 +486,7 @@ function ConsultarPiezaRetirada(id, idReparacion, tipoVehiculoCodigo, idVehiculo
 }
 
 function EditarPiezaAsignada(id, idReparacion, tipoVehiculoCodigo, idVehiculo) {
-    $("#titleGenerciModal").text("Editar Retirar Piezas");
+    $("#titleGenerciModal").text("Editar Pieza Asignada");
 
     $("#boddyGeericModal").load(`/Taller/PartialViewModalAsignarPiezas?id=${id}&idReparacion=${idReparacion}&tipoVehiculo=${tipoVehiculoCodigo}&idVehiculo=${idVehiculo}`, function () {
         $("#genericModal").modal("show");
@@ -452,7 +494,7 @@ function EditarPiezaAsignada(id, idReparacion, tipoVehiculoCodigo, idVehiculo) {
 }
 
 function ConsultarPiezaAsignada(id, idReparacion, tipoVehiculoCodigo, idVehiculo) {
-    $("#titleGenerciModal").text("Consultar Pieza Asignada");
+    $("#titleGenerciModal").html('<span style="color: black;">Consultar Pieza Asignada');
 
     $("#boddyGeericModal").load(`/Taller/PartialViewConsultarPiezaAsignada?id=${id}&idReparacion=${idReparacion}&tipoVehiculo=${tipoVehiculoCodigo}&idVehiculo=${idVehiculo}`, function () {
         $("#genericModal").modal("show");
@@ -460,26 +502,44 @@ function ConsultarPiezaAsignada(id, idReparacion, tipoVehiculoCodigo, idVehiculo
 }
 
 function EliminarPiezaAsignada(id) {
-    Swal.fire({
-        title: 'Eliminar Registro',
-        text: "Desea eliminar el siguiente registro?",
-        icon: 'warning',
+    swal({
+        title: "Eliminar Registro",
+        text: "Se eliminara el siguiente registro",
+        type: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Si, eliminar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si, eliminar",
+        cancelButtonText: "Cancelar"
+    }, function (isConfirmed) {
+        if (isConfirmed) {
             var parametro = { Id: id };
-
+            swal({
+                title: "Eliminado",
+                text: "El registro ha sido eliminado.",
+                type: "success",
+                confirmButtonText: "Aceptar"
+            }, function () {
+                window.location.reload();
+            });
+            window.location.reload();
             PostMVC('/Taller/DeleteComponenteVehiculoById', parametro, function (r) {
                 if (r.IsSuccess) {
-                    Swal.fire('Eliminado', 'El registro ha sido eliminado.', 'success')
-                        .then(() => { window.location.reload(); });
+                    swal({
+                        title: "Eliminado",
+                        text: "El registro ha sido eliminado.",
+                        type: "success",
+                        confirmButtonText: "Aceptar"
+                    }, function () {
+                        window.location.reload();
+                    });
                 } else {
-                    Swal.fire('Eliminado', 'El registro ha sido eliminado.', 'success')
-                        .then(() => { window.location.reload(); });
+                    swal({
+                        title: "Error",
+                        text: r.ErrorMessage || "Error al eliminar el registro",
+                        type: "error",
+                        confirmButtonText: "Aceptar"
+                    });
                 }
             });
         }
@@ -487,26 +547,44 @@ function EliminarPiezaAsignada(id) {
 }
 
 function ActualizarEstado(id, estado) {
-    Swal.fire({
-        title: 'Actualizar Estado',
-        text: "Desea atualizar el estado del siguiente registro?",
-        icon: 'info',
+    swal({
+        title: "Actualizar Estado",
+        text: "Se actualizara el estado del siguiente registro",
+        type: "info",
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Si, actualizar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si, actualizar",
+        cancelButtonText: "Cancelar"
+    }, function (isConfirmed) {
+        if (isConfirmed) {
             var parametro = { Id: id, Estado: estado };
-
+            swal({
+                title: "Actualizado",
+                text: "El registro ha sido actualizado.",
+                type: "success",
+                confirmButtonText: "Aceptar"
+            }, function () {
+                window.location.reload();
+            });
             PostMVC('/Taller/ActualizarEstado', parametro, function (r) {
+                window.location.reload();
                 if (r.IsSuccess) {
-                    Swal.fire('Actualizado', 'El registro ha sido actualizado.', 'success')
-                        .then(() => { window.location.reload(); });
+                    swal({
+                        title: "Actualizado",
+                        text: "El registro ha sido actualizado.",
+                        type: "success",
+                        confirmButtonText: "Aceptar"
+                    }, function () {
+                        window.location.reload();
+                    });
                 } else {
-                    Swal.fire('Actualizado', 'El registro ha sido actualizado.', 'success')
-                        .then(() => { window.location.reload(); });
+                    swal({
+                        title: "Error",
+                        text: r.ErrorMessage || "Error al actualizar el registro",
+                        type: "error",
+                        confirmButtonText: "Aceptar"
+                    });
                 }
             });
         }
@@ -520,6 +598,7 @@ document.getElementById("btnGenerarPDF").addEventListener("click", function () {
 document.getElementById("btnGenerarExcel").addEventListener("click", function () {
     generarReporteExcel();
 });
+
 function generarReporteReparacionPDF() {
     // Verificar si hay datos en al menos una tabla
     var tablaRetiradas = $('#tblPiezasRetiradas').DataTable();
@@ -529,23 +608,22 @@ function generarReporteReparacionPDF() {
     var datosAsignadas = tablaAsignadas.data().toArray();
 
     if (datosRetiradas.length === 0 && datosAsignadas.length === 0) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Sin datos',
-            text: 'No hay datos para exportar',
-            confirmButtonText: 'Entendido'
+        swal({
+            title: "Sin datos",
+            text: "No hay datos para exportar",
+            type: "warning",
+            confirmButtonText: "Entendido"
         });
         return;
     }
 
     // Mostrar loading
-    Swal.fire({
+    swal({
         title: "Generando reporte...",
         text: "Por favor espere mientras se genera el PDF",
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
+        type: "info",
+        showConfirmButton: false,
+        allowOutsideClick: false
     });
 
     // Obtener información de la reparación
@@ -569,24 +647,23 @@ function generarReporteReparacionPDF() {
     if (datosRetiradas.length > 0) {
         tablaRetiradasHTML = '<h2 style="color: #2c3e50; margin-top: 20px;">Piezas Retiradas</h2>';
         tablaRetiradasHTML += '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;margin-bottom:20px;">';
-        tablaRetiradasHTML += '<thead><tr>';
-        tablaRetiradasHTML += '<th>ID</th>';
-        tablaRetiradasHTML += '<th>Nombre</th>';
-        tablaRetiradasHTML += '<th>Categoria</th>';
-        tablaRetiradasHTML += '<th>Marca</th>';
-        tablaRetiradasHTML += '<th>Cantidad</th>';
-        tablaRetiradasHTML += '<th>Reutilizable</th>';
-        tablaRetiradasHTML += '</thead>';
-        tablaRetiradasHTML += '<tbody>';
+        tablaRetiradasHTML += '<thead><tr style="background-color:#34495e;color:white;">';
+        tablaRetiradasHTML += '<th style="padding:10px;">ID</th>';
+        tablaRetiradasHTML += '<th style="padding:10px;">Nombre</th>';
+        tablaRetiradasHTML += '<th style="padding:10px;">Categoria</th>';
+        tablaRetiradasHTML += '<th style="padding:10px;">Marca</th>';
+        tablaRetiradasHTML += '<th style="padding:10px;">Cantidad</th>';
+        tablaRetiradasHTML += '<th style="padding:10px;">Reutilizable</th>';
+        tablaRetiradasHTML += '</tr></thead><tbody>';
 
         datosRetiradas.forEach(function (item) {
             tablaRetiradasHTML += '<tr>';
-            tablaRetiradasHTML += '<td>' + (item.id || '') + '</td>';
-            tablaRetiradasHTML += '<td>' + (item.nombre || '') + '</td>';
-            tablaRetiradasHTML += '<td>' + (item.nombreCategoria || '') + '</td>';
-            tablaRetiradasHTML += '<td>' + (item.marca || '') + '</td>';
-            tablaRetiradasHTML += '<td>' + (item.cantidadRetirada || '') + '</td>';
-            tablaRetiradasHTML += '<td>' + (item.reutilizable ? 'Si' : 'No') + '</td>';
+            tablaRetiradasHTML += '<td style="padding:8px;">' + (item.id || '') + '</td>';
+            tablaRetiradasHTML += '<td style="padding:8px;">' + (item.nombre || '') + '</td>';
+            tablaRetiradasHTML += '<td style="padding:8px;">' + (item.nombreCategoria || '') + '</td>';
+            tablaRetiradasHTML += '<td style="padding:8px;">' + (item.marca || '') + '</td>';
+            tablaRetiradasHTML += '<td style="padding:8px;text-align:center;">' + (item.cantidadRetirada || '') + '</td>';
+            tablaRetiradasHTML += '<td style="padding:8px;text-align:center;">' + (item.reutilizable ? 'Si' : 'No') + '</td>';
             tablaRetiradasHTML += '</tr>';
         });
         tablaRetiradasHTML += '</tbody></table>';
@@ -600,14 +677,13 @@ function generarReporteReparacionPDF() {
     if (datosAsignadas.length > 0) {
         tablaAsignadasHTML = '<h2 style="color: #2c3e50; margin-top: 20px;">Piezas Instaladas</h2>';
         tablaAsignadasHTML += '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
-        tablaAsignadasHTML += '<thead><tr>';
-        tablaAsignadasHTML += '<th>ID</th>';
-        tablaAsignadasHTML += '<th>Tipo de Inventario</th>';
-        tablaAsignadasHTML += '<th>Categoría</th>';
-        tablaAsignadasHTML += '<th>Componente Usado</th>';
-        tablaAsignadasHTML += '<th>Cantidad</th>';
-        tablaAsignadasHTML += '</thead>';
-        tablaAsignadasHTML += '<tbody>';
+        tablaAsignadasHTML += '<thead><tr style="background-color:#34495e;color:white;">';
+        tablaAsignadasHTML += '<th style="padding:10px;">ID</th>';
+        tablaAsignadasHTML += '<th style="padding:10px;">Tipo de Inventario</th>';
+        tablaAsignadasHTML += '<th style="padding:10px;">Categoría</th>';
+        tablaAsignadasHTML += '<th style="padding:10px;">Componente Usado</th>';
+        tablaAsignadasHTML += '<th style="padding:10px;">Cantidad</th>';
+        tablaAsignadasHTML += '</tr></thead><tbody>';
 
         datosAsignadas.forEach(function (item) {
             var tipoInventario = "";
@@ -616,11 +692,11 @@ function generarReporteReparacionPDF() {
             else tipoInventario = "Sin Tipo";
 
             tablaAsignadasHTML += '<tr>';
-            tablaAsignadasHTML += '<td>' + (item.id || '') + '</td>';
-            tablaAsignadasHTML += '<td>' + tipoInventario + '</td>';
-            tablaAsignadasHTML += '<td>' + (item.nombreCategoria || '') + '</td>';
-            tablaAsignadasHTML += '<td>' + (item.nombreInventario || '') + '</td>';
-            tablaAsignadasHTML += '<td>' + (item.cantidadComponente || '') + '</td>';
+            tablaAsignadasHTML += '<td style="padding:8px;">' + (item.id || '') + '</td>';
+            tablaAsignadasHTML += '<td style="padding:8px;">' + tipoInventario + '</td>';
+            tablaAsignadasHTML += '<td style="padding:8px;">' + (item.nombreCategoria || '') + '</td>';
+            tablaAsignadasHTML += '<td style="padding:8px;">' + (item.nombreInventario || '') + '</td>';
+            tablaAsignadasHTML += '<td style="padding:8px;text-align:center;">' + (item.cantidadComponente || '') + '</td>';
             tablaAsignadasHTML += '</tr>';
         });
         tablaAsignadasHTML += '</tbody></table>';
@@ -678,19 +754,22 @@ function generarReporteReparacionPDF() {
     }).appendTo(form);
 
     form.appendTo('body').submit();
+    form.remove();
 
     // Cerrar el loading después de enviar el formulario
-    setTimeout(() => {
-        Swal.close();
-        Swal.fire({
-            icon: 'success',
-            title: 'Reporte generado!',
-            text: 'El PDF se ha creado correctamente',
+    setTimeout(function () {
+        swal.close();
+        swal({
+            title: "Reporte generado!",
+            text: "El PDF se ha creado correctamente",
+            type: "success",
             timer: 3000,
             showConfirmButton: false
         });
+        window.location.reload();
     }, 2000);
 }
+
 function generarReporteExcel() {
     // Verificar si hay datos en al menos una tabla
     var tablaRetiradas = $('#tblPiezasRetiradas').DataTable();
@@ -700,23 +779,22 @@ function generarReporteExcel() {
     var datosAsignadas = tablaAsignadas.data().toArray();
 
     if (datosRetiradas.length === 0 && datosAsignadas.length === 0) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Sin datos',
-            text: 'No hay datos para exportar',
-            confirmButtonText: 'Entendido'
+        swal({
+            title: "Sin datos",
+            text: "No hay datos para exportar",
+            type: "warning",
+            confirmButtonText: "Entendido"
         });
         return;
     }
 
     // Mostrar loading
-    Swal.fire({
+    swal({
         title: "Generando Excel...",
         text: "Por favor espere mientras se genera el archivo Excel",
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
+        type: "info",
+        showConfirmButton: false,
+        allowOutsideClick: false
     });
 
     // Obtener informacion de la reparacion
@@ -765,7 +843,7 @@ function generarReporteExcel() {
         });
     });
 
-    // Crear formulario con datos en JSON - CORREGIDO: apuntando a ExcelController
+    // Crear formulario con datos en JSON - apuntando a ExcelController
     var form = $('<form>', {
         method: 'POST',
         action: '/Excel/GenerarReporteReparacionExcel'
@@ -814,15 +892,17 @@ function generarReporteExcel() {
     }).appendTo(form);
 
     form.appendTo('body').submit();
+    form.remove();
 
-    setTimeout(() => {
-        Swal.close();
-        Swal.fire({
-            icon: 'success',
-            title: 'Excel generado!',
-            text: 'El archivo Excel se ha creado correctamente',
+    setTimeout(function () {
+        swal.close();
+        swal({
+            title: "Excel generado!",
+            text: "El archivo Excel se ha creado correctamente",
+            type: "success",
             timer: 3000,
             showConfirmButton: false
         });
+        window.location.reload();
     }, 2000);
 }

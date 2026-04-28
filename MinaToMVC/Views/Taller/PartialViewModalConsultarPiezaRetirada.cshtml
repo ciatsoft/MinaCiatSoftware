@@ -7,320 +7,366 @@
     var rutaArchivo = ViewBag.RutaArchivo as string;
     var nombreArchivo = ViewBag.NombreArchivo as string;
 }
-<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
 
 <style>
-    /* Tus estilos existentes se mantienen */
-    .photo-upload-container {
-        border: 2px dashed #ddd;
-        border-radius: 6px;
-        padding: 10px;
-        text-align: center;
-        background-color: #f9f9f9;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        min-height: 120px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        position: relative;
+    /* Estilos estandarizados */
+    .container-fluid {
+        background-color: transparent;
     }
 
-    .photo-preview {
-        max-width: 100%;
-        max-height: 100px;
-        margin-bottom: 5px;
-        border-radius: 4px;
-        object-fit: cover;
-        cursor: pointer;
-    }
-
-    .photo-placeholder {
-        color: #999;
-        font-size: 28px;
-        margin-bottom: 5px;
-    }
-
-        .photo-placeholder .camera-icon {
-            font-size: 32px;
-            display: inline-block;
-            margin-bottom: 5px;
-        }
-
-        .photo-placeholder p {
-            font-size: 11px;
-            margin: 5px 0;
-        }
-
-        .photo-placeholder small {
-            font-size: 9px;
-        }
-
-    .photo-actions {
-        margin-top: 5px;
-        display: flex;
-        gap: 5px;
-        justify-content: center;
-    }
-
-    .btn-photo {
-        padding: 3px 10px;
-        border: none;
-        border-radius: 3px;
-        cursor: pointer;
-        font-size: 10px;
-        transition: all 0.3s ease;
-    }
-
-    .btn-delete-photo {
-        background-color: #dc3545;
-        color: white;
-    }
-
-        .btn-delete-photo:hover {
-            background-color: #c82333;
-        }
-
-    .btn-change-photo {
-        background-color: #007bff;
-        color: white;
-    }
-
-        .btn-change-photo:hover {
-            background-color: #0056b3;
-        }
-
-    .file-input-hidden {
-        display: none;
-    }
-
-    .photo-required {
-        color: #dc3545;
-        font-size: 10px;
-        margin-top: 3px;
-        display: none;
-    }
-
-    .photo-upload-container.has-error {
-        border-color: #dc3545;
-        background-color: #fff5f5;
-    }
-
-    .photo-label {
-        font-weight: 600;
-        margin-bottom: 5px;
-        display: block;
-        font-size: 12px;
-    }
-
-        .photo-label .required-star {
-            color: #dc3545;
-            margin-left: 3px;
-        }
-
+    /* Panel de rectángulos con fondo blanco */
     .rectangulos {
-        padding: 15px;
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
     }
 
-    .form-control-sm-custom {
-        height: 32px;
-        font-size: 12px;
-        padding: 4px 8px;
+    /* Títulos */
+    h2 {
+        color: #005c8a !important;
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-size: 24px;
     }
 
-        /* Estilo para inputs bloqueados */
-        .form-control-sm-custom[readonly],
-        .form-control-sm-custom[disabled],
-        select.form-control-sm-custom[disabled] {
-            background-color: #e9ecef;
-            opacity: 1;
-            cursor: not-allowed;
+    /* Labels */
+    .control-label, label {
+        color: #333333 !important;
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: inline-block;
+    }
+
+    /* Inputs y selects */
+    .form-control {
+        color: #333333 !important;
+        background-color: #ffffff !important;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        width: 100%;
+    }
+
+        .form-control:disabled, .form-control[readonly], select.form-control:disabled, input.form-control:read-only {
+            background-color: #e9ecef !important;
+            color: #495057 !important;
+            cursor: default;
         }
 
-    /* Estilo para checkbox bloqueado */
-    input[type="checkbox"][disabled] {
-        cursor: not-allowed;
+    /* Botones */
+    .btn {
+        display: inline-block;
+        padding: 8px 16px;
+        font-size: 14px;
+        font-weight: normal;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        cursor: pointer;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .btn-custom-cancel {
+        background-color: #d9534f !important;
+        border-color: #d43f3a !important;
+        color: #ffffff !important;
+    }
+
+        .btn-custom-cancel:hover {
+            background-color: #c9302c !important;
+            border-color: #ac2925 !important;
+            color: #ffffff !important;
+            opacity: 0.9;
+        }
+
+    .btn-lg-custom {
+        padding: 8px 16px;
+        font-size: 14px;
+        border-radius: 4px;
+    }
+
+    /* Checkbox deshabilitado */
+    input[type="checkbox"]:disabled {
+        cursor: default;
         opacity: 0.7;
     }
 
-    label {
-        font-size: 12px;
-        margin-bottom: 3px;
+    /* Sección de fotografía */
+    .photo-label {
+        margin-bottom: 5px;
     }
 
-    h2 {
-        font-size: 18px;
-        margin: 0 0 10px 0;
+    .photo-upload-container {
+        border: 2px dashed #ccc;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        background-color: #f9f9f9;
+        position: relative;
     }
 
-    .field-required {
-        color: #dc3545;
-        font-size: 10px;
-        margin-top: 3px;
-        display: none;
+    .photo-placeholder {
+        text-align: center;
     }
 
-    .form-control.error {
-        border-color: #dc3545;
-        background-color: #fff5f5;
+    .camera-icon {
+        font-size: 48px;
+        margin-bottom: 10px;
     }
 
-    .existing-image-indicator {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        background-color: rgba(0, 123, 255, 0.8);
-        color: white;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        font-weight: bold;
+    .photo-placeholder p {
+        margin: 5px 0;
+        color: #666;
+    }
+
+    .photo-placeholder small {
+        color: #999;
+        font-size: 11px;
     }
 
     .img-thumbnail-preview {
         max-width: 100%;
-        max-height: 100px;
-        cursor: pointer;
+        max-height: 200px;
         border-radius: 4px;
-        object-fit: cover;
-        transition: transform 0.2s;
+        margin-bottom: 10px;
+        cursor: pointer;
     }
 
-        .img-thumbnail-preview:hover {
-            transform: scale(1.05);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
+    .existing-image-indicator {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #28a745;
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        cursor: default;
+    }
+
+    /* Layout de filas */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -15px;
+        margin-left: -15px;
+    }
+
+    .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-12 {
+        position: relative;
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+    .col-lg-2 {
+        flex: 0 0 16.666667%;
+        max-width: 16.666667%;
+    }
+
+    .col-lg-3 {
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+
+    .col-lg-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+
+    .col-lg-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .text-right {
+        text-align: right;
+    }
+
+    /* Margen superior */
+    .margin-top-15 {
+        margin-top: 15px;
+    }
+
+    /* Estilo adicional para el modal de imagen */
+    .image-modal-popup {
+        background: transparent !important;
+        box-shadow: none !important;
+    }
 </style>
 
-@using (Html.BeginForm("SaveOrUpdateRetirarPiezaVehiculoReparacion", "Taller", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmRetirarPiezaVehiculo" }))
-{
-    @Html.HiddenFor(x => x.Id, new { @Value = Model?.Id ?? 0 })
-    @Html.HiddenFor(x => x.Estatus, new { @id = "estatusModal", @Value = 1 })
-    @Html.HiddenFor(x => x.CreatedBy, new { @id = "createdByModal", @Value = usuarioToken })
-    @Html.HiddenFor(x => x.UpdatedBy, new { @id = "updatedByModal", @Value = usuarioToken })
-    @Html.HiddenFor(x => x.CreatedDt, new { @id = "createdDtModal", @Value = fechaActual })
-    @Html.HiddenFor(x => x.UpdatedDt, new { @id = "updatedDtModal", @Value = fechaActual })
-    @Html.HiddenFor(x => x.RutaFoto, new { @id = "rutaFoto" })
-    @Html.HiddenFor(x => x.GitFoto, new { @id = "gitFoto" })
-    @Html.HiddenFor(x => x.IdReparacion, new { @Value = ViewBag.IdReparacion })
-    @Html.HiddenFor(x => x.IdVehiculo, new { @Value = ViewBag.IdVehiculo })
-    @Html.HiddenFor(x => x.TipoVehiculo, new { @Value = ViewBag.TipoVehiculo })
+<div class="container-fluid" style="padding: 20px 15px;">
+    <div class="panel panel-default" style="background-color: #ffffff;">
+        <div class="panel-body" style="background-color: #ffffff; color: #333333;">
+            @using (Html.BeginForm("SaveOrUpdateRetirarPiezaVehiculoReparacion", "Taller", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmRetirarPiezaVehiculo" }))
+            {
+                @Html.HiddenFor(x => x.Id, new { @Value = Model?.Id ?? 0 })
+                @Html.HiddenFor(x => x.Estatus, new { @id = "estatusModal", @Value = 1 })
+                @Html.HiddenFor(x => x.CreatedBy, new { @id = "createdByModal", @Value = usuarioToken })
+                @Html.HiddenFor(x => x.UpdatedBy, new { @id = "updatedByModal", @Value = usuarioToken })
+                @Html.HiddenFor(x => x.CreatedDt, new { @id = "createdDtModal", @Value = fechaActual })
+                @Html.HiddenFor(x => x.UpdatedDt, new { @id = "updatedDtModal", @Value = fechaActual })
+                @Html.HiddenFor(x => x.RutaFoto, new { @id = "rutaFoto" })
+                @Html.HiddenFor(x => x.GitFoto, new { @id = "gitFoto" })
+                @Html.HiddenFor(x => x.IdReparacion, new { @Value = ViewBag.IdReparacion })
+                @Html.HiddenFor(x => x.IdVehiculo, new { @Value = ViewBag.IdVehiculo })
+                @Html.HiddenFor(x => x.TipoVehiculo, new { @Value = ViewBag.TipoVehiculo })
 
-    <h2>Detalles de la Pieza/Componente Retirado</h2>
-
-    <div class="tabla-consultas-empleados">
-        <div class="rectangulos" style="width: 100%; padding: 10px;">
-            <div class="row">
-                <div class="col-lg-4">
-                    <label>Categoria Inventario:</label>
-                    @Html.DropDownListFor(x => x.IdCategoriaInventario,
-                        new SelectList((IEnumerable<SelectListItem>)ViewBag.CategoriaInventario, "Value", "Text"),
-                        "Selecciona",
-                        new { @class = "form-control form-control-sm-custom", id = "ddlCategoriaInventario", disabled = "disabled" })
-                </div>
-                <div class="col-lg-4">
-                    <label>Nombre:</label>
-                    @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control form-control-sm-custom", @id = "nombre", placeholder = "Nombre", @readonly = "readonly" })
-                </div>
-                <div class="col-lg-2">
-                    <label>Reutilizable:</label>
-                    @Html.CheckBoxFor(x => x.Reutilizable, new { @class = "form-control", @id = "reutilizable", style = "width: 20px; height: 20px; margin-top: 5px;", disabled = "disabled" })
-                </div>
-            </div>
-            <div class="row" style="margin-top: 8px;">
-                <div class="col-lg-3">
-                    <label>Marca:</label>
-                    @Html.TextBoxFor(x => x.Marca, new { @class = "form-control form-control-sm-custom", @id = "marca", @readonly = "readonly" })
-                </div>
-                <div class="col-lg-2">
-                    <label>Cantidad:</label>
-                    @Html.TextBoxFor(x => x.CantidadRetirada, new { @class = "form-control form-control-sm-custom", @id = "cantidad", type = "number", min = "1", @readonly = "readonly" })
-                </div>
-                <div class="col-lg-4">
-                    <label>Ubicacion Almacen:</label>
-                    @Html.DropDownListFor(x => x.UbicacionAlmacen,
-                        (IEnumerable<SelectListItem>)ViewBag.UbicacionesInventarioTaller,
-                        "Selecciona ubicación",
-                        new { @class = "form-control form-control-sm-custom", @id = "ubicacionAlmacen", disabled = "disabled" })
-                </div>
-                <div class="col-lg-3">
-                    <label>Fecha:</label>
-                    @Html.TextBoxFor(x => x.Fecha, new { @class = "form-control form-control-sm-custom", @id = "fecha", @Value = fechaActual.ToString("yyyy-MM-dd HH:mm:ss"), @readonly = "readonly" })
-                </div>
-            </div>
-            <div class="row" style="margin-top: 8px;">
-                <div class="col-lg-12">
-                    <div class="photo-label">
-                        <label>Fotografía</label>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2>
+                            <i class="fa fa-info-circle"></i> Detalles de la Pieza/Componente Retirado
+                        </h2>
                     </div>
-                    <div class="photo-upload-container" id="photoUploadContainer">
-                        <div class="photo-placeholder" id="photoPlaceholder" style="@(hasImage ? "display:none;" : "")">
-                            <div class="camera-icon">📷</div>
-                            <p>Sin imagen disponible</p>
+                </div>
+
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-4 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-folder"></i> Categoría Inventario:
+                            </label>
+                            @Html.DropDownListFor(x => x.IdCategoriaInventario,
+                                new SelectList((IEnumerable<SelectListItem>)ViewBag.CategoriaInventario, "Value", "Text"),
+                                "Selecciona",
+                                new { @class = "form-control", id = "ddlCategoriaInventario", disabled = "disabled" })
                         </div>
-                        @if (hasImage)
-                        {
-                            <img id="photoPreview" class="img-thumbnail-preview"
-                                 src="@Html.Raw(imageUrl)"
-                                 alt="Vista previa"
-                                 onclick="ampliarImagenPieza('@Html.Raw(imageUrl)')"
-                                 title="Click para ampliar"
-                                 style="max-width: 100%; max-height: 100px; cursor: pointer;" />
-                        }
-                        else
-                        {
-                            <img id="photoPreview" class="img-thumbnail-preview"
-                                 style="display: none;"
-                                 alt="Vista previa" />
-                        }
-                        @if (hasImage)
-                        {
-                            <div class="existing-image-indicator" title="Imagen existente">
-                                ✓
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-tag"></i> Nombre:
+                            </label>
+                            @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control", @id = "nombre", placeholder = "Nombre", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-refresh"></i> Reutilizable:
+                            </label>
+                            <div>
+                                @Html.CheckBoxFor(x => x.Reutilizable, new { @class = "form-control", @id = "reutilizable", style = "width: 20px; height: 20px; margin-top: 5px;", disabled = "disabled" })
                             </div>
-                        }
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="row" style="margin-top: 15px;">
-        <div class="col-lg-12 text-right">
-            <button type="button" class="btn btn-custom-cancel btn-lg-custom" data-dismiss="modal">Cerrar</button>
+                <div class="row">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-trademark"></i> Marca:
+                            </label>
+                            @Html.TextBoxFor(x => x.Marca, new { @class = "form-control", @id = "marca", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-hashtag"></i> Cantidad:
+                            </label>
+                            @Html.TextBoxFor(x => x.CantidadRetirada, new { @class = "form-control", @id = "cantidad", type = "number", min = "1", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-map-marker"></i> Ubicación Almacén:
+                            </label>
+                            @Html.DropDownListFor(x => x.UbicacionAlmacen,
+                                (IEnumerable<SelectListItem>)ViewBag.UbicacionesInventarioTaller,
+                                "Selecciona ubicación",
+                                new { @class = "form-control", id = "ubicacionAlmacen", disabled = "disabled" })
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-calendar"></i> Fecha:
+                            </label>
+                            @Html.TextBoxFor(x => x.Fecha, new { @class = "form-control", @id = "fecha", @Value = fechaActual.ToString("yyyy-MM-dd HH:mm:ss"), @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-camera"></i> Fotografía
+                            </label>
+                            <div class="photo-upload-container" id="photoUploadContainer">
+                                <div class="photo-placeholder" id="photoPlaceholder" style="@(hasImage ? "display:none;" : "")">
+                                    <div class="camera-icon">📷</div>
+                                    <p>Sin imagen disponible</p>
+                                </div>
+                                @if (hasImage)
+                                {
+                                    <img id="photoPreview" class="img-thumbnail-preview"
+                                         src="@Html.Raw(imageUrl)"
+                                         alt="Vista previa"
+                                         onclick="ampliarImagenPieza('@Html.Raw(imageUrl)')"
+                                         title="Click para ampliar" />
+                                }
+                                else
+                                {
+                                    <img id="photoPreview" class="img-thumbnail-preview"
+                                         style="display: none;"
+                                         alt="Vista previa" />
+                                }
+                                @if (hasImage)
+                                {
+                                    <div class="existing-image-indicator" title="Imagen existente">
+                                        ✓
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12 text-right">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                            <i class="fa fa-times"></i> Cerrar
+                        </button>
+                    </div>
+                </div>
+            }
         </div>
     </div>
-}
+</div>
 
 <script>
     // Función para ampliar imagen
     function ampliarImagenPieza(url) {
         if (!url || url === '#' || url === '') {
-            Swal.fire({
-                title: 'Sin imagen',
-                text: 'No hay imagen disponible para mostrar',
-                icon: 'info',
-                confirmButtonText: 'Aceptar'
+            swal({
+                title: "Sin imagen",
+                text: "No hay imagen disponible para mostrar",
+                type: "info",
+                confirmButtonText: "Aceptar"
             });
             return;
         }
 
-        Swal.fire({
-            html: '<img src="' + url + '" style="max-width: 100%; max-height: 70vh; cursor: pointer;" onclick="this.style.transform=\'scale(1.1)\'" />',
-            showCloseButton: true,
-            showConfirmButton: false,
-            width: 'auto',
-            background: 'transparent',
-            backdrop: 'rgba(0,0,0,0.8)',
-            customClass: {
-                popup: 'image-modal-popup'
-            }
-        });
+        // Abrir imagen en una nueva ventana
+        var ventana = window.open('', '_blank');
+        ventana.document.write('<html><head><title>Vista previa de imagen</title><style>body{margin:0;display:flex;justify-content:center;align-items:center;background:#000;min-height:100vh;} img{max-width:100%;max-height:100vh;}</style></head><body><img src="' + url + '" /></body></html>');
+        ventana.document.close();
     }
 
     $(document).ready(function () {
@@ -360,31 +406,3 @@
         });
     });
 </script>
-
-<style>
-    /* Estilo adicional para el modal de imagen */
-    .image-modal-popup {
-        background: transparent !important;
-        box-shadow: none !important;
-    }
-
-    /* Asegurar que los selects deshabilitados se vean consistentes */
-    select.form-control-sm-custom:disabled {
-        background-color: #e9ecef;
-        color: #495057;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-    }
-
-    /* Estilo para campos de texto readonly */
-    input.form-control-sm-custom:read-only {
-        background-color: #e9ecef;
-        cursor: default;
-    }
-
-    /* Estilo para el checkbox deshabilitado */
-    input[type="checkbox"]:disabled {
-        cursor: default;
-    }
-</style>

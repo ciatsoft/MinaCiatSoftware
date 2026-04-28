@@ -3,251 +3,402 @@
     var fechaActual = DateTime.Now;
     var usuarioToken = ViewBag.UserToken;
 }
-<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
 
 <style>
-    .photo-upload-container {
-        border: 2px dashed #ddd;
-        border-radius: 6px;
-        padding: 10px;
-        text-align: center;
-        background-color: #f9f9f9;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        min-height: 120px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+    /* Estilos estandarizados */
+    .container-fluid {
+        background-color: transparent;
     }
 
+    .required-star {
+        color: #dc3545;
+        font-weight: bold;
+    }
+
+    .field-required {
+        display: none;
+        color: #dc3545;
+        font-size: 11px;
+        margin-top: 5px;
+    }
+
+    .form-control.error, input.error, select.error, textarea.error {
+        border-color: #dc3545 !important;
+        box-shadow: none !important;
+    }
+
+    /* Panel de rectángulos con fondo blanco */
+    .rectangulos {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    /* Títulos */
+    h2 {
+        color: #005c8a !important;
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
+
+    /* Labels */
+    .control-label, label {
+        color: #333333 !important;
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: inline-block;
+    }
+
+    /* Inputs y selects */
+    .form-control {
+        color: #333333 !important;
+        background-color: #ffffff !important;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        width: 100%;
+    }
+
+        .form-control:disabled, .form-control[readonly] {
+            background-color: #e9ecef !important;
+            color: #495057 !important;
+        }
+
+    /* Botones */
+    .btn {
+        display: inline-block;
+        padding: 8px 16px;
+        font-size: 14px;
+        font-weight: normal;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        cursor: pointer;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .btn-success {
+        background-color: #5cb85c !important;
+        border-color: #4cae4c !important;
+        color: #ffffff !important;
+    }
+
+        .btn-success:hover {
+            background-color: #449d44 !important;
+            border-color: #398439 !important;
+            color: #ffffff !important;
+            opacity: 0.9;
+        }
+
+    .btn-custom-cancel {
+        background-color: #d9534f !important;
+        border-color: #d43f3a !important;
+        color: #ffffff !important;
+    }
+
+        .btn-custom-cancel:hover {
+            background-color: #c9302c !important;
+            border-color: #ac2925 !important;
+            color: #ffffff !important;
+            opacity: 0.9;
+        }
+
+    .btn-lg-custom {
+        padding: 8px 16px;
+        font-size: 14px;
+        border-radius: 4px;
+    }
+
+    /* Checkbox */
+    input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        margin-top: 5px;
+        cursor: pointer;
+    }
+
+    /* Sección de fotografía */
+    .photo-label {
+        margin-bottom: 5px;
+    }
+
+    .photo-upload-container {
+        border: 2px dashed #ccc;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background-color: #f9f9f9;
+        position: relative;
+    }
+
+        .photo-upload-container.has-error {
+            border-color: #dc3545;
+            background-color: #fff3f3;
+        }
+
         .photo-upload-container:hover {
-            border-color: #007bff;
+            border-color: #337ab7;
             background-color: #f0f0f0;
         }
 
+    .photo-placeholder {
+        text-align: center;
+    }
+
+    .camera-icon {
+        font-size: 48px;
+        margin-bottom: 10px;
+    }
+
+    .photo-placeholder p {
+        margin: 5px 0;
+        color: #666;
+    }
+
+    .photo-placeholder small {
+        color: #999;
+        font-size: 11px;
+    }
+
     .photo-preview {
         max-width: 100%;
-        max-height: 100px;
-        margin-bottom: 5px;
+        max-height: 200px;
         border-radius: 4px;
-        object-fit: cover;
+        margin-bottom: 10px;
     }
-
-    .photo-placeholder {
-        color: #999;
-        font-size: 28px;
-        margin-bottom: 5px;
-    }
-
-        .photo-placeholder .camera-icon {
-            font-size: 32px;
-            display: inline-block;
-            margin-bottom: 5px;
-        }
-
-        .photo-placeholder p {
-            font-size: 11px;
-            margin: 5px 0;
-        }
-
-        .photo-placeholder small {
-            font-size: 9px;
-        }
 
     .photo-actions {
-        margin-top: 5px;
+        margin-top: 10px;
         display: flex;
-        gap: 5px;
+        gap: 10px;
         justify-content: center;
     }
 
     .btn-photo {
-        padding: 3px 10px;
-        border: none;
-        border-radius: 3px;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        padding: 5px 10px;
+        border-radius: 4px;
         cursor: pointer;
-        font-size: 10px;
+        font-size: 12px;
         transition: all 0.3s ease;
     }
 
-    .btn-delete-photo {
-        background-color: #dc3545;
-        color: white;
-    }
-
-        .btn-delete-photo:hover {
-            background-color: #c82333;
+        .btn-photo:hover {
+            background-color: #e0e0e0;
         }
 
-    .btn-change-photo {
-        background-color: #007bff;
-        color: white;
+    .photo-required {
+        display: none;
+        color: #dc3545;
+        font-size: 11px;
+        margin-top: 5px;
     }
-
-        .btn-change-photo:hover {
-            background-color: #0056b3;
-        }
 
     .file-input-hidden {
         display: none;
     }
 
-    .photo-required {
-        color: #dc3545;
-        font-size: 10px;
-        margin-top: 3px;
-        display: none;
+    /* Layout de filas */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -15px;
+        margin-left: -15px;
     }
 
-    .photo-upload-container.has-error {
-        border-color: #dc3545;
-        background-color: #fff5f5;
+    .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-12 {
+        position: relative;
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
     }
 
-    .photo-label {
-        font-weight: 600;
-        margin-bottom: 5px;
-        display: block;
-        font-size: 12px;
+    .col-lg-2 {
+        flex: 0 0 16.666667%;
+        max-width: 16.666667%;
     }
 
-        .photo-label .required-star {
-            color: #dc3545;
-            margin-left: 3px;
-        }
-
-    .rectangulos {
-        padding: 15px;
+    .col-lg-3 {
+        flex: 0 0 25%;
+        max-width: 25%;
     }
 
-    .form-control-sm-custom {
-        height: 32px;
-        font-size: 12px;
-        padding: 4px 8px;
+    .col-lg-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
     }
 
-    label {
-        font-size: 12px;
-        margin-bottom: 3px;
+    .col-lg-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
     }
 
-    h2 {
-        font-size: 18px;
-        margin: 0 0 10px 0;
+    .text-right {
+        text-align: right;
     }
 
-    .field-required {
-        color: #dc3545;
-        font-size: 10px;
-        margin-top: 3px;
-        display: none;
-    }
-
-    .form-control.error {
-        border-color: #dc3545;
-        background-color: #fff5f5;
+    /* Margen superior */
+    .margin-top-15 {
+        margin-top: 15px;
     }
 </style>
 
-@using (Html.BeginForm("SaveOrUpdateRetirarPiezaVehiculoReparacion", "Taller", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmRetirarPiezaVehiculo" }))
-{
-    @Html.HiddenFor(x => x.Id, new { @Value = Model?.Id ?? 0 })
-    @Html.HiddenFor(x => x.Estatus, new { @id = "estatusModal", @Value = 1 })
-    @Html.HiddenFor(x => x.CreatedBy, new { @id = "createdByModal", @Value = usuarioToken })
-    @Html.HiddenFor(x => x.UpdatedBy, new { @id = "updatedByModal", @Value = usuarioToken })
-    @Html.HiddenFor(x => x.CreatedDt, new { @id = "createdDtModal", @Value = fechaActual })
-    @Html.HiddenFor(x => x.UpdatedDt, new { @id = "updatedDtModal", @Value = fechaActual })
-    @Html.HiddenFor(x => x.RutaFoto, new { @id = "rutaFoto" })
-    @Html.HiddenFor(x => x.GitFoto, new { @id = "gitFoto" })
-    @Html.HiddenFor(x => x.IdReparacion, new { @Value = ViewBag.IdRegistro })
-    @Html.HiddenFor(x => x.IdVehiculo, new { @Value = ViewBag.IdVehiculo })
-    @Html.HiddenFor(x => x.TipoVehiculo, new { @Value = ViewBag.TipoVehiculo })
+<div class="container-fluid" style="padding: 20px 15px;">
+    <div class="panel panel-default" style="background-color: #ffffff;">
+        <div class="panel-body" style="background-color: #ffffff; color: #333333;">
+            @using (Html.BeginForm("SaveOrUpdateRetirarPiezaVehiculoReparacion", "Taller", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmRetirarPiezaVehiculo" }))
+            {
+                @Html.HiddenFor(x => x.Id, new { @Value = Model?.Id ?? 0 })
+                @Html.HiddenFor(x => x.Estatus, new { @id = "estatusModal", @Value = 1 })
+                @Html.HiddenFor(x => x.CreatedBy, new { @id = "createdByModal", @Value = usuarioToken })
+                @Html.HiddenFor(x => x.UpdatedBy, new { @id = "updatedByModal", @Value = usuarioToken })
+                @Html.HiddenFor(x => x.CreatedDt, new { @id = "createdDtModal", @Value = fechaActual })
+                @Html.HiddenFor(x => x.UpdatedDt, new { @id = "updatedDtModal", @Value = fechaActual })
+                @Html.HiddenFor(x => x.RutaFoto, new { @id = "rutaFoto" })
+                @Html.HiddenFor(x => x.GitFoto, new { @id = "gitFoto" })
+                @Html.HiddenFor(x => x.IdReparacion, new { @Value = ViewBag.IdRegistro })
+                @Html.HiddenFor(x => x.IdVehiculo, new { @Value = ViewBag.IdVehiculo })
+                @Html.HiddenFor(x => x.TipoVehiculo, new { @Value = ViewBag.TipoVehiculo })
 
-    <h2>Retirar Pieza/Componente</h2>
-
-    <div class="tabla-consultas-empleados">
-        <div class="rectangulos" style="width: 100%; padding: 10px;">
-            <div class="row">
-                <div class="col-lg-4">
-                    <label>Categoria Inventario: <span class="required-star">*</span></label>
-                    @Html.DropDownListFor(x => x.IdCategoriaInventario,
-                        new SelectList((IEnumerable<SelectListItem>)ViewBag.CategoriaInventario, "Value", "Text"),
-                        "Selecciona",
-                        new { @class = "form-control form-control-sm-custom", id = "ddlCategoriaInventario" })
-                    <div class="field-required" id="errorCategoria">Seleccione una categoría</div>
-                </div>
-                <div class="col-lg-4">
-                    <label>Nombre: <span class="required-star">*</span></label>
-                    @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control form-control-sm-custom", @id = "nombre", placeholder = "Nombre" })
-                    <div class="field-required" id="errorNombre">El nombre es requerido</div>
-                </div>
-                <div class="col-lg-2">
-                    <label>Reutilizable:</label>
-                    @Html.CheckBoxFor(x => x.Reutilizable, new { @class = "form-control", @id = "reutilizable", style = "width: 20px; height: 20px; margin-top: 5px;" })
-                </div>
-            </div>
-            <div class="row" style="margin-top: 8px;">
-                <div class="col-lg-3">
-                    <label>Marca: <span class="required-star">*</span></label>
-                    @Html.TextBoxFor(x => x.Marca, new { @class = "form-control form-control-sm-custom", @id = "marca" })
-                    <div class="field-required" id="errorMarca">La marca es requerida</div>
-                </div>
-                <div class="col-lg-2">
-                    <label>Cantidad: <span class="required-star">*</span></label>
-                    @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control form-control-sm-custom", @id = "cantidad", type = "number", min = "1" })
-                    <div class="field-required" id="errorCantidad">La cantidad es requerida y debe ser mayor a 0</div>
-                </div>
-                <div class="col-lg-4">
-                    <label>Ubicacion Almacen: <span class="required-star">*</span></label>
-                    @Html.DropDownListFor(x => x.UbicacionAlmacen,
-                        (IEnumerable<SelectListItem>)ViewBag.UbicacionesInventarioTaller,
-                        "Selecciona ubicación",
-                        new { @class = "form-control form-control-sm-custom", @id = "ubicacionAlmacen" })
-                    <div class="field-required" id="errorUbicacion">La ubicación es requerida</div>
-                </div>
-                <div class="col-lg-3">
-                    <label>Fecha: <span class="required-star">*</span></label>
-                    @Html.TextBoxFor(x => x.Fecha, new { @class = "form-control form-control-sm-custom", @id = "fecha", @Value = fechaActual.ToString("yyyy-MM-dd HH:mm:ss"), @readonly = "readonly" })
-                </div>
-            </div>
-            <div class="row" style="margin-top: 8px;">
-                <div class="col-lg-12">
-                    <div class="photo-label">
-                        <label>Fotografía <span class="required-star">*</span></label>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2>
+                            <i class="fa fa-trash"></i> Retirar Pieza/Componente
+                        </h2>
                     </div>
-                    <div class="photo-upload-container" id="photoUploadContainer">
-                        <div class="photo-placeholder" id="photoPlaceholder">
-                            <div class="camera-icon">📷</div>
-                            <p>Seleccionar foto</p>
-                            <small>JPG, JPEG, PNG, GIF | 5MB</small>
-                        </div>
-                        <img id="photoPreview" class="photo-preview" style="display: none;" alt="Vista previa" />
-                        <div class="photo-actions" id="photoActions" style="display: none;">
-                            <button type="button" class="btn-photo btn-change-photo" id="btnChangePhoto">
-                                🔄 Cambiar
-                            </button>
-                            <button type="button" class="btn-photo btn-delete-photo" id="btnDeletePhoto">
-                                🗑️ Eliminar
-                            </button>
+                </div>
+
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-4 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-folder"></i> Categoría Inventario: <span class="required-star">*</span>
+                            </label>
+                            @Html.DropDownListFor(x => x.IdCategoriaInventario,
+                                new SelectList((IEnumerable<SelectListItem>)ViewBag.CategoriaInventario, "Value", "Text"),
+                                "Selecciona",
+                                new { @class = "form-control", id = "ddlCategoriaInventario" })
+                            <div class="field-required" id="errorCategoria">Seleccione una categoría</div>
                         </div>
                     </div>
-                    <div class="photo-required" id="photoRequired">
-                        ⚠️ La fotografía es requerida
+                    <div class="col-md-4 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-tag"></i> Nombre: <span class="required-star">*</span>
+                            </label>
+                            @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control", @id = "nombre", placeholder = "Ingrese el nombre" })
+                            <div class="field-required" id="errorNombre">El nombre es requerido</div>
+                        </div>
                     </div>
-                    <input type="file" id="fotografia" name="Fotografia" accept="image/jpeg,image/jpg,image/png,image/gif" class="file-input-hidden" />
+                    <div class="col-md-2 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-refresh"></i> Reutilizable:
+                            </label>
+                            <div>
+                                @Html.CheckBoxFor(x => x.Reutilizable, new { @class = "form-control", @id = "reutilizable", style = "width: 20px; height: 20px; margin-top: 5px;" })
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="row" style="margin-top: 15px;">
-        <div class="col-lg-12 text-right">
-            <button type="submit" class="btn btn-success btn-lg-custom">Guardar</button>
-            <button type="button" class="btn btn-custom-cancel btn-lg-custom" data-dismiss="modal">Cancelar</button>
+                <div class="row">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-trademark"></i> Marca: <span class="required-star">*</span>
+                            </label>
+                            @Html.TextBoxFor(x => x.Marca, new { @class = "form-control", @id = "marca", placeholder = "Ingrese la marca" })
+                            <div class="field-required" id="errorMarca">La marca es requerida</div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-hashtag"></i> Cantidad: <span class="required-star">*</span>
+                            </label>
+                            @Html.TextBoxFor(x => x.Cantidad, new { @class = "form-control", @id = "cantidad", type = "number", min = "1", placeholder = "Cantidad" })
+                            <div class="field-required" id="errorCantidad">La cantidad es requerida y debe ser mayor a 0</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-map-marker"></i> Ubicación Almacén: <span class="required-star">*</span>
+                            </label>
+                            @Html.DropDownListFor(x => x.UbicacionAlmacen,
+                                (IEnumerable<SelectListItem>)ViewBag.UbicacionesInventarioTaller,
+                                "Selecciona ubicación",
+                                new { @class = "form-control", @id = "ubicacionAlmacen" })
+                            <div class="field-required" id="errorUbicacion">La ubicación es requerida</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-calendar"></i> Fecha: <span class="required-star">*</span>
+                            </label>
+                            @Html.TextBoxFor(x => x.Fecha, new { @class = "form-control", @id = "fecha", @Value = fechaActual.ToString("yyyy-MM-dd HH:mm:ss"), @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-camera"></i> Fotografía <span class="required-star">*</span>
+                            </label>
+                            <div class="photo-upload-container" id="photoUploadContainer">
+                                <div class="photo-placeholder" id="photoPlaceholder">
+                                    <div class="camera-icon">📷</div>
+                                    <p>Seleccionar foto</p>
+                                    <small>JPG, JPEG, PNG, GIF | 5MB</small>
+                                </div>
+                                <img id="photoPreview" class="photo-preview" style="display: none;" alt="Vista previa" />
+                                <div class="photo-actions" id="photoActions" style="display: none;">
+                                    <button type="button" class="btn-photo btn-change-photo" id="btnChangePhoto">
+                                        🔄 Cambiar
+                                    </button>
+                                    <button type="button" class="btn-photo btn-delete-photo" id="btnDeletePhoto">
+                                        🗑️ Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="photo-required" id="photoRequired">
+                                ⚠️ La fotografía es requerida
+                            </div>
+                            <input type="file" id="fotografia" name="Fotografia" accept="image/jpeg,image/jpg,image/png,image/gif" class="file-input-hidden" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12 text-right">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa fa-save"></i> Guardar
+                        </button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                            <i class="fa fa-times"></i> Cancelar
+                        </button>
+                    </div>
+                </div>
+            }
         </div>
     </div>
-}
+</div>
 
 <script>
     $(document).ready(function () {
@@ -366,24 +517,22 @@
             validatePhoto();
         }
 
-        // Función para mostrar mensajes con SweetAlert
+        // Función para mostrar mensajes con SweetAlert 1.x
         function showError(message) {
-            Swal.fire({
-                title: 'Error',
+            swal({
+                title: "Error",
                 text: message,
-                icon: 'error',
-                confirmButtonText: 'Aceptar',
-                confirmButtonColor: '#3085d6'
+                type: "error",
+                confirmButtonText: "Aceptar"
             });
         }
 
         function showWarning(message) {
-            Swal.fire({
-                title: 'Advertencia',
+            swal({
+                title: "Advertencia",
                 text: message,
-                icon: 'warning',
-                confirmButtonText: 'Aceptar',
-                confirmButtonColor: '#3085d6'
+                type: "warning",
+                confirmButtonText: "Aceptar"
             });
         }
 

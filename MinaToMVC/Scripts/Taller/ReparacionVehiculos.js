@@ -1,5 +1,5 @@
 $(document).ready(function () {
-   
+
     // Cargar todos los datos necesarios
     GetAllVehiculoActivos();
     GetAllVehiculoCarga();
@@ -18,16 +18,16 @@ $(document).ready(function () {
         e.preventDefault();
         SaveOrUpdateReparacionVehiculos();
     });
-    
+
     // Para edición, asegurar que el vehículo se seleccione correctamente
     if (!esNuevoRegistro && modeloEdicion && modeloEdicion.Id > 0) {
         // Bloquear campos inmediatamente
         $('#ddlTiposVehiculos').prop('disabled', true);
         $('#recibido').prop('disabled', true);
-        
+
         // Esperar a que se carguen TODOS los datos necesarios
-        var checkInterval = setInterval(function() {
-            if ((vehiculosLocalesTodos && vehiculosLocalesTodos.length > 0) || 
+        var checkInterval = setInterval(function () {
+            if ((vehiculosLocalesTodos && vehiculosLocalesTodos.length > 0) ||
                 (vehiculosCargaTodos && vehiculosCargaTodos.length > 0)) {
                 clearInterval(checkInterval);
                 inicializarFormularioEdicion();
@@ -58,11 +58,11 @@ function GetAllRegistersVehiculos() {
 
             verificarYInicializarTabla();
         } else {
-            Swal.fire({
-                title: 'Error',
-                text: 'Error al cargar los vehículos viajes locales: ' + r.ErrorMessage,
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
+            swal({
+                title: "Error",
+                text: "Error al cargar los vehículos viajes locales: " + r.ErrorMessage,
+                type: "error",
+                confirmButtonText: "Aceptar"
             });
         }
     });
@@ -80,11 +80,11 @@ function GetAllRegistersVehiculoCarga() {
 
             verificarYInicializarTabla();
         } else {
-            Swal.fire({
-                title: 'Error',
-                text: 'Error al cargar los vehículos de carga: ' + r.ErrorMessage,
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
+            swal({
+                title: "Error",
+                text: "Error al cargar los vehículos de carga: " + r.ErrorMessage,
+                type: "error",
+                confirmButtonText: "Aceptar"
             });
         }
     });
@@ -99,11 +99,11 @@ function GetAllVehiculoActivos() {
                 inicializarFormularioEdicion();
             }
         } else {
-            Swal.fire({
-                title: 'Error',
-                text: 'Error al cargar los vehículos viajes locales activos: ' + r.ErrorMessage,
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
+            swal({
+                title: "Error",
+                text: "Error al cargar los vehículos viajes locales activos: " + r.ErrorMessage,
+                type: "error",
+                confirmButtonText: "Aceptar"
             });
         }
     });
@@ -121,11 +121,11 @@ function GetAllVehiculoCarga() {
                 inicializarFormularioEdicion();
             }
         } else {
-            Swal.fire({
-                title: 'Error',
-                text: 'Error al cargar los vehículos de carga: ' + r.ErrorMessage,
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
+            swal({
+                title: "Error",
+                text: "Error al cargar los vehículos de carga: " + r.ErrorMessage,
+                type: "error",
+                confirmButtonText: "Aceptar"
             });
         }
     });
@@ -137,11 +137,11 @@ function GetAllEmpleados() {
             empleados = r.Response;
             verificarYInicializarTabla();
         } else {
-            Swal.fire({
-                title: 'Error',
-                text: 'Error al cargar los empleados: ' + r.ErrorMessage,
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
+            swal({
+                title: "Error",
+                text: "Error al cargar los empleados: " + r.ErrorMessage,
+                type: "error",
+                confirmButtonText: "Aceptar"
             });
         }
     });
@@ -153,11 +153,11 @@ function GetAllReparacionVehiculos() {
             reparaciones = r.Response;
             verificarYInicializarTabla();
         } else {
-            Swal.fire({
-                title: 'Error',
-                text: 'Error al cargar datos de ReparacionVehiculos: ' + r.ErrorMessage,
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
+            swal({
+                title: "Error",
+                text: "Error al cargar datos de ReparacionVehiculos: " + r.ErrorMessage,
+                type: "error",
+                confirmButtonText: "Aceptar"
             });
         }
     });
@@ -470,45 +470,44 @@ function llenarSelectVehiculo(tipoVehiculo) {
 function SaveOrUpdateReparacionVehiculos() {
     // Validar que los campos requeridos tengan valor
     if ($("#ddlTiposVehiculos").val() === "" || $("#ddlTiposVehiculos").val() === null) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Por favor seleccione un tipo de vehículo',
-            confirmButtonText: 'Aceptar'
+        swal({
+            title: "Error",
+            text: "Por favor seleccione un tipo de vehículo",
+            type: "error",
+            confirmButtonText: "Aceptar"
         });
         return false;
     }
 
     if ($("#ddlVehiculo").val() === "" || $("#ddlVehiculo").val() === null) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Por favor seleccione un vehículo',
-            confirmButtonText: 'Aceptar'
+        swal({
+            title: "Error",
+            text: "Por favor seleccione un vehículo",
+            type: "error",
+            confirmButtonText: "Aceptar"
         });
         return false;
     }
 
     if ($("#ddlEmpleados").val() === "" || $("#ddlEmpleados").val() === null) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Por favor seleccione un empleado',
-            confirmButtonText: 'Aceptar'
+        swal({
+            title: "Error",
+            text: "Por favor seleccione un empleado",
+            type: "error",
+            confirmButtonText: "Aceptar"
         });
         return false;
     }
 
     if ($("#ddlTipoServicio").val() === "" || $("#ddlTipoServicio").val() === null) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Por favor seleccione un tipo de servicio',
-            confirmButtonText: 'Aceptar'
+        swal({
+            title: "Error",
+            text: "Por favor seleccione un tipo de servicio",
+            type: "error",
+            confirmButtonText: "Aceptar"
         });
         return false;
     }
-
 
     // Preparar el parámetro
     var id = parseInt($("#id").val()) || 0;
@@ -532,27 +531,33 @@ function SaveOrUpdateReparacionVehiculos() {
         UpdatedBy: $("#updatedBy").val(),
         UpdatedDt: $("#updatedDt").val()
     };
-
+    swal({
+        title: "Registro guardado!",
+        text: "El registro se ha guardado correctamente.",
+        type: "success",
+        confirmButtonText: "OK"
+    }, function () {
+        window.location.href = "/Taller/ReparacionVehiculos";
+    });
+    window.location.href = "/Taller/ReparacionVehiculos";
     PostMVC('/Taller/SaveOrUpdateReparacionVehiculos', parametro, function (r) {
-        Swal.close();
-
         // Verificar la respuesta
         if (r && r.IsSuccess) {
-            Swal.fire({
+            swal({
                 title: "Registro guardado!",
                 text: "El registro se ha guardado correctamente.",
-                icon: "success",
-                confirmButtonText: 'OK'
-            }).then(() => {
+                type: "success",
+                confirmButtonText: "OK"
+            }, function () {
                 window.location.href = "/Taller/ReparacionVehiculos";
             });
         } else {
-            Swal.fire({
+            swal({
                 title: "Registro guardado!",
                 text: "El registro se ha guardado correctamente.",
-                icon: "success",
-                confirmButtonText: 'OK'
-            }).then(() => {
+                type: "success",
+                confirmButtonText: "OK"
+            }, function () {
                 window.location.href = "/Taller/ReparacionVehiculos";
             });
         }
@@ -573,38 +578,48 @@ function EditarRegistro(id, element) {
 
 // Función EliminarRegistro
 function EliminarRegistro(id, idVehiculo, tipoVehiculo) {
-    Swal.fire({
-        title: 'Eliminar Registro',
-        text: "Desea eliminar el siguiente registro?",
-        icon: 'warning',
+    swal({
+        title: "Eliminar Registro",
+        text: "Se eliminara el siguiente registro",
+        type: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Si, eliminar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si, eliminar",
+        cancelButtonText: "Cancelar"
+    }, function (isConfirmed) {
+        if (isConfirmed) {
             var parametro = {
                 Id: id,
                 IdVehiculo: idVehiculo,
                 TipoVehiculo: tipoVehiculo
             };
-
+            swal({
+                title: "Eliminado",
+                text: "El registro ha sido eliminado.",
+                type: "success",
+                confirmButtonText: "Aceptar"
+            }, function () {
+                window.location.reload();
+            });
+            window.location.reload();
             PostMVC('/Taller/DeleteReparacionVehiculosById', parametro, function (r) {
                 if (r && r.IsSuccess) {
-                    Swal.fire({
-                        title: 'Eliminado',
-                        text: 'El registro ha sido eliminado.',
-                        icon: 'success'
-                    }).then(() => {
+                    swal({
+                        title: "Eliminado",
+                        text: "El registro ha sido eliminado.",
+                        type: "success",
+                        confirmButtonText: "Aceptar"
+                    }, function () {
                         window.location.reload();
                     });
                 } else {
-                    Swal.fire({
-                        title: 'Eliminado',
-                        text: 'El registro ha sido eliminado.',
-                        icon: 'success'
-                    }).then(() => {
+                    swal({
+                        title: "Eliminado",
+                        text: "El registro ha sido eliminado.",
+                        type: "success",
+                        confirmButtonText: "Aceptar"
+                    }, function () {
                         window.location.reload();
                     });
                 }
@@ -615,26 +630,19 @@ function EliminarRegistro(id, idVehiculo, tipoVehiculo) {
 
 // Función para liberar vehículo (versión unificada)
 function LiberarVehiculo(id, idVehiculo, tipoVehiculo) {
-    Swal.fire({
-        title: 'Liberar Vehiculo',
-        text: "Deseas liberar este vehiculo?",
-        icon: 'question',
+    // SweetAlert 1.x usa confirm directamente
+    swal({
+        title: "Liberar Vehiculo",
+        text: "Se liberara el siguiente vehiculo",
+        type: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Si, liberar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Mostrar loading
-            Swal.fire({
-                title: 'Procesando...',
-                text: 'Liberando vehiculo',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Si, liberar",
+        cancelButtonText: "Cancelar",
+        closeOnConfirm: true,
+        closeOnCancel: true
+    }, function (isConfirmed) {
+        if (isConfirmed) {
 
             $.ajax({
                 url: '/Taller/LiberarVehiculo',
@@ -646,42 +654,47 @@ function LiberarVehiculo(id, idVehiculo, tipoVehiculo) {
                     TipoVehiculo: tipoVehiculo
                 }),
                 success: function (response) {
-                    Swal.close();
-
+                    swal({
+                        title: "Liberado",
+                        text: "El vehiculo ha sido liberado correctamente.",
+                        type: "success",
+                        confirmButtonText: "Aceptar"
+                    }, function () {
+                        window.location.reload();
+                    });
+                    window.location.reload();
                     if (response && response.IsSuccess) {
-                        Swal.fire({
-                            title: 'Liberado!',
-                            text: 'El vehiculo ha sido liberado correctamente.',
-                            icon: 'success',
-                            confirmButtonText: 'Aceptar'
-                        }).then(() => {
+                        swal({
+                            title: "Liberado",
+                            text: "El vehiculo ha sido liberado correctamente.",
+                            type: "success",
+                            confirmButtonText: "Aceptar"
+                        }, function () {
                             window.location.reload();
                         });
                     } else {
-                        Swal.fire({
-                            title: 'Liberado!',
-                            text: 'El vehiculo ha sido liberado correctamente.',
-                            icon: 'success',
-                            confirmButtonText: 'Aceptar'
-                        }).then(() => {
-                            window.location.reload();
+                        swal({
+                            title: "Error",
+                            text: response?.ErrorMessage || "No se pudo liberar el vehículo.",
+                            type: "error",
+                            confirmButtonText: "Aceptar"
                         });
                     }
                 },
                 error: function (xhr, status, error) {
-                    Swal.close();
-
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Error de conexión: ' + error,
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
+                    swal.close();
+                    swal({
+                        title: "Error de conexión",
+                        text: "Error: " + error,
+                        type: "error",
+                        confirmButtonText: "Aceptar"
                     });
                 }
             });
         }
     });
 }
+
 // Intenta preseleccionar el vehículo si estamos en modo edición
 function inicializarFormularioEdicion() {
     // Si no es nuevo registro y tenemos modelo
@@ -720,11 +733,11 @@ document.getElementById("btnFiltrar").addEventListener("click", function () {
 
     // Validación 1: Verificar que ambos campos estén llenos
     if (!fechaInicio || !fechaFin) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Campos incompletos',
-            text: 'Por favor, complete ambas fechas',
-            confirmButtonColor: '#3085d6'
+        swal({
+            title: "Campos incompletos",
+            text: "Por favor, complete ambas fechas",
+            type: "error",
+            confirmButtonText: "Aceptar"
         });
         return;
     }
@@ -735,22 +748,22 @@ document.getElementById("btnFiltrar").addEventListener("click", function () {
 
     // Validación 2: Verificar que sean fechas válidas
     if (isNaN(fechaInicioObj.getTime()) || isNaN(fechaFinObj.getTime())) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Fechas invalidas',
-            text: 'Una o ambas fechas tienen un formato incorrecto',
-            confirmButtonColor: '#3085d6'
+        swal({
+            title: "Fechas invalidas",
+            text: "Una o ambas fechas tienen un formato incorrecto",
+            type: "error",
+            confirmButtonText: "Aceptar"
         });
         return;
     }
 
     // Validación 3: Fecha inicio no puede ser mayor que fecha fin
     if (fechaInicioObj > fechaFinObj) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Rango de fechas invalido',
-            text: 'La fecha de inicio no puede ser mayor que la fecha de fin',
-            confirmButtonColor: '#3085d6'
+        swal({
+            title: "Rango de fechas invalido",
+            text: "La fecha de inicio no puede ser mayor que la fecha de fin",
+            type: "error",
+            confirmButtonText: "Aceptar"
         });
         return;
     }
@@ -760,11 +773,11 @@ document.getElementById("btnFiltrar").addEventListener("click", function () {
     fechaActual.setHours(0, 0, 0, 0);
 
     if (fechaFinObj > fechaActual) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Fecha futura no permitida',
-            text: 'La fecha de fin no puede ser mayor a la fecha actual',
-            confirmButtonColor: '#3085d6'
+        swal({
+            title: "Fecha futura no permitida",
+            text: "La fecha de fin no puede ser mayor a la fecha actual",
+            type: "error",
+            confirmButtonText: "Aceptar"
         });
         return;
     }
@@ -775,11 +788,11 @@ document.getElementById("btnFiltrar").addEventListener("click", function () {
     const maxDays = 365; // Cambia este valor según tu necesidad
 
     if (diffDays > maxDays) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Rango muy extenso',
+        swal({
+            title: "Rango muy extenso",
             text: `El rango de fechas no puede exceder los ${maxDays} días`,
-            confirmButtonColor: '#3085d6'
+            type: "error",
+            confirmButtonText: "Aceptar"
         });
         return;
     }
@@ -1078,16 +1091,7 @@ function ReparacionVehiculosByDates(fechaInicio, fechaFin) {
                 table2.DataTable().clear().destroy();
                 table2.empty();
             }
-
         }
-    }).fail(function (jqXHR, textStatus, errorThrown) {
-        console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Error al cargar los datos filtrados',
-            confirmButtonColor: '#3085d6'
-        });
     });
 }
 
@@ -1104,11 +1108,11 @@ function generarReporteReparacionVehiculosPDF() {
     var datosEstatus = tablaEstatus.data().toArray();
 
     if (datosReparaciones.length === 0 && datosEstatus.length === 0) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Sin datos',
-            text: 'No hay datos para exportar en el rango de fechas seleccionado',
-            confirmButtonText: 'Entendido'
+        swal({
+            title: "Sin datos",
+            text: "No hay datos para exportar en el rango de fechas seleccionado",
+            type: "warning",
+            confirmButtonText: "Entendido"
         });
         return;
     }
@@ -1118,13 +1122,12 @@ function generarReporteReparacionVehiculosPDF() {
     var fechaFin = $("#fechaFin").val();
 
     // Mostrar loading
-    Swal.fire({
+    swal({
         title: "Generando reporte...",
         text: "Por favor espere mientras se genera el PDF",
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
+        type: "info",
+        showConfirmButton: false,
+        allowOutsideClick: false
     });
 
     // Crear tabla HTML para el Listado General de Reparaciones (tabla1)
@@ -1133,14 +1136,14 @@ function generarReporteReparacionVehiculosPDF() {
         tablaReparacionesHTML = '<h2 style="color: #2c3e50; margin-top: 20px;">Listado General de Reparaciones</h2>';
         tablaReparacionesHTML += '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;margin-bottom:20px;">';
         tablaReparacionesHTML += '<thead>';
-        tablaReparacionesHTML += '<tr>';
-        tablaReparacionesHTML += '<th>ID</th>';
-        tablaReparacionesHTML += '<th>Tipo de Vehiculo</th>';
-        tablaReparacionesHTML += '<th>Vehiculo</th>';
-        tablaReparacionesHTML += '<th>Empleado</th>';
-        tablaReparacionesHTML += '<th>Tipo de Servicio</th>';
-        tablaReparacionesHTML += '<th>Recibio</th>';
-        tablaReparacionesHTML += '<th>Fecha y Hora</th>';
+        tablaReparacionesHTML += '<tr style="background-color:#34495e;color:white;">';
+        tablaReparacionesHTML += '<th style="padding:10px;">ID</th>';
+        tablaReparacionesHTML += '<th style="padding:10px;">Tipo de Vehiculo</th>';
+        tablaReparacionesHTML += '<th style="padding:10px;">Vehiculo</th>';
+        tablaReparacionesHTML += '<th style="padding:10px;">Empleado</th>';
+        tablaReparacionesHTML += '<th style="padding:10px;">Tipo de Servicio</th>';
+        tablaReparacionesHTML += '<th style="padding:10px;">Recibio</th>';
+        tablaReparacionesHTML += '<th style="padding:10px;">Fecha y Hora</th>';
         tablaReparacionesHTML += '</tr>';
         tablaReparacionesHTML += '</thead>';
         tablaReparacionesHTML += '<tbody>';
@@ -1185,13 +1188,13 @@ function generarReporteReparacionVehiculosPDF() {
             }
 
             tablaReparacionesHTML += '<tr>';
-            tablaReparacionesHTML += '<td>' + (item.id || '') + '</td>';
-            tablaReparacionesHTML += '<td>' + tipoVehiculo + '</td>';
-            tablaReparacionesHTML += '<td>' + vehiculoTexto + '</td>';
-            tablaReparacionesHTML += '<td>' + empleadoTexto + '</td>';
-            tablaReparacionesHTML += '<td>' + tipoServicio + '</td>';
-            tablaReparacionesHTML += '<td>' + (item.recibio || '') + '</td>';
-            tablaReparacionesHTML += '<td>' + fecha + '</td>';
+            tablaReparacionesHTML += '<td style="padding:8px;">' + (item.id || '') + '</td>';
+            tablaReparacionesHTML += '<td style="padding:8px;">' + tipoVehiculo + '</td>';
+            tablaReparacionesHTML += '<td style="padding:8px;">' + vehiculoTexto + '</td>';
+            tablaReparacionesHTML += '<td style="padding:8px;">' + empleadoTexto + '</td>';
+            tablaReparacionesHTML += '<td style="padding:8px;">' + tipoServicio + '</td>';
+            tablaReparacionesHTML += '<td style="padding:8px;">' + (item.recibio || '') + '</td>';
+            tablaReparacionesHTML += '<td style="padding:8px;">' + fecha + '</td>';
             tablaReparacionesHTML += '</tr>';
         });
         tablaReparacionesHTML += '</tbody>';
@@ -1207,15 +1210,15 @@ function generarReporteReparacionVehiculosPDF() {
         tablaEstatusHTML = '<h2 style="color: #2c3e50; margin-top: 20px;">Estatus y Asignacion de Refacciones</h2>';
         tablaEstatusHTML += '<table border="1" cellpadding="5" cellspacing="0" style="width:100%;border-collapse:collapse;">';
         tablaEstatusHTML += '<thead>';
-        tablaEstatusHTML += '<tr>';
-        tablaEstatusHTML += '<th>ID</th>';
-        tablaEstatusHTML += '<th>Tipo de Vehiculo</th>';
-        tablaEstatusHTML += '<th>Vehiculo</th>';
-        tablaEstatusHTML += '<th>Empleado</th>';
-        tablaEstatusHTML += '<th>Tipo de Servicio</th>';
-        tablaEstatusHTML += '<th>Recibio</th>';
-        tablaEstatusHTML += '<th>Fecha y Hora</th>';
-        tablaEstatusHTML += '<th>Estado</th>';
+        tablaEstatusHTML += '<tr style="background-color:#34495e;color:white;">';
+        tablaEstatusHTML += '<th style="padding:10px;">ID</th>';
+        tablaEstatusHTML += '<th style="padding:10px;">Tipo de Vehiculo</th>';
+        tablaEstatusHTML += '<th style="padding:10px;">Vehiculo</th>';
+        tablaEstatusHTML += '<th style="padding:10px;">Empleado</th>';
+        tablaEstatusHTML += '<th style="padding:10px;">Tipo de Servicio</th>';
+        tablaEstatusHTML += '<th style="padding:10px;">Recibio</th>';
+        tablaEstatusHTML += '<th style="padding:10px;">Fecha y Hora</th>';
+        tablaEstatusHTML += '<th style="padding:10px;">Estado</th>';
         tablaEstatusHTML += '</tr>';
         tablaEstatusHTML += '</thead>';
         tablaEstatusHTML += '<tbody>';
@@ -1269,14 +1272,14 @@ function generarReporteReparacionVehiculosPDF() {
             }
 
             tablaEstatusHTML += '<tr>';
-            tablaEstatusHTML += '<td>' + (item.id || '') + '</td>';
-            tablaEstatusHTML += '<td>' + tipoVehiculo + '</td>';
-            tablaEstatusHTML += '<td>' + vehiculoTexto + '</td>';
-            tablaEstatusHTML += '<td>' + empleadoTexto + '</td>';
-            tablaEstatusHTML += '<td>' + tipoServicio + '</td>';
-            tablaEstatusHTML += '<td>' + (item.recibio || '') + '</td>';
-            tablaEstatusHTML += '<td>' + fecha + '</td>';
-            tablaEstatusHTML += '<td>' + estadoTexto + '</td>';
+            tablaEstatusHTML += '<td style="padding:8px;">' + (item.id || '') + '</td>';
+            tablaEstatusHTML += '<td style="padding:8px;">' + tipoVehiculo + '</td>';
+            tablaEstatusHTML += '<td style="padding:8px;">' + vehiculoTexto + '</td>';
+            tablaEstatusHTML += '<td style="padding:8px;">' + empleadoTexto + '</td>';
+            tablaEstatusHTML += '<td style="padding:8px;">' + tipoServicio + '</td>';
+            tablaEstatusHTML += '<td style="padding:8px;">' + (item.recibio || '') + '</td>';
+            tablaEstatusHTML += '<td style="padding:8px;">' + fecha + '</td>';
+            tablaEstatusHTML += '<td style="padding:8px;">' + estadoTexto + '</td>';
             tablaEstatusHTML += '</tr>';
         });
         tablaEstatusHTML += '</tbody>';
@@ -1327,11 +1330,11 @@ function generarReporteReparacionVehiculosPDF() {
 
     // Cerrar el loading despues de enviar el formulario
     setTimeout(function () {
-        Swal.close();
-        Swal.fire({
-            icon: 'success',
-            title: 'Reporte generado!',
-            text: 'El PDF se ha creado correctamente',
+        swal.close();
+        swal({
+            title: "Reporte generado!",
+            text: "El PDF se ha creado correctamente",
+            type: "success",
             timer: 3000,
             showConfirmButton: false
         });
@@ -1351,11 +1354,11 @@ function generarReporteReparacionVehiculosExcel() {
     var datosEstatus = tablaEstatus.data().toArray();
 
     if (datosReparaciones.length === 0 && datosEstatus.length === 0) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Sin datos',
-            text: 'No hay datos para exportar en el rango de fechas seleccionado',
-            confirmButtonText: 'Entendido'
+        swal({
+            title: "Sin datos",
+            text: "No hay datos para exportar en el rango de fechas seleccionado",
+            type: "warning",
+            confirmButtonText: "Entendido"
         });
         return;
     }
@@ -1365,13 +1368,12 @@ function generarReporteReparacionVehiculosExcel() {
     var fechaFin = $("#fechaFin").val();
 
     // Mostrar loading
-    Swal.fire({
+    swal({
         title: "Generando Excel...",
         text: "Por favor espere mientras se genera el archivo Excel",
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
+        type: "info",
+        showConfirmButton: false,
+        allowOutsideClick: false
     });
 
     // Calcular estadisticas
@@ -1487,11 +1489,11 @@ function generarReporteReparacionVehiculosExcel() {
     form.remove();
 
     setTimeout(function () {
-        Swal.close();
-        Swal.fire({
-            icon: 'success',
-            title: 'Excel generado!',
-            text: 'El archivo Excel se ha creado correctamente',
+        swal.close();
+        swal({
+            title: "Excel generado!",
+            text: "El archivo Excel se ha creado correctamente",
+            type: "success",
             timer: 3000,
             showConfirmButton: false
         });

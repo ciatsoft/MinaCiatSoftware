@@ -51,68 +51,203 @@
     var esEdicionValue = ViewBag.EsEdicion ?? false;
 }
 
-<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<style>
+    /* Estilos estandarizados */
+    .container-fluid {
+        background-color: transparent;
+    }
 
-@using (Html.BeginForm("SaveOrUpdateComponenteVehiculo", "Taller", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmAsignarPiezas" }))
-{
-    @Html.HiddenFor(x => x.Id, new { @id = "id", @Value = ViewBag.Id })
-    @Html.HiddenFor(x => x.Estatus, new { @id = "estatus" })
-    @Html.HiddenFor(x => x.CreatedBy, new { @id = "createdBy" })
-    @Html.HiddenFor(x => x.UpdatedBy, new { @id = "updatedBy" })
-    @Html.HiddenFor(x => x.CreatedDt, new { @id = "createdDt" })
-    @Html.HiddenFor(x => x.UpdatedDt, new { @id = "updatedDt" })
+    /* Panel de rectángulos con fondo blanco */
+    .rectangulos {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
 
-    @Html.HiddenFor(x => x.IdReparacion, new { @id = "idReparacion", @Value = ViewBag.IdReparacion })
-    @Html.HiddenFor(x => x.TipoVehiculo, new { @id = "tipoVehiculo", @Value = ViewBag.TipoVehiculo })
-    @Html.HiddenFor(x => x.IdVehiculo, new { @id = "idVehiculo", @Value = ViewBag.IdVehiculo })
+    /* Títulos */
+    h2 {
+        color: #005c8a !important;
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
 
-    <div class="tabla-consultas-empleados">
-        <div class="rectangulos" style="width: 100%;">
-            <div class="row">
-                @Html.HiddenFor(x => x.IdInventario, new { @id = "idInventario" })
-                <div class="col-lg-4">
-                    <label>Categoria del Inventario</label>
-                    @Html.DropDownListFor(
-                        x => x.IdCategoria,
-                        categorias,
-                        new { @class = "form-control", id = "ddlCategoriaInventario", required = "required" }
-                    )
-                </div>
-                <div class="col-lg-4">
-                    <label>Tipo de Inventario</label>
-                    @Html.DropDownListFor(
-                        x => x.TipoInventario,
-                        tipos,
-                        new { @class = "form-control", id = "ddlTipoInventario", required = "required" }
-                    )
-                </div>
-                <div class="col-lg-4">
-                    <label>Item del Inventario</label>
-                    <select id="ddlInventarioItems" class="form-control">
-                        <option value="" selected disabled>Seleccione un item</option>
-                    </select>
-                </div>
-                @Html.HiddenFor(x => x.NombreInventario, new { @class = "form-control", @id = "nombreItem" })
-            </div>
+    /* Labels */
+    .control-label, label {
+        color: #333333 !important;
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: inline-block;
+    }
 
-            <div class="row">
-                <div class="col-lg-4">
-                    <label>Cantidad a usar</label>
-                    @Html.TextBoxFor(x => x.CantidadComponente, new { @class = "form-control", type = "number", @id = "cantidadItem", min = "1", step = "1", onkeypress = "return event.charCode >= 48 && event.charCode <= 57", oninput = "if(this.value < 1) this.value = 1" })
-                </div>
-                <div class="col-lg-4">
-                    <input type="hidden" id="txtCantidad" class="form-control" readonly disabled />
-                </div>
-            </div>
+    /* Inputs y selects */
+    .form-control {
+        color: #333333 !important;
+        background-color: #ffffff !important;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        width: 100%;
+    }
 
-            <div style="margin-top: 35px; align-items:end;">
-                <button type="button" class="btn btn-custom-cancel" data-dismiss="modal">
-                    Cancelar
-                </button>
-            </div>
+        .form-control:disabled, .form-control[readonly] {
+            background-color: #e9ecef !important;
+            color: #495057 !important;
+        }
+
+    /* Botones */
+    .btn {
+        display: inline-block;
+        padding: 8px 16px;
+        font-size: 14px;
+        font-weight: normal;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        cursor: pointer;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .btn-custom-cancel {
+        background-color: #d9534f !important;
+        border-color: #d43f3a !important;
+        color: #ffffff !important;
+    }
+
+        .btn-custom-cancel:hover {
+            background-color: #c9302c !important;
+            border-color: #ac2925 !important;
+            color: #ffffff !important;
+            opacity: 0.9;
+        }
+
+    /* Layout de filas */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -15px;
+        margin-left: -15px;
+    }
+
+    .col-lg-4 {
+        position: relative;
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+
+    .margin-top-35 {
+        margin-top: 35px;
+    }
+
+    .text-right {
+        text-align: right;
+    }
+</style>
+
+<div class="container-fluid" style="padding: 20px 15px;">
+    <div class="panel panel-default" style="background-color: #ffffff;">
+        <div class="panel-body" style="background-color: #ffffff; color: #333333;">
+            @using (Html.BeginForm("SaveOrUpdateComponenteVehiculo", "Taller", FormMethod.Post, new { enctype = "multipart/form-data", @id = "frmAsignarPiezas" }))
+            {
+                @Html.HiddenFor(x => x.Id, new { @id = "id", @Value = ViewBag.Id })
+                @Html.HiddenFor(x => x.Estatus, new { @id = "estatus" })
+                @Html.HiddenFor(x => x.CreatedBy, new { @id = "createdBy" })
+                @Html.HiddenFor(x => x.UpdatedBy, new { @id = "updatedBy" })
+                @Html.HiddenFor(x => x.CreatedDt, new { @id = "createdDt" })
+                @Html.HiddenFor(x => x.UpdatedDt, new { @id = "updatedDt" })
+
+                @Html.HiddenFor(x => x.IdReparacion, new { @id = "idReparacion", @Value = ViewBag.IdReparacion })
+                @Html.HiddenFor(x => x.TipoVehiculo, new { @id = "tipoVehiculo", @Value = ViewBag.TipoVehiculo })
+                @Html.HiddenFor(x => x.IdVehiculo, new { @id = "idVehiculo", @Value = ViewBag.IdVehiculo })
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2>
+                            <i class="fa fa-cogs"></i> Consultar Pieza Instalada
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 20px;">
+                    @Html.HiddenFor(x => x.IdInventario, new { @id = "idInventario" })
+                    <div class="col-md-4 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-folder"></i> Categoría del Inventario
+                            </label>
+                            @Html.DropDownListFor(
+                                x => x.IdCategoria,
+                                categorias,
+                                new { @class = "form-control", id = "ddlCategoriaInventario", disabled = "disabled" }
+                            )
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-tags"></i> Tipo de Inventario
+                            </label>
+                            @Html.DropDownListFor(
+                                x => x.TipoInventario,
+                                tipos,
+                                new { @class = "form-control", id = "ddlTipoInventario", disabled = "disabled" }
+                            )
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-list"></i> Item del Inventario
+                            </label>
+                            <select id="ddlInventarioItems" class="form-control" disabled>
+                                <option value="" selected disabled>Seleccione un item</option>
+                            </select>
+                        </div>
+                    </div>
+                    @Html.HiddenFor(x => x.NombreInventario, new { @class = "form-control", @id = "nombreItem" })
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-calculator"></i> Cantidad a usar
+                            </label>
+                            @Html.TextBoxFor(x => x.CantidadComponente, new { @class = "form-control", type = "number", @id = "cantidadItem", min = "1", step = "1", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">
+                                <i class="fa fa-database"></i> Cantidad Disponible
+                            </label>
+                            <input type="text" id="txtCantidad" class="form-control" readonly disabled />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 35px;">
+                    <div class="col-md-12 text-right">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                            <i class="fa fa-times"></i> Cerrar
+                        </button>
+                    </div>
+                </div>
+            }
         </div>
     </div>
-}
+</div>
 
 <script>
     // Variable global para almacenar los datos del inventario seleccionado
@@ -126,28 +261,6 @@
 
     $(document).ready(function () {
 
-        // Configurar eventos
-        $("#ddlCategoriaInventario").on("change", function () {
-            var categoriaVal = $("#ddlCategoriaInventario").val();
-            var tipoVal = $("#ddlTipoInventario").val();
-            if (categoriaVal && categoriaVal !== "" && tipoVal && tipoVal !== "") {
-                GetInventarioByCategoriaTipo();
-            }
-        });
-
-        $("#ddlTipoInventario").on("change", function () {
-            var categoriaVal = $("#ddlCategoriaInventario").val();
-            var tipoVal = $("#ddlTipoInventario").val();
-            if (categoriaVal && categoriaVal !== "" && tipoVal && tipoVal !== "") {
-                GetInventarioByCategoriaTipo();
-            }
-        });
-
-        // Evento para cuando se selecciona un item
-        $("#ddlInventarioItems").on("change", function () {
-            cargarNombreYCantidad();
-        });
-
         // Si es edición, precargar datos
         if (esEdicion && idInventarioModel > 0) {
             setTimeout(function() {
@@ -157,7 +270,6 @@
     });
 
     function precargarDatosEdicion() {
-
         // Establecer los valores de los selects
         if (idCategoriaModel && idCategoriaModel !== "" && idCategoriaModel !== "null") {
             $("#ddlCategoriaInventario").val(idCategoriaModel);
@@ -166,12 +278,6 @@
         if (tipoInventarioModel && tipoInventarioModel !== "" && tipoInventarioModel !== "null") {
             $("#ddlTipoInventario").val(tipoInventarioModel);
         }
-
-        // Deshabilitar los selects en modo edición
-        $("#ddlCategoriaInventario").prop('disabled', true);
-        $("#ddlTipoInventario").prop('disabled', true);
-        $("#ddlInventarioItems").prop('disabled', true);
-        $("#cantidadItem").prop('disabled', true);
 
         // Cargar el inventario basado en la categoría y tipo seleccionados
         if (idCategoriaModel && idCategoriaModel !== "" && idCategoriaModel !== "null" &&
@@ -224,7 +330,6 @@
         var url = `/Taller/GetAllInventarioByCategoriaTipo?categoriaInventario=${encodeURIComponent(categoriaInventario)}&tipoInventario=${encodeURIComponent(tipoInventario)}`;
 
         GetMVC(url, function (r) {
-
             if (r.IsSuccess) {
                 // Limpiar y llenar el select de items
                 llenarSelectInventario(r.Response, tipoInventario);
@@ -232,11 +337,11 @@
                 // Ejecutar callback después de llenar el select
                 if (callback) callback();
             } else {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Error al cargar el Inventario: ' + r.ErrorMessage,
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
+                swal({
+                    title: "Error",
+                    text: "Error al cargar el Inventario: " + r.ErrorMessage,
+                    type: "error",
+                    confirmButtonText: "Aceptar"
                 });
 
                 // Limpiar y mostrar mensaje de error usando DOM
@@ -258,7 +363,6 @@
     }
 
     function llenarSelectInventario(data, tipoInventario) {
-
         var selectElement = document.getElementById("ddlInventarioItems");
         if (!selectElement) return;
 
@@ -321,7 +425,6 @@
 
             selectElement.appendChild(option);
         }
-
     }
 
     function cargarNombreYCantidad() {

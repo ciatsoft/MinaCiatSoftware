@@ -8,33 +8,26 @@
     var tiposServicio = (List<string>)ViewBag.TipoServicio;
     var esNuevoRegistro = ViewBag.EsNuevoRegistro ?? true;
 
-    // CORREGIDO: Formatear la fecha correctamente
     string fechaFormateada = "";
     if (Model != null && Model.Fecha != null && Model.Fecha > DateTime.MinValue)
     {
-        // Si es edición y tiene fecha válida
         fechaFormateada = Model.Fecha.ToString("yyyy-MM-dd HH:mm:ss");
     }
     else
     {
-        // Si es nuevo registro, usar fecha actual
         fechaFormateada = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
     }
 
-    // Crear SelectLists para los dropdowns con opción por defecto SIEMPRE presente
     var tipoVehiculoSelectList = new List<SelectListItem>();
-
-    // Determinar si hay un valor seleccionado en el modelo
     bool tieneTipoVehiculo = Model != null && Model.TipoVehiculo > 0;
     bool tieneTipoServicio = Model != null && Model.TipoServicio > 0;
     bool tieneEmpleado = Model != null && Model.IdEmpleado > 0;
 
-    // Agregar opción por defecto SIEMPRE (disabled)
     tipoVehiculoSelectList.Add(new SelectListItem
     {
         Value = "",
         Text = "Selecciona un Tipo de Vehiculo",
-        Selected = !tieneTipoVehiculo, // Seleccionada SOLO si NO hay valor en el modelo
+        Selected = !tieneTipoVehiculo,
         Disabled = true
     });
 
@@ -50,13 +43,11 @@
     }
 
     var tipoServicioSelectList = new List<SelectListItem>();
-
-    // Agregar opción por defecto SIEMPRE (disabled)
     tipoServicioSelectList.Add(new SelectListItem
     {
         Value = "",
         Text = "Selecciona un Tipo de Servicio",
-        Selected = !tieneTipoServicio, // Seleccionada SOLO si NO hay valor en el modelo
+        Selected = !tieneTipoServicio,
         Disabled = true
     });
 
@@ -72,13 +63,11 @@
     }
 
     var trabajadoresSelectList = new List<SelectListItem>();
-
-    // Agregar opción por defecto SIEMPRE (disabled)
     trabajadoresSelectList.Add(new SelectListItem
     {
         Value = "",
         Text = "Selecciona un Chofer",
-        Selected = !tieneEmpleado, // Seleccionada SOLO si NO hay valor en el modelo
+        Selected = !tieneEmpleado,
         Disabled = true
     });
 
@@ -93,119 +82,454 @@
     }
 }
 
-<link href="~/Assets/css/EstilosBtnCambios/EstiloBtn.css" rel="stylesheet" />
+<style>
+    /* Estilos para asegurar que todo el contenido tenga fondo blanco y texto legible */
+    .container-fluid {
+        background-color: transparent;
+    }
 
-<div class="content">
-    @using (Html.BeginForm("SaveOrUpdateReparacionVehiculos", "Taller", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmReparacionVehiculos", @id = "frmReparacionVehiculos" }))
-    {
-        @Html.HiddenFor(x => x.Id, new { id = "id" })
-        @Html.HiddenFor(x => x.Estatus, new { id = "estatus" })
-        @Html.HiddenFor(x => x.CreatedDt, new { id = "createdDt", @Value = Model != null && Model.CreatedDt != null && Model.CreatedDt > DateTime.MinValue ? Model.CreatedDt.ToString("yyyy-MM-dd HH:mm:ss") : DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") })
-        @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy", @Value = Model != null && !string.IsNullOrEmpty(Model.CreatedBy) ? Model.CreatedBy : usuarioToken.UserName })
-        @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy", @Value = usuarioToken.UserName })
-        @Html.HiddenFor(x => x.UpdatedDt, new { id = "updatedDt", @Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") })
+    /* Estilos para los botones dentro de las tablas - letras blancas */
+    .table .btn {
+        color: #ffffff !important;
+    }
 
-        <br />
-        <center><h1>Reparacion de Vehiculos</h1></center>
-        <div class="tabla-consultas-empleados">
-            <div class="rectangulos" style="width: 100%;">
+    .table .btn-primary {
+        background-color: #337ab7;
+        border-color: #2e6da4;
+    }
+
+    .table .btn-danger {
+        background-color: #d9534f;
+        border-color: #d43f3a;
+    }
+
+    .table .btn-warning {
+        background-color: #f0ad4e;
+        border-color: #eea236;
+    }
+
+    .table .btn-info {
+        background-color: #5bc0de;
+        border-color: #46b8da;
+    }
+
+    .table .btn-success {
+        background-color: #5cb85c;
+        border-color: #4cae4c;
+    }
+
+    /* Hover effects */
+    .table .btn:hover {
+        opacity: 0.9;
+        color: #ffffff !important;
+    }
+
+    /* Asegurar que el texto de los botones principales también sea blanco */
+    .btn-success, .btn-danger, .btn-info, .btn-primary {
+        color: #ffffff !important;
+    }
+
+    /* Estilos para DataTables - texto oscuro sobre fondo blanco */
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_processing,
+    .dataTables_wrapper .dataTables_paginate {
+        color: #333333 !important;
+    }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            color: #333333 !important;
+        }
+
+            .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+                background: #337ab7 !important;
+                color: #ffffff !important;
+            }
+
+    /* Tablas - celdas con texto oscuro */
+    .table tbody tr td {
+        color: #333333 !important;
+        background-color: #ffffff !important;
+    }
+
+    .table thead tr th {
+        color: #333333 !important;
+        background-color: #f5f5f5 !important;
+    }
+
+    /* Inputs y selects dentro del formulario */
+    .form-control {
+        color: #333333 !important;
+        background-color: #ffffff !important;
+    }
+
+        .form-control:disabled, .form-control[readonly] {
+            background-color: #e9ecef !important;
+            color: #495057 !important;
+        }
+
+    /* Labels */
+    .control-label, label, .form-label {
+        color: #333333 !important;
+        font-weight: bold;
+    }
+
+    /* Botón cancelar personalizado */
+    .btn-custom-cancel {
+        background-color: #d9534f !important;
+        border-color: #d43f3a !important;
+        color: #ffffff !important;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+
+        .btn-custom-cancel:hover {
+            background-color: #c9302c !important;
+            border-color: #ac2925 !important;
+            color: #ffffff !important;
+            opacity: 0.9;
+            text-decoration: none;
+        }
+
+    /* Botón custom clean */
+    .btn-custom-clean {
+        background-color: #5bc0de !important;
+        border-color: #46b8da !important;
+        color: #ffffff !important;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+
+        .btn-custom-clean:hover {
+            background-color: #31b0d5 !important;
+            border-color: #269abc !important;
+            color: #ffffff !important;
+            opacity: 0.9;
+            text-decoration: none;
+        }
+
+    /* Botones grandes personalizados */
+    .btn-lg-custom {
+        padding: 8px 16px;
+        font-size: 14px;
+        border-radius: 4px;
+    }
+
+    /* Panel de rectángulos con fondo blanco */
+    .rectangulos {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    /* Títulos */
+    h1, h2, h3, h4, h5, h6 {
+        color: #005c8a !important;
+    }
+
+    h1 {
+        margin-top: 0;
+    }
+
+    /* Enlaces */
+    a {
+        color: #337ab7 !important;
+    }
+
+        a:hover {
+            color: #23527c !important;
+        }
+
+    /* Contenido general */
+    .content {
+        background-color: #f5f5f5;
+        padding: 15px;
+    }
+
+    /* Tabla responsive */
+    .table-responsive {
+        overflow-x: auto;
+        margin-bottom: 20px;
+    }
+
+    /* Panel principal */
+    .panel-primary {
+        border-color: #337ab7;
+    }
+
+        .panel-primary > .panel-heading {
+            background-color: #337ab7;
+            border-color: #337ab7;
+        }
+
+    /* Alineación de botones */
+    .d-flex {
+        display: flex;
+    }
+
+    .justify-content-between {
+        justify-content: space-between;
+    }
+
+    .align-items-end {
+        align-items: flex-end;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -15px;
+        margin-left: -15px;
+    }
+
+    .col-auto {
+        flex: 0 0 auto;
+        width: auto;
+        max-width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+    .mb-2 {
+        margin-bottom: 0.5rem;
+    }
+
+    .mt-3 {
+        margin-top: 1rem;
+    }
+
+    /* Botones de reporte */
+    #btnGenerarPDF, #btnGenerarExcel {
+        background-color: #28a745 !important;
+        color: white !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 4px !important;
+        cursor: pointer !important;
+        width: 180px !important;
+        transition: all 0.3s ease !important;
+    }
+
+        #btnGenerarPDF:hover, #btnGenerarExcel:hover {
+            background-color: #218838 !important;
+            color: white !important;
+            opacity: 0.9 !important;
+        }
+
+    /* Estado de vehículo con círculo de color */
+    .estado-indicador {
+        display: flex;
+        align-items: center;
+    }
+
+    .estado-circulo {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+
+    /* Gap para botones */
+    .gap-2 {
+        gap: 10px;
+    }
+</style>
+
+<div class="container-fluid" style="padding: 20px 15px;">
+    <!-- Panel Principal con fondo blanco -->
+    <div class="panel panel-default" style="background-color: #ffffff;">
+        <div class="panel-body" style="background-color: #ffffff; color: #333333;">
+            @using (Html.BeginForm("SaveOrUpdateReparacionVehiculos", "Taller", FormMethod.Post, new { enctype = "multipart/form-data", @name = "frmReparacionVehiculos", @id = "frmReparacionVehiculos" }))
+            {
+                @Html.HiddenFor(x => x.Id, new { id = "id" })
+                @Html.HiddenFor(x => x.Estatus, new { id = "estatus" })
+                @Html.HiddenFor(x => x.CreatedDt, new { id = "createdDt", @Value = Model != null && Model.CreatedDt != null && Model.CreatedDt > DateTime.MinValue ? Model.CreatedDt.ToString("yyyy-MM-dd HH:mm:ss") : DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") })
+                @Html.HiddenFor(x => x.CreatedBy, new { id = "createdBy", @Value = Model != null && !string.IsNullOrEmpty(Model.CreatedBy) ? Model.CreatedBy : usuarioToken.UserName })
+                @Html.HiddenFor(x => x.UpdatedBy, new { id = "updatedBy", @Value = usuarioToken.UserName })
+                @Html.HiddenFor(x => x.UpdatedDt, new { id = "updatedDt", @Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") })
+
                 <div class="row">
-                    <div class="col-lg-3">
-                        <label>Fecha:</label>
-                        <input type="text" id="fecha" name="Fecha" class="form-control"
-                               readonly="readonly" required="required"
-                               value="@fechaFormateada" />
-                    </div>
-
-                    <div class="col-lg-3">
-                        <label>Origen de Vehiculo:</label>
-                        @Html.DropDownListFor(x => x.TipoVehiculo,
-                            tipoVehiculoSelectList,
-                            new { @class = "form-control", id = "ddlTiposVehiculos", @required = "required" })
-                    </div>
-
-                    <div class="col-lg-3">
-                        <label>Vehiculo:</label>
-                        <select id="ddlVehiculo" name="IdVehiculo" class="form-control" required>
-                            <option value="" disabled selected>Selecciona un Vehiculo</option>
-                        </select>
-                    </div>
-
-                    <div class="col-lg-3">
-                        <label>Chofer:</label>
-                        @Html.DropDownListFor(x => x.IdEmpleado,
-                            trabajadoresSelectList,
-                            new { @class = "form-control", id = "ddlEmpleados", @required = "required" })
+                    <div class="col-md-12 text-center">
+                        <h1 class="text-primary" style="color: #005c8a !important;">
+                            <i class="fa fa-wrench"></i> Reparación de Vehículos
+                        </h1>
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-lg-3">
-                        <label>Tipo de Servicio:</label>
-                        @Html.DropDownListFor(x => x.TipoServicio,
-                            tipoServicioSelectList,
-                            new { @class = "form-control", id = "ddlTipoServicio", @required = "required" })
-                    </div>
-
-                    <div class="col-lg-3">
-                        <label>Recibio:</label>
-                        @Html.TextBoxFor(x => x.Recibio, new
-                        {
-                            @class = "form-control",
-                            @type = "text",
-                            id = "recibido",
-                            @readonly = "readonly",
-                            @Value = Model != null && !string.IsNullOrEmpty(Model.Recibio) ? Model.Recibio : usuarioToken.UserName,
-                            @required = "required"
-                        })
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-lg-12 d-flex justify-content-between">
-                        <div>
-                            <input id="btnGuardar" type="submit" value="Guardar" class="btn btn-success btn-lg-custom" />
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label" style="color: #333333; font-weight: bold;">
+                                <i class="fa fa-calendar"></i> Fecha:
+                            </label>
+                            <input type="text" id="fecha" name="Fecha" class="form-control"
+                                   readonly="readonly" required="required"
+                                   value="@fechaFormateada" />
                         </div>
-                        <a href="/Taller/ReparacionVehiculos" class="btn btn-custom-cancel btn-lg-custom">Cancelar</a>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label" style="color: #333333; font-weight: bold;">
+                                <i class="fa fa-car"></i> Origen de Vehículo:
+                            </label>
+                            @Html.DropDownListFor(x => x.TipoVehiculo,
+                                tipoVehiculoSelectList,
+                                new { @class = "form-control", id = "ddlTiposVehiculos", @required = "required" })
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label" style="color: #333333; font-weight: bold;">
+                                <i class="fa fa-truck"></i> Vehículo:
+                            </label>
+                            <select id="ddlVehiculo" name="IdVehiculo" class="form-control" required>
+                                <option value="" disabled selected>Selecciona un Vehículo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label" style="color: #333333; font-weight: bold;">
+                                <i class="fa fa-user"></i> Chofer:
+                            </label>
+                            @Html.DropDownListFor(x => x.IdEmpleado,
+                                trabajadoresSelectList,
+                                new { @class = "form-control", id = "ddlEmpleados", @required = "required" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label" style="color: #333333; font-weight: bold;">
+                                <i class="fa fa-gear"></i> Tipo de Servicio:
+                            </label>
+                            @Html.DropDownListFor(x => x.TipoServicio,
+                                tipoServicioSelectList,
+                                new { @class = "form-control", id = "ddlTipoServicio", @required = "required" })
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label" style="color: #333333; font-weight: bold;">
+                                <i class="fa fa-user-circle"></i> Recibió:
+                            </label>
+                            @Html.TextBoxFor(x => x.Recibio, new
+                            {
+                                @class = "form-control",
+                                @type = "text",
+                                id = "recibido",
+                                @readonly = "readonly",
+                                @Value = Model != null && !string.IsNullOrEmpty(Model.Recibio) ? Model.Recibio : usuarioToken.UserName,
+                                @required = "required"
+                            })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12 text-center">
+                        <button type="submit" id="btnGuardar" class="btn btn-success">
+                            <i class="fa fa-save"></i> Guardar
+                        </button>
+                        <a href="/Taller/ReparacionVehiculos" class="btn btn-danger">
+                            <i class="fa fa-times"></i> Cancelar
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Tabla de Historial de Reparaciones -->
+<div class="container-fluid" style="padding: 0 15px 20px 15px;">
+    <div class="panel panel-primary" style="background-color: #ffffff;">
+        <div class="panel-heading" style="background-color: #337ab7; color: #ffffff;">
+            <i class="fa fa-history"></i> Historial de Reparaciones
+        </div>
+        <div class="panel-body table-responsive" style="background-color: #ffffff;">
+            <div class="row" style="margin-bottom: 15px; align-items: flex-end;">
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label form-label" style="color: #333333; font-weight: bold;">
+                            <i class="fa fa-calendar"></i> Fecha Inicio:
+                        </label>
+                        <input type="date" id="fechaInicio" name="fechaInicio" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label form-label" style="color: #333333; font-weight: bold;">
+                            <i class="fa fa-calendar"></i> Fecha Fin:
+                        </label>
+                        <input type="date" id="fechaFin" name="fechaFin" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <div class="form-group" style="margin-top: 24px;">
+                        <button id="btnFiltrar" type="button" class="btn btn-primary">
+                            <i class="fa fa-search"></i> Buscar
+                        </button>
+                        <a href="/Taller/ReparacionVehiculos" class="btn btn-danger" style="margin-left: 10px;">
+                            <i class="fa fa-times"></i> Cancelar
+                        </a>
                     </div>
                 </div>
             </div>
-        </div>
-    }
-    <br />
-    <center><h1>Historial de Reparaciones</h1></center>
-    <br />
-    <div class="row align-items-end">
-        @* FILTRADO POR FECHA *@
-        <div class="col-auto">
-            <label for="fechaInicioLabel" class="form-label">Fecha:</label>
-            <input type="date" id="fechaInicio" name="fechaInicio" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
-        </div>
-
-        <div class="col-auto">
-            <label for="fechaFinLabel" class="form-label">Fecha:</label>
-            <input type="date" id="fechaFin" name="fechaFin" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
-        </div>
-
-        <div class="col-auto">
-            <input id="btnFiltrar" type="button" value="Buscar" class="btn btn-custom-clean" style="margin-top: -30px" />
-            <a href="/Taller/ReparacionVehiculos" class="btn btn-custom-cancel" style="margin-top: -30px; margin-left: 10px">Cancelar</a>
+            <table id="tblReparacionVehiculos" class="table table-bordered table-striped" style="width: 100%;"> </table>
         </div>
     </div>
-    <br />
-    <table id="tblReparacionVehiculos" class="table table-bordered table-striped" style="width: 100%;"></table>
-    <br />
-    <center><h1>Estatus y Asignacion de Refacciones</h1></center>
-    <br />
-    <table id="tblAllRegistersReparacionVehiculos" class="table table-bordered table-striped" style="width: 100%;"></table>
-    <br />
-    <div class="mb-2" style="text-align: left;">
-        <button id="btnGenerarPDF" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
-            Generar Reporte PDF
-        </button>
-        <button id="btnGenerarExcel" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; width: 150px;">
-            Generar Reporte Excel
-        </button>
+</div>
+
+<!-- Tabla de Estatus y Asignación de Refacciones -->
+<div class="container-fluid" style="padding: 0 15px 20px 15px;">
+    <div class="panel panel-primary" style="background-color: #ffffff;">
+        <div class="panel-heading" style="background-color: #337ab7; color: #ffffff;">
+            <i class="fa fa-cube"></i> Estatus y Asignación de Refacciones
+        </div>
+        <div class="panel-body table-responsive" style="background-color: #ffffff;">
+            <table id="tblAllRegistersReparacionVehiculos" class="table table-bordered table-striped" style="width: 100%;"> </table>
+        </div>
+    </div>
+</div>
+
+<!-- Botones de Reporte -->
+<div class="container-fluid" style="padding: 0 15px 20px 15px;">
+    <div class="panel panel-default" style="background-color: #ffffff;">
+        <div class="panel-body" style="background-color: #ffffff; color: #333333;">
+            <div class="row">
+                <div class="col-md-12">
+                    <button id="btnGenerarPDF" class="btn btn-success" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; width: 180px;">
+                        <i class="fa fa-file-pdf-o"></i> Generar Reporte PDF
+                    </button>
+                    <button id="btnGenerarExcel" class="btn btn-success" style="background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; width: 180px; margin-left: 10px;">
+                        <i class="fa fa-file-excel-o"></i> Generar Reporte Excel
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -214,13 +538,9 @@
     var modeloEdicion = @Html.Raw(Json.Encode(Model));
     var esNuevoRegistro = @(esNuevoRegistro ? "true" : "false");
 
-    // CORRECCIÓN: Forzar que en nuevos registros se muestre la opción por defecto
     $(document).ready(function() {
         if (esNuevoRegistro) {
-            // Asegurar que los selects muestren la opción por defecto
             setTimeout(function() {
-                // Estos selects ya deberían tener la opción por defecto seleccionada
-                // pero forzamos por si acaso
                 if ($("#ddlTiposVehiculos").val() !== "") {
                     $("#ddlTiposVehiculos").val("");
                 }

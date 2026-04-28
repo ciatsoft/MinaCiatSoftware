@@ -2,22 +2,39 @@
     // Validación del formulario
     $("#frmVehiculoCrud").validate({
         rules: {
-            "txtPlaca": "required",
-            "txtColor": "required",
-            "txtEstado": "requerid",
-            
+            Placa: "required",
+            Color: "required",
+            Estado: "required"
+        },
+        messages: {
+            Placa: "Por favor ingrese la placa",
+            Color: "Por favor ingrese el color",
+            Estado: "Por favor seleccione un estado"
+        },
+        errorElement: "span",
+        errorClass: "help-block",
+        highlight: function (element) {
+            $(element).closest('.form-group').addClass('has-error');
+        },
+        unhighlight: function (element) {
+            $(element).closest('.form-group').removeClass('has-error');
         }
     });
 
     // Datos en la tabla
-    $("#tblvehiculo").dataTable({
+    $("#tblvehiculo").DataTable({
+        data: [],
         processing: true,
         destroy: true,
         paging: true,
         searching: true,
+        responsive: true,
+        autoWidth: false,
+        pageLength: 10,
+        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
         columns: [
             { data: "id", visible: false, title: "Id" },
-            { data: "tipoVehiculo.nombre", title: "Vehiculo" },
+            { data: "tipoVehiculo.nombre", title: "Vehículo" },
             { data: "placa", title: "Placas" },
             { data: "color", title: "Color" },
             { data: "comentario", title: "Comentario" },
@@ -26,47 +43,57 @@
                 title: "Estado",
                 render: function (valor) {
                     if (valor == 'En patio') {
-                        return "<span style='display: inline-block; width: 20px; height: 20px; background-color: #51b00b; border-radius: 50%; animation: blink 1s infinite alternate;'></span> En Patio";
+                        return '<span class="estado-indicador"><span class="estado-circulo" style="background-color: #28a745;"></span> En Patio</span>';
                     } else if (valor == 'En viaje') {
-                        return "<span style='display: inline-block; width: 20px; height: 20px; background-color: yellow; border-radius: 50%; animation: blink 1s infinite alternate;'></span> En Viaje";
+                        return '<span class="estado-indicador"><span class="estado-circulo" style="background-color: #ffc107;"></span> En Viaje</span>';
                     } else if (valor == 'En taller') {
-                        return "<span style='display: inline-block; width: 20px; height: 20px; background-color: red; border-radius: 50%; animation: blink 1s infinite alternate;'></span> En Taller";
+                        return '<span class="estado-indicador"><span class="estado-circulo" style="background-color: #dc3545;"></span> En Taller</span>';
                     } else {
-                        return "<span style='display: inline-block; width: 20px; height: 20px; background-color: blue; border-radius: 50%; animation: blink 1s infinite alternate;'></span> Sin estado";
+                        return '<span class="estado-indicador"><span class="estado-circulo" style="background-color: #6c757d;"></span> Sin estado</span>';
                     }
                 }
             },
             {
                 data: "estatus",
+                visible: false,
                 title: "Estatus",
                 render: function (data) {
-                    return data == 1 ? "Activo" : "Inactivo";
+                    if (data == 1) {
+                        return '<span class="label label-success"><i class="fa fa-check"></i> Activo</span>';
+                    } else {
+                        return '<span class="label label-danger"><i class="fa fa-times"></i> Inactivo</span>';
+                    }
                 }
             },
             {
-                data: "id", render: function (data) {
-                    return '<input type="button" value="Editar" class="btn btn-custom-clean" onclick="EditarVehiculo(' + data + ')" />' +
-                        ' <input type="button" value="Eliminar" class="btn btn-custom-cancel" onclick="EliminarVehiculo(' + data + ')"/>';
+                data: "id",
+                title: "Acciones",
+                orderable: false,
+                render: function (data) {
+                    return '<button class="btn btn-info btn-sm btnEditar" data-id="' + data + '" title="Editar">' +
+                        '<i class="fa fa-edit"></i> Editar</button> ' +
+                        '<button class="btn btn-danger btn-sm btnEliminar" data-id="' + data + '" title="Eliminar">' +
+                        '<i class="fa fa-trash"></i> Eliminar</button>';
                 }
             }
         ],
         language: {
             "decimal": ",",
             "thousands": ".",
-            "processing": "Procesando...",
-            "lengthMenu": "Mostrar _MENU_ entradas",
-            "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningun dato disponible en esta tabla",
-            "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-            "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-            "infoFiltered": "(filtrado de un total de _MAX_ entradas)",
-            "search": "Buscar:",
+            "processing": '<i class="fa fa-spinner fa-spin"></i> Procesando...',
+            "lengthMenu": '<i class="fa fa-list"></i> Mostrar _MENU_ entradas',
+            "zeroRecords": '<i class="fa fa-info-circle"></i> No se encontraron resultados',
+            "emptyTable": '<i class="fa fa-database"></i> Ningún dato disponible en esta tabla',
+            "info": '<i class="fa fa-info-circle"></i> Mostrando _START_ a _END_ de _TOTAL_ entradas',
+            "infoEmpty": '<i class="fa fa-info-circle"></i> Mostrando 0 a 0 de 0 entradas',
+            "infoFiltered": '<i class="fa fa-filter"></i> (filtrado de un total de _MAX_ entradas)',
+            "search": '<i class="fa fa-search"></i> Buscar:',
             "loadingRecords": "Cargando...",
             "paginate": {
-                "first": "Primero",
-                "last": "Último",
-                "next": "Siguiente",
-                "previous": "Anterior"
+                "first": '<i class="fa fa-fast-backward"></i> Primero',
+                "last": '<i class="fa fa-fast-forward"></i> Último',
+                "next": '<i class="fa fa-forward"></i> Siguiente',
+                "previous": '<i class="fa fa-backward"></i> Anterior'
             },
             "aria": {
                 "sortAscending": ": activar para ordenar la columna de manera ascendente",
@@ -75,30 +102,59 @@
         }
     });
 
+    // Eventos delegados para los botones
+    $(document).on('click', '.btnEditar', function () {
+        var id = $(this).data('id');
+        EditarVehiculo(id);
+    });
+
+    $(document).on('click', '.btnEliminar', function () {
+        var id = $(this).data('id');
+        EliminarVehiculo(id);
+    });
+
     GetAllVehiculo();
 });
 
 function EliminarVehiculo(id) {
-    Swal.fire({
-        title: 'Eliminar Registro',
-        text: "Se eliminara el siguiente registro",
-        icon: 'warning',
+    swal({
+        title: "Eliminar Registro",
+        text: "¿Desea eliminar el siguiente registro?",
+        type: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar"
+    }, function (isConfirmed) {
+        if (isConfirmed) {
             var parametro = { Id: id };
-
+            swal({
+                title: "Eliminado",
+                text: "El vehículo ha sido eliminado.",
+                type: "success",
+                confirmButtonText: "Aceptar"
+            }, function () {
+                window.location.href = '/Taller/Vehiculos';
+            });
+            window.location.href = '/Taller/Vehiculos';
             PostMVC('/Vehiculo/EliminarVehiculo', parametro, function (r) {
                 if (r.IsSuccess) {
-                    Swal.fire('Eliminado', 'El vehiculo ha sido eliminado.', 'success')
-                        .then(() => { window.location.href = '/Taller/Vehiculos'; });
+                    swal({
+                        title: "Eliminado",
+                        text: "El vehículo ha sido eliminado.",
+                        type: "success",
+                        confirmButtonText: "Aceptar"
+                    }, function () {
+                        window.location.href = '/Taller/Vehiculos';
+                    });
                 } else {
-                    Swal.fire('Eliminado', 'El vehiculo ha sido eliminado.', 'success')
-                        .then(() => { window.location.href = '/Taller/Vehiculos'; });
+                    swal({
+                        title: "Error",
+                        text: r.ErrorMessage || "Error al eliminar el vehículo",
+                        type: "error",
+                        confirmButtonText: "Aceptar"
+                    });
                 }
             });
         }
@@ -108,34 +164,46 @@ function EliminarVehiculo(id) {
 function SaveOrUpdateVehiculo() {
     if ($("#frmVehiculoCrud").valid()) {
         var parametro = {
-            Id: $("#Id").val(),
+            Id: $("#Id").val() || 0,
             Placa: $("#txtPlaca").val(),
             Color: $("#txtColor").val(),
             Estado: $("#txtEstado").val(),
             Comentario: $("#txtComentario").val(),
             TipoVehiculo: {
                 Id: $("#TipoVehiculo_Id").val()
-            }
+            },
+            Estatus: 1,
+            CreatedBy: $("#CreatedBy").val(),
+            CreatedDt: $("#CreatedDt").val(),
+            UpdatedBy: $("#UpdatedBy").val(),
+            UpdatedDt: $("#UpdatedDt").val()
         };
-
+        LimpiarFormulario();
+        swal({
+            title: "Registro guardado!",
+            text: "El registro se ha guardado correctamente.",
+            type: "success",
+            confirmButtonText: "OK"
+        }, function () {
+            window.location.reload();
+        });
         PostMVC('/Vehiculo/SaveOrUpdateVehiculo', parametro, function (r) {
             if (r.IsSuccess) {
                 LimpiarFormulario();
-                Swal.fire({
+                swal({
                     title: "Registro guardado!",
                     text: "El registro se ha guardado correctamente.",
-                    icon: "success",
-                    confirmButtonText: 'OK'
-                }).then(() => {
+                    type: "success",
+                    confirmButtonText: "OK"
+                }, function () {
                     window.location.reload();
                 });
-
             } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error al guardar los datos: ' + r.ErrorMessage,
-                    confirmButtonText: 'Aceptar'
+                swal({
+                    title: "Error",
+                    text: "Error al guardar los datos: " + r.ErrorMessage,
+                    type: "error",
+                    confirmButtonText: "Aceptar"
                 });
             }
         });
@@ -147,11 +215,11 @@ function GetAllVehiculo() {
         if (r.IsSuccess) {
             MapingPropertiesDataTable("tblvehiculo", r.Response);
         } else {
-            Swal.fire({
-                title: 'Error',
-                text: 'Error al cargar los vehículos: ' + r.ErrorMessage,
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
+            swal({
+                title: "Error",
+                text: "Error al cargar los vehículos: " + r.ErrorMessage,
+                type: "error",
+                confirmButtonText: "Aceptar"
             });
         }
     });
@@ -163,4 +231,6 @@ function EditarVehiculo(id) {
 
 function LimpiarFormulario() {
     $("#frmVehiculoCrud")[0].reset();
+    $("#frmVehiculoCrud").validate().resetForm();
+    $('.form-group').removeClass('has-error');
 }
